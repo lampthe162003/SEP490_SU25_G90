@@ -1,2 +1,6 @@
 .vs
 SEP490_SU25_G90/.vs
+bin
+obj
+bin/debug
+obj/debug

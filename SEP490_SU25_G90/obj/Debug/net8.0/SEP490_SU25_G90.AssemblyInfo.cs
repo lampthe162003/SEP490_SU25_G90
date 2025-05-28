@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SEP490_SU25_G90")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9a66f3bb641ca95a8159179dd46a7a6687a52462")]
 [assembly: System.Reflection.AssemblyProductAttribute("SEP490_SU25_G90")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SEP490_SU25_G90")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
