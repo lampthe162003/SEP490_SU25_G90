@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Models;
 
-public partial class TestThesisDb2Context : DbContext
+public partial class Sep490Su25G90DbContext : DbContext
 {
-    public TestThesisDb2Context()
+    public Sep490Su25G90DbContext()
     {
     }
 
-    public TestThesisDb2Context(DbContextOptions<TestThesisDb2Context> options)
+    public Sep490Su25G90DbContext(DbContextOptions<Sep490Su25G90DbContext> options)
         : base(options)
     {
     }
@@ -48,14 +48,25 @@ public partial class TestThesisDb2Context : DbContext
     public virtual DbSet<Ward> Wards { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=(local);Database=TestThesisDB2;user=Verliezer;pwd=123456;TrustServerCertificate=true");
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            var builder = new ConfigurationBuilder()
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
+
+            var connectionString = builder.GetConnectionString("DefaultConnection");
+
+            optionsBuilder.UseSqlServer(connectionString);
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Address>(entity =>
         {
-            entity.HasKey(e => e.AddressId).HasName("PK__Addresse__CAA247C8705A940D");
+            entity.HasKey(e => e.AddressId).HasName("PK__Addresse__CAA247C83EA33219");
 
             entity.Property(e => e.AddressId).HasColumnName("address_id");
             entity.Property(e => e.HouseNumber)
@@ -73,7 +84,7 @@ public partial class TestThesisDb2Context : DbContext
 
         modelBuilder.Entity<Cccd>(entity =>
         {
-            entity.HasKey(e => e.CccdId).HasName("PK__CCCD__E13426B76D7F0E2D");
+            entity.HasKey(e => e.CccdId).HasName("PK__CCCD__E13426B7DA74310D");
 
             entity.ToTable("CCCD");
 
@@ -90,7 +101,7 @@ public partial class TestThesisDb2Context : DbContext
 
         modelBuilder.Entity<City>(entity =>
         {
-            entity.HasKey(e => e.CityId).HasName("PK__Cities__031491A86021A390");
+            entity.HasKey(e => e.CityId).HasName("PK__Cities__031491A8C91EC696");
 
             entity.Property(e => e.CityId)
                 .ValueGeneratedNever()
@@ -102,7 +113,7 @@ public partial class TestThesisDb2Context : DbContext
 
         modelBuilder.Entity<HealthCertificate>(entity =>
         {
-            entity.HasKey(e => e.HealthCertificateId).HasName("PK__HealthCe__9EBB8D85BBC6B158");
+            entity.HasKey(e => e.HealthCertificateId).HasName("PK__HealthCe__9EBB8D85FF1D155C");
 
             entity.Property(e => e.HealthCertificateId).HasColumnName("health_certificate_id");
             entity.Property(e => e.ImageUrl)
@@ -112,7 +123,7 @@ public partial class TestThesisDb2Context : DbContext
 
         modelBuilder.Entity<InstructorSpecialization>(entity =>
         {
-            entity.HasKey(e => e.IsId).HasName("PK__Instruct__ADF81AD3FE712193");
+            entity.HasKey(e => e.IsId).HasName("PK__Instruct__ADF81AD3A1619A66");
 
             entity.Property(e => e.IsId).HasColumnName("is_id");
             entity.Property(e => e.InstructorId).HasColumnName("instructor_id");
@@ -131,7 +142,7 @@ public partial class TestThesisDb2Context : DbContext
 
         modelBuilder.Entity<LearningApplication>(entity =>
         {
-            entity.HasKey(e => e.LearningId).HasName("PK__Learning__C996F2D5AC664073");
+            entity.HasKey(e => e.LearningId).HasName("PK__Learning__C996F2D5E8D91CBA");
 
             entity.Property(e => e.LearningId).HasColumnName("learning_id");
             entity.Property(e => e.AssignedAt)
@@ -163,7 +174,7 @@ public partial class TestThesisDb2Context : DbContext
 
         modelBuilder.Entity<LearningMaterial>(entity =>
         {
-            entity.HasKey(e => e.MaterialId).HasName("PK__Learning__6BFE1D284D906242");
+            entity.HasKey(e => e.MaterialId).HasName("PK__Learning__6BFE1D28FB069504");
 
             entity.Property(e => e.MaterialId).HasColumnName("material_id");
             entity.Property(e => e.CreatedAt)
@@ -181,7 +192,7 @@ public partial class TestThesisDb2Context : DbContext
 
         modelBuilder.Entity<LicenceType>(entity =>
         {
-            entity.HasKey(e => e.LicenceTypeId).HasName("PK__LicenceT__959FF8931A34ADCC");
+            entity.HasKey(e => e.LicenceTypeId).HasName("PK__LicenceT__959FF893E9AA9E50");
 
             entity.Property(e => e.LicenceTypeId).HasColumnName("licence_type_id");
             entity.Property(e => e.LicenceCode)
@@ -192,7 +203,7 @@ public partial class TestThesisDb2Context : DbContext
 
         modelBuilder.Entity<MockTestQuestion>(entity =>
         {
-            entity.HasKey(e => e.QuestionId).HasName("PK__MockTest__2EC21549893F329E");
+            entity.HasKey(e => e.QuestionId).HasName("PK__MockTest__2EC21549DE28DB3F");
 
             entity.Property(e => e.QuestionId).HasColumnName("question_id");
             entity.Property(e => e.CorrectOption)
@@ -227,7 +238,7 @@ public partial class TestThesisDb2Context : DbContext
 
         modelBuilder.Entity<MockTestResult>(entity =>
         {
-            entity.HasKey(e => e.ResultId).HasName("PK__MockTest__AFB3C316B72D3771");
+            entity.HasKey(e => e.ResultId).HasName("PK__MockTest__AFB3C3164C98D6B8");
 
             entity.Property(e => e.ResultId).HasColumnName("result_id");
             entity.Property(e => e.Score).HasColumnName("score");
@@ -244,7 +255,7 @@ public partial class TestThesisDb2Context : DbContext
 
         modelBuilder.Entity<Province>(entity =>
         {
-            entity.HasKey(e => e.ProvinceId).HasName("PK__Province__08DCB60FB9A64E56");
+            entity.HasKey(e => e.ProvinceId).HasName("PK__Province__08DCB60F51F2B946");
 
             entity.Property(e => e.ProvinceId)
                 .ValueGeneratedNever()
@@ -261,7 +272,7 @@ public partial class TestThesisDb2Context : DbContext
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.RoleId).HasName("PK__Roles__760965CC57853982");
+            entity.HasKey(e => e.RoleId).HasName("PK__Roles__760965CCD782B494");
 
             entity.Property(e => e.RoleId).HasColumnName("role_id");
             entity.Property(e => e.RoleName)
@@ -271,7 +282,7 @@ public partial class TestThesisDb2Context : DbContext
 
         modelBuilder.Entity<TestApplication>(entity =>
         {
-            entity.HasKey(e => e.TestId).HasName("PK__TestAppl__F3FF1C02B5D7ADC2");
+            entity.HasKey(e => e.TestId).HasName("PK__TestAppl__F3FF1C02314A5E74");
 
             entity.Property(e => e.TestId).HasColumnName("test_id");
             entity.Property(e => e.ExamDate).HasColumnName("exam_date");
@@ -291,11 +302,11 @@ public partial class TestThesisDb2Context : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Users__B9BE370FF580423E");
+            entity.HasKey(e => e.UserId).HasName("PK__Users__B9BE370F8FB76AD8");
 
-            entity.HasIndex(e => e.Email, "UQ__Users__AB6E6164EE57C498").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__Users__AB6E61647286917E").IsUnique();
 
-            entity.HasIndex(e => e.Username, "UQ__Users__F3DBC572A4C06825").IsUnique();
+            entity.HasIndex(e => e.Username, "UQ__Users__F3DBC572148FC0E2").IsUnique();
 
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.AddressId).HasColumnName("address_id");
@@ -344,7 +355,7 @@ public partial class TestThesisDb2Context : DbContext
 
         modelBuilder.Entity<UserRole>(entity =>
         {
-            entity.HasKey(e => e.UserRoleId).HasName("PK__UserRole__B8D9ABA261D0CDFF");
+            entity.HasKey(e => e.UserRoleId).HasName("PK__UserRole__B8D9ABA2700ABC5F");
 
             entity.Property(e => e.UserRoleId).HasColumnName("user_role_id");
             entity.Property(e => e.RoleId).HasColumnName("role_id");
@@ -363,7 +374,7 @@ public partial class TestThesisDb2Context : DbContext
 
         modelBuilder.Entity<Ward>(entity =>
         {
-            entity.HasKey(e => e.WardId).HasName("PK__Wards__396B899DFD9420CD");
+            entity.HasKey(e => e.WardId).HasName("PK__Wards__396B899D2EE30219");
 
             entity.Property(e => e.WardId)
                 .ValueGeneratedNever()
