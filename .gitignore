@@ -4,3 +4,4 @@ bin
 obj
 bin/debug
 obj/debug
+appsettings.json
