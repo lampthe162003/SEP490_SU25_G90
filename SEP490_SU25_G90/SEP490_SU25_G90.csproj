@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\Admins\" />
     <Folder Include="Pages\Users\" />
     <Folder Include="vn.edu.fpt.Models\" />
   </ItemGroup>
