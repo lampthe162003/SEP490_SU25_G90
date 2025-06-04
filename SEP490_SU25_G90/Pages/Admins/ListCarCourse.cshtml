@@ -1,0 +1,84 @@
+﻿@page
+@model SEP490_SU25_G90.Pages.Admins.ListCarCourseModel
+
+@{
+    ViewData["Title"] = "ListCarCourse";
+}
+
+<h1>ListCarCourse</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.MockTestQuestion[0].QuestionText)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MockTestQuestion[0].OptionA)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MockTestQuestion[0].OptionB)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MockTestQuestion[0].OptionC)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MockTestQuestion[0].OptionD)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MockTestQuestion[0].CorrectOption)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MockTestQuestion[0].CreatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MockTestQuestion[0].ReadyStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MockTestQuestion[0].TestTypeNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.MockTestQuestion) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.QuestionText)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OptionA)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OptionB)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OptionC)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OptionD)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CorrectOption)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReadyStatus)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TestTypeNavigation.LicenceTypeId)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.QuestionId">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.QuestionId">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.QuestionId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
