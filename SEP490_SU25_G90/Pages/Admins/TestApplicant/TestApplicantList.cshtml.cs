@@ -12,7 +12,7 @@ namespace SEP490_SU25_G90.Pages.Admins.TestApplicant
 {
     public class TestApplicantListModel : PageModel
     {
-      /*  private readonly SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext _context;
+      private readonly SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext _context;
 
         public TestApplicantListModel(SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext context)
         {
@@ -45,6 +45,6 @@ namespace SEP490_SU25_G90.Pages.Admins.TestApplicant
                 .ToListAsync();
 
             return Page();
-        }*/
+        }
     }
 }

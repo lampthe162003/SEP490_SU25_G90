@@ -25,45 +25,22 @@
                 <th scope="col" class="text-center" style="width: 120px;">Kết quả</th>
             </tr>
         </thead>
-
         <tbody>
-            <script>
-                async function loadApplicants() {
-                    const response = await fetch("/api/TestApplicants");
-                    const data = await response.json();
-
-                    const tbody = document.querySelector("tbody");
-                    tbody.innerHTML = "";
-
-                    data.forEach(item => {
-                        tbody.innerHTML += `
-                            <tr class="border-bottom">
-                                <td class="text-center">${item.testId}</td>
-                                <td class="text-start">${item.learnerFullName}</td>
-                                <td class="text-center">${item.licenceType}</td>
-                                <td class="text-center">${formatDate(item.examDate)}</td>
-                                <td class="text-center text-success fw-bold">${item.score?.toFixed(1) ?? 'N/A'}</td>
-                                <td class="text-center"><span class="badge ${getBadgeClass(item.statusText)}">${item.statusText}</span></td>
-                            </tr>
-                        `;
-                    });
-                }
-
-                function formatDate(dateStr) {
-                    if (!dateStr) return "N/A";
-                    const d = new Date(dateStr);
-                    return d.toLocaleDateString("vi-VN");
-                }
-
-                function getBadgeClass(status) {
-                    return status === "Đạt" ? "bg-success"
-                         : status === "Trượt" ? "bg-danger"
-                         : "bg-secondary";
-                }
-
-                window.onload = loadApplicants;
-            </script>
-
+            @foreach (var item in Model.TestApplicants)
+            {
+                <tr class="border-bottom">
+                    <td class="text-center">@item.TestId</td>
+                    <td class="text-start">@item.LearnerFullName</td>
+                    <td class="text-center">@item.LicenceType</td>
+                    <td class="text-center">@item.ExamDate?.ToString("dd/MM/yyyy")</td>
+                    <td class="text-center text-success fw-bold">@item.Score?.ToString("0.0")</td>
+                    <td class="text-center">
+                        <span class="badge @GetStatusBadgeClass(item.StatusText)">
+                            @item.StatusText
+                        </span>
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 </div>
