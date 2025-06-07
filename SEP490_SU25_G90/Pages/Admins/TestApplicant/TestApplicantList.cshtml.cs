@@ -12,7 +12,7 @@ namespace SEP490_SU25_G90.Pages.Admins.TestApplicant
 {
     public class TestApplicantListModel : PageModel
     {
-      /*  private readonly SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext _context;
+      private readonly SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext _context;
 
         public TestApplicantListModel(SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext context)
         {
@@ -25,9 +25,9 @@ namespace SEP490_SU25_G90.Pages.Admins.TestApplicant
         {
             TestApplicants = await _context.TestApplications
                 .Include(t => t.Learner) 
-                    .ThenInclude(la => la.Learner) 
+                    .ThenInclude(l => l.Learner) 
                 .Include(t => t.Learner)
-                    .ThenInclude(la => la.LicenceType)
+                    .ThenInclude(l => l.LicenceType)
                 .Select(t => new TestApplicantViewModel
                 {
                     TestId = t.TestId,
@@ -45,6 +45,6 @@ namespace SEP490_SU25_G90.Pages.Admins.TestApplicant
                 .ToListAsync();
 
             return Page();
-        }*/
+        }
     }
 }
