@@ -8,6 +8,5 @@
         public DateTime? ExamDate { get; set; }
         public double? Score { get; set; }
         public string StatusText { get; set; }
-
     }
 }
