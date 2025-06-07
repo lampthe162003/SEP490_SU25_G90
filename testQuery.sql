@@ -147,6 +147,25 @@ CREATE TABLE LearningMaterials (
     material_id INT IDENTITY(1,1) PRIMARY KEY,
     title NVARCHAR(100),
     [description] NVARCHAR(MAX),
-    file_link NVARCHAR(255),
-    created_at DATETIME DEFAULT GETDATE()
+    licence_type_id TINYINT,
+    file_link NVARCHAR(MAX),
+    created_at DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (licence_type_id) REFERENCES LicenceTypes(licence_type_id)
 ); 
+
+CREATE TABLE Courses (
+    course_id INT IDENTITY(1, 1) PRIMARY KEY,
+    title NVARCHAR(150),
+    [description] NVARCHAR(MAX),
+    licence_type_id TINYINT,
+    active_status BIT, -- 1 = active, 0 = disabled
+    FOREIGN KEY (licence_type_id) REFERENCES LicenceTypes(licence_type_id)
+)
+
+CREATE TABLE Videos (
+    video_id INT IDENTITY(1, 1) PRIMARY KEY,
+    video_link NVARCHAR(MAX),
+    course_id INT,
+    active_status BIT, -- 1 = active, 0 = disabled
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id)
+)
