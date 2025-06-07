@@ -25,9 +25,9 @@ namespace SEP490_SU25_G90.Pages.Admins.TestApplicant
         {
             TestApplicants = await _context.TestApplications
                 .Include(t => t.Learner) 
-                    .ThenInclude(la => la.Learner) 
+                    .ThenInclude(l => l.Learner) 
                 .Include(t => t.Learner)
-                    .ThenInclude(la => la.LicenceType)
+                    .ThenInclude(l => l.LicenceType)
                 .Select(t => new TestApplicantViewModel
                 {
                     TestId = t.TestId,
