@@ -20,13 +20,28 @@ namespace SEP490_SU25_G90.Pages.Admins.CarCourse
 
         public IList<Course> Course { get;set; } = default!;
 
+        [BindProperty(SupportsGet = true)]
+        public string? SearchString { get; set; }
+
         public async Task OnGetAsync()
         {
-            Course = await _context.Courses
+            var query = _context.Courses
                 .Include(c => c.LicenceType)
-                .Include(c => c.Videos) 
-                .ToListAsync();
+                .Include(c => c.Videos)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(SearchString))
+            {
+                query = query.Where(c =>
+                    (c.Title != null && c.Title.Contains(SearchString)) ||
+                    (c.Description != null && c.Description.Contains(SearchString)));
+            }
+
+            Course = await query.OrderBy(c => c.Title).ToListAsync();
         }
+
+
+
 
     }
 }
