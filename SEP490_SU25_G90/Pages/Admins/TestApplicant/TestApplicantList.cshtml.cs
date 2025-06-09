@@ -21,13 +21,41 @@ namespace SEP490_SU25_G90.Pages.Admins.TestApplicant
 
         public List<TestApplicantViewModel> TestApplicants { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public string SearchName { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string SearchCccd { get; set; }
+
+
         public async Task<IActionResult> OnGetAsync()
         {
-            TestApplicants = await _context.TestApplications
-                .Include(t => t.Learner) 
-                    .ThenInclude(l => l.Learner) 
+            var query = _context.TestApplications
+                .Include(t => t.Learner)
+                    .ThenInclude(l => l.Learner)
+                        .ThenInclude(c => c.Cccd)
                 .Include(t => t.Learner)
                     .ThenInclude(l => l.LicenceType)
+                .AsQueryable();
+
+            
+            if (!string.IsNullOrEmpty(SearchName))
+            {
+                var lowerSearchName = SearchName.ToLower();
+                query = query.Where(t =>
+                    (t.Learner.Learner.FirstName + " " +
+                     t.Learner.Learner.MiddleName + " " +
+                     t.Learner.Learner.LastName).ToLower().Contains(lowerSearchName));
+            }
+
+           
+            if (!string.IsNullOrEmpty(SearchCccd))
+            {
+                query = query.Where(t => t.Learner.Learner.Cccd.CccdNumber.Contains(SearchCccd));
+            }
+
+            
+            TestApplicants = await query
                 .Select(t => new TestApplicantViewModel
                 {
                     TestId = t.TestId,
@@ -35,12 +63,13 @@ namespace SEP490_SU25_G90.Pages.Admins.TestApplicant
                                       t.Learner.Learner.MiddleName + " " +
                                       t.Learner.Learner.LastName,
                     LicenceType = t.Learner.LicenceType.LicenceCode,
-                    ExamDate = t.ExamDate.HasValue  
+                    ExamDate = t.ExamDate.HasValue
                                ? t.ExamDate.Value.ToDateTime(TimeOnly.MinValue)
                                : (DateTime?)null,
                     Score = t.Score,
                     StatusText = t.Status == null ? "Không tham gia"
-                                : t.Status == true ? "Đạt" : "Trượt"
+                                : t.Status == true ? "Đạt" : "Trượt",
+                    CccdNumber = t.Learner.Learner.Cccd.CccdNumber,
                 })
                 .ToListAsync();
 
