@@ -1,0 +1,61 @@
+﻿@page "/Admins/CarCourse/List"
+@model SEP490_SU25_G90.Pages.Admins.CarCourse.ListModel
+
+
+@{
+    ViewData["Title"] = "ListCarCourse";
+}
+
+<h1>ListCarCourse</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Course[0].Title)</th>
+            <th>@Html.DisplayNameFor(model => model.Course[0].Description)</th>
+            <th>@Html.DisplayNameFor(model => model.Course[0].ActiveStatus)</th>
+            <th>Videos</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Course)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>@Html.DisplayFor(modelItem => item.ActiveStatus)</td>
+                <td>
+                    @if (item.Videos != null && item.Videos.Any())
+                    {
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            @foreach (var video in item.Videos)
+                            {
+                                <li>
+                                    @if (!string.IsNullOrEmpty(video.VideoLink))
+                                    {
+                                        var link = video.VideoLink.StartsWith(".") ? video.VideoLink.Substring(1) : video.VideoLink;
+                                        <a href="@link" target="_blank">View Video</a>
+                                    }
+                                </li>
+                            }
+                        </ul>
+
+                    }
+                    else
+                    {
+                        <span>No videos</span>
+                    }
+                </td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.CourseId">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@item.CourseId">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.CourseId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
