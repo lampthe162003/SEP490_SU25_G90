@@ -1,5 +1,5 @@
 ﻿@page "/Admins/TestApplicant/List"
-@model SEP490_SU25_G90.Pages.Admins.TestApplicant.TestApplicantListModel
+@model SEP490_SU25_G90.Pages.Admins.TestApplicantion.TestApplicantionListModel
 
 @{
     ViewData["Title"] = "Hồ sơ đăng kí thi";
@@ -54,15 +54,16 @@
                 {
                     <tr class="border-bottom">
                         <td class="text-center">@item.TestId</td>
-                        <td class="text-start">@item.LearnerFullName</td>
-                        <td class="text-center">@item.CccdNumber</td>
-                        <td class="text-center">@item.LicenceType</td>
+                        <td>@item.LearnerFullName</td>
+                        <td>@item.CccdNumber</td>
+                        <td>@item.LicenceType</td>
                         <td class="text-center">@item.ExamDate?.ToString("dd/MM/yyyy")</td>
                         <td class="text-center text-success fw-bold">@item.Score?.ToString("0")</td>
                         <td class="text-center">
-                            <span class="badge @GetStatusBadgeClass(item.StatusText)">
-                                @item.StatusText
+                            <span class="badge @GetStatusBadgeClass(item.Status == true ? "Đạt" : "Trượt")">
+                                @(item.Status == true ? "Đạt" : "Trượt")
                             </span>
+
                         </td>
                         <td class="text-center">
                             <a asp-page="./Details" asp-route-id="@item.TestId" class="btn btn-sm btn-info me-1">

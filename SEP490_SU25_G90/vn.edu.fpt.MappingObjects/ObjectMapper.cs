@@ -13,6 +13,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
 
             CreateMap<UserListInformationResponse, User>();
             CreateMap<User, UserListInformationResponse>();
+
+            CreateMap<DateOnly, DateTime>().ConvertUsing(d => d.ToDateTime(TimeOnly.MinValue));
+            CreateMap<TestApplicantionListInformationResponse, TestApplication>();
+            CreateMap<TestApplication, TestApplicantionListInformationResponse>();
+
         }
     }
 }
