@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
@@ -7,8 +8,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
     {
         public ObjectMapper() 
         {
-            CreateMap<LoginInformationRequest, User>();
-            CreateMap<User, LoginInformationRequest>();
+            CreateMap<LoginInformationResponse, User>();
+            CreateMap<User, LoginInformationResponse>();
+
+            CreateMap<UserListInformationResponse, User>();
+            CreateMap<User, UserListInformationResponse>();
         }
     }
 }
