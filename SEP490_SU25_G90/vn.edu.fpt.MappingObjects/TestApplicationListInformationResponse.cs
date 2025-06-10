@@ -2,10 +2,10 @@
 
 namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
 {
-    public class TestApplicantionListInformationResponse
+    public class TestApplicationListInformationResponse
     {
         public int TestId { get; set; }
-        public DateTime? ExamDate { get; set; }
+        public DateOnly? ExamDate { get; set; }
         public double? Score { get; set; }
         public bool? Status { get; set; }
         public string LearnerFullName => Learner == null || Learner.Learner == null
