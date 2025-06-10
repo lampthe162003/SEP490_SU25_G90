@@ -4,25 +4,25 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
-using SEP490_SU25_G90.vn.edu.fpt.Services.TestApplicantion;
+using SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication;
 using SEP490_SU25_G90.vn.edu.fpt.Services.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SEP490_SU25_G90.Pages.Admins.TestApplicantion
+namespace SEP490_SU25_G90.Pages.Admins.TestApplication
 {
-    public class TestApplicantionListModel : PageModel
+    public class TestApplicationListModel : PageModel
     {
-        private readonly ITestApplicantionService _testApplicantionService;
+        private readonly ITestApplicationService _testApplicationService;
 
-        public TestApplicantionListModel(Sep490Su25G90DbContext context, IMapper mapper)
+        public TestApplicationListModel(Sep490Su25G90DbContext context, IMapper mapper)
         {
-            _testApplicantionService = new TestApplicantionService(context, mapper);
+            _testApplicationService = new TestApplicationService(context, mapper);
         }
 
-        public List<TestApplicantionListInformationResponse> TestApplicants { get; set; }
+        public List<TestApplicationListInformationResponse> TestApplications { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public string SearchName { get; set; }
@@ -33,17 +33,17 @@ namespace SEP490_SU25_G90.Pages.Admins.TestApplicantion
         {
             if (!string.IsNullOrEmpty(SearchName))
             {
-                TestApplicants = _testApplicantionService.GetByName(SearchName);
+                TestApplications = _testApplicationService.GetByName(SearchName);
                 return;
             }
 
             if (!string.IsNullOrEmpty(SearchCccd))
             {
-                TestApplicants = _testApplicantionService.GetByCccd(SearchCccd);
+                TestApplications = _testApplicationService.GetByCccd(SearchCccd);
                 return;
             }
 
-            TestApplicants = _testApplicantionService.GetAll();
+            TestApplications = _testApplicationService.GetAllTestApplication();
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿@page "/Admins/TestApplicant/List"
-@model SEP490_SU25_G90.Pages.Admins.TestApplicantion.TestApplicantionListModel
+@model SEP490_SU25_G90.Pages.Admins.TestApplication.TestApplicationListModel
 
 @{
     ViewData["Title"] = "Hồ sơ đăng kí thi";
@@ -42,7 +42,7 @@
             </tr>
         </thead>
         <tbody>
-            @if (Model.TestApplicants.Count == 0)
+            @if (Model.TestApplications.Count == 0)
             {
                 <tr>
                     <td colspan="8" class="text-center text-muted py-4">Không có kết quả phù hợp.</td>
@@ -50,7 +50,7 @@
             }
             else
             {
-                @foreach (var item in Model.TestApplicants)
+                @foreach (var item in Model.TestApplications)
                 {
                     <tr class="border-bottom">
                         <td class="text-center">@item.TestId</td>
@@ -59,11 +59,16 @@
                         <td>@item.LicenceType</td>
                         <td class="text-center">@item.ExamDate?.ToString("dd/MM/yyyy")</td>
                         <td class="text-center text-success fw-bold">@item.Score?.ToString("0")</td>
-                        <td class="text-center">
-                            <span class="badge @GetStatusBadgeClass(item.Status == true ? "Đạt" : "Trượt")">
-                                @(item.Status == true ? "Đạt" : "Trượt")
-                            </span>
+                        @{
+                            string statusText = item.Status == true ? "Đạt" :
+                            item.Status == false ? "Trượt" :
+                            "Không tham gia";
+                        }
 
+                        <td class="text-center">
+                            <span class="badge @GetStatusBadgeClass(statusText)">
+                                @statusText
+                            </span>
                         </td>
                         <td class="text-center">
                             <a asp-page="./Details" asp-route-id="@item.TestId" class="btn btn-sm btn-info me-1">
