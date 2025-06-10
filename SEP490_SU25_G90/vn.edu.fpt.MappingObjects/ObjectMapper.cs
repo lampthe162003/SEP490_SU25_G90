@@ -13,6 +13,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
 
             CreateMap<UserListInformationResponse, User>();
             CreateMap<User, UserListInformationResponse>();
+
+            CreateMap<TestApplicationListInformationResponse, TestApplication>();
+            CreateMap<TestApplication, TestApplicationListInformationResponse>();
+
         }
     }
 }
