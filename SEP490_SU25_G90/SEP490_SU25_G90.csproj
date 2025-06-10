@@ -19,6 +19,8 @@
 
   <ItemGroup>
     <Folder Include="Pages\Users\" />
+    <Folder Include="vn.edu.fpt.MappingObjects\MotorbikeDTO\" />
+    <Folder Include="vn.edu.fpt.MappingObjects\MotorbikeCourseMapper\" />
     <Folder Include="vn.edu.fpt.Models\" />
   </ItemGroup>
 
