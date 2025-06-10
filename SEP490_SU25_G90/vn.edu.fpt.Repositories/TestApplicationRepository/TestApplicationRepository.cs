@@ -1,18 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 
-namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.TestApplicantionRepository
+namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.TestApplicationRepository
 {
-    public class TestApplicantionRepository : ITestApplicantionRepository
+    public class TestApplicationRepository : ITestApplicationRepository
     {
         private readonly Sep490Su25G90DbContext _context;
 
-        public TestApplicantionRepository(Sep490Su25G90DbContext context)
+        public TestApplicationRepository(Sep490Su25G90DbContext context)
         {
             _context = context;
         }
 
-        public List<TestApplication> GetAll()
+        public List<TestApplication> GetAllTestApplication()
         {
             return _context.TestApplications
                 .Include(t => t.Learner)
