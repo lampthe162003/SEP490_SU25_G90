@@ -4,7 +4,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.User
 {
     public interface IUserService
     {
-        public List<UserListInformationResponse> GetAllUsers();
-        
+        public IList<UserListInformationResponse> GetAllUsers(string? name, string? email);
     }
 }
