@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
+using SEP490_SU25_G90.vn.edu.fpt.Repositories.MotobikeCouseRepository;
+using SEP490_SU25_G90.vn.edu.fpt.Services.Course;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,10 +14,14 @@ var connectionString = builder.Configuration.GetConnectionString("MyCnn") ;
 builder.Services.AddDbContext<Sep490Su25G90DbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
+builder.Services.AddAutoMapper(typeof(ObjectMapper));
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<Sep490Su25G90DbContext>();
 builder.Services.AddRazorPages();
+//Repository
+builder.Services.AddScoped<IMotobikeCourseRepository, MotobikeCourseRepository>();
+//Service
+builder.Services.AddScoped<IMotobikeCourseService, MotobikeCourseService>();
 builder.Services.AddControllers();
 builder.Services.AddScoped<ILearningApplicationRepository, LearningApplicationRepository>();
 builder.Services.AddScoped<ILearningApplicationService, LearningApplicationService>();

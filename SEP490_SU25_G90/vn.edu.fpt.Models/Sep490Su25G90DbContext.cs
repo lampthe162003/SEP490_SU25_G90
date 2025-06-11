@@ -21,6 +21,8 @@ public partial class Sep490Su25G90DbContext : DbContext
 
     public virtual DbSet<City> Cities { get; set; }
 
+    public virtual DbSet<Course> Courses { get; set; }
+
     public virtual DbSet<HealthCertificate> HealthCertificates { get; set; }
 
     public virtual DbSet<InstructorSpecialization> InstructorSpecializations { get; set; }
@@ -45,18 +47,20 @@ public partial class Sep490Su25G90DbContext : DbContext
 
     public virtual DbSet<UserRole> UserRoles { get; set; }
 
+    public virtual DbSet<Video> Videos { get; set; }
+
     public virtual DbSet<Ward> Wards { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
         {
-            var builder = new ConfigurationBuilder()
-            .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .Build();
+            var config = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
 
-            var connectionString = builder.GetConnectionString("DefaultConnection");
+            var connectionString = config.GetConnectionString("DefaultConnection");
 
             optionsBuilder.UseSqlServer(connectionString);
         }
@@ -66,7 +70,7 @@ public partial class Sep490Su25G90DbContext : DbContext
     {
         modelBuilder.Entity<Address>(entity =>
         {
-            entity.HasKey(e => e.AddressId).HasName("PK__Addresse__CAA247C83EA33219");
+            entity.HasKey(e => e.AddressId).HasName("PK__Addresse__CAA247C80FE9B020");
 
             entity.Property(e => e.AddressId).HasColumnName("address_id");
             entity.Property(e => e.HouseNumber)
@@ -84,7 +88,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<Cccd>(entity =>
         {
-            entity.HasKey(e => e.CccdId).HasName("PK__CCCD__E13426B7DA74310D");
+            entity.HasKey(e => e.CccdId).HasName("PK__CCCD__E13426B71A07CD4B");
 
             entity.ToTable("CCCD");
 
@@ -101,7 +105,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<City>(entity =>
         {
-            entity.HasKey(e => e.CityId).HasName("PK__Cities__031491A8C91EC696");
+            entity.HasKey(e => e.CityId).HasName("PK__Cities__031491A8B91B7667");
 
             entity.Property(e => e.CityId)
                 .ValueGeneratedNever()
@@ -111,9 +115,26 @@ public partial class Sep490Su25G90DbContext : DbContext
                 .HasColumnName("city_name");
         });
 
+        modelBuilder.Entity<Course>(entity =>
+        {
+            entity.HasKey(e => e.CourseId).HasName("PK__Courses__8F1EF7AE87932E20");
+
+            entity.Property(e => e.CourseId).HasColumnName("course_id");
+            entity.Property(e => e.ActiveStatus).HasColumnName("active_status");
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.LicenceTypeId).HasColumnName("licence_type_id");
+            entity.Property(e => e.Title)
+                .HasMaxLength(150)
+                .HasColumnName("title");
+
+            entity.HasOne(d => d.LicenceType).WithMany(p => p.Courses)
+                .HasForeignKey(d => d.LicenceTypeId)
+                .HasConstraintName("FK__Courses__licence__6D0D32F4");
+        });
+
         modelBuilder.Entity<HealthCertificate>(entity =>
         {
-            entity.HasKey(e => e.HealthCertificateId).HasName("PK__HealthCe__9EBB8D85FF1D155C");
+            entity.HasKey(e => e.HealthCertificateId).HasName("PK__HealthCe__9EBB8D85BC93375A");
 
             entity.Property(e => e.HealthCertificateId).HasColumnName("health_certificate_id");
             entity.Property(e => e.ImageUrl)
@@ -123,7 +144,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<InstructorSpecialization>(entity =>
         {
-            entity.HasKey(e => e.IsId).HasName("PK__Instruct__ADF81AD3A1619A66");
+            entity.HasKey(e => e.IsId).HasName("PK__Instruct__ADF81AD3A54B4EF0");
 
             entity.Property(e => e.IsId).HasColumnName("is_id");
             entity.Property(e => e.InstructorId).HasColumnName("instructor_id");
@@ -142,7 +163,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<LearningApplication>(entity =>
         {
-            entity.HasKey(e => e.LearningId).HasName("PK__Learning__C996F2D5E8D91CBA");
+            entity.HasKey(e => e.LearningId).HasName("PK__Learning__C996F2D5DB9DB054");
 
             entity.Property(e => e.LearningId).HasColumnName("learning_id");
             entity.Property(e => e.AssignedAt)
@@ -174,7 +195,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<LearningMaterial>(entity =>
         {
-            entity.HasKey(e => e.MaterialId).HasName("PK__Learning__6BFE1D28FB069504");
+            entity.HasKey(e => e.MaterialId).HasName("PK__Learning__6BFE1D28858A88CA");
 
             entity.Property(e => e.MaterialId).HasColumnName("material_id");
             entity.Property(e => e.CreatedAt)
@@ -182,17 +203,20 @@ public partial class Sep490Su25G90DbContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
             entity.Property(e => e.Description).HasColumnName("description");
-            entity.Property(e => e.FileLink)
-                .HasMaxLength(255)
-                .HasColumnName("file_link");
+            entity.Property(e => e.FileLink).HasColumnName("file_link");
+            entity.Property(e => e.LicenceTypeId).HasColumnName("licence_type_id");
             entity.Property(e => e.Title)
                 .HasMaxLength(100)
                 .HasColumnName("title");
+
+            entity.HasOne(d => d.LicenceType).WithMany(p => p.LearningMaterials)
+                .HasForeignKey(d => d.LicenceTypeId)
+                .HasConstraintName("FK__LearningM__licen__6A30C649");
         });
 
         modelBuilder.Entity<LicenceType>(entity =>
         {
-            entity.HasKey(e => e.LicenceTypeId).HasName("PK__LicenceT__959FF893E9AA9E50");
+            entity.HasKey(e => e.LicenceTypeId).HasName("PK__LicenceT__959FF8931EBB0048");
 
             entity.Property(e => e.LicenceTypeId).HasColumnName("licence_type_id");
             entity.Property(e => e.LicenceCode)
@@ -203,7 +227,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<MockTestQuestion>(entity =>
         {
-            entity.HasKey(e => e.QuestionId).HasName("PK__MockTest__2EC21549DE28DB3F");
+            entity.HasKey(e => e.QuestionId).HasName("PK__MockTest__2EC215497DB325D5");
 
             entity.Property(e => e.QuestionId).HasColumnName("question_id");
             entity.Property(e => e.CorrectOption)
@@ -238,7 +262,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<MockTestResult>(entity =>
         {
-            entity.HasKey(e => e.ResultId).HasName("PK__MockTest__AFB3C3164C98D6B8");
+            entity.HasKey(e => e.ResultId).HasName("PK__MockTest__AFB3C316026E5656");
 
             entity.Property(e => e.ResultId).HasColumnName("result_id");
             entity.Property(e => e.Score).HasColumnName("score");
@@ -255,7 +279,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<Province>(entity =>
         {
-            entity.HasKey(e => e.ProvinceId).HasName("PK__Province__08DCB60F51F2B946");
+            entity.HasKey(e => e.ProvinceId).HasName("PK__Province__08DCB60F5EB338AC");
 
             entity.Property(e => e.ProvinceId)
                 .ValueGeneratedNever()
@@ -272,7 +296,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.RoleId).HasName("PK__Roles__760965CCD782B494");
+            entity.HasKey(e => e.RoleId).HasName("PK__Roles__760965CCF0A72107");
 
             entity.Property(e => e.RoleId).HasColumnName("role_id");
             entity.Property(e => e.RoleName)
@@ -282,7 +306,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<TestApplication>(entity =>
         {
-            entity.HasKey(e => e.TestId).HasName("PK__TestAppl__F3FF1C02314A5E74");
+            entity.HasKey(e => e.TestId).HasName("PK__TestAppl__F3FF1C02513040EB");
 
             entity.Property(e => e.TestId).HasColumnName("test_id");
             entity.Property(e => e.ExamDate).HasColumnName("exam_date");
@@ -302,11 +326,11 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Users__B9BE370F8FB76AD8");
+            entity.HasKey(e => e.UserId).HasName("PK__Users__B9BE370F36A774C7");
 
-            entity.HasIndex(e => e.Email, "UQ__Users__AB6E61647286917E").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__Users__AB6E61640F7F424C").IsUnique();
 
-            entity.HasIndex(e => e.Username, "UQ__Users__F3DBC572148FC0E2").IsUnique();
+            entity.HasIndex(e => e.Username, "UQ__Users__F3DBC5722FCAFC1A").IsUnique();
 
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.AddressId).HasColumnName("address_id");
@@ -355,7 +379,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<UserRole>(entity =>
         {
-            entity.HasKey(e => e.UserRoleId).HasName("PK__UserRole__B8D9ABA2700ABC5F");
+            entity.HasKey(e => e.UserRoleId).HasName("PK__UserRole__B8D9ABA28B51FF94");
 
             entity.Property(e => e.UserRoleId).HasColumnName("user_role_id");
             entity.Property(e => e.RoleId).HasColumnName("role_id");
@@ -372,9 +396,23 @@ public partial class Sep490Su25G90DbContext : DbContext
                 .HasConstraintName("FK__UserRoles__user___4E88ABD4");
         });
 
+        modelBuilder.Entity<Video>(entity =>
+        {
+            entity.HasKey(e => e.VideoId).HasName("PK__Videos__E8F11E1090D64E6E");
+
+            entity.Property(e => e.VideoId).HasColumnName("video_id");
+            entity.Property(e => e.ActiveStatus).HasColumnName("active_status");
+            entity.Property(e => e.CourseId).HasColumnName("course_id");
+            entity.Property(e => e.VideoLink).HasColumnName("video_link");
+
+            entity.HasOne(d => d.Course).WithMany(p => p.Videos)
+                .HasForeignKey(d => d.CourseId)
+                .HasConstraintName("FK__Videos__course_i__6FE99F9F");
+        });
+
         modelBuilder.Entity<Ward>(entity =>
         {
-            entity.HasKey(e => e.WardId).HasName("PK__Wards__396B899D2EE30219");
+            entity.HasKey(e => e.WardId).HasName("PK__Wards__396B899D772FFCE8");
 
             entity.Property(e => e.WardId)
                 .ValueGeneratedNever()
