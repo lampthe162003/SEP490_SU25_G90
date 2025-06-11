@@ -1,0 +1,48 @@
+﻿@page
+@model SEP490_SU25_G90.Pages.Admins.LearningProfile.ListLearningProfileModel
+@{
+    <h1 class="mb-4 text-primary fw-bold">Hồ sơ học viên</h1>
+
+    <div class="table-responsive shadow-sm rounded" style="background: #fff;">
+        <table class="table table-striped table-bordered shadow-sm">
+            <thead class="thead-dark">
+                <tr>
+                    <th class="text-center">ID</th>
+                    <th class="text-center">Họ và Tên</th>
+                    <th class="text-center">Loại bằng</th>
+                    <th class="text-center">Thời gian đăng ký</th>
+                    <th class="text-center">Trạng thái học</th>
+                    <th class="text-center">Trạng thái thanh toán</th>
+                    <th class="text-center">Giáo viên</th>
+                    <th class="text-center">Thời gian xếp giáo viên</th>
+                   
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var profile in Model.LearningProfiles)
+                {
+                    <tr>
+                        <td class="text-center">@profile.LearningId</td>
+                        <td class="text-center">@profile.Learner.LastName @profile.Learner.MiddleName @profile.Learner.FirstName </td>
+                        <td class="text-center">@profile.LicenceType.LicenceCode</td>
+                        <td class="text-center">@profile.SubmittedAt?.ToString("dd/MM/yyyy")</td>
+                        <td class="text-center">
+                            <span class="badge @(profile.LearningStatus == 1 ? "bg-success" : "bg-secondary")">
+                                @(profile.LearningStatus == 1 ? "Đã bắt đầu học" : "Chưa bắt đầu học")
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge @(profile.PaymentStatus == true ? "bg-success" : "bg-secondary")">
+                                @(profile.PaymentStatus == true ? "Đã thanh toán" : "Chưa thanh toán")
+                            </span>
+                        </td>
+
+                        <td class="text-center">@profile.Instructor.LastName @profile.Instructor.MiddleName @profile.Instructor.FirstName</td>
+                        <td class="text-center">@profile.AssignedAt?.ToString("dd/MM/yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+}

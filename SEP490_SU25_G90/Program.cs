@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
+using SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository;
+using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("MyCnn") ;
 builder.Services.AddDbContext<Sep490Su25G90DbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -14,6 +16,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<Sep490Su25G90DbContext>();
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
+builder.Services.AddScoped<ILearningApplicationRepository, LearningApplicationRepository>();
+builder.Services.AddScoped<ILearningApplicationService, LearningApplicationService>();
 var app = builder.Build();
 app.MapControllers();
 
