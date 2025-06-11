@@ -24,9 +24,14 @@ namespace SEP490_SU25_G90.Pages.Admins.User
 
         public IList<UserListInformationResponse> User { get;set; } = default!;
 
-        public void OnGet()
-        {
-            User = _userService.GetAllUsers();
+        [BindProperty(SupportsGet = true)]
+        public string? NameSearch { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string? EmailSearch { get; set; }
+
+        public void OnGet() { 
+            User = _userService.GetAllUsers(NameSearch, EmailSearch);
         }
     }
 }
