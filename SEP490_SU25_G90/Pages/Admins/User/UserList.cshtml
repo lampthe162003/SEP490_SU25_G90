@@ -2,14 +2,23 @@
 @model SEP490_SU25_G90.Pages.Admins.User.UserListModel
 
 @{
-    ViewData["Title"] = "UserList";
+    ViewData["Title"] = "Danh sách người dùng";
 }
 
-<h1>UserList</h1>
+<h1>Danh sách người dùng</h1>
+<br />
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
+<form>
+    <h3>Tìm kiếm</h3>
+    <p>
+        <label>
+            <pre>Họ Tên     <input type="text" asp-for="NameSearch" /></pre>
+            <pre>Email      <input type="text" asp-for="EmailSearch" ></pre>
+            <pre>           <input type="submit" value="Tìm" /></pre>
+        </label>
+    </p>
+</form>
+
 <table class="table">
     <thead>
         <tr>
@@ -41,7 +50,7 @@
         @foreach (var item in Model.User) {
             <tr>
                 <td>
-                    @(item.FirstName + " " + item.MiddleName + " " + item.LastName)
+                    @item.FullName
                 </td>
                 <td>
                     @foreach (var role in item.UserRoles)
@@ -54,9 +63,8 @@
             <td>@item.Dob</td>
             <td>@(item.Gender == true ? "Nam" : "Nữ")</td>
             <td>
-                <a asp-page="./Edit" asp-route-id="@item.UserId">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.UserId">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.UserId">Delete</a>
+                <a asp-page="./Edit" asp-route-id="@item.UserId">Sửa</a> |
+                <a asp-page="./Details" asp-route-id="@item.UserId">Chi Tiết</a> 
             </td>
         </tr>
 }
