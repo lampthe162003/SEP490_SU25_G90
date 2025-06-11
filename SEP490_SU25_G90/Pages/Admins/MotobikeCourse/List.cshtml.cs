@@ -1,29 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using SEP490_SU25_G90.vn.edu.fpt.Models;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
+using SEP490_SU25_G90.vn.edu.fpt.Services.Course;
 
 namespace SEP490_SU25_G90.Pages.Admins.MotobikeCourse
 {
     public class ListModel : PageModel
     {
-        private readonly SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext _context;
+        private readonly IMotobikeCourseService _motobikeCourseService;
 
-        public ListModel(SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext context)
+        public ListModel(IMotobikeCourseService motobikeCourseService)
         {
-            _context = context;
+            _motobikeCourseService = motobikeCourseService;
         }
 
-        public IList<Course> Course { get;set; } = default!;
+        public IList<CourseInformationResponse> Course { get; set; } = default!;
+        [BindProperty(SupportsGet = true)]
+        public string? SearchString { get; set; }
 
         public async Task OnGetAsync()
         {
-            Course = await _context.Courses
-                .Include(c => c.LicenceType).ToListAsync();
+            Course = await _motobikeCourseService.GetAllMotobikeCourseAsync(SearchString);
         }
     }
 }

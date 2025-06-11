@@ -15,10 +15,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.Course
             _mapper = mapper;
         }
 
-        public List<CourseInformationResponse> GetAllMotobikeCourse()
+        public async Task<List<CourseInformationResponse>> GetAllMotobikeCourseAsync(string? search)
         {
-            var courses = _motobikeCourseRepository.GetAllMotobikeCourse();
-            return _mapper.Map<List<CourseInformationResponse>>(courses);
+            var data = await _motobikeCourseRepository.GetAllMotobikeCourseAsync(search);
+            return _mapper.Map<List<CourseInformationResponse>>(data);
         }
+
     }
 }
