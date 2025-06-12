@@ -85,7 +85,7 @@ CREATE TABLE LicenceTypes (
 );
 
 INSERT INTO LicenceTypes (licence_type_id, licence_code)
-VALUES (1, 'A1'), (2, 'A2'), (3, 'B1'), (4, 'B2'), (5, 'C'), (6, 'D'), (7, 'E');
+VALUES (1, 'B1'), (2, 'B2'), (3, 'C'), (4, 'D'), (5, 'E');
 
 
 CREATE TABLE LearningApplications (
@@ -170,4 +170,13 @@ CREATE TABLE Videos (
     course_id INT,
     active_status BIT, -- 1 = active, 0 = disabled
     FOREIGN KEY (course_id) REFERENCES Courses(course_id)
+)
+
+CREATE TABLE News (
+    news_id INT IDENTITY(1, 1) PRIMARY KEY,
+    title NVARCHAR(500),
+    news_content NVARCHAR(MAX),
+    author_id INT,
+    post_time DATETIME,
+    FOREIGN KEY (author_id) REFERENCES Users(user_id)
 )
