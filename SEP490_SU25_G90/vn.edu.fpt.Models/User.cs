@@ -45,5 +45,7 @@ public partial class User
 
     public virtual ICollection<MockTestResult> MockTestResults { get; set; } = new List<MockTestResult>();
 
+    public virtual ICollection<News> News { get; set; } = new List<News>();
+
     public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 }
