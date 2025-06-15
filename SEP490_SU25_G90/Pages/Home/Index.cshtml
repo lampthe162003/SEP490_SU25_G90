@@ -1,0 +1,57 @@
+﻿@page "/Home/Index"
+@model IndexModel
+@{
+    Layout = "_HomeLayout";
+    ViewData["Title"] = "Trang chủ";
+}
+
+
+<div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/07/hinh-anh-oto-13.jpg" class="d-block w-100" alt="Slide 1">
+            <div class="carousel-caption d-none d-md-block">
+                <h2>Chào mừng đến với Trung Tâm Lái Xe Bắc Hà</h2>
+                <p>Đào tạo lái xe chuyên nghiệp, uy tín và tận tâm</p>
+                <a href="#courses" class="btn btn-primary">Xem các khóa học</a>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src="https://danhgiaxevinfast.com/wp-content/uploads/2020/03/lux-a20-18-600x345.jpg" class="d-block w-100" alt="Slide 2">
+            <div class="carousel-caption d-none d-md-block">
+                <h2>Học lái xe dễ dàng & hiệu quả</h2>
+                <p>Cơ sở vật chất hiện đại - Giáo viên tận tâm</p>
+                <a href="#courses" class="btn btn-primary">Xem thêm</a>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src="https://photo.znews.vn/w660/Uploaded/abhuuwo/2020_09_21/Honda_CR_V_2020_Zing_50_.jpg" class="d-block w-100" alt="Slide 3">
+            <div class="carousel-caption d-none d-md-block">
+                <h2>Thi thử lý thuyết & thực hành</h2>
+                <p>Giúp bạn tự tin bước vào kỳ thi chính thức</p>
+                <a href="#exam" class="btn btn-primary">Bắt đầu thi thử</a>
+            </div>
+        </div>
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Trước</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Tiếp</span>
+    </button>
+</div>
+
+<!-- Nội dung chính -->
+<div class="container my-5">
+    <main role="main">
+        <section class="section" id="about">
+            <div class="container">
+                <h3>Giới thiệu</h3>
+                <p>Trung Tâm Lái Xe Bắc Hà tự hào là nơi đào tạo hàng đầu tại Việt Nam...</p>
+            </div>
+        </section>
+    </main>
+</div>

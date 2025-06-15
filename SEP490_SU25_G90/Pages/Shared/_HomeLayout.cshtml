@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Trung Tâm Lái Xe Bắc Hà</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SEP490_SU25_G90.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo"><a asp-page="/Home/Index">Trung Tâm Lái Xe Bắc Hà</a></div>
+            <div class="nav-row">
+                <nav class="nav-menu">
+                    <a asp-page="/Home/Index">Trang chủ</a>
+                    <a href="#about">Giới thiệu</a>
+
+                    <!-- Khóa học -->
+                    <div class="dropdown">
+                        <a href="#">Khóa học ▾</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#b1">B1 - Số tự động</a></li>
+                            <li><a href="#b2">B2 - Số sàn</a></li>
+                            <li><a href="#c">C - Xe tải &gt; 3.5 tấn</a></li>
+                            <li><a href="#c1">C1 - Xe tải trung bình</a></li>
+                            <li><a href="#de">D/E - Xe khách lớn</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Tài liệu -->
+                    <div class="dropdown">
+                        <a href="#">Tài liệu ▾</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#b1">Tài liệu B1</a></li>
+                            <li><a href="#b2">Tài liệu B2</a></li>
+                            <li><a href="#c">Tài liệu C</a></li>
+                            <li><a href="#c1">Tài liệu C1</a></li>
+                            <li><a href="#de">Tài liệu D/E</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Thi thử -->
+                    <div class="dropdown">
+                        <a href="#">Thi thử ▾</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#b1">Thi thử B1</a></li>
+                            <li><a href="#b2">Thi thử B2</a></li>
+                            <li><a href="#c">Thi thử C</a></li>
+                            <li><a href="#c1">Thi thử C1</a></li>
+                            <li><a href="#de">Thi thử D/E</a></li>
+                        </ul>
+                    </div>
+
+                    <a href="#news">Tin tức</a>
+                    <a href="#contact">Liên hệ</a>
+                </nav>
+
+                <a asp-page="/Commons/Login" class="login-link">Đăng nhập</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer text-center border-top py-3">
+        <div class="container">
+            &copy; 2025 Trung Tâm Lái Xe Bắc Hà. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
