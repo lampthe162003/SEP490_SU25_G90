@@ -94,10 +94,10 @@ CREATE TABLE LearningApplications (
     licence_type_id TINYINT,
     submitted_at DATETIME DEFAULT GETDATE(),
     learning_status TINYINT,   -- 1-pending, 2-approved, 3-rejected
-    payment_status bit,
+    payment_status BIT,
     instructor_id INT,
     assigned_at DATETIME,
-    notes NVARCHAR(MAX),
+    test_eligibility BIT,
     FOREIGN KEY (learner_id) REFERENCES Users([user_id]),
     FOREIGN KEY (licence_type_id) REFERENCES LicenceTypes(licence_type_id),
     FOREIGN KEY (instructor_id) REFERENCES Users([user_id])
