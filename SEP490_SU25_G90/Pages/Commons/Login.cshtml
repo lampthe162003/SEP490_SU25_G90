@@ -6,37 +6,45 @@
     ViewData["Title"] = "Login";
 }
 
-<h1>Hello World</h1>
+<h1>Đăng nhập tài khoản của bạn</h1>
 
-<h4>User</h4>
-<hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <div class="form-group">
-                <label asp-for="Username" class="control-label">Tên đăng nhập/Email:</label>
-                <input asp-for="Username" class="form-control" />
+                <label asp-for="Username" class="control-label form-label">Email / Tài Khoản</label>
+                <input asp-for="Username" class="form-control" type="email" />
                 <span asp-validation-for="Username" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="Password" class="control-label">Mật khẩu:</label>
-                <input asp-for="Password" class="form-control" />
+                <label asp-for="Password" class="control-label form-label">Mật khẩu</label>
+                <input asp-for="Password" class="form-control" type="password" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <a href="#">Đăng ký</a>
-                <a href="#">Quên mật khẩu</a>
+
+            <br />
+
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input"/> Lưu thông tin tài khoản
+                </label>
             </div>
+
+            <br />
+
             <div class="form-group">
                 <input type="submit" value="Đăng nhập" class="btn btn-primary" />
+                <a class="btn btn-danger" asp-page="/Commons/ForgotPassword">Quên mật khẩu?</a>
+            </div>
+
+            <div class="form-group mt-3">
+                <a asp-page="/Commons/Register" class="btn btn-link">Đăng ký</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-page="./Index">Back to List</a>
 </div>
 
 @section Scripts {
