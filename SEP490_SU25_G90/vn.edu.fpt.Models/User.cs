@@ -11,6 +11,8 @@ public partial class User
 
     public string? PasswordHash { get; set; }
 
+    public string? ProfileImageUrl { get; set; }
+
     public string? FirstName { get; set; }
 
     public string? MiddleName { get; set; }

@@ -56,6 +56,7 @@ CREATE TABLE Users (
     [user_id] INT IDENTITY(1,1) PRIMARY KEY,
     email VARCHAR(100),
     password_hash VARCHAR(255),
+    profile_image_url VARCHAR(500),
     first_name NVARCHAR(10),
     middle_name NVARCHAR(20),
     last_name NVARCHAR(10),
