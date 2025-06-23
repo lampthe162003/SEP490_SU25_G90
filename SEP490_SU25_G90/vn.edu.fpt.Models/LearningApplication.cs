@@ -15,13 +15,11 @@ public partial class LearningApplication
 
     public byte? LearningStatus { get; set; }
 
-    public bool? PaymentStatus { get; set; }
-
     public int? InstructorId { get; set; }
 
     public DateTime? AssignedAt { get; set; }
 
-    public string? Notes { get; set; }
+    public bool? TestEligibility { get; set; }
 
     public virtual User? Instructor { get; set; }
 

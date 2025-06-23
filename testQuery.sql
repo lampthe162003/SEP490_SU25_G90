@@ -12,7 +12,7 @@ CREATE TABLE Roles (
 );
 
 INSERT INTO Roles (role_id, role_name)
-VALUES (1, 'user'), (2, 'admin'), (3, 'instructor'), (4, 'accountant');
+VALUES (1, 'learner'), (2, 'admin'), (3, 'instructor'), (4, 'accountant');
 
 CREATE TABLE CCCD (
 	CCCD_id INT IDENTITY(1, 1) PRIMARY KEY,
@@ -54,9 +54,8 @@ CREATE TABLE Addresses (
 
 CREATE TABLE Users (
     [user_id] INT IDENTITY(1,1) PRIMARY KEY,
-    username VARCHAR(50) UNIQUE,
+    email VARCHAR(100),
     password_hash VARCHAR(255),
-    email VARCHAR(100) UNIQUE,
     first_name NVARCHAR(10),
     middle_name NVARCHAR(20),
     last_name NVARCHAR(10),
@@ -93,8 +92,7 @@ CREATE TABLE LearningApplications (
     learner_id INT,
     licence_type_id TINYINT,
     submitted_at DATETIME DEFAULT GETDATE(),
-    learning_status TINYINT,   -- 1-pending, 2-approved, 3-rejected
-    payment_status BIT,
+    learning_status TINYINT,
     instructor_id INT,
     assigned_at DATETIME,
     test_eligibility BIT,
@@ -117,7 +115,8 @@ CREATE TABLE TestApplications (
     learner_id INT,
     exam_date DATE,
     submitted_at DATETIME DEFAULT GETDATE(),
-	score FLOAT,
+	theory_score FLOAT,
+    practical_score FLOAT,
     [status] bit,   -- 0 - failed, 1 - passed, NULL - not participated
     notes NVARCHAR(MAX),
     FOREIGN KEY (learner_id) REFERENCES LearningApplications(learning_id)
@@ -155,28 +154,12 @@ CREATE TABLE LearningMaterials (
     FOREIGN KEY (licence_type_id) REFERENCES LicenceTypes(licence_type_id)
 ); 
 
-CREATE TABLE Courses (
-    course_id INT IDENTITY(1, 1) PRIMARY KEY,
-    title NVARCHAR(150),
-    [description] NVARCHAR(MAX),
-    licence_type_id TINYINT,
-    active_status BIT, -- 1 = active, 0 = disabled
-    FOREIGN KEY (licence_type_id) REFERENCES LicenceTypes(licence_type_id)
-)
-
-CREATE TABLE Videos (
-    video_id INT IDENTITY(1, 1) PRIMARY KEY,
-    video_link NVARCHAR(MAX),
-    course_id INT,
-    active_status BIT, -- 1 = active, 0 = disabled
-    FOREIGN KEY (course_id) REFERENCES Courses(course_id)
-)
-
 CREATE TABLE News (
     news_id INT IDENTITY(1, 1) PRIMARY KEY,
     title NVARCHAR(500),
     news_content NVARCHAR(MAX),
     author_id INT,
     post_time DATETIME,
+    image VARCHAR(250),
     FOREIGN KEY (author_id) REFERENCES Users(user_id)
 )

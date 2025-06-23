@@ -13,7 +13,9 @@ public partial class TestApplication
 
     public DateTime? SubmittedAt { get; set; }
 
-    public double? Score { get; set; }
+    public double? TheoryScore { get; set; }
+
+    public double? PracticalScore { get; set; }
 
     public bool? Status { get; set; }
 
