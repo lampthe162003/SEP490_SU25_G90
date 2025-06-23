@@ -166,3 +166,14 @@ CREATE TABLE News (
     image VARCHAR(250),
     FOREIGN KEY (author_id) REFERENCES Users(user_id)
 )
+
+CREATE TABLE TestScoreStandards (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    licence_type_id TINYINT NOT NULL,
+    part_name NVARCHAR(50) NOT NULL,
+    max_score INT NOT NULL,
+    pass_score INT NOT NULL,
+
+    CONSTRAINT FK_TestScore_LicenceType FOREIGN KEY (licence_type_id)
+        REFERENCES LicenceTypes(licence_type_id)
+);

@@ -16,4 +16,6 @@ public partial class LicenceType
     public virtual ICollection<LearningMaterial> LearningMaterials { get; set; } = new List<LearningMaterial>();
 
     public virtual ICollection<MockTestQuestion> MockTestQuestions { get; set; } = new List<MockTestQuestion>();
+
+    public virtual ICollection<TestScoreStandard> TestScoreStandards { get; set; } = new List<TestScoreStandard>();
 }
