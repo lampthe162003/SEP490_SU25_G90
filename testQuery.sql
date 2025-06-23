@@ -115,8 +115,10 @@ CREATE TABLE TestApplications (
     learner_id INT,
     exam_date DATE,
     submitted_at DATETIME DEFAULT GETDATE(),
-	theory_score FLOAT,
-    practical_score FLOAT,
+	theory_score INT,
+    simulation_score INT,
+    obstacle_score INT,
+    practical_score INT,
     [status] bit,   -- 0 - failed, 1 - passed, NULL - not participated
     notes NVARCHAR(MAX),
     FOREIGN KEY (learner_id) REFERENCES LearningApplications(learning_id)
