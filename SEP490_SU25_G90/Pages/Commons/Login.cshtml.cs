@@ -58,7 +58,7 @@ namespace SEP490_SU25_G90.Pages.Commons
 
         private bool UserExists(string username)
         {
-            return _context.Users.Any(e => e.Username == username || e.Email == username);
+            return _context.Users.Any(e => e.Email == username);
         }
     }
 }
