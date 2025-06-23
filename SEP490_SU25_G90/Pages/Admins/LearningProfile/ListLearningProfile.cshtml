@@ -12,7 +12,6 @@
                     <th class="text-center">Loại bằng</th>
                     <th class="text-center">Thời gian đăng ký</th>
                     <th class="text-center">Trạng thái học</th>
-                    <th class="text-center">Trạng thái thanh toán</th>
                     <th class="text-center">Giáo viên</th>
                     <th class="text-center">Thời gian xếp giáo viên</th>
                    
@@ -30,13 +29,7 @@
                             <span class="badge @(profile.LearningStatus == 1 ? "bg-success" : "bg-secondary")">
                                 @(profile.LearningStatus == 1 ? "Đã bắt đầu học" : "Chưa bắt đầu học")
                             </span>
-                        </td>
-                        <td class="text-center">
-                            <span class="badge @(profile.PaymentStatus == true ? "bg-success" : "bg-secondary")">
-                                @(profile.PaymentStatus == true ? "Đã thanh toán" : "Chưa thanh toán")
-                            </span>
-                        </td>
-
+                        </td
                         <td class="text-center">@profile.Instructor.LastName @profile.Instructor.MiddleName @profile.Instructor.FirstName</td>
                         <td class="text-center">@profile.AssignedAt?.ToString("dd/MM/yyyy")</td>
                     </tr>

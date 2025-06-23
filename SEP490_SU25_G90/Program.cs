@@ -5,7 +5,6 @@ using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -20,6 +19,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 builder.Services.AddScoped<ILearningApplicationRepository, LearningApplicationRepository>();
 builder.Services.AddScoped<ILearningApplicationService, LearningApplicationService>();
+builder.Services.AddSession();
 var app = builder.Build();
 app.MapControllers();
 

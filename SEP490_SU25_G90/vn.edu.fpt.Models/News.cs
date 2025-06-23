@@ -15,5 +15,7 @@ public partial class News
 
     public DateTime? PostTime { get; set; }
 
+    public string? Image { get; set; }
+
     public virtual User? Author { get; set; }
 }

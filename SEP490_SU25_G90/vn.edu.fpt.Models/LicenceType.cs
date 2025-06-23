@@ -9,8 +9,6 @@ public partial class LicenceType
 
     public string LicenceCode { get; set; } = null!;
 
-    public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
-
     public virtual ICollection<InstructorSpecialization> InstructorSpecializations { get; set; } = new List<InstructorSpecialization>();
 
     public virtual ICollection<LearningApplication> LearningApplications { get; set; } = new List<LearningApplication>();
@@ -18,4 +16,6 @@ public partial class LicenceType
     public virtual ICollection<LearningMaterial> LearningMaterials { get; set; } = new List<LearningMaterial>();
 
     public virtual ICollection<MockTestQuestion> MockTestQuestions { get; set; } = new List<MockTestQuestion>();
+
+    public virtual ICollection<TestScoreStandard> TestScoreStandards { get; set; } = new List<TestScoreStandard>();
 }
