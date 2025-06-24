@@ -16,8 +16,6 @@ builder.Services.AddAutoMapper(typeof(ObjectMapper));
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<Sep490Su25G90DbContext>();
 builder.Services.AddRazorPages();
-//Repository
-//Service
 builder.Services.AddControllers();
 builder.Services.AddScoped<ILearningApplicationRepository, LearningApplicationRepository>();
 builder.Services.AddScoped<ILearningApplicationService, LearningApplicationService>();
