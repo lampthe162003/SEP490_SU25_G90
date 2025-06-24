@@ -1,0 +1,79 @@
+﻿@page "/Admins/LearningApplications/Detail/{id:int}"
+@model SEP490_SU25_G90.Pages.Admins.LearningApplications.LearningApplicationDetailModel
+
+@{
+    ViewData["Title"] = "Thông tin chi tiết hồ sơ học";
+    var app = Model.LearningApplication;
+}
+
+<h2>Thông tin chi tiết hồ sơ học</h2>
+<div class="row">
+    <div class="col-md-7">
+        <table class="table table-bordered">
+            <tr>
+                <td><b>Tên học viên:</b> @app?.LearnerFullName</td>
+            </tr>
+            <tr>
+                <td><b>CCCD:</b> @app?.LearnerCccdNumber</td>
+            </tr>
+
+            <tr>
+                <td><b>Ngày sinh:</b> @app?.LearnerDob?.ToString("dd/MM/yyyy")</td>
+            </tr>
+            <tr>
+                <td><b>Số điện thoại:</b> @app?.LearnerPhone</td>
+            </tr>
+            <tr>
+                <td><b>Email:</b> @app?.LearnerEmail</td>
+            </tr>
+            <tr>
+                <td><b>Loại bằng đăng ký:</b> @app?.LicenceTypeName</td>
+            </tr>
+            <tr>
+                <td><b>Giảng viên phụ trách:</b> @app?.InstructorFullName</td>
+            </tr>
+            <tr>
+                <td><b>Ngày đăng ký học:</b> @(app?.SubmittedAt != null ? app.SubmittedAt.Value.ToString("d/M/yyyy") : "")</td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Trạng thái hồ sơ:</b> @app?.LearningStatusName
+                </td>
+            </tr>
+            <tr>
+                <td><b>Ghi chú nội bộ:</b> (Ghi chú thêm của quản trị viên)</td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-md-5">
+        <div>
+            <b>Tài liệu đính kèm:</b>
+            <ul style="margin-bottom: 0;">
+                <li>
+                    Giấy khám sức khỏe:
+                    <span class="text-muted">Chưa có</span>
+                </li>
+                <li>
+                    Căn cước công dân (CCCD):
+                    <span class="text-muted">Chưa có</span>
+                </li>
+            </ul>
+        </div>
+        <div class="mt-3">
+            <b>Các nút hành động:</b>
+            <ul style="margin-bottom: 0;">
+                <li>
+                    [Chỉnh sửa hồ sơ]
+                    <span class="text-muted">(hiển thị nếu trạng thái còn chỉnh sửa được)</span>
+                </li>
+                <li>
+                    [Phân công giảng viên]
+                    <span class="text-muted">(hiển thị nếu chưa có giảng viên)</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="mt-4">
+    <a asp-page="./ListLearningApplication" class="btn btn-secondary">Quay lại</a>
+</div>

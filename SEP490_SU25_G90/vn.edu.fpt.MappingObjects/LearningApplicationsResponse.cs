@@ -10,6 +10,15 @@
         public string? LearnerFullName { get; set; }
         public string? LearnerCccdNumber { get; set; }
 
+        // Thông tin bổ sung học viên
+        public DateTime? LearnerDob { get; set; }
+        public string? LearnerPhone { get; set; }
+        public string? LearnerEmail { get; set; }
+
+        // Đường dẫn tài liệu đính kèm
+        public string? LearnerCccdImageUrl { get; set; }
+        public string? LearnerHealthCertImageUrl { get; set; }
+
         // Loại bằng
         public byte? LicenceTypeId { get; set; }
         public string? LicenceTypeName { get; set; }

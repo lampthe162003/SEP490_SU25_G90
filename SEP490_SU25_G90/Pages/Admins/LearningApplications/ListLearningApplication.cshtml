@@ -41,7 +41,7 @@
                     <td>@item.SubmittedAt?.ToString("d/M/yyyy")</td>
                     <td>@item.LearningStatusName</td>
                     <td class="text-center">
-                        <a asp-page="./Details" asp-route-id="@item.LearningId" class="btn btn-info btn-sm">Xem</a>
+                        <a asp-page="LearningApplicationDetail" asp-route-id="@item.LearningId" class="btn btn-info btn-sm">Xem</a>
                     </td>
                 </tr>
                 stt++;

@@ -1,24 +1,28 @@
-﻿using NuGet.Protocol.Core.Types;
-using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
+﻿using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository;
+using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
 
-namespace SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService
+public class LearningApplicationService : ILearningApplicationService
 {
-    public class LearningApplicationService: ILearningApplicationService
+    private readonly ILearningApplicationRepository _learningApplicationRepository;
+    public LearningApplicationService(ILearningApplicationRepository learningApplicationRepository)
     {
-        private readonly ILearningApplicationRepository _learningApplicationRepository;
-        public LearningApplicationService(ILearningApplicationRepository learningApplicationRepository)
-        {
-            _learningApplicationRepository = learningApplicationRepository;
-        }
-        public List<LearningApplication> GetAll()
-        {
-            return _learningApplicationRepository.GetAll();
-        }
-        public async Task<List<LearningApplicationsResponse>> GetAllAsync(string? searchString = null)
-        {
-            return await _learningApplicationRepository.GetAllAsync(searchString);
-        }
+        _learningApplicationRepository = learningApplicationRepository;
+    }
+    public List<LearningApplication> GetAll()
+    {
+        return _learningApplicationRepository.GetAll();
+    }
+
+    public async Task<List<LearningApplicationsResponse>> GetAllAsync(string? searchString = null)
+    {
+        return await _learningApplicationRepository.GetAllAsync(searchString);
+    }
+
+    // Thêm phương thức lấy chi tiết
+    public async Task<LearningApplicationsResponse?> GetDetailAsync(int id)
+    {
+        return await _learningApplicationRepository.GetDetailAsync(id);
     }
 }
