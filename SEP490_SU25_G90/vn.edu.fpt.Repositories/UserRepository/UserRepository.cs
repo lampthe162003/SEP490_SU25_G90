@@ -44,6 +44,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.UserRepository
         }
 
         public User GetLoginDetails(string email, string password)
-            => _context.Users.Where(u => u.Email.Equals(email) && u.PasswordHash.Equals(password)).FirstOrDefault();
+            => _context.Users
+            .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+            .Where(u => u.Email.Equals(email) && u.PasswordHash.Equals(password))
+            .FirstOrDefault();
     }
 }
