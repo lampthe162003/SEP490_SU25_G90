@@ -116,6 +116,7 @@ CREATE TABLE TestApplications (
     learner_id INT,
     exam_date DATE,
     submitted_at DATETIME DEFAULT GETDATE(),
+    result_image_url VARCHAR(500),
 	theory_score INT,
     simulation_score INT,
     obstacle_score INT,

@@ -13,6 +13,8 @@ public partial class TestApplication
 
     public DateTime? SubmittedAt { get; set; }
 
+    public string? ResultImageUrl { get; set; }
+
     public int? TheoryScore { get; set; }
 
     public int? SimulationScore { get; set; }
