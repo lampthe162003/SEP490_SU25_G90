@@ -1,59 +1,87 @@
-﻿@page "/Admins/LearningApplications/List"
-@model SEP490_SU25_G90.Pages.Admins.LearningApplications.ListLearningApplicationsModel
+﻿@page "/Admins/LearningApplications/List"  
+@model SEP490_SU25_G90.Pages.Admins.LearningApplications.ListLearningApplicationsModel  
 
-@{
-    ViewData["Title"] = "Danh sách hồ sơ học";
-    var stt = 1;
-}
+@{  
+    ViewData["Title"] = "Danh sách hồ sơ học";  
+    var stt = 1;  
+}  
 
-<h2>Danh sách hồ sơ học</h2>
+<!-- Sidebar Start -->  
+<div class="d-flex">  
+    <nav class="sidebar bg-light p-3" style="width: 250px; min-height: 100vh;">  
+        <div class="mb-4">  
+            <span class="fs-5 fw-bold">SEP490_SU25_G90</span>  
+        </div>  
+        <ul class="nav flex-column">  
+            <li class="nav-item mb-2">  
+                <a class="nav-link" href="#"><i class="bi bi-house-door"></i> Dashboard</a>  
+            </li>  
+            <li class="nav-item mb-2">  
+                <a class="nav-link" href="#"><i class="bi bi-person"></i> Quản lý tài khoản</a>  
+            </li>  
+            <li class="nav-item mb-2">  
+                <a class="nav-link" href="#"><i class="bi bi-newspaper"></i> Tin Tức</a>  
+            </li>  
+            <li class="nav-item mb-2">  
+                <a class="nav-link" href="#"><i class="bi bi-journal-text"></i> Quản lý hồ sơ thi</a>  
+            </li>  
+            <li class="nav-item mb-2">  
+                <a class="nav-link active fw-bold" href="/Admins/LearningApplications/List">  
+                    <i class="bi bi-folder2-open"></i> Quản lý hồ sơ học  
+                </a>  
+            </li>  
+        </ul>  
+    </nav>  
+    <div class="flex-grow-1 p-4">  
+        <h2>Danh sách hồ sơ học</h2>  
+        <form method="get" class="mb-3 d-flex">  
+            <input type="text" name="SearchString" value="@Model.SearchString" class="form-control me-2" placeholder="Tìm theo tên, cccd, loại bằng..." />  
+            <button type="submit" class="btn btn-primary me-2">Tìm kiếm</button>  
+            <a asp-page="Create" class="btn btn-success">Tạo hồ sơ</a>  
+        </form>  
 
-<form method="get" class="mb-3 d-flex">
-    <input type="text" name="SearchString" value="@Model.SearchString" class="form-control me-2" placeholder="Tìm theo tên, cccd, loại bằng..." />
-    <button type="submit" class="btn btn-primary me-2">Tìm kiếm</button>
-    <a asp-page="Create" class="btn btn-success">Tạo hồ sơ</a>
-</form>
-
-<table class="table table-bordered table-striped">
-    <thead class="table-info">
-        <tr>
-            <th class="text-center">#</th>
-            <th class="text-center">Tên học viên</th>
-            <th class="text-center">CCCD</th>
-            <th class="text-center">Loại bằng</th>
-            <th class="text-center">Giảng viên</th>
-            <th class="text-center">Ngày đăng kí</th>
-            <th class="text-center">Trạng thái</th>
-            <th class="text-center">Thao tác</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model.LearningApplications != null && Model.LearningApplications.Any())
-        {
-            @foreach (var item in Model.LearningApplications)
-            {
-                <tr>
-                    <td class="text-center">@stt</td>
-                    <td>@item.LearnerFullName</td>
-                    <td>@item.LearnerCccdNumber</td>
-                    <td>@item.LicenceTypeName</td>
-                    <td>@item.InstructorFullName</td>
-                    <td>@item.SubmittedAt?.ToString("d/M/yyyy")</td>
-                    <td>@item.LearningStatusName</td>
-                    <td class="text-center">
-                        <a asp-page="LearningApplicationDetail" asp-route-id="@item.LearningId" class="btn btn-info btn-sm">Xem</a>
-                    </td>
-                </tr>
-                stt++;
-            }
-        }
-        else
-        {
-            <tr>
-                <td colspan="8" class="text-center text-muted">Không có hồ sơ học nào.</td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<!-- Phân trang: tuỳ chỉnh nếu có -->
+        <table class="table table-bordered table-striped">  
+            <thead class="table-info">  
+                <tr>  
+                    <th class="text-center">#</th>  
+                    <th class="text-center">Tên học viên</th>  
+                    <th class="text-center">CCCD</th>  
+                    <th class="text-center">Loại bằng</th>  
+                    <th class="text-center">Giảng viên</th>  
+                    <th class="text-center">Ngày đăng kí</th>  
+                    <th class="text-center">Trạng thái</th>  
+                    <th class="text-center">Thao tác</th>  
+                </tr>  
+            </thead>  
+            <tbody>  
+                @if (Model.LearningApplications != null && Model.LearningApplications.Any())  
+                {  
+                    @foreach (var item in Model.LearningApplications)  
+                    {  
+                        <tr>  
+                            <td class="text-center">@stt</td>  
+                            <td>@item.LearnerFullName</td>  
+                            <td>@item.LearnerCccdNumber</td>  
+                            <td>@item.LicenceTypeName</td>  
+                            <td>@item.InstructorFullName</td>  
+                            <td>@item.SubmittedAt?.ToString("d/M/yyyy")</td>  
+                            <td>@item.LearningStatusName</td>  
+                            <td class="text-center">  
+                                <a asp-page="LearningApplicationDetail" asp-route-id="@item.LearningId" class="btn btn-info btn-sm">Xem</a>  
+                            </td>  
+                        </tr>  
+                        stt++;  
+                    }  
+                }  
+                else  
+                {  
+                    <tr>  
+                        <td colspan="8" class="text-center text-muted">Không có hồ sơ học nào.</td>  
+                    </tr>  
+                }  
+            </tbody>  
+        </table>  
+        <!-- Phân trang: tuỳ chỉnh nếu có -->
+    </div>  
+</div>  
+<!-- Sidebar End -->  

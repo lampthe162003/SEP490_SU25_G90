@@ -5,8 +5,34 @@
     ViewData["Title"] = "Thông tin chi tiết hồ sơ học";
     var app = Model.LearningApplication;
 }
-
-<h2>Thông tin chi tiết hồ sơ học</h2>
+<!-- Sidebar Start -->
+<div class="d-flex">
+    <nav class="sidebar bg-light p-3" style="width: 250px; min-height: 100vh;">
+        <div class="mb-4">
+            <span class="fs-5 fw-bold">SEP490_SU25_G90</span>
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item mb-2">
+                <a class="nav-link" href="#"><i class="bi bi-house-door"></i> Dashboard</a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link" href="#"><i class="bi bi-person"></i> Quản lý tài khoản</a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link" href="#"><i class="bi bi-newspaper"></i> Tin Tức</a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link" href="#"><i class="bi bi-journal-text"></i> Quản lý hồ sơ thi</a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link active fw-bold" href="/Admins/LearningApplications/List">
+                    <i class="bi bi-folder2-open"></i> Quản lý hồ sơ học
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <div class="flex-grow-1 p-4">
+        <h2>Thông tin chi tiết hồ sơ học</h2>
 <div class="row">
     <div class="col-md-7">
         <table class="table table-bordered">
