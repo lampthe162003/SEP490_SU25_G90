@@ -12,46 +12,72 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.TestApplicationRepository
             _context = context;
         }
 
-        public List<TestApplication> GetAllTestApplication()
+        public async Task<List<TestApplication>> GetAllTestApplicationAsync()
         {
-            return _context.TestApplications
+            return await _context.TestApplications
                 .Include(t => t.Learner)
-                    .ThenInclude(l => l.Learner)
+                    .ThenInclude(la => la.Learner)
                         .ThenInclude(u => u.Cccd)
                 .Include(t => t.Learner)
-                    .ThenInclude(l => l.LicenceType)
-                .ToList();
+                    .ThenInclude(la => la.LicenceType)
+                .ToListAsync();
         }
 
-        public List<TestApplication> GetByName(string name)
+        public async Task<List<TestApplication>> GetByNameAsync(string name)
         {
-            name = name.ToLower().Trim();
-
-            return _context.TestApplications
+            return await _context.TestApplications
                 .Include(t => t.Learner)
-                    .ThenInclude(l => l.Learner)
+                    .ThenInclude(la => la.Learner)
                         .ThenInclude(u => u.Cccd)
                 .Include(t => t.Learner)
-                    .ThenInclude(l => l.LicenceType)
-                .Where(t =>
-                    (t.Learner.Learner.FirstName + " " +
-                     t.Learner.Learner.MiddleName + " " +
-                     t.Learner.Learner.LastName).ToLower().Contains(name))
-                .ToList();
+                    .ThenInclude(la => la.LicenceType)
+                .Where(t => t.Learner.Learner.FirstName.Contains(name) ||
+                            t.Learner.Learner.MiddleName.Contains(name) ||
+                            t.Learner.Learner.LastName.Contains(name))
+                .ToListAsync();
         }
 
-
-        public List<TestApplication> GetByCccd(string cccd)
+        public async Task<List<TestApplication>> GetByCccdAsync(string cccd)
         {
-            return _context.TestApplications
+            return await _context.TestApplications
                 .Include(t => t.Learner)
-                    .ThenInclude(l => l.Learner)
+                    .ThenInclude(la => la.Learner)
                         .ThenInclude(u => u.Cccd)
                 .Include(t => t.Learner)
-                    .ThenInclude(l => l.LicenceType)
-                .Where(t => t.Learner.Learner.Cccd.CccdNumber.Contains(cccd))
-                .ToList();
+                    .ThenInclude(la => la.LicenceType)
+                .Where(t => t.Learner.Learner.Cccd.CccdNumber == cccd)
+                .ToListAsync();
         }
-
     }
+
+    //public List<TestApplication> GetByName(string name)
+    //{
+    //    name = name.ToLower().Trim();
+
+    //    return _context.TestApplications
+    //        .Include(t => t.Learner)
+    //            .ThenInclude(l => l.Learner)
+    //                .ThenInclude(u => u.Cccd)
+    //        .Include(t => t.Learner)
+    //            .ThenInclude(l => l.LicenceType)
+    //        .Where(t =>
+    //            (t.Learner.Learner.FirstName + " " +
+    //             t.Learner.Learner.MiddleName + " " +
+    //             t.Learner.Learner.LastName).ToLower().Contains(name))
+    //        .ToList();
+    //}
+
+
+    //public List<TestApplication> GetByCccd(string cccd)
+    //{
+    //    return _context.TestApplications
+    //        .Include(t => t.Learner)
+    //            .ThenInclude(l => l.Learner)
+    //                .ThenInclude(u => u.Cccd)
+    //        .Include(t => t.Learner)
+    //            .ThenInclude(l => l.LicenceType)
+    //        .Where(t => t.Learner.Learner.Cccd.CccdNumber.Contains(cccd))
+    //        .ToList();
+    //}
+
 }

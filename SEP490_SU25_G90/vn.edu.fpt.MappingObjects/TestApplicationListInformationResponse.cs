@@ -6,7 +6,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
     {
         public int TestId { get; set; }
         public DateOnly? ExamDate { get; set; }
-        public double? Score { get; set; }
         public bool? Status { get; set; }
         public string LearnerFullName => Learner == null || Learner.Learner == null
            ? string.Empty
