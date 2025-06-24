@@ -27,6 +27,7 @@ namespace SEP490_SU25_G90.Pages.Commons
         }
 
         [BindProperty]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ. Vui lòng thử lại.")]
         [Required(ErrorMessage = "Email không được để trống")]
         public String Email { get; set; } = default!;
         
