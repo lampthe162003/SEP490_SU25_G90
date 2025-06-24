@@ -28,5 +28,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.User
             return _mapper.Map<List<UserListInformationResponse>>(query.ToList());
         }
 
+        public LoginInformationResponse GetLoginDetails(string email, string password)
+            => _mapper.Map<LoginInformationResponse>(_userRepository.GetLoginDetails(email, password));
     }
 }

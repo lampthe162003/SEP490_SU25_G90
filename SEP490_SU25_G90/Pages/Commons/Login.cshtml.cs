@@ -7,12 +7,14 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
+using SEP490_SU25_G90.vn.edu.fpt.Services.User;
 
 namespace SEP490_SU25_G90.Pages.Commons
 {
     public class LoginModel : PageModel
     {
         private readonly SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext _context;
+        private readonly IUserService _userService;
 
         public LoginModel(SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext context)
         {
@@ -20,7 +22,7 @@ namespace SEP490_SU25_G90.Pages.Commons
         }
 
         [BindProperty]
-        public String Username { get; set; } = default!;
+        public String Email { get; set; } = default!;
         
         [BindProperty]
         public String Password { get; set; } = default!;
@@ -45,7 +47,7 @@ namespace SEP490_SU25_G90.Pages.Commons
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserExists(Username))
+                if (!UserExists(Email))
                 {
                     return Page();
                 }
@@ -56,9 +58,9 @@ namespace SEP490_SU25_G90.Pages.Commons
             }
         }
 
-        private bool UserExists(string username)
+        private bool UserExists(string email)
         {
-            return _context.Users.Any(e => e.Email == username);
+            return _context.Users.Any(e => e.Email == email);
         }
     }
 }

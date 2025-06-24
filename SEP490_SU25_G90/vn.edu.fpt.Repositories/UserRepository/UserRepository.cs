@@ -42,5 +42,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.UserRepository
             _context.Users.Update(user);
             _context.SaveChanges();
         }
+
+        public User GetLoginDetails(string email, string password)
+            => _context.Users.Where(u => u.Email.Equals(email) && u.PasswordHash.Equals(password)).FirstOrDefault();
     }
 }
