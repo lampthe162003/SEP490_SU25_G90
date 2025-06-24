@@ -44,6 +44,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
                 Phone = instructor.Phone,
                 ProfileImageUrl = instructor.ProfileImageUrl,
                 CccdNumber = instructor.Cccd?.CccdNumber,
+                CccdImageUrl = instructor.Cccd?.ImageUrl,
                 AddressDisplay = BuildAddressDisplay(instructor.Address),
                 Specializations = instructor.InstructorSpecializations.Select(ins => new LicenceTypeResponse
                 {
@@ -73,6 +74,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
                 Phone = instructor.Phone,
                 ProfileImageUrl = instructor.ProfileImageUrl,
                 CccdNumber = instructor.Cccd?.CccdNumber,
+                CccdImageUrl = instructor.Cccd?.ImageUrl,
                 AddressDisplay = BuildAddressDisplay(instructor.Address),
                 Specializations = instructor.InstructorSpecializations.Select(ins => new LicenceTypeResponse
                 {
