@@ -32,6 +32,8 @@ namespace SEP490_SU25_G90.Pages.Commons
         public String Email { get; set; } = default!;
         
         [BindProperty]
+        [DataType(DataType.Password)]
+        [MinLength(8, ErrorMessage = "Mật khẩu phải có ít nhất 8 ký tự.")]
         [Required(ErrorMessage = "Mật khẩu không được để trống")]
         public String Password { get; set; } = default!;
 
@@ -55,11 +57,20 @@ namespace SEP490_SU25_G90.Pages.Commons
                 ModelState.AddModelError(string.Empty, "Tài khoản hoặc mật khẩu không đúng. Vui lòng thử lại.");
                 return Page();
             }
-            string role = user.UserRoles.First().ToString();
+            string role = user.UserRoles.First().Role.RoleName;
             var token = _jwt.GenerateToken(Email, role);
             Response.Cookies.Append("jwt", token, new CookieOptions { HttpOnly = true });
+            Console.WriteLine("Role from DB: " + role); // Or log to file, or watch in debugger
+            if (role.Equals("admin", StringComparison.OrdinalIgnoreCase))
+            {
+                return Redirect("Admin/Dashboard");
+            }
+            else if (role.Equals("instructor", StringComparison.OrdinalIgnoreCase))
+            {
+                return Redirect("./Learner/News/ListNews");
+            }
 
-            return RedirectToPage("./Index");
+            else return Redirect("./Learner/News/ListNews");
         }
     }
 }
