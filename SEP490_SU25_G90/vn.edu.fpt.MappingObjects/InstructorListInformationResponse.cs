@@ -20,6 +20,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         
         // CCCD information
         public string? CccdNumber { get; set; }
+        public string? CccdImageUrl { get; set; }
         
         // Specializations - các loại bằng giảng viên có thể dạy
         public List<LicenceTypeResponse> Specializations { get; set; } = new List<LicenceTypeResponse>();
