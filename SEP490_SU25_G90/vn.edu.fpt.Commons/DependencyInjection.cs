@@ -1,9 +1,11 @@
 ﻿using SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.NewsRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.UserRepository;
+using SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.NewsService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.User;
+using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Commons
 {
@@ -18,6 +20,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Commons
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
+
+            services.AddScoped<IInstructorRepository, InstructorRepository>();
+            services.AddScoped<IInstructorService, InstructorService>();
 
             return services;
         }
