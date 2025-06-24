@@ -1,0 +1,41 @@
+﻿@page 
+@model SEP490_SU25_G90.Pages.Admins.News.DetailsNewsModel
+
+@{
+    ViewData["Title"] = "Chi tiết tin tức";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="~/css/details-news.css" />
+
+<div class="container mt-4">
+
+    
+    <div class="mb-3">
+        <a asp-page="/Admins/News/ListNews" class="btn btn-primary">
+            ← Trở lại
+        </a>
+    </div>
+
+  
+    <div>
+        <h1 class="news-title">@Model.News.Title</h1>
+    </div>
+
+    <div class="news-meta ">
+        <i class="bi bi-person-circle"></i> @Model.News.AuthorName
+        &nbsp;•&nbsp;
+        <i class="bi bi-clock"></i> @Model.News.PostTime?.ToString("dd/MM/yyyy HH:mm")
+    </div>
+
+    <div class="news-content">
+        @Model.News.NewsContent
+    </div>
+   
+    <div class="text-center mb-4">
+        <img src="@Model.News.Image"
+             class="news-image" alt="Ảnh tin tức" />
+    </div>
+</div>
