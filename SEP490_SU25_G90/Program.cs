@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SEP490_SU25_G90.vn.edu.fpt.Commons;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository;
+using SEP490_SU25_G90.vn.edu.fpt.Repositories.NewsRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
+using SEP490_SU25_G90.vn.edu.fpt.Services.NewsService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +20,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<Sep490Su25G90DbContext>();
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
-builder.Services.AddScoped<ILearningApplicationRepository, LearningApplicationRepository>();
-builder.Services.AddScoped<ILearningApplicationService, LearningApplicationService>();
+// Add Scope (Commons)
+builder.Services.AddApplicationServices();
 builder.Services.AddSession();
 var app = builder.Build();
 app.MapControllers();
