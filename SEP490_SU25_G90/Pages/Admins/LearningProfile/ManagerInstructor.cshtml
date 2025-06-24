@@ -279,12 +279,12 @@
     <script>
         function viewInstructor(id) {
             // Redirect to detail page
-            window.location.href = `/Admins/LearningProfile/InstructorDetail?id=${id}`;
+            window.location.href = './InstructorDetail?id=' + id;
         }
 
         function editInstructor(id) {
             // Redirect to edit page  
-            window.location.href = `/Admins/LearningProfile/EditInstructor?id=${id}`;
+            window.location.href = './EditInstructor?id=' + id;
         }
 
         function deleteInstructor(id, name) {
