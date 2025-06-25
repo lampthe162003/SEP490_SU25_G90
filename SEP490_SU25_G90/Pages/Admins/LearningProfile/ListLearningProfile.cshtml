@@ -29,7 +29,7 @@
                             <span class="badge @(profile.LearningStatus == 1 ? "bg-success" : "bg-secondary")">
                                 @(profile.LearningStatus == 1 ? "Đã bắt đầu học" : "Chưa bắt đầu học")
                             </span>
-                        </td
+                        </td>
                         <td class="text-center">@profile.Instructor.LastName @profile.Instructor.MiddleName @profile.Instructor.FirstName</td>
                         <td class="text-center">@profile.AssignedAt?.ToString("dd/MM/yyyy")</td>
                     </tr>
