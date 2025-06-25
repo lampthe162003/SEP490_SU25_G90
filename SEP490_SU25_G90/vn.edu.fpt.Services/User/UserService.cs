@@ -30,5 +30,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.User
 
         public LoginInformationResponse GetLoginDetails(string email, string password)
             => _mapper.Map<LoginInformationResponse>(_userRepository.GetLoginDetails(email, password));
+
+        public void CreateAccount(AccountCreationRequest request)
+        {
+            
+        }
     }
 }

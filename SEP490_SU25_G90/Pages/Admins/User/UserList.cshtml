@@ -2,6 +2,7 @@
 @model SEP490_SU25_G90.Pages.Admins.User.UserListModel
 
 @{
+    Layout = "_AdminLayout";
     ViewData["Title"] = "Danh sách người dùng";
 }
 
@@ -18,6 +19,8 @@
         </label>
     </p>
 </form>
+
+<a asp-page="./CreateAccount">Tạo tài khoản mới</a>
 
 <table class="table">
     <thead>
@@ -55,7 +58,7 @@
                 <td>
                     @foreach (var role in item.UserRoles)
                     {
-                        @(role.Role + " ")
+                        @(role.Role.RoleName + " ")
                     }
             </td>
             <td>@item.Username</td>

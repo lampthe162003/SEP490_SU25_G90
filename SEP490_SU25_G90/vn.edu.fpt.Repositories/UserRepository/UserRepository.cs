@@ -27,6 +27,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.UserRepository
             .Include(u => u.LearningApplicationLearners)
             .Include(u => u.MockTestResults)
             .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
             .AsQueryable();
 
         public IQueryable<User> GetUsersByEmail(IQueryable<User> query, string email)

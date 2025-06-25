@@ -27,6 +27,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
             CreateMap<News, NewsListInformationResponse>()
                 .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author != null ? string.Join(" ", src.Author.FirstName, src.Author.MiddleName, src.Author.LastName) : ""))
                 .ForMember(dest => dest.ShortContent, opt => opt.MapFrom(src => src.NewsContent.Length > 100 ? src.NewsContent.Substring(0,100)+ "..." : src.NewsContent));
+
+            CreateMap<AccountCreationRequest, User>();
+            CreateMap<User, AccountCreationRequest>();
         }
     }
 }

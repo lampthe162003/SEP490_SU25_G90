@@ -1,0 +1,75 @@
+﻿@page "/Admin/Users/Create"
+@model SEP490_SU25_G90.Pages.Admins.User.CreateAccountModel
+
+@{
+    ViewData["Title"] = "Tạo tài khoản mới";
+    Layout = "~/Pages/Shared/_AdminLayout.cshtml";
+}
+
+<h1>CreateAccount</h1>
+
+<h4>User</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="User.Email" class="control-label"></label>
+                <input asp-for="User.Email" class="form-control" />
+                <span asp-validation-for="User.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Mật khẩu</label>
+                <input asp-for="User.PasswordHash" class="form-control" />
+                <span asp-validation-for="User.PasswordHash" class="text-danger"></span>
+            </div>
+            @* <div class="form-group"> *@
+            @*     <label asp-for="User.ProfileImageUrl" class="control-label"></label> *@
+            @*     <input asp-for="User.ProfileImageUrl" class="form-control" /> *@
+            @*     <span asp-validation-for="User.ProfileImageUrl" class="text-danger"></span> *@
+            @* </div> *@
+            <div class="form-group">
+                <label class="control-label">Họ</label>
+                <input asp-for="User.FirstName" class="form-control" />
+                <span asp-validation-for="User.FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="User.MiddleName" class="control-label">Tên Đệm</label>
+                <input asp-for="User.MiddleName" class="form-control" />
+                <span asp-validation-for="User.MiddleName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="User.LastName" class="control-label">Tên</label>
+                <input asp-for="User.LastName" class="form-control" />
+                <span asp-validation-for="User.LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Ngày Sinh</label>
+                <input asp-for="User.Dob" class="form-control" />
+                <span asp-validation-for="User.Dob" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Giới Tính</label>
+                <input asp-for="User.Gender" class="form-control" />
+                <span asp-validation-for="User.Gender" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">SĐT</label>
+                <input asp-for="User.Phone" class="form-control" />
+                <span asp-validation-for="User.Phone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Tạo" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="UserList">Trở Về</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

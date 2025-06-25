@@ -42,9 +42,23 @@ body {
     cursor: pointer;
     color: #000;
 }
+    .menu-item.active {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .menu-item a {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
 
     .menu-item i {
         margin-right: 10px;
+    }
+
+    .menu-item.active i, .menu-item.active span {
+        color: white;
     }
 
 /* Main content */
