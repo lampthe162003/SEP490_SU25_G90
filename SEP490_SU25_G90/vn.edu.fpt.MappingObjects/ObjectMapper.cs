@@ -21,8 +21,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
                 string.Join(" ", new[] { src.FirstName, src.MiddleName, src.LastName }
                 .Where(name => !string.IsNullOrWhiteSpace(name)))));
 
-            CreateMap<TestApplicationListInformationResponse, TestApplication>();
-            CreateMap<TestApplication, TestApplicationListInformationResponse>();
+            CreateMap<TestApplication, TestApplicationListInformationResponse>()
+                .ForMember(dest => dest.TestId, opt => opt.MapFrom(src => src.TestId))
+                .ForMember(dest => dest.ExamDate, opt => opt.MapFrom(src => src.ExamDate))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+                .ForMember(dest => dest.Learner, opt => opt.MapFrom(src => src.Learner));
+
 
             CreateMap<News, NewsListInformationResponse>()
                 .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author != null ? string.Join(" ", src.Author.FirstName, src.Author.MiddleName, src.Author.LastName) : ""))

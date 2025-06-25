@@ -4,8 +4,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.TestApplicationRepository
 {
     public interface ITestApplicationRepository
     {
-        List<TestApplication> GetAllTestApplication(); 
-        List<TestApplication> GetByName(string name); 
-        List<TestApplication> GetByCccd(string cccd); 
+        Task<List<TestApplication>> GetAllTestApplicationAsync();
+        Task<List<TestApplication>> GetByNameAsync(string name);
+        Task<List<TestApplication>> GetByCccdAsync(string cccd);
     }
 }

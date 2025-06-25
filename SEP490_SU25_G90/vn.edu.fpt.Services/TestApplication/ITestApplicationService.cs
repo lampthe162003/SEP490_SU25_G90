@@ -5,8 +5,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
 {
     public interface ITestApplicationService
     {
-        public List<TestApplicationListInformationResponse> GetAllTestApplication();
-        List<TestApplicationListInformationResponse> GetByName(string name);
-        List<TestApplicationListInformationResponse> GetByCccd(string cccd);
+        Task<List<TestApplicationListInformationResponse>> GetAllTestApplicationAsync();
+        Task<List<TestApplicationListInformationResponse>> GetByNameAsync(string name);
+        Task<List<TestApplicationListInformationResponse>> GetByCccdAsync(string cccd);
     }
 }
