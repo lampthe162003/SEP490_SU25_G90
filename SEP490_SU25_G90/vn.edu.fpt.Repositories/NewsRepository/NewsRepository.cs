@@ -17,6 +17,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.NewsRepository
             var totalItems = await _context.News.CountAsync();
 
             var items = await _context.News
+                .Include(n => n.Author)
                 .OrderByDescending(n => n.PostTime) 
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
