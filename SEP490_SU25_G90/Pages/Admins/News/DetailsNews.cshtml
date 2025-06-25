@@ -1,4 +1,4 @@
-﻿@page 
+﻿@page
 @model SEP490_SU25_G90.Pages.Admins.News.DetailsNewsModel
 
 @{
@@ -6,37 +6,46 @@
     Layout = "_AdminLayout";
 }
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-
-<link rel="stylesheet" href="~/css/details-news.css" />
+@section Styles {
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/details-news.css" />
+}
 
 <div class="container mt-4">
-
-    
-    <div class="mb-3">
-        <a asp-page="/Admins/News/ListNews" class="btn btn-primary">
-            ← Trở lại
+    <!-- Back button -->
+    <div class="mb-4">
+        <a asp-page="/Admins/News/ListNews" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Trở lại 
         </a>
     </div>
 
-  
-    <div>
-        <h1 class="news-title">@Model.News.Title</h1>
-    </div>
+    <!-- News content card -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <!-- Title -->
+            <h1 class="news-title mb-3">@Model.News.Title</h1>
 
-    <div class="news-meta ">
-        <i class="bi bi-person-circle"></i> @Model.News.AuthorName
-        &nbsp;•&nbsp;
-        <i class="bi bi-clock"></i> @Model.News.PostTime?.ToString("dd/MM/yyyy HH:mm")
-    </div>
+            <!-- Author and date -->
+            <div class="news-meta text-muted mb-4">
+                <span class="author">
+                    <i class="bi bi-person-circle"></i> @Model.News.AuthorName
+                </span>
+                <span class="mx-2">•</span>
+                <span class="date">
+                    <i class="bi bi-calendar"></i> @Model.News.PostTime?.ToString("dd/MM/yyyy HH:mm")
+                </span>
+            </div>
 
-    <div class="news-content">
-        @Model.News.NewsContent
-    </div>
-   
-    <div class="text-center mb-4">
-        <img src="@Model.News.Image"
-             class="news-image" alt="Ảnh tin tức" />
+            <!-- Image -->
+            <div class="news-image-container mb-4">
+                <img src="@Model.News.Image" class="img-fluid rounded" alt="Ảnh tin tức" />
+            </div>
+
+            <!-- Content -->
+            <div class="news-content">
+                @Html.Raw(Model.News.NewsContent)
+            </div>
+        </div>
     </div>
 </div>
