@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace SEP490_SU25_G90.Pages.Admins.News
 {
+    [Authorize(Roles = "admin")]
     public class DetailsNewsModel : PageModel
     {
         private readonly INewsService _iNewsService;

@@ -1,58 +1,77 @@
 ﻿@{
     var path = Context.Request.Path.Value;
 }
-
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewBag.Title</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/admin-dashboard.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    @await RenderSectionAsync("Styles", required: false)
+    <link rel="stylesheet" href="~/css/admin-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
 </head>
 <body>
-    <div class="container">
-        <div class="sidebar" id="sidebar">
-            <button class="toggle-btn" id="toggleSidebar"><i class="fas fa-bars"></i></button>
-            <div class="menu-item @(path.Contains("/Admin/Dashboard") ? "active" : "")"><a href="/Admin/Dashboard"><i class="fa-solid fa-chart-simple"></i><span>Thống kê</span></a></div>
-            <div class="menu-item @(path.Contains("/Admin/Users/List") ? "active" : "")"><a href="/Admin/Users/List"><i class="fa-solid fa-users"></i><span>Quản lý tài khoản</span></a></div>
-            <div class="menu-item"><a href="#"><i class="fa-solid fa-envelope"></i><span>Tin tức</span></a></div>
-            <div class="menu-item"><a href="#"><i class="fas fa-clipboard-list"></i> <span>Quản lý hồ sơ thi</span></a></div>
-            <div class="menu-item"><a href="#"><i class="fas fa-clipboard-list"></i><span>Quản lý hồ sơ học</span></a></div>
+    <div class="sidebar" id="sidebar">
+        <button class="toggle-btn" id="toggleSidebar"><i class="fas fa-bars"></i></button>
+        <div class="menu-item @(path.Contains("/Admin/Dashboard") ? "active" : "")">
+            <a href="/Admin/Dashboard"><i class="fa-solid fa-chart-simple"></i><span>Thống kê</span></a>
         </div>
+        <div class="menu-item @(path.Contains("/Admin/Users/List") ? "active" : "")">
+            <a href="/Admin/Users/List"><i class="fa-solid fa-users"></i><span>Quản lý tài khoản</span></a>
+        </div>
+        <div class="menu-item @(path.Contains("/Admins/News/ListNews") ? "active" : "")">
+            <a href="/Admins/News/ListNews"><i class="fa-solid fa-envelope"></i><span>Tin tức</span></a>
+        </div>
+        <div class="menu-item"><a href="#"><i class="fas fa-clipboard-list"></i> <span>Quản lý hồ sơ thi</span></a></div>
+        <div class="menu-item"><a href="#"><i class="fas fa-clipboard-list"></i><span>Quản lý hồ sơ học</span></a></div>
+        @RenderSection("Styles", required: false)
+    </div>
 
-        <div class="main">
-            <div class="header">
-                <div class="section-title">SU25_SEP490</div>
-                <div class="user-menu">
-                    <div class="username">
-                        <div><strong>Lâm</strong></div>
-                        <div class="role">Instructor</div>
-                    </div>
-                    <i class="fas fa-user-circle fa-2x" id="userIcon"></i>
-                    <div class="user-dropdown" id="userDropdown">
-                        <a href="#">Hồ sơ người dùng</a>
-                        <a href="#">Đổi mật khẩu</a>
-                        <a href="#">Đăng xuất</a>
-                    </div>
+    <div class="main">
+        <div class="header">
+            <div class="section-title">SU25_SEP490</div>
+            <div class="user-menu">
+                <div class="username">
+                    <div><strong>Lâm</strong></div>
+                    <div class="role">Instructor</div>
+                </div>
+                <i class="fas fa-user-circle fa-2x" id="userIcon"></i>
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="#">Hồ sơ người dùng</a>
+                    <a href="#">Đổi mật khẩu</a>
+                    <a href="#">Đăng xuất</a>
                 </div>
             </div>
-
-            <div class="content">
-                @RenderBody()
-            </div>
         </div>
 
-        
+        <div class="content">
+            @RenderBody()
+        </div>
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/admin-dashboard.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Toggle sidebar
+            $('#toggleSidebar').click(function() {
+                $('#sidebar').toggleClass('collapsed');
+            });
+
+            // Toggle user dropdown
+            $('#userIcon').click(function(e) {
+                e.stopPropagation();
+                $('#userDropdown').toggle();
+            });
+
+            // Close dropdown when clicking outside
+            $(document).click(function() {
+                $('#userDropdown').hide();
+            });
+        });
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
