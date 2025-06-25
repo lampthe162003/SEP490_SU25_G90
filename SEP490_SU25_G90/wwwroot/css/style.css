@@ -12,11 +12,15 @@ body {
 }
 
 a {
-    text-decoration: none;
+    text-decoration: none !important;
     color: #0056b3;
     transition: 0.3s;
 }
 
+    a:hover {
+        text-decoration: underline !important; /* hoặc bỏ nếu bạn không muốn gạch chân khi hover */
+        color: #003f88;
+    }
     a:hover {
         color: #003f88;
     }
@@ -184,6 +188,7 @@ a {
     background: #222;
     color: white;
     text-align: center;
-    padding: 20px;
-    font-size: 14px;
+    line-height:20px;
+    padding: 2px 0; 
+    font-size: 13px; 
 }
