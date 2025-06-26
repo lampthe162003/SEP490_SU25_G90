@@ -32,9 +32,6 @@
                 Vai Trò
             </th>
             <th>
-                Tên Người Dùng
-            </th>
-            <th>
                 Email
             </th>
             <th>
@@ -61,10 +58,10 @@
                         @(role.Role.RoleName + " ")
                     }
             </td>
-            <td>@item.Username</td>
             <td>@item.Email</td>
             <td>@item.Dob</td>
             <td>@(item.Gender == true ? "Nam" : "Nữ")</td>
+            <td>@item.Phone</td>
             <td>
                 <a asp-page="./Edit" asp-route-id="@item.UserId">Sửa</a> |
                 <a asp-page="./Details" asp-route-id="@item.UserId">Chi Tiết</a> 

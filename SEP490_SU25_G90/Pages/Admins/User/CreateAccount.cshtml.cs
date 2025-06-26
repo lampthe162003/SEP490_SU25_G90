@@ -1,35 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
+using SEP490_SU25_G90.vn.edu.fpt.Services.RoleService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.User;
 
 namespace SEP490_SU25_G90.Pages.Admins.User
 {
+    [Authorize(Roles = "admin")]
     public class CreateAccountModel : PageModel
     {
         private readonly SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext _context;
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
+        private readonly IroleService _roleService;
 
-        public CreateAccountModel(SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext context, IUserService service, IMapper mapper)
+        public CreateAccountModel(SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext context, IUserService service, IMapper mapper, IroleService roleService)
         {
             _context = context;
             _userService = service;
             _mapper = mapper;
+            _roleService = roleService;
         }
 
-        public IActionResult OnGet()
+        public List<SelectListItem> GenderSelect = new List<SelectListItem>
         {
-        //ViewData["AddressId"] = new SelectList(_context.Addresses, "AddressId", "AddressId");
-        //ViewData["CccdId"] = new SelectList(_context.Cccds, "CccdId", "CccdId");
-        //ViewData["HealthCertificateId"] = new SelectList(_context.HealthCertificates, "HealthCertificateId", "HealthCertificateId");
+            new SelectListItem { Value = "true", Text = "Nam" },
+            new SelectListItem { Value = "false", Text = "Nữ" }
+        };
+
+        public List<SelectListItem> RoleSelect;
+
+        [BindProperty(SupportsGet = true)]
+        [Range(1, 3, ErrorMessage = "Hãy chọn vai trò hợp lệ")]
+        [Display(Name = "Vai trò")]
+        [Required(ErrorMessage = "Hãy chọn vai trò hợp lệ")]
+        public int Role {  get; set; }
+
+        public async Task<IActionResult> OnGetAsync()
+        {
+            RoleSelect = await _roleService.GetRolesAsSelectListAsync();
             return Page();
         }
 
@@ -47,7 +65,7 @@ namespace SEP490_SU25_G90.Pages.Admins.User
             _context.Users.Add(_mapper.Map<vn.edu.fpt.Models.User>(User));
             await _context.SaveChangesAsync();
 
-            return RedirectToPage("/Admin/Users/List");
+            return RedirectToPage("./UserList");
         }
     }
 }

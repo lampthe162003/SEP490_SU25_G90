@@ -17,9 +17,9 @@ namespace SEP490_SU25_G90.Pages.Admins.User
     {
         private readonly IUserService _userService;
 
-        public UserListModel(Sep490Su25G90DbContext context, IMapper mapper)
+        public UserListModel(IUserService userService, IMapper mapper)
         {
-            _userService = new UserService(context, mapper);
+            _userService = userService;
         }
 
         public IList<UserListInformationResponse> User { get;set; } = default!;
@@ -30,8 +30,10 @@ namespace SEP490_SU25_G90.Pages.Admins.User
         [BindProperty(SupportsGet = true)]
         public string? EmailSearch { get; set; }
 
-        public void OnGet() { 
-            User = _userService.GetAllUsers(NameSearch, EmailSearch);
+        public async Task<IActionResult> OnGetAsync() { 
+            User = await _userService.GetAllUsers(NameSearch, EmailSearch);
+
+            return Page();
         }
     }
 }

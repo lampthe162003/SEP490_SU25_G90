@@ -6,6 +6,9 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.NewsService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.User;
 using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
+using SEP490_SU25_G90.vn.edu.fpt.Repositories.RoleRepository;
+using SEP490_SU25_G90.vn.edu.fpt.Services.RoleService;
+using Microsoft.AspNetCore.Identity;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Commons
 {
@@ -23,6 +26,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Commons
 
             services.AddScoped<IInstructorRepository, InstructorRepository>();
             services.AddScoped<IInstructorService, InstructorService>();
+
+            services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IroleService, RoleService>();
+
+            services.AddScoped<IPasswordHasher<Models.User>, PasswordHasher<Models.User>>();
 
             return services;
         }

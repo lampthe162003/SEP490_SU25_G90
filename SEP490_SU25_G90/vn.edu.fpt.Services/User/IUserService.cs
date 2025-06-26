@@ -4,8 +4,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.User
 {
     public interface IUserService
     {
-        public IList<UserListInformationResponse> GetAllUsers(string? name, string? email);
-        public LoginInformationResponse GetLoginDetails(string email, string password);
-        public void CreateAccount(AccountCreationRequest request);
+        public Task<IList<UserListInformationResponse>> GetAllUsers(string? name, string? email);
+        public Task<LoginInformationResponse> GetLoginDetails(string email, string password);
+        public Task CreateAccount(AccountCreationRequest request, byte roleId);
     }
 }

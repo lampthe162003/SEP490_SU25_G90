@@ -12,10 +12,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.UserRepository
             _context = context;
         }
 
-        public void Create(User user)
+        public async Task<User> Create(User user)
         {
-            _context.Users.Add(user);
-            _context.SaveChanges();
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+            return user;
         }
 
         public IQueryable<User> GetAllUsers() => _context.Users
@@ -38,17 +39,22 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.UserRepository
                 u.MiddleName.Contains(name) ||
                 u.LastName.Contains(name));
 
-        public void Update(User user)
+        public async Task Update(User user)
         {
-            _context.Users.Update(user);
-            _context.SaveChanges();
+             _context.Users.Update(user);
+            await _context.SaveChangesAsync();
         }
 
-        public User GetLoginDetails(string email, string password)
-            => _context.Users
+        public async Task<User> GetLoginDetails(string email, string password)
+            => await _context.Users
             .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
             .Where(u => u.Email.Equals(email) && u.PasswordHash.Equals(password))
-            .FirstOrDefault();
+            .FirstOrDefaultAsync();
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
     }
 }

@@ -51,7 +51,7 @@ namespace SEP490_SU25_G90.Pages.Commons
                 return Page();
             }
 
-            var user = _userService.GetLoginDetails(Email, Password);
+            var user = await _userService.GetLoginDetails(Email, Password);
             if (user == null)
             {
                 ModelState.AddModelError(string.Empty, "Tài khoản hoặc mật khẩu không đúng. Vui lòng thử lại.");
@@ -60,7 +60,6 @@ namespace SEP490_SU25_G90.Pages.Commons
             string role = user.UserRoles.First().Role.RoleName;
             var token = _jwt.GenerateToken(Email, role);
             Response.Cookies.Append("jwt", token, new CookieOptions { HttpOnly = true });
-            Console.WriteLine("Role from DB: " + role); // Or log to file, or watch in debugger
             if (role.Equals("admin", StringComparison.OrdinalIgnoreCase))
             {
                 return Redirect("Admin/Dashboard");
