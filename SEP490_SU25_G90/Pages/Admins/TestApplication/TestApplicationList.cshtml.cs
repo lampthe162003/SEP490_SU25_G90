@@ -1,14 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
-using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication;
-using SEP490_SU25_G90.vn.edu.fpt.Services.User;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SEP490_SU25_G90.Pages.Admins.TestApplication
@@ -17,33 +12,34 @@ namespace SEP490_SU25_G90.Pages.Admins.TestApplication
     {
         private readonly ITestApplicationService _testApplicationService;
 
-        public TestApplicationListModel(Sep490Su25G90DbContext context, IMapper mapper)
+        public TestApplicationListModel(ITestApplicationService testApplicationService)
         {
-            _testApplicationService = new TestApplicationService(context, mapper);
+            _testApplicationService = testApplicationService;
         }
 
-        public List<TestApplicationListInformationResponse> TestApplications { get; set; }
+        public List<TestApplicationListInformationResponse> TestApplications { get; set; } = new();
 
         [BindProperty(SupportsGet = true)]
         public string SearchName { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public string SearchCccd { get; set; }
-        public void OnGet()
+
+        public async Task OnGetAsync()
         {
             if (!string.IsNullOrEmpty(SearchName))
             {
-                TestApplications = _testApplicationService.GetByName(SearchName);
+                TestApplications = await _testApplicationService.GetByNameAsync(SearchName);
                 return;
             }
 
             if (!string.IsNullOrEmpty(SearchCccd))
             {
-                TestApplications = _testApplicationService.GetByCccd(SearchCccd);
+                TestApplications = await _testApplicationService.GetByCccdAsync(SearchCccd);
                 return;
             }
 
-            TestApplications = _testApplicationService.GetAllTestApplication();
+            TestApplications = await _testApplicationService.GetAllTestApplicationAsync();
         }
     }
 }

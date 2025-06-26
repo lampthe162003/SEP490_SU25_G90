@@ -2,30 +2,38 @@
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.TestApplicationRepository;
-using SEP490_SU25_G90.vn.edu.fpt.Repositories.UserRepository;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
 {
     public class TestApplicationService : ITestApplicationService
     {
-        private readonly ITestApplicationRepository _testApplicatRepository ;
+        private readonly ITestApplicationRepository _testApplicationRepository;
         private readonly IMapper _mapper;
 
-        public TestApplicationService(Sep490Su25G90DbContext context, IMapper mapper)
+        public TestApplicationService(ITestApplicationRepository testApplicationRepository, IMapper mapper)
         {
-            _testApplicatRepository = new TestApplicationRepository(context);
+            _testApplicationRepository = testApplicationRepository;
             _mapper = mapper;
         }
 
-        public List<TestApplicationListInformationResponse> GetAllTestApplication()
-        => _mapper.Map<List<TestApplicationListInformationResponse>>(_testApplicatRepository.GetAllTestApplication());
+        public async Task<List<TestApplicationListInformationResponse>> GetAllTestApplicationAsync()
+        {
+            var list = await _testApplicationRepository.GetAllTestApplicationAsync();
+            return _mapper.Map<List<TestApplicationListInformationResponse>>(list);
+        }
 
+        public async Task<List<TestApplicationListInformationResponse>> GetByCccdAsync(string cccd)
+        {
+            var list = await _testApplicationRepository.GetByCccdAsync(cccd);
+            return _mapper.Map<List<TestApplicationListInformationResponse>>(list);
+        }
 
-        public List<TestApplicationListInformationResponse> GetByCccd(string cccd)
-        => _mapper.Map < List < TestApplicationListInformationResponse >>(_testApplicatRepository.GetByCccd(cccd));
-
-        public List<TestApplicationListInformationResponse> GetByName(string name)
-         => _mapper.Map<List<TestApplicationListInformationResponse>>(_testApplicatRepository.GetByName(name));
+        public async Task<List<TestApplicationListInformationResponse>> GetByNameAsync(string name)
+        {
+            var list = await _testApplicationRepository.GetByNameAsync(name);
+            return _mapper.Map<List<TestApplicationListInformationResponse>>(list);
+        }
     }
 }
