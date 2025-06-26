@@ -21,6 +21,10 @@ public partial class Sep490Su25G90DbContext : DbContext
 
     public virtual DbSet<City> Cities { get; set; }
 
+    public virtual DbSet<Class> Classes { get; set; }
+
+    public virtual DbSet<ClassMember> ClassMembers { get; set; }
+
     public virtual DbSet<HealthCertificate> HealthCertificates { get; set; }
 
     public virtual DbSet<InstructorSpecialization> InstructorSpecializations { get; set; }
@@ -30,10 +34,6 @@ public partial class Sep490Su25G90DbContext : DbContext
     public virtual DbSet<LearningMaterial> LearningMaterials { get; set; }
 
     public virtual DbSet<LicenceType> LicenceTypes { get; set; }
-
-    public virtual DbSet<MockTestQuestion> MockTestQuestions { get; set; }
-
-    public virtual DbSet<MockTestResult> MockTestResults { get; set; }
 
     public virtual DbSet<News> News { get; set; }
 
@@ -52,25 +52,14 @@ public partial class Sep490Su25G90DbContext : DbContext
     public virtual DbSet<Ward> Wards { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            var config = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .Build();
-
-            var connectionString = config.GetConnectionString("DefaultConnection");
-
-            optionsBuilder.UseSqlServer(connectionString);
-        }
-    }
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=(local);Database=SEP490_SU25_G90_DB;user=Verliezer;pwd=123456;TrustServerCertificate=true");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Address>(entity =>
         {
-            entity.HasKey(e => e.AddressId).HasName("PK__Addresse__CAA247C82FA6F9BE");
+            entity.HasKey(e => e.AddressId).HasName("PK__Addresse__CAA247C822D7847B");
 
             entity.Property(e => e.AddressId).HasColumnName("address_id");
             entity.Property(e => e.HouseNumber)
@@ -83,12 +72,12 @@ public partial class Sep490Su25G90DbContext : DbContext
 
             entity.HasOne(d => d.Ward).WithMany(p => p.Addresses)
                 .HasForeignKey(d => d.WardId)
-                .HasConstraintName("FK__Addresses__ward___44FF419A");
+                .HasConstraintName("FK__Addresses__ward___46E78A0C");
         });
 
         modelBuilder.Entity<Cccd>(entity =>
         {
-            entity.HasKey(e => e.CccdId).HasName("PK__CCCD__E13426B798EE0589");
+            entity.HasKey(e => e.CccdId).HasName("PK__CCCD__E13426B7AE73012C");
 
             entity.ToTable("CCCD");
 
@@ -98,14 +87,17 @@ public partial class Sep490Su25G90DbContext : DbContext
                 .IsUnicode(false)
                 .IsFixedLength()
                 .HasColumnName("CCCD_number");
-            entity.Property(e => e.ImageUrl)
+            entity.Property(e => e.ImageMs)
                 .IsUnicode(false)
-                .HasColumnName("image_url");
+                .HasColumnName("image_ms");
+            entity.Property(e => e.ImageMt)
+                .IsUnicode(false)
+                .HasColumnName("image_mt");
         });
 
         modelBuilder.Entity<City>(entity =>
         {
-            entity.HasKey(e => e.CityId).HasName("PK__Cities__031491A81755A9C2");
+            entity.HasKey(e => e.CityId).HasName("PK__Cities__031491A8107CAD2E");
 
             entity.Property(e => e.CityId)
                 .ValueGeneratedNever()
@@ -115,9 +107,46 @@ public partial class Sep490Su25G90DbContext : DbContext
                 .HasColumnName("city_name");
         });
 
+        modelBuilder.Entity<Class>(entity =>
+        {
+            entity.HasKey(e => e.ClassId).HasName("PK__Classes__FDF47986E26BC571");
+
+            entity.Property(e => e.ClassId).HasColumnName("class_id");
+            entity.Property(e => e.ClassName)
+                .HasMaxLength(30)
+                .HasColumnName("class_name");
+            entity.Property(e => e.InstructorId).HasColumnName("instructor_id");
+            entity.Property(e => e.LicenceTypeId).HasColumnName("licence_type_id");
+
+            entity.HasOne(d => d.Instructor).WithMany(p => p.Classes)
+                .HasForeignKey(d => d.InstructorId)
+                .HasConstraintName("FK__Classes__instruc__571DF1D5");
+
+            entity.HasOne(d => d.LicenceType).WithMany(p => p.Classes)
+                .HasForeignKey(d => d.LicenceTypeId)
+                .HasConstraintName("FK__Classes__licence__5812160E");
+        });
+
+        modelBuilder.Entity<ClassMember>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__ClassMem__3213E83F1FDFDB23");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ClassId).HasColumnName("class_id");
+            entity.Property(e => e.LearnerId).HasColumnName("learner_id");
+
+            entity.HasOne(d => d.Class).WithMany(p => p.ClassMembers)
+                .HasForeignKey(d => d.ClassId)
+                .HasConstraintName("FK__ClassMemb__class__5AEE82B9");
+
+            entity.HasOne(d => d.Learner).WithMany(p => p.ClassMembers)
+                .HasForeignKey(d => d.LearnerId)
+                .HasConstraintName("FK__ClassMemb__learn__5BE2A6F2");
+        });
+
         modelBuilder.Entity<HealthCertificate>(entity =>
         {
-            entity.HasKey(e => e.HealthCertificateId).HasName("PK__HealthCe__9EBB8D85C97DFD25");
+            entity.HasKey(e => e.HealthCertificateId).HasName("PK__HealthCe__9EBB8D854CFF4AA6");
 
             entity.Property(e => e.HealthCertificateId).HasColumnName("health_certificate_id");
             entity.Property(e => e.ImageUrl)
@@ -127,7 +156,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<InstructorSpecialization>(entity =>
         {
-            entity.HasKey(e => e.IsId).HasName("PK__Instruct__ADF81AD3E59AFA65");
+            entity.HasKey(e => e.IsId).HasName("PK__Instruct__ADF81AD303B8759D");
 
             entity.Property(e => e.IsId).HasColumnName("is_id");
             entity.Property(e => e.InstructorId).HasColumnName("instructor_id");
@@ -135,39 +164,34 @@ public partial class Sep490Su25G90DbContext : DbContext
 
             entity.HasOne(d => d.Instructor).WithMany(p => p.InstructorSpecializations)
                 .HasForeignKey(d => d.InstructorId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Instructo__instr__5812160E");
+                .HasConstraintName("FK__Instructo__instr__5EBF139D");
 
             entity.HasOne(d => d.LicenceType).WithMany(p => p.InstructorSpecializations)
                 .HasForeignKey(d => d.LicenceTypeId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Instructo__licen__59063A47");
+                .HasConstraintName("FK__Instructo__licen__5FB337D6");
         });
 
         modelBuilder.Entity<LearningApplication>(entity =>
         {
-            entity.HasKey(e => e.LearningId).HasName("PK__Learning__C996F2D5C73CABC7");
+            entity.HasKey(e => e.LearningId).HasName("PK__Learning__C996F2D57D4FBAED");
 
             entity.Property(e => e.LearningId).HasColumnName("learning_id");
-            entity.Property(e => e.AssignedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("assigned_at");
-            entity.Property(e => e.InstructorId).HasColumnName("instructor_id");
             entity.Property(e => e.LearnerId).HasColumnName("learner_id");
             entity.Property(e => e.LearningStatus).HasColumnName("learning_status");
             entity.Property(e => e.LicenceTypeId).HasColumnName("licence_type_id");
+            entity.Property(e => e.ObstacleScore).HasColumnName("obstacle_score");
+            entity.Property(e => e.PracticalScore).HasColumnName("practical_score");
+            entity.Property(e => e.SimulationScore).HasColumnName("simulation_score");
             entity.Property(e => e.SubmittedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("submitted_at");
             entity.Property(e => e.TestEligibility).HasColumnName("test_eligibility");
+            entity.Property(e => e.TheoryScore).HasColumnName("theory_score");
 
-            entity.HasOne(d => d.Instructor).WithMany(p => p.LearningApplicationInstructors)
-                .HasForeignKey(d => d.InstructorId)
-                .HasConstraintName("FK__LearningA__instr__5535A963");
-
-            entity.HasOne(d => d.Learner).WithMany(p => p.LearningApplicationLearners)
+            entity.HasOne(d => d.Learner).WithMany(p => p.LearningApplications)
                 .HasForeignKey(d => d.LearnerId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__LearningA__learn__534D60F1");
 
             entity.HasOne(d => d.LicenceType).WithMany(p => p.LearningApplications)
@@ -177,7 +201,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<LearningMaterial>(entity =>
         {
-            entity.HasKey(e => e.MaterialId).HasName("PK__Learning__6BFE1D2872B86B89");
+            entity.HasKey(e => e.MaterialId).HasName("PK__Learning__6BFE1D2824897B31");
 
             entity.Property(e => e.MaterialId).HasColumnName("material_id");
             entity.Property(e => e.CreatedAt)
@@ -193,12 +217,12 @@ public partial class Sep490Su25G90DbContext : DbContext
 
             entity.HasOne(d => d.LicenceType).WithMany(p => p.LearningMaterials)
                 .HasForeignKey(d => d.LicenceTypeId)
-                .HasConstraintName("FK__LearningM__licen__68487DD7");
+                .HasConstraintName("FK__LearningM__licen__6754599E");
         });
 
         modelBuilder.Entity<LicenceType>(entity =>
         {
-            entity.HasKey(e => e.LicenceTypeId).HasName("PK__LicenceT__959FF89309F3A258");
+            entity.HasKey(e => e.LicenceTypeId).HasName("PK__LicenceT__959FF89320224CFC");
 
             entity.Property(e => e.LicenceTypeId).HasColumnName("licence_type_id");
             entity.Property(e => e.LicenceCode)
@@ -207,61 +231,9 @@ public partial class Sep490Su25G90DbContext : DbContext
                 .HasColumnName("licence_code");
         });
 
-        modelBuilder.Entity<MockTestQuestion>(entity =>
-        {
-            entity.HasKey(e => e.QuestionId).HasName("PK__MockTest__2EC21549FB3A5FE2");
-
-            entity.Property(e => e.QuestionId).HasColumnName("question_id");
-            entity.Property(e => e.CorrectOption)
-                .HasMaxLength(1)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("correct_option");
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime")
-                .HasColumnName("created_at");
-            entity.Property(e => e.OptionA)
-                .HasMaxLength(255)
-                .HasColumnName("option_a");
-            entity.Property(e => e.OptionB)
-                .HasMaxLength(255)
-                .HasColumnName("option_b");
-            entity.Property(e => e.OptionC)
-                .HasMaxLength(255)
-                .HasColumnName("option_c");
-            entity.Property(e => e.OptionD)
-                .HasMaxLength(255)
-                .HasColumnName("option_d");
-            entity.Property(e => e.QuestionText).HasColumnName("question_text");
-            entity.Property(e => e.ReadyStatus).HasColumnName("ready_status");
-            entity.Property(e => e.TestType).HasColumnName("test_type");
-
-            entity.HasOne(d => d.TestTypeNavigation).WithMany(p => p.MockTestQuestions)
-                .HasForeignKey(d => d.TestType)
-                .HasConstraintName("FK__MockTestQ__test___60A75C0F");
-        });
-
-        modelBuilder.Entity<MockTestResult>(entity =>
-        {
-            entity.HasKey(e => e.ResultId).HasName("PK__MockTest__AFB3C316F89EA0C8");
-
-            entity.Property(e => e.ResultId).HasColumnName("result_id");
-            entity.Property(e => e.Score).HasColumnName("score");
-            entity.Property(e => e.SubmittedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime")
-                .HasColumnName("submitted_at");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
-
-            entity.HasOne(d => d.User).WithMany(p => p.MockTestResults)
-                .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__MockTestR__user___6477ECF3");
-        });
-
         modelBuilder.Entity<News>(entity =>
         {
-            entity.HasKey(e => e.NewsId).HasName("PK__News__4C27CCD8C5CF2948");
+            entity.HasKey(e => e.NewsId).HasName("PK__News__4C27CCD8ABCEF2B6");
 
             entity.Property(e => e.NewsId).HasColumnName("news_id");
             entity.Property(e => e.AuthorId).HasColumnName("author_id");
@@ -279,12 +251,12 @@ public partial class Sep490Su25G90DbContext : DbContext
 
             entity.HasOne(d => d.Author).WithMany(p => p.News)
                 .HasForeignKey(d => d.AuthorId)
-                .HasConstraintName("FK__News__author_id__6B24EA82");
+                .HasConstraintName("FK__News__author_id__6A30C649");
         });
 
         modelBuilder.Entity<Province>(entity =>
         {
-            entity.HasKey(e => e.ProvinceId).HasName("PK__Province__08DCB60FF9F7DBB7");
+            entity.HasKey(e => e.ProvinceId).HasName("PK__Province__08DCB60FBD99A5F0");
 
             entity.Property(e => e.ProvinceId)
                 .ValueGeneratedNever()
@@ -296,12 +268,12 @@ public partial class Sep490Su25G90DbContext : DbContext
 
             entity.HasOne(d => d.City).WithMany(p => p.Provinces)
                 .HasForeignKey(d => d.CityId)
-                .HasConstraintName("FK__Provinces__city___3F466844");
+                .HasConstraintName("FK__Provinces__city___412EB0B6");
         });
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.RoleId).HasName("PK__Roles__760965CC496CB513");
+            entity.HasKey(e => e.RoleId).HasName("PK__Roles__760965CC8E4F2BC9");
 
             entity.Property(e => e.RoleId).HasColumnName("role_id");
             entity.Property(e => e.RoleName)
@@ -311,11 +283,11 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<TestApplication>(entity =>
         {
-            entity.HasKey(e => e.TestId).HasName("PK__TestAppl__F3FF1C02794A175E");
+            entity.HasKey(e => e.TestId).HasName("PK__TestAppl__F3FF1C0213D75CE8");
 
             entity.Property(e => e.TestId).HasColumnName("test_id");
             entity.Property(e => e.ExamDate).HasColumnName("exam_date");
-            entity.Property(e => e.LearnerId).HasColumnName("learner_id");
+            entity.Property(e => e.LearningId).HasColumnName("learning_id");
             entity.Property(e => e.Notes).HasColumnName("notes");
             entity.Property(e => e.ObstacleScore).HasColumnName("obstacle_score");
             entity.Property(e => e.PracticalScore).HasColumnName("practical_score");
@@ -323,22 +295,26 @@ public partial class Sep490Su25G90DbContext : DbContext
                 .HasMaxLength(500)
                 .IsUnicode(false)
                 .HasColumnName("result_image_url");
+            entity.Property(e => e.SignedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("signed_at");
+            entity.Property(e => e.SignedBy).HasColumnName("signed_by");
             entity.Property(e => e.SimulationScore).HasColumnName("simulation_score");
             entity.Property(e => e.Status).HasColumnName("status");
-            entity.Property(e => e.SubmittedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime")
-                .HasColumnName("submitted_at");
             entity.Property(e => e.TheoryScore).HasColumnName("theory_score");
 
-            entity.HasOne(d => d.Learner).WithMany(p => p.TestApplications)
-                .HasForeignKey(d => d.LearnerId)
-                .HasConstraintName("FK__TestAppli__learn__5CD6CB2B");
+            entity.HasOne(d => d.Learning).WithMany(p => p.TestApplications)
+                .HasForeignKey(d => d.LearningId)
+                .HasConstraintName("FK__TestAppli__learn__628FA481");
+
+            entity.HasOne(d => d.SignedByNavigation).WithMany(p => p.TestApplications)
+                .HasForeignKey(d => d.SignedBy)
+                .HasConstraintName("FK__TestAppli__signe__6383C8BA");
         });
 
         modelBuilder.Entity<TestScoreStandard>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__TestScor__3213E83F22254AC9");
+            entity.HasKey(e => e.Id).HasName("PK__TestScor__3213E83F63F03BB4");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.LicenceTypeId).HasColumnName("licence_type_id");
@@ -350,13 +326,12 @@ public partial class Sep490Su25G90DbContext : DbContext
 
             entity.HasOne(d => d.LicenceType).WithMany(p => p.TestScoreStandards)
                 .HasForeignKey(d => d.LicenceTypeId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TestScore_LicenceType");
+                .HasConstraintName("FK__TestScore__licen__6D0D32F4");
         });
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Users__B9BE370FAFB8C823");
+            entity.HasKey(e => e.UserId).HasName("PK__Users__B9BE370FB976D7DA");
 
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.AddressId).HasColumnName("address_id");
@@ -392,20 +367,20 @@ public partial class Sep490Su25G90DbContext : DbContext
 
             entity.HasOne(d => d.Address).WithMany(p => p.Users)
                 .HasForeignKey(d => d.AddressId)
-                .HasConstraintName("FK__Users__address_i__49C3F6B7");
+                .HasConstraintName("FK__Users__address_i__4BAC3F29");
 
             entity.HasOne(d => d.Cccd).WithMany(p => p.Users)
                 .HasForeignKey(d => d.CccdId)
-                .HasConstraintName("FK__Users__CCCD_id__47DBAE45");
+                .HasConstraintName("FK__Users__CCCD_id__49C3F6B7");
 
             entity.HasOne(d => d.HealthCertificate).WithMany(p => p.Users)
                 .HasForeignKey(d => d.HealthCertificateId)
-                .HasConstraintName("FK__Users__health_ce__48CFD27E");
+                .HasConstraintName("FK__Users__health_ce__4AB81AF0");
         });
 
         modelBuilder.Entity<UserRole>(entity =>
         {
-            entity.HasKey(e => e.UserRoleId).HasName("PK__UserRole__B8D9ABA2B709B843");
+            entity.HasKey(e => e.UserRoleId).HasName("PK__UserRole__B8D9ABA2218420EA");
 
             entity.Property(e => e.UserRoleId).HasColumnName("user_role_id");
             entity.Property(e => e.RoleId).HasColumnName("role_id");
@@ -414,17 +389,17 @@ public partial class Sep490Su25G90DbContext : DbContext
             entity.HasOne(d => d.Role).WithMany(p => p.UserRoles)
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__UserRoles__role___4D94879B");
+                .HasConstraintName("FK__UserRoles__role___4F7CD00D");
 
             entity.HasOne(d => d.User).WithMany(p => p.UserRoles)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__UserRoles__user___4CA06362");
+                .HasConstraintName("FK__UserRoles__user___4E88ABD4");
         });
 
         modelBuilder.Entity<Ward>(entity =>
         {
-            entity.HasKey(e => e.WardId).HasName("PK__Wards__396B899D9C01C91B");
+            entity.HasKey(e => e.WardId).HasName("PK__Wards__396B899DB0074754");
 
             entity.Property(e => e.WardId)
                 .ValueGeneratedNever()
@@ -436,7 +411,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
             entity.HasOne(d => d.Province).WithMany(p => p.Wards)
                 .HasForeignKey(d => d.ProvinceId)
-                .HasConstraintName("FK__Wards__province___4222D4EF");
+                .HasConstraintName("FK__Wards__province___440B1D61");
         });
 
         OnModelCreatingPartial(modelBuilder);

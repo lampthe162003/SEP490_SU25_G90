@@ -35,17 +35,19 @@ public partial class User
 
     public virtual Cccd? Cccd { get; set; }
 
+    public virtual ICollection<ClassMember> ClassMembers { get; set; } = new List<ClassMember>();
+
+    public virtual ICollection<Class> Classes { get; set; } = new List<Class>();
+
     public virtual HealthCertificate? HealthCertificate { get; set; }
 
     public virtual ICollection<InstructorSpecialization> InstructorSpecializations { get; set; } = new List<InstructorSpecialization>();
 
-    public virtual ICollection<LearningApplication> LearningApplicationInstructors { get; set; } = new List<LearningApplication>();
-
-    public virtual ICollection<LearningApplication> LearningApplicationLearners { get; set; } = new List<LearningApplication>();
-
-    public virtual ICollection<MockTestResult> MockTestResults { get; set; } = new List<MockTestResult>();
+    public virtual ICollection<LearningApplication> LearningApplications { get; set; } = new List<LearningApplication>();
 
     public virtual ICollection<News> News { get; set; } = new List<News>();
+
+    public virtual ICollection<TestApplication> TestApplications { get; set; } = new List<TestApplication>();
 
     public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 }

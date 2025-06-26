@@ -7,9 +7,11 @@ public partial class Cccd
 {
     public int CccdId { get; set; }
 
-    public string? CccdNumber { get; set; }
+    public string CccdNumber { get; set; } = null!;
 
-    public string? ImageUrl { get; set; }
+    public string? ImageMt { get; set; }
+
+    public string? ImageMs { get; set; }
 
     public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

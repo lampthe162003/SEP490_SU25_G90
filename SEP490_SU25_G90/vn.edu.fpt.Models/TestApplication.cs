@@ -7,11 +7,9 @@ public partial class TestApplication
 {
     public int TestId { get; set; }
 
-    public int? LearnerId { get; set; }
+    public int? LearningId { get; set; }
 
     public DateOnly? ExamDate { get; set; }
-
-    public DateTime? SubmittedAt { get; set; }
 
     public string? ResultImageUrl { get; set; }
 
@@ -25,7 +23,13 @@ public partial class TestApplication
 
     public bool? Status { get; set; }
 
+    public int? SignedBy { get; set; }
+
+    public DateTime? SignedAt { get; set; }
+
     public string? Notes { get; set; }
 
-    public virtual LearningApplication? Learner { get; set; }
+    public virtual LearningApplication? Learning { get; set; }
+
+    public virtual User? SignedByNavigation { get; set; }
 }
