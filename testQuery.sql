@@ -10,50 +10,59 @@ CREATE TABLE Roles (
     role_id TINYINT PRIMARY KEY,
     role_name NVARCHAR(100)
 );
+INSERT INTO Roles VALUES 
+(1, 'learner'), (2, 'admin'), (3, 'instructor');
 
-INSERT INTO Roles (role_id, role_name)
-VALUES (1, 'learner'), (2, 'admin'), (3, 'instructor'), (4, 'accountant');
+CREATE TABLE LicenceTypes (
+    licence_type_id TINYINT PRIMARY KEY,
+    licence_code VARCHAR(2) NOT NULL
+);
+INSERT INTO LicenceTypes VALUES 
+(1, 'B1'), (2, 'B2'), (3, 'C'), (4, 'D'), (5, 'E');
+
 
 CREATE TABLE CCCD (
-	CCCD_id INT IDENTITY(1, 1) PRIMARY KEY,
-	CCCD_number char(12),
-	image_url varchar(MAX)
-)
+    CCCD_id INT IDENTITY PRIMARY KEY,
+    CCCD_number CHAR(12) NOT NULL,
+    image_mt VARCHAR(MAX),
+	image_ms VARCHAR(MAX)
+);
 
 CREATE TABLE HealthCertificates (
-	health_certificate_id INT IDENTITY(1, 1) PRIMARY KEY,
-	image_url varchar(MAX)
-)
+    health_certificate_id INT IDENTITY PRIMARY KEY,
+    image_url VARCHAR(MAX)
+);
 
 CREATE TABLE Cities (
-	city_id INT PRIMARY KEY,
-	city_name NVARCHAR(100)
-)
+    city_id INT PRIMARY KEY,
+    city_name NVARCHAR(100)
+);
 
 CREATE TABLE Provinces (
-	province_id INT PRIMARY KEY,
-	province_name NVARCHAR(100),
-	city_id INT,
-	fOREIGN KEY (city_id) REFERENCES Cities(city_id)
-)
+    province_id INT PRIMARY KEY,
+    province_name NVARCHAR(100),
+    city_id INT,
+    FOREIGN KEY (city_id) REFERENCES Cities(city_id)
+);
 
 CREATE TABLE Wards (
-	ward_id INT PRIMARY KEY,
-	ward_name NVARCHAR(100),
-	province_id INT,
-	FOREIGN KEY (province_id) REFERENCES Provinces(province_id)
-)
+    ward_id INT PRIMARY KEY,
+    ward_name NVARCHAR(100),
+    province_id INT,
+    FOREIGN KEY (province_id) REFERENCES Provinces(province_id)
+);
 
 CREATE TABLE Addresses (
-	address_id INT IDENTITY(1, 1) PRIMARY KEY,
-	house_number NVARCHAR(100),
-	road_name NVARCHAR(100),
-	ward_id INT,
-	FOREIGN KEY (ward_id) REFERENCES Wards(ward_id)
-)
+    address_id INT IDENTITY PRIMARY KEY,
+    house_number NVARCHAR(100),
+    road_name NVARCHAR(100),
+    ward_id INT,
+    FOREIGN KEY (ward_id) REFERENCES Wards(ward_id)
+);
+
 
 CREATE TABLE Users (
-    [user_id] INT IDENTITY(1,1) PRIMARY KEY,
+    user_id INT IDENTITY PRIMARY KEY,
     email VARCHAR(100),
     password_hash VARCHAR(255),
     profile_image_url VARCHAR(500),
@@ -61,120 +70,113 @@ CREATE TABLE Users (
     middle_name NVARCHAR(20),
     last_name NVARCHAR(10),
     dob DATE,
-    gender BIT,  -- 0 = Female, 1 = Male
+    gender BIT,  -- 0 = Nu, 1 = Nam
     CCCD_id INT,
-	health_certificate_id INT,
+    health_certificate_id INT,
     phone VARCHAR(10),
     address_id INT,
-	FOREIGN KEY (CCCD_id) REFERENCES CCCD(CCCD_id),
-	FOREIGN KEY (health_certificate_id) REFERENCES HealthCertificates(health_certificate_id),
-	FOREIGN KEY (address_id) REFERENCES Addresses(address_id)
+    FOREIGN KEY (CCCD_id) REFERENCES CCCD(CCCD_id),
+    FOREIGN KEY (health_certificate_id) REFERENCES HealthCertificates(health_certificate_id),
+    FOREIGN KEY (address_id) REFERENCES Addresses(address_id)
 );
 
 CREATE TABLE UserRoles (
-	user_role_id INT IDENTITY(1, 1) PRIMARY KEY,
-	[user_id] INT NOT NULL,
-	role_id TINYINT NOT NULL,
-	FOREIGN KEY ([user_id]) REFERENCES Users([user_id]),
-	FOREIGN KEY (role_id) REFERENCES Roles(role_id)
-)
-
-CREATE TABLE LicenceTypes (
-    licence_type_id TINYINT PRIMARY KEY,
-    licence_code VARCHAR(2) NOT NULL
+    user_role_id INT IDENTITY PRIMARY KEY,
+    user_id INT NOT NULL,
+    role_id TINYINT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (role_id) REFERENCES Roles(role_id)
 );
-
-INSERT INTO LicenceTypes (licence_type_id, licence_code)
-VALUES (1, 'B1'), (2, 'B2'), (3, 'C'), (4, 'D'), (5, 'E');
 
 
 CREATE TABLE LearningApplications (
-    learning_id INT IDENTITY(1,1) PRIMARY KEY,
-    learner_id INT,
+    learning_id INT IDENTITY PRIMARY KEY,
+    learner_id INT NOT NULL,
     licence_type_id TINYINT,
     submitted_at DATETIME DEFAULT GETDATE(),
-    learning_status TINYINT,
-    instructor_id INT,
-    assigned_at DATETIME,
+    theory_score INT,
+    simulation_score INT,
+    obstacle_score INT,
+    practical_score INT,
+    learning_status TINYINT, -- 1 = dang hoc, 2 = bao luu, 3 = hoc lai, 4 = ho�n th�nh
     test_eligibility BIT,
-    FOREIGN KEY (learner_id) REFERENCES Users([user_id]),
-    FOREIGN KEY (licence_type_id) REFERENCES LicenceTypes(licence_type_id),
-    FOREIGN KEY (instructor_id) REFERENCES Users([user_id])
+    FOREIGN KEY (learner_id) REFERENCES Users(user_id),
+    FOREIGN KEY (licence_type_id) REFERENCES LicenceTypes(licence_type_id)
 );
 
+
+CREATE TABLE Classes (
+    class_id INT IDENTITY PRIMARY KEY,
+    instructor_id INT,
+    licence_type_id TINYINT,
+	class_name NVARCHAR(30),
+    FOREIGN KEY (instructor_id) REFERENCES Users(user_id),
+    FOREIGN KEY (licence_type_id) REFERENCES LicenceTypes(licence_type_id)
+);
+
+CREATE TABLE ClassMembers (
+    id INT IDENTITY PRIMARY KEY,
+    class_id INT,
+    learner_id INT,
+    FOREIGN KEY (class_id) REFERENCES Classes(class_id),
+    FOREIGN KEY (learner_id) REFERENCES Users(user_id)
+);
+
+
 CREATE TABLE InstructorSpecializations (
-	is_id INT IDENTITY(1, 1) PRIMARY KEY,
-    instructor_id INT NOT NULL,
-    licence_type_id TINYINT NOT NULL,
-    FOREIGN KEY (instructor_id) REFERENCES Users([user_id]),
+    is_id INT IDENTITY PRIMARY KEY,
+    instructor_id INT,
+    licence_type_id TINYINT,
+    FOREIGN KEY (instructor_id) REFERENCES Users(user_id),
     FOREIGN KEY (licence_type_id) REFERENCES LicenceTypes(licence_type_id)
 );
 
 
 CREATE TABLE TestApplications (
-    test_id INT IDENTITY(1,1) PRIMARY KEY,
-    learner_id INT,
+    test_id INT IDENTITY PRIMARY KEY,
+    learning_id INT,
     exam_date DATE,
-    submitted_at DATETIME DEFAULT GETDATE(),
     result_image_url VARCHAR(500),
-	theory_score INT,
+    theory_score INT,
     simulation_score INT,
     obstacle_score INT,
     practical_score INT,
-    [status] bit,   -- 0 - failed, 1 - passed, NULL - not participated
+    [status] BIT, -- NULL = ch?a thi, 0 = tr??t, 1 = ??u
+    signed_by INT, -- gi�o vi�n ch?m thi
+    signed_at DATETIME,
     notes NVARCHAR(MAX),
-    FOREIGN KEY (learner_id) REFERENCES LearningApplications(learning_id)
+    FOREIGN KEY (learning_id) REFERENCES LearningApplications(learning_id),
+    FOREIGN KEY (signed_by) REFERENCES Users(user_id)
 );
 
-CREATE TABLE MockTestQuestions (
-    question_id INT IDENTITY(1,1) PRIMARY KEY,
-	test_type TINYINT,
-    question_text NVARCHAR(MAX),
-    option_a NVARCHAR(255),
-    option_b NVARCHAR(255),
-    option_c NVARCHAR(255),
-    option_d NVARCHAR(255),
-    correct_option CHAR(1),
-    created_at DATETIME DEFAULT GETDATE(),
-	ready_status BIT,	-- 0 = not ready, 1 = ready
-	FOREIGN KEY (test_type) REFERENCES LicenceTypes(licence_type_id)
-);
-
-CREATE TABLE MockTestResults (
-    result_id INT IDENTITY(1,1) PRIMARY KEY,
-    [user_id] INT,
-    submitted_at DATETIME DEFAULT GETDATE(),
-    score INT,
-    FOREIGN KEY ([user_id]) REFERENCES Users([user_id])
-);
 
 CREATE TABLE LearningMaterials (
-    material_id INT IDENTITY(1,1) PRIMARY KEY,
+    material_id INT IDENTITY PRIMARY KEY,
     title NVARCHAR(100),
     [description] NVARCHAR(MAX),
     licence_type_id TINYINT,
     file_link NVARCHAR(MAX),
     created_at DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (licence_type_id) REFERENCES LicenceTypes(licence_type_id)
-); 
+);
+
 
 CREATE TABLE News (
-    news_id INT IDENTITY(1, 1) PRIMARY KEY,
+    news_id INT IDENTITY PRIMARY KEY,
     title NVARCHAR(500),
     news_content NVARCHAR(MAX),
     author_id INT,
     post_time DATETIME,
     image VARCHAR(250),
     FOREIGN KEY (author_id) REFERENCES Users(user_id)
-)
+);
+
 
 CREATE TABLE TestScoreStandards (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    licence_type_id TINYINT NOT NULL,
-    part_name NVARCHAR(50) NOT NULL,
-    max_score INT NOT NULL,
-    pass_score INT NOT NULL,
-
-    CONSTRAINT FK_TestScore_LicenceType FOREIGN KEY (licence_type_id)
-        REFERENCES LicenceTypes(licence_type_id)
+    id INT IDENTITY PRIMARY KEY,
+    licence_type_id TINYINT,
+    part_name NVARCHAR(50),
+    max_score INT,
+    pass_score INT,
+    FOREIGN KEY (licence_type_id) REFERENCES LicenceTypes(licence_type_id)
 );
