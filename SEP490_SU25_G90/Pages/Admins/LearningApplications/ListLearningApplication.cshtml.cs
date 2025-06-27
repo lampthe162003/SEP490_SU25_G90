@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
 {
+    [Authorize(Roles = "Admin")]
     public class ListLearningApplicationsModel : PageModel
     {
         private readonly ILearningApplicationService _learningApplicationService;
