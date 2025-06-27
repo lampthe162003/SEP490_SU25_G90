@@ -58,7 +58,7 @@ namespace SEP490_SU25_G90.Pages.Commons
                 return Page();
             }
             string role = user.UserRoles.First().Role.RoleName;
-            var token = _jwt.GenerateToken(Email, role);
+            var token = _jwt.GenerateToken(user.UserId, Email, role);
             Response.Cookies.Append("jwt", token, new CookieOptions { HttpOnly = true });
             if (role.Equals("admin", StringComparison.OrdinalIgnoreCase))
             {
