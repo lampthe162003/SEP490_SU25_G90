@@ -16,7 +16,7 @@ namespace SEP490_SU25_G90.Pages.Admins.LearningProfile
         {
             // Fetch all learning applications from the service
             LearningProfiles = _learningApplicationService.GetAll();
-            LearningProfiles = LearningProfiles.Where(x => x.Instructor is not null).ToArray();
+            //LearningProfiles = LearningProfiles.Where(x => x.Instructor is not null).ToArray();
         }
     }
 }
