@@ -7,13 +7,13 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         public int TestId { get; set; }
         public DateOnly? ExamDate { get; set; }
         public bool? Status { get; set; }
-        public string LearnerFullName => Learner == null || Learner.Learner == null
+        public string LearnerFullName => Learning == null || Learning.Learner == null
            ? string.Empty
-           : $"{Learner.Learner.FirstName} {Learner.Learner.MiddleName} {Learner.Learner.LastName}";
+           : $"{Learning.Learner.FirstName} {Learning.Learner.MiddleName} {Learning.Learner.LastName}";
 
-        public string CccdNumber => Learner?.Learner?.Cccd?.CccdNumber ?? string.Empty;
+        public string CccdNumber => Learning?.Learner?.Cccd?.CccdNumber ?? string.Empty;
 
-        public string LicenceType => Learner?.LicenceType?.LicenceCode ?? string.Empty;
-        public virtual LearningApplication? Learner { get; set; }
+        public string LicenceType => Learning?.LicenceType?.LicenceCode ?? string.Empty;
+        public virtual LearningApplication? Learning { get; set; }
     }
 }

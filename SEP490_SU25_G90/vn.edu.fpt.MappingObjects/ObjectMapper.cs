@@ -25,7 +25,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
                 .ForMember(dest => dest.TestId, opt => opt.MapFrom(src => src.TestId))
                 .ForMember(dest => dest.ExamDate, opt => opt.MapFrom(src => src.ExamDate))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
-                .ForMember(dest => dest.Learner, opt => opt.MapFrom(src => src.Learner));
+                .ForMember(dest => dest.Learning, opt => opt.MapFrom(src => src.Learning));
 
 
             CreateMap<News, NewsListInformationResponse>()
