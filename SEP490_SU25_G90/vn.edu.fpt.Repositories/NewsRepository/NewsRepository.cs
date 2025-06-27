@@ -11,7 +11,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.NewsRepository
         {
             _context = context;
         }
-
+        
         public async Task<(List<News>, int)> GetPagedNewsAsync(int page, int pageSize)
         {
             var totalItems = await _context.News.CountAsync();
@@ -25,11 +25,18 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.NewsRepository
 
             return (items, totalItems);
         }
+        
         public async Task<News?> GetNewsByIdAsync(int id)
         {
             return await _context.News
                 .Include(n => n.Author)
                 .FirstOrDefaultAsync(n => n.NewsId == id);
+        }
+
+        public async Task AddNewsAsync(News news)
+        {
+            _context.News.Add(news);
+            await _context.SaveChangesAsync();
         }
     }
 }
