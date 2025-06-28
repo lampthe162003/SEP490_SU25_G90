@@ -44,14 +44,14 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
                 Phone = instructor.Phone,
                 ProfileImageUrl = instructor.ProfileImageUrl,
                 CccdNumber = instructor.Cccd?.CccdNumber,
-                CccdImageUrl = instructor.Cccd?.ImageUrl,
+                CccdImageUrl = instructor.Cccd?.ImageMt,
                 AddressDisplay = BuildAddressDisplay(instructor.Address),
                 Specializations = instructor.InstructorSpecializations.Select(ins => new LicenceTypeResponse
                 {
-                    LicenceTypeId = ins.LicenceTypeId,
+                    LicenceTypeId = ins.LicenceType.LicenceTypeId,
                     LicenceCode = ins.LicenceType.LicenceCode
                 }).ToList(),
-                StudentCount = instructor.LearningApplicationInstructors.Count(la => la.LearningStatus == 1) // Active learning applications
+                //StudentCount = instructor.LearningApplicationInstructors.Count(la => la.LearningStatus == 1) // Active learning applications
             }).ToList();
 
             return result;
@@ -74,14 +74,14 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
                 Phone = instructor.Phone,
                 ProfileImageUrl = instructor.ProfileImageUrl,
                 CccdNumber = instructor.Cccd?.CccdNumber,
-                CccdImageUrl = instructor.Cccd?.ImageUrl,
+                CccdImageUrl = instructor.Cccd?.ImageMt,
                 AddressDisplay = BuildAddressDisplay(instructor.Address),
                 Specializations = instructor.InstructorSpecializations.Select(ins => new LicenceTypeResponse
                 {
-                    LicenceTypeId = ins.LicenceTypeId,
+                    LicenceTypeId = ins.LicenceType.LicenceTypeId,
                     LicenceCode = ins.LicenceType.LicenceCode
                 }).ToList(),
-                StudentCount = instructor.LearningApplicationInstructors.Count(la => la.LearningStatus == 1)
+                //StudentCount = instructor.LearningApplicationInstructors.Count(la => la.LearningStatus == 1)
             };
         }
 
