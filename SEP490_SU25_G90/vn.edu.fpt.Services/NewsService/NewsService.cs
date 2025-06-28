@@ -43,19 +43,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.NewsService
 
             await _newsRepository.AddNewsAsync(news);
         }
-        private async Task<string?> SaveImageAsync(IFormFile? file)
-        {
-            var news = await _newsRepository.GetNewsByIdAsync(id);
-            if (news == null) return false;
-
-            news.Title = request.Title;
-            news.NewsContent = request.NewsContent;
-
-           
-            news.Image = await SaveImageAsync(newImage, news.Image);
-
-            return await _newsRepository.EditNewsAsync(news);
-        }
 
         public async Task<bool> DeleteNewsAsync(int id)
         {

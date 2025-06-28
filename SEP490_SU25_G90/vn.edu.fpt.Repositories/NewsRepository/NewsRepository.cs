@@ -38,5 +38,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.NewsRepository
             _context.News.Add(news);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<bool> DeleteNewsAsync(News news)
+        {
+            _context.News.Remove(news);
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
+        }
     }
 }
