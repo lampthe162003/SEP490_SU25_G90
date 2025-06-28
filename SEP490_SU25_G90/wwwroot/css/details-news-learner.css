@@ -1,0 +1,56 @@
+﻿/* Main container - điều chỉnh chính ở đây */
+.news-detail-container {
+    max-width: 800px;
+    margin: 0 10px 0 5px; 
+    padding: 15px 5px; 
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #333;
+}
+
+/* Back link - đẩy sát trái hơn */
+.back-to-list {
+    display: block;
+    margin-bottom: 10px;
+    color: #0066cc;
+    text-decoration: none;
+    font-size: 15px;
+    padding-left: 0; 
+}
+
+/* News title - căn trái hoàn toàn */
+.news-title {
+    font-size: 22px;
+    padding: 0;
+    margin: 0 0 10px 0;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+/* News meta info - sát trái hơn */
+.news-meta {
+    padding: 0;
+    margin: 0 0 15px 0;
+    gap: 10px;
+}
+
+/* News content - giảm padding */
+.news-content {
+    padding: 0;
+    margin: 0;
+    text-align: left;
+}
+
+/* News image - căn trái */
+.news-image-wrapper {
+    margin: 15px 0;
+    padding: 0;
+    text-align: left; 
+}
+
+/* Responsive - điều chỉnh cho mobile */
+@media (max-width: 768px) {
+    .news-detail-container {
+        margin: 0 5px; 
+        padding: 10px 0;
+    }
+}
