@@ -11,7 +11,7 @@
 <form method="post" enctype="multipart/form-data">
     <div class="mb-3">
         <label class="form-label">Tiêu đề</label>
-        <input asp-for="Input.Title" class="form-control" />
+        <textarea asp-for="Input.Title" class="form-control ckeditor"></textarea>
         <span asp-validation-for="Input.Title" class="text-danger"></span>
     </div>
 
