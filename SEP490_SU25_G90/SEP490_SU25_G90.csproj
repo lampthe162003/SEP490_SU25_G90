@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Pages\Instructors\" />
     <Folder Include="vn.edu.fpt.Models\" />
     <Folder Include="wwwroot\uploads\news\" />
   </ItemGroup>
