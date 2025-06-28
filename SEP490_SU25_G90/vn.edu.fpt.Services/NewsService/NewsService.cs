@@ -43,6 +43,31 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.NewsService
 
             await _newsRepository.AddNewsAsync(news);
         }
+        public async Task<NewsFormRequest?> GetNewsFormByIdAsync(int id)
+        {
+            var entity = await _newsRepository.GetNewsByIdAsync(id);
+            if (entity == null) return null;
+
+            return new NewsFormRequest
+            {
+                NewsId = entity.NewsId,
+                Title = entity.Title,
+                NewsContent = entity.NewsContent,
+                OldImagePath = entity.Image
+            };
+        }
+        public async Task<bool> EditNewsAsync(NewsFormRequest request)
+        {
+            var news = await _newsRepository.GetNewsByIdAsync(request.NewsId);
+            if (news == null) return false;
+
+            news.Title = request.Title;
+            news.NewsContent = request.NewsContent;
+            news.PostTime = DateTime.Now;
+            news.Image = await SaveImageAsync(request.Image, request.OldImagePath);
+
+            return await _newsRepository.EditNewsAsync(news);
+        }
 
         public async Task<bool> DeleteNewsAsync(int id)
         {
