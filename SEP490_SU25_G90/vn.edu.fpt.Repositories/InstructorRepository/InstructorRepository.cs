@@ -23,8 +23,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 .Include(u => u.Cccd)
                 .Include(u => u.InstructorSpecializations)
                     .ThenInclude(ins => ins.LicenceType)
-                .Include(u => u.LearningApplicationInstructors)
-                    .ThenInclude(la => la.Learner)
+                //.Include(u => u.LearningApplicationInstructors)
+                    //.ThenInclude(la => la.Learner)
                 .Where(u => u.InstructorSpecializations.Any())
                 .AsQueryable();
         }
@@ -53,7 +53,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 .Include(u => u.Cccd)
                 .Include(u => u.InstructorSpecializations)
                     .ThenInclude(ins => ins.LicenceType)
-                .Include(u => u.LearningApplicationInstructors)
+                //.Include(u => u.LearningApplicationInstructors)
                 .FirstOrDefault(u => u.UserId == id);
         }
 
