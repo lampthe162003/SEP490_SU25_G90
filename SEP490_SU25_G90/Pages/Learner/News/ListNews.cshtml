@@ -8,43 +8,43 @@
 }
 
 <div class="container mt-4">
-   
-    <div class="row">
-        <div class="col-md-8">
-            @if (Model.News == null || Model.News.Count == 0)
+    <div class="row g-3">
+        @if (Model.News == null || Model.News.Count == 0)
+        {
+            <div class="alert alert-info text-center">
+                Không có tin tức hoặc thông báo nào.
+            </div>
+        }
+        else
+        {
+            @foreach (var item in Model.News)
             {
-                <div class="alert alert-info text-center">
-                    Không có tin tức hoặc thông báo nào.
-                </div>
-            }
-            else
-            {
-                foreach (var item in Model.News)
-                {
-                    <div class="row mb-4 align-items-center">
-                        <div class="col-md-4">
-                            <img src="@item.Image" class="img-fluid rounded shadow-sm" style="height:200px;object-fit:cover;" />
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card border-0 shadow-sm w-100">
-                                <div class="card-body">
-                                    <h3 class="card-title text-primary">@WebUtility.HtmlDecode(item.Title)</h3>
-                                    <p class="card-text">@WebUtility.HtmlDecode(item.ShortContent)</p>
+                <div class="col-12 col-md-6">
+                    <div class="card h-100 shadow-sm d-flex flex-column">
+                        <div class="row g-0 flex-grow-1">
+                            <div class="col-4">
+                                <img src="@item.Image" class="img-fluid rounded-start h-100 w-100" style="object-fit: cover;" alt="@item.Title">
+                            </div>
+                            <div class="col-8">
+                                <div class="h-100 d-flex flex-column justify-content-between p-3">
+                                    <div>
+                                        <h5 class="card-title text-primary">@Html.Raw(item.Title)</h5>
+                                        <div class="card-text">@Html.Raw(item.ShortContent)</div>
+                                    </div>
                                     <a asp-page="/Learner/News/DetailsNews"
                                        asp-route-id="@item.NewsId"
-                                       class="text-primary fw-bold">
+                                       class="mt-2 text-primary fw-bold">
                                         Xem chi tiết
                                     </a>
-                                  
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <hr class="my-4" />
-                }
+                </div>
             }
-        </div>
+        }
     </div>
+</div>
 
     <div class="d-flex justify-content-center mt-3">
         @if (Model.TotalPages > 1)

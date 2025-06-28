@@ -12,40 +12,34 @@
     <link rel="stylesheet" href="~/css/details-news.css" />
 }
 
-<div class="container mt-4">
-    <!-- Back button -->
-    <div class="mb-4">
-        <a asp-page="/Admins/News/ListNews" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Trở lại 
+<div class="container-fluid mt-4 px-4">
+    <!-- Nút trở lại -->
+    <div class="mb-3">
+        <a asp-page="/Admins/News/ListNews" class="btn btn-outline-secondary rounded-pill px-4">
+            <i class="bi bi-arrow-left"></i> Trở lại
         </a>
     </div>
 
-    <!-- News content card -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-body">
-            <!-- Title -->
-            <h1 class="news-title mb-3">@Model.News.Title</h1>
+   
+    <div class="card border-0 shadow-sm p-4">
+        
+        <h2 class="fw-bold text-dark mb-3">@Html.Raw(Model.News.Title)</h2>
 
-            <!-- Author and date -->
-            <div class="news-meta text-muted mb-4">
-                <span class="author">
-                    <i class="bi bi-person-circle"></i> @Model.News.AuthorName
-                </span>
-                <span class="mx-2">•</span>
-                <span class="date">
-                    <i class="bi bi-calendar"></i> @Model.News.PostTime?.ToString("dd/MM/yyyy HH:mm")
-                </span>
-            </div>
+        
+        <div class="mb-4 text-muted d-flex align-items-center">
+            <i class="bi bi-person-circle me-2"></i> @Model.News.AuthorName
+            <span class="mx-2">•</span>
+            <i class="bi bi-calendar me-2"></i> @Model.News.PostTime?.ToString("dd/MM/yyyy")
+        </div>
 
-            <!-- Image -->
-            <div class="news-image-container mb-4">
-                <img src="@Model.News.Image" class="img-fluid rounded" alt="Ảnh tin tức" />
-            </div>
+        
+        <div class="text-center mb-4">
+            <img src="@Model.News.Image" alt="Ảnh tin tức" class="img-fluid rounded" style="max-height: 400px;" />
+        </div>
 
-            <!-- Content -->
-            <div class="news-content">
-                @Html.Raw(Model.News.NewsContent)
-            </div>
+        
+        <div class="news-content fs-5 text-dark lh-lg">
+            @Html.Raw(Model.News.NewsContent)
         </div>
     </div>
-</div>
+</>
