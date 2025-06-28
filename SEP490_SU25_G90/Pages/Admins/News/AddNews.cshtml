@@ -1,0 +1,38 @@
+﻿@page
+@model SEP490_SU25_G90.Pages.Admins.News.AddNewsModel
+
+@{
+    ViewData["Title"] = "Thêm tin tức";
+    Layout = "~/Pages/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Thêm Tin Tức</h2>
+
+<form method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label class="form-label">Tiêu đề</label>
+        <input asp-for="Input.Title" class="form-control" />
+        <span asp-validation-for="Input.Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Nội dung</label>
+        <textarea asp-for="Input.NewsContent" class="form-control ckeditor"></textarea>
+        <span asp-validation-for="Input.NewsContent" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Ảnh đại diện</label>
+        <input type="file" asp-for="Input.Image" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Đăng tin</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replaceAll('ckeditor');
+    </script>
+}

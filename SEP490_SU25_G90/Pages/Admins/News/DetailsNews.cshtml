@@ -24,7 +24,7 @@
     <div class="card border-0 shadow-sm">
         <div class="card-body">
             <!-- Title -->
-            <h1 class="news-title mb-3">@Model.News.Title</h1>
+            <h1 class="news-title mb-3"> @Html.Raw(Model.News.Title)</h1>
 
             <!-- Author and date -->
             <div class="news-meta text-muted mb-4">
@@ -33,7 +33,7 @@
                 </span>
                 <span class="mx-2">•</span>
                 <span class="date">
-                    <i class="bi bi-calendar"></i> @Model.News.PostTime?.ToString("dd/MM/yyyy HH:mm")
+                    <i class="bi bi-calendar"></i> @Model.News.PostTime?.ToString("dd/MM/yyyy")
                 </span>
             </div>
 

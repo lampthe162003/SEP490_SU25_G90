@@ -36,5 +36,31 @@ namespace SEP490_SU25_G90.Pages.Admins.News
             News = items;
             TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
         }
+
+        public async Task<IActionResult> OnPostDeleteAsync(int id, string imagePath)
+        {
+            var success = await _iNewsService.DeleteNewsAsync(id);
+
+            if (success)
+            {
+                // Xóa ảnh nếu tồn tại
+                if (!string.IsNullOrWhiteSpace(imagePath))
+                {
+                    var imageFullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", imagePath.TrimStart('/'));
+                    if (System.IO.File.Exists(imageFullPath))
+                    {
+                        System.IO.File.Delete(imageFullPath);
+                    }
+                }
+
+                TempData["SuccessMessage"] = "Xóa tin tức thành công.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Không tìm thấy tin tức để xóa.";
+            }
+
+            return RedirectToPage();
+        }
     }
 }

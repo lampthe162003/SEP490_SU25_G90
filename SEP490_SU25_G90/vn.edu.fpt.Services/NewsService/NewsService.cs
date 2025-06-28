@@ -45,8 +45,44 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.NewsService
         }
         private async Task<string?> SaveImageAsync(IFormFile? file)
         {
-            if (file == null) return null;
+            var news = await _newsRepository.GetNewsByIdAsync(id);
+            if (news == null) return false;
 
+            news.Title = request.Title;
+            news.NewsContent = request.NewsContent;
+
+           
+            news.Image = await SaveImageAsync(newImage, news.Image);
+
+            return await _newsRepository.EditNewsAsync(news);
+        }
+
+        public async Task<bool> DeleteNewsAsync(int id)
+        {
+            var news = await _newsRepository.GetNewsByIdAsync(id);
+            if (news == null)
+            {
+                return false;
+            }
+
+            return await _newsRepository.DeleteNewsAsync(news);
+        }
+
+        private async Task<string?> SaveImageAsync(IFormFile? file, string? oldImagePath = null)
+        {
+            if (file == null) return oldImagePath;
+
+            
+            if (!string.IsNullOrEmpty(oldImagePath))
+            {
+                var fullOldPath = Path.Combine(_env.WebRootPath, oldImagePath.TrimStart('/').Replace("/", Path.DirectorySeparatorChar.ToString()));
+                if (System.IO.File.Exists(fullOldPath))
+                {
+                    System.IO.File.Delete(fullOldPath);
+                }
+            }
+
+          
             var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
             var folder = Path.Combine(_env.WebRootPath, "uploads", "news");
             Directory.CreateDirectory(folder);
@@ -57,6 +93,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.NewsService
 
             return "/uploads/news/" + fileName;
         }
+
     }
 }
 
