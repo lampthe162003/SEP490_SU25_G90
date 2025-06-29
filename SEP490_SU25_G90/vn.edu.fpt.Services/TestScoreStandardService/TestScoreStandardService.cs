@@ -24,7 +24,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestScoreStandardService
             return testScoreStandardRepository
                 .GetAll()
                 .Include(x => x.LicenceType)
-                .ThenInclude(x => x.LearningApplications.Where(y => y.LearningId == learningApplicationid))
+                .Where(x => x.LicenceType.LearningApplications.Any(x => x.LearningId == learningApplicationid))
                 .ToList();
         }
     }

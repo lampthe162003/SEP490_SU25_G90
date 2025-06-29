@@ -12,6 +12,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.TestApplicationRepository
             _context = context;
         }
 
+        public IQueryable<TestApplication> GetAll()
+        {
+            return _context.TestApplications.AsQueryable();
+        }
         public async Task<List<TestApplication>> GetAllTestApplicationAsync()
         {
             return await _context.TestApplications
@@ -52,6 +56,13 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.TestApplicationRepository
         public async Task<TestApplication> Create(TestApplication testApplication)
         {
             testApplication = _context.TestApplications.Add(testApplication).Entity;
+            await _context.SaveChangesAsync();
+            return testApplication;
+        }
+
+        public async Task<TestApplication> Update(TestApplication testApplication)
+        {
+            _context.Entry(testApplication).CurrentValues.SetValues(testApplication);
             await _context.SaveChangesAsync();
             return testApplication;
         }

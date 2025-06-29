@@ -2,11 +2,17 @@
 
 namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects.TestApplication
 {
-    public class CreateTestApplicationRequest
+    public class CreatUpdateTestApplicationRequest
     {
-        public CreateTestApplicationRequest()
+        public CreatUpdateTestApplicationRequest()
         {
         }
+
+        public string? FullName { get; set; }
+
+        public string? DateOfBirth { get; set; }
+
+        public string? LicenseType { get; set; }
 
         [Display(Name = "CCCD")]
         public string? CCCD { get; set; } = null!;
@@ -24,24 +30,16 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects.TestApplication
         [Display(Name = "Ngày thi")]
         public DateOnly? ExamDate { get; set; }
 
-        [Required(ErrorMessage = "Điểm thi lý thuyết không được để trống")]
         [Display(Name = "Điểm thi lý thuyết")]
-        [Range(0, int.MaxValue, ErrorMessage = "Điểm thi phải lớn hơn 0")]
         public int? TheoryScore { get; set; }
 
-        [Required(ErrorMessage = "Điểm thi mô phỏng không được để trống")]
         [Display(Name = "Điểm thi mô phỏng")]
-        [Range(0, int.MaxValue, ErrorMessage = "Điểm thi phải lớn hơn 0")]
         public int? SimulationScore { get; set; }
 
-        [Required(ErrorMessage = "Điểm thi sa hình không được để trống")]
         [Display(Name = "Điểm thi sa hình")]
-        [Range(0, int.MaxValue, ErrorMessage = "Điểm thi phải lớn hơn 0")]
         public int? ObstacleScore { get; set; }
 
-        [Required(ErrorMessage = "Điểm thi đường trường không được để trống")]
         [Display(Name = "Điểm thi đường trường")]
-        [Range(0, int.MaxValue, ErrorMessage = "Điểm thi phải lớn hơn 0")]
         public int? PracticalScore { get; set; }
 
         [Display(Name = "Tài liệu đính kèm")]
@@ -49,6 +47,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects.TestApplication
 
         [Display(Name = "Ghi chú")]
         public string? Note { get; set; }
+
+        public string? ResultImageUrl;
 
     }
 }
