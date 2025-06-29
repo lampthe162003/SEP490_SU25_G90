@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.TestApplication;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.TestApplicationRepository;
 using System.Collections.Generic;

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using SEP490_SU25_G90.vn.edu.fpt.Commons;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.TestApplication;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
@@ -21,7 +22,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
                 string.Join(" ", new[] { src.FirstName, src.MiddleName, src.LastName }
                 .Where(name => !string.IsNullOrWhiteSpace(name)))));
 
-            CreateMap<TestApplication, TestApplicationListInformationResponse>()
+            CreateMap<Models.TestApplication, TestApplicationListInformationResponse>()
                 .ForMember(dest => dest.TestId, opt => opt.MapFrom(src => src.TestId))
                 .ForMember(dest => dest.ExamDate, opt => opt.MapFrom(src => src.ExamDate))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
