@@ -41,8 +41,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.User
             {
                 var user = _mapper.Map<vn.edu.fpt.Models.User>(request);
 
-                user.PasswordHash = _hasher.HashPassword(user, request.PasswordHash);
-
                 var createdUser = await _userRepository.Create(user);
 
                 var userRole = new UserRole

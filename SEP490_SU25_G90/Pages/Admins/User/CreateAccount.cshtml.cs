@@ -43,7 +43,7 @@ namespace SEP490_SU25_G90.Pages.Admins.User
         [Range(1, 3, ErrorMessage = "Hãy chọn vai trò hợp lệ")]
         [Display(Name = "Vai trò")]
         [Required(ErrorMessage = "Hãy chọn vai trò hợp lệ")]
-        public int Role {  get; set; }
+        public byte Role {  get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -62,8 +62,7 @@ namespace SEP490_SU25_G90.Pages.Admins.User
                 return Page();
             }
 
-            _context.Users.Add(_mapper.Map<vn.edu.fpt.Models.User>(User));
-            await _context.SaveChangesAsync();
+            await _userService.CreateAccount(User, Role);
 
             return RedirectToPage("./UserList");
         }
