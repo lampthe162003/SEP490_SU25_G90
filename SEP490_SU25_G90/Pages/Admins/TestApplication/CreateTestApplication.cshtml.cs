@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.TestApplication;
+using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication;
 using System.Text.Json;
 
@@ -14,9 +15,13 @@ namespace SEP490_SU25_G90.Pages.Admins.TestApplication
         public CreateTestApplicationRequest RequestModel { get; set; } = new();
 
         private readonly ITestApplicationService _testApplicationService;
-        public CreateTestApplicationModel(ITestApplicationService testApplicationService)
+        private readonly ILearningApplicationService learningApplicationService;
+        public CreateTestApplicationModel(ITestApplicationService testApplicationService,
+            ILearningApplicationService learningApplicationService
+            )
         {
             _testApplicationService = testApplicationService;
+            this.learningApplicationService = learningApplicationService;
         }
         public void OnGet()
         {
@@ -34,19 +39,17 @@ namespace SEP490_SU25_G90.Pages.Admins.TestApplication
         public async Task<IActionResult> OnPostSearchAsync([FromBody] CreateTestApplicationSearchRequest search)
         {
 
-            // TODO: Lấy dữ liệu từ DB theo CCCD
-            var results = new List<object>
-            {
-            new {
-                text = $"Đỗ Đức Tuấn - B1",
-                cccd = search.cccd,
-                fullname = "Đỗ Đức Tuấn",
-                birthday = "31/10/2001",
-                licenseType = "B1"
-            }
-            };
+            var learningApplicationInfo = await learningApplicationService
+              .FindByCCCD(search.cccd, x => x.TestEligibility == true && !x.TestApplications.Any());
 
-            return new JsonResult(results);
+            return new JsonResult(learningApplicationInfo.Select(x => new
+            {
+                cccd = search.cccd,
+                fullName = x.LearnerFullName,
+                id = x.LearningId,
+                licenseType = x.LicenceTypeName,
+                dateOfBirth = x.LearnerDob.HasValue ? x.LearnerDob.Value.ToString("yyyy/MM/dd") : null
+            }));
         }
     }
 }

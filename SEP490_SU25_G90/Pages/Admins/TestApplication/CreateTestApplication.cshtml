@@ -16,20 +16,29 @@
         <form method="post" enctype="multipart/form-data">
             <div class="row">
                 <div class="form-group col-md-6">
-                    <label asp-for="RequestModel.CCCD"></label>
-                    <div class="input-group">
-                        <input asp-for="RequestModel.CCCD" class="form-control" id="cccdInput" />
-                        <div class="input-group-append">
-                            <button type="button" onclick="searchByCCCD()" class="btn btn-outline-primary">Tìm</button>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label asp-for="RequestModel.CCCD"></label>
+                            <div class="input-group">
+                                <input asp-for="RequestModel.CCCD" class="form-control" id="cccdInput" />
+                                <div class="input-group-append">
+                                    <button type="button" onclick="searchByCCCD()" class="btn btn-outline-primary">Tìm</button>
+                                </div>
+                                <span asp-validation-for="RequestModel.CCCD" class="text-danger" id="cccdError"></span>
+                            </div>
+                        </div>
+                        <div id="searchResults" class="col-md-6">
+                            <label>Hồ sơ khả dụng:</label>
+                            <select asp-for="RequestModel.LearningApplicationId"
+                                    class="form-control" id="resultDropdown" onchange="fillInfoFromDropdown(this)">
+                                <option value="">-- Chọn --</option>
+                            </select>
+                            <span asp-validation-for="RequestModel.LearningApplicationId" class="text-danger" id="cccdError"></span>
                         </div>
                     </div>
-                    <span asp-validation-for="RequestModel.CCCD" class="text-danger" id="cccdError"></span>
-                    <div id="searchResults" class="mt-2" style="display:none;">
-                        <label>Kết quả tìm kiếm:</label>
-                        <select class="form-control" id="resultDropdown" onchange="fillInfoFromDropdown(this)">
-                            <option value="">-- Chọn --</option>
-                        </select>
-                    </div>
+
+
+
                 </div>
                 <div class="form-group col-md-6">
                     <label>Ngày sinh:</label>
@@ -109,6 +118,7 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
+        let options = [];
         function searchByCCCD() {
             const cccd = document.getElementById("cccdInput").value;
             const errorElem = document.getElementById("cccdError");
@@ -132,13 +142,14 @@
             .then(data => {
                 const dropdown = document.getElementById("resultDropdown");
                 dropdown.innerHTML = '<option value="">-- Chọn --</option>';
+                options = data;
                 data.forEach(item => {
                     const opt = document.createElement("option");
-                    opt.value = JSON.stringify(item);
-                    opt.textContent = item.text;
+                    opt.value = item.id;
+                    opt.textContent = `${item.fullName} - ${item.dateOfBirth} - Hạng ${item.licenseType}`;
                     dropdown.appendChild(opt);
                 });
-                document.getElementById("searchResults").style.display = "block";
+                dropdown.click();
             })
             .catch(err => {
                 console.error(err);
@@ -147,23 +158,12 @@
         }
 
         function fillInfoFromDropdown(selectEl) {
-            console.log(selectEl.value);
             const selected = selectEl.value;
-             let info
-            try{
-                info = JSON.parse(selected);
-            } catch{
-                info = {
-                    cccd: "",
-                    fullname: "",
-                    birthday: "",
-                    licenseType: ""
-                }
-            }
-
+            const info = options.find(x => x.id == selected);
+            console.log(selected, info)
             document.getElementById("cccdInput").value = info?.cccd ?? "";
-            document.getElementById("fullname").value = info?.fullname ?? "";
-            document.getElementById("birthday").value = info?.birthday ?? "";
+            document.getElementById("fullname").value = info?.fullName ?? "";
+            document.getElementById("birthday").value = info?.dateOfBirth ?? "";
             document.getElementById("licenseType").value = info?.licenseType ?? "";
         }
     </script>

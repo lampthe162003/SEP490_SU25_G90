@@ -8,9 +8,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects.TestApplication
         {
         }
 
-        [Required(ErrorMessage = "CCCD không được để trống")]
         [Display(Name = "CCCD")]
         public string? CCCD { get; set; } = null!;
+
+        [Required(ErrorMessage = "Vui lòng chọn hồ sơ khóa học cần thi")]
+        public int? LearningApplicationId { get; set; }
 
         [DataType(DataType.Date)]
         [Required(ErrorMessage = "Ngày nộp hồ sơ không được để trống")]

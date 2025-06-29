@@ -89,6 +89,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
             return result;
         }
 
+        public Task<IQueryable<LearningApplication>> GetAllAsync()
+        {
+            return Task.FromResult(_context.LearningApplications.AsQueryable());
+        }
+
         public async Task<LearningApplicationsResponse?> GetDetailAsync(int id)
         {
             var la = await _context.LearningApplications
