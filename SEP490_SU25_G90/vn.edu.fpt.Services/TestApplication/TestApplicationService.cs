@@ -1,11 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.TestApplication;
-using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.TestApplicationRepository;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using static Azure.Core.HttpHeader;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
 {
@@ -43,7 +39,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
                 TheoryScore = request.TheoryScore,
                 Status = null,
                 ResultImageUrl = request.Attachment == null ? null : path,
-                SignedAt = request.SubmitProfileDate.HasValue ? request.SubmitProfileDate.Value.ToDateTime(TimeOnly.MinValue) : null,
+                //SignedAt = request.SubmitProfileDate.HasValue ? request.SubmitProfileDate.Value.ToDateTime(TimeOnly.MinValue) : null,
             };
             return await _testApplicationRepository.Create(testApplication);
         }
@@ -86,7 +82,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
                 PracticalScore = obj.PracticalScore,
                 SimulationScore = obj.SimulationScore,
                 TheoryScore = obj.TheoryScore,
-                SubmitProfileDate = obj.SignedAt.HasValue ? DateOnly.FromDateTime(obj.SignedAt.Value) : null,
+                //SubmitProfileDate = obj.SignedAt.HasValue ? DateOnly.FromDateTime(obj.SignedAt.Value) : null,
                 DateOfBirth = obj.Learning.Learner.Dob.HasValue ? obj.Learning.Learner.Dob.Value.ToString("yyyy-MM-dd") : null,
                 FullName = obj.Learning == null || obj.Learning.Learner == null
                     ? string.Empty
@@ -119,7 +115,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
 
             raw.ResultImageUrl = request.Attachment == null ? raw.ResultImageUrl : path;
             raw.Notes = request.Note;
-            raw.SignedAt = request.SubmitProfileDate.HasValue ? request.SubmitProfileDate.Value.ToDateTime(TimeOnly.MinValue) : null;
+            //raw.SignedAt = request.SubmitProfileDate.HasValue ? request.SubmitProfileDate.Value.ToDateTime(TimeOnly.MinValue) : null;
             raw.Notes = request.Note;
             raw.ObstacleScore = request.ObstacleScore;
             raw.PracticalScore = request.PracticalScore;
