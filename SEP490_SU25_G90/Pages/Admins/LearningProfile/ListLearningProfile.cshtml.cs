@@ -4,17 +4,18 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
+using SEP490_SU25_G90.vn.edu.fpt.Services.User;
 
 namespace SEP490_SU25_G90.Pages.Admins.LearningProfile
 {
     //[Authorize(Roles = "admin")]
     public class ListLearningProfileModel : PageModel
     {
-        private readonly vn.edu.fpt.Services.InstructorService.IInstructorService _instructorService;
+        private readonly IUserService _userService;
 
-        public ListLearningProfileModel(vn.edu.fpt.Services.InstructorService.IInstructorService instructorService)
+        public ListLearningProfileModel(IUserService userService)
         {
-            _instructorService = instructorService;
+            _userService = userService;
         }
 
         public IList<LearnerUserResponse> LearningProfiles { get; set; } = new List<LearnerUserResponse>();
@@ -54,18 +55,23 @@ namespace SEP490_SU25_G90.Pages.Admins.LearningProfile
         {
             try
             {
-                // Build search string from name and cccd
-                string? searchString = null;
-                if (!string.IsNullOrEmpty(SearchName) || !string.IsNullOrEmpty(SearchCccd))
-                {
-                    var searchTerms = new List<string>();
-                    if (!string.IsNullOrEmpty(SearchName)) searchTerms.Add(SearchName);
-                    if (!string.IsNullOrEmpty(SearchCccd)) searchTerms.Add(SearchCccd);
-                    searchString = string.Join(" ", searchTerms);
-                }
-
                 // Get all learners
-                var allProfiles = await _instructorService.GetAllLearnersAsync(searchString);
+                var allProfiles = await _userService.GetAllLearnersAsync();
+                
+                // Apply search filters
+                if (!string.IsNullOrEmpty(SearchName))
+                {
+                    allProfiles = allProfiles.Where(p => 
+                        p.FullName.Contains(SearchName, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+                }
+                
+                if (!string.IsNullOrEmpty(SearchCccd))
+                {
+                    allProfiles = allProfiles.Where(p => 
+                        p.CccdNumber.Contains(SearchCccd, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+                }
                 
                 // Calculate pagination
                 TotalRecords = allProfiles.Count;
