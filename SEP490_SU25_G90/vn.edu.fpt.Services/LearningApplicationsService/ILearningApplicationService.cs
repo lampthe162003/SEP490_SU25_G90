@@ -8,6 +8,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService
         public List<LearningApplication> GetAll();
         Task<List<LearningApplicationsResponse>> GetAllAsync(string? searchString = null);
         Task<LearningApplicationsResponse?> GetDetailAsync(int id);
+        Task AddAsync(LearningApplication entity);
     }
 }
 
