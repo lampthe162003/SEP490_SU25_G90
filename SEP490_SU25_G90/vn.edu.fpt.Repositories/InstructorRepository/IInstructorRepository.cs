@@ -1,3 +1,4 @@
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
@@ -10,6 +11,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
         User? GetInstructorById(int id);
         void Create(User instructor);
         void Update(User instructor);
+        void UpdateInstructorInfo(int instructorId, UpdateInstructorRequest request);
         void Delete(int id);
         void AddSpecialization(InstructorSpecialization specialization);
         void RemoveSpecialization(int instructorId, byte licenceTypeId);
