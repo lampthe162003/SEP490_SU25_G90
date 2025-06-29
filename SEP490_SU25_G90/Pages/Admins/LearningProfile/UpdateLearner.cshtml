@@ -1,0 +1,628 @@
+@page
+@model SEP490_SU25_G90.Pages.Admins.LearningProfile.UpdateLearnerModel
+@{
+    ViewData["Title"] = "Cập nhật thông tin học viên";
+    Layout = "~/Pages/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="/Admins/LearningProfile/ListLearningProfile" class="text-decoration-none">
+                                    <i class="fas fa-graduation-cap me-1"></i>
+                                    Quản lý Học viên
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">Cập nhật thông tin</li>
+                        </ol>
+                    </nav>
+                    <h2 class="h3 mb-0">
+                        <i class="fas fa-user-edit text-primary me-2"></i>
+                        Cập nhật thông tin học viên
+                    </h2>
+                </div>
+            </div>
+
+            <!-- Alert Messages -->
+            @if (!string.IsNullOrEmpty(Model.Message))
+            {
+                <div class="alert alert-@(Model.MessageType == "success" ? "success" : "danger") alert-dismissible fade show" role="alert">
+                    <i class="fas fa-@(Model.MessageType == "success" ? "check-circle" : "exclamation-triangle") me-2"></i>
+                    @Model.Message
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <!-- Update Form -->
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-edit me-2"></i>
+                        Thông tin học viên
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-page-handler="Post">
+                        <input type="hidden" asp-for="UpdateRequest.UserId" />
+                        
+                        <div class="row">
+                            <!-- Left Column - Basic Information -->
+                            <div class="col-md-12 mb-4">
+                                <div class="card">
+                                    <div class="card-header bg-info text-white">
+                                        <h6 class="card-title mb-0">
+                                            <i class="fas fa-user me-2"></i>
+                                            Thông tin cá nhân
+                                        </h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-4 mb-3">
+                                                <label asp-for="UpdateRequest.FirstName" class="form-label">
+                                                    <i class="fas fa-user me-1"></i>
+                                                    Họ <span class="text-danger">*</span>
+                                                </label>
+                                                <input asp-for="UpdateRequest.FirstName" class="form-control" />
+                                                <span asp-validation-for="UpdateRequest.FirstName" class="text-danger"></span>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label asp-for="UpdateRequest.MiddleName" class="form-label">
+                                                    <i class="fas fa-user me-1"></i>
+                                                    Tên đệm
+                                                </label>
+                                                <input asp-for="UpdateRequest.MiddleName" class="form-control" />
+                                                <span asp-validation-for="UpdateRequest.MiddleName" class="text-danger"></span>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label asp-for="UpdateRequest.LastName" class="form-label">
+                                                    <i class="fas fa-user me-1"></i>
+                                                    Tên <span class="text-danger">*</span>
+                                                </label>
+                                                <input asp-for="UpdateRequest.LastName" class="form-control" />
+                                                <span asp-validation-for="UpdateRequest.LastName" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label asp-for="UpdateRequest.Email" class="form-label">
+                                                    <i class="fas fa-envelope me-1"></i>
+                                                    Email <span class="text-danger">*</span>
+                                                </label>
+                                                <input asp-for="UpdateRequest.Email" class="form-control" type="email" />
+                                                <span asp-validation-for="UpdateRequest.Email" class="text-danger"></span>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label asp-for="UpdateRequest.Phone" class="form-label">
+                                                    <i class="fas fa-phone me-1"></i>
+                                                    Số điện thoại
+                                                </label>
+                                                <input asp-for="UpdateRequest.Phone" class="form-control" type="tel" />
+                                                <span asp-validation-for="UpdateRequest.Phone" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label asp-for="UpdateRequest.Dob" class="form-label">
+                                                    <i class="fas fa-calendar me-1"></i>
+                                                    Ngày sinh
+                                                </label>
+                                                <input asp-for="UpdateRequest.Dob" class="form-control" type="date" />
+                                                <span asp-validation-for="UpdateRequest.Dob" class="text-danger"></span>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label asp-for="UpdateRequest.Gender" class="form-label">
+                                                    <i class="fas fa-venus-mars me-1"></i>
+                                                    Giới tính
+                                                </label>
+                                                <select asp-for="UpdateRequest.Gender" class="form-select">
+                                                    <option value="">-- Chọn giới tính --</option>
+                                                    <option value="true">Nam</option>
+                                                    <option value="false">Nữ</option>
+                                                </select>
+                                                <span asp-validation-for="UpdateRequest.Gender" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                        <!-- Documents Section -->
+                        <div class="row">
+                            <!-- CCCD Information -->
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header bg-warning text-dark">
+                                        <h6 class="card-title mb-0">
+                                            <i class="fas fa-id-card me-2"></i>
+                                            Thông tin CCCD
+                                        </h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label asp-for="UpdateRequest.CccdNumber" class="form-label">
+                                                <i class="fas fa-id-card me-1"></i>
+                                                Số CCCD
+                                            </label>
+                                            <input asp-for="UpdateRequest.CccdNumber" class="form-control" 
+                                                   id="cccdNumber" maxlength="12" placeholder="Nhập 12 chữ số CCCD" />
+                                            <span asp-validation-for="UpdateRequest.CccdNumber" class="text-danger"></span>
+                                            <div class="form-text">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Chỉ nhập số, tối đa 12 chữ số
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label asp-for="UpdateRequest.CccdImageFront" class="form-label">
+                                                <i class="fas fa-image me-1"></i>
+                                                Ảnh mặt trước CCCD
+                                            </label>
+                                            <input asp-for="UpdateRequest.CccdImageFront" class="form-control image-url-input" 
+                                                   type="url" placeholder="Dán URL ảnh mặt trước"
+                                                   data-preview-target="cccdFrontPreview" />
+                                            <span asp-validation-for="UpdateRequest.CccdImageFront" class="text-danger"></span>
+                                            
+                                            <!-- Preview Container Front -->
+                                            <div class="mt-2 preview-container" id="cccdFrontPreview">
+                                                @if (!string.IsNullOrEmpty(Model.UpdateRequest.CccdImageFront))
+                                                {
+                                                    <img src="@Model.UpdateRequest.CccdImageFront" 
+                                                         alt="Mặt trước CCCD" 
+                                                         class="img-thumbnail preview-image" 
+                                                         style="max-width: 200px; max-height: 130px; cursor: pointer;"
+                                                         onclick="showImagePreview('@Model.UpdateRequest.CccdImageFront', 'Mặt trước CCCD')" />
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label asp-for="UpdateRequest.CccdImageBack" class="form-label">
+                                                <i class="fas fa-image me-1"></i>
+                                                Ảnh mặt sau CCCD
+                                            </label>
+                                            <input asp-for="UpdateRequest.CccdImageBack" class="form-control image-url-input" 
+                                                   type="url" placeholder="Dán URL ảnh mặt sau"
+                                                   data-preview-target="cccdBackPreview" />
+                                            <span asp-validation-for="UpdateRequest.CccdImageBack" class="text-danger"></span>
+                                            
+                                            <!-- Preview Container Back -->
+                                            <div class="mt-2 preview-container" id="cccdBackPreview">
+                                                @if (!string.IsNullOrEmpty(Model.UpdateRequest.CccdImageBack))
+                                                {
+                                                    <img src="@Model.UpdateRequest.CccdImageBack" 
+                                                         alt="Mặt sau CCCD" 
+                                                         class="img-thumbnail preview-image" 
+                                                         style="max-width: 200px; max-height: 130px; cursor: pointer;"
+                                                         onclick="showImagePreview('@Model.UpdateRequest.CccdImageBack', 'Mặt sau CCCD')" />
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Health Certificate Information -->
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header bg-success text-white">
+                                        <h6 class="card-title mb-0">
+                                            <i class="fas fa-file-medical me-2"></i>
+                                            Giấy khám sức khỏe
+                                        </h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label asp-for="UpdateRequest.HealthCertificateImageUrl" class="form-label">
+                                                <i class="fas fa-image me-1"></i>
+                                                Ảnh giấy khám sức khỏe
+                                            </label>
+                                            <input asp-for="UpdateRequest.HealthCertificateImageUrl" class="form-control image-url-input" 
+                                                   type="url" placeholder="Dán URL ảnh giấy khám sức khỏe"
+                                                   data-preview-target="healthCertPreview" />
+                                            <span asp-validation-for="UpdateRequest.HealthCertificateImageUrl" class="text-danger"></span>
+                                            <div class="form-text">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Giấy khám sức khỏe có hiệu lực cho việc học lái xe
+                                            </div>
+                                            
+                                            <!-- Preview Container Health Certificate -->
+                                            <div class="mt-2 preview-container" id="healthCertPreview">
+                                                @if (!string.IsNullOrEmpty(Model.UpdateRequest.HealthCertificateImageUrl))
+                                                {
+                                                    <img src="@Model.UpdateRequest.HealthCertificateImageUrl" 
+                                                         alt="Giấy khám sức khỏe" 
+                                                         class="img-thumbnail preview-image" 
+                                                         style="max-width: 200px; max-height: 130px; cursor: pointer;"
+                                                         onclick="showImagePreview('@Model.UpdateRequest.HealthCertificateImageUrl', 'Giấy khám sức khỏe')" />
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="card-footer bg-light">
+                            <div class="d-flex justify-content-between">
+                                <a href="/Admins/LearningProfile/ListLearningProfile" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>
+                                    Quay lại
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>
+                                    Cập nhật thông tin
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Image Preview Modal -->
+<div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-labelledby="imagePreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imagePreviewModalLabel">Xem ảnh</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div id="imageLoading" class="text-center mb-3">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Đang tải...</span>
+                    </div>
+                    <p class="text-muted mt-2">Đang tải hình ảnh...</p>
+                </div>
+                <img id="previewImage" src="" alt="" class="img-fluid" style="display: none;">
+                <div id="imageError" class="alert alert-danger" style="display: none;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Không thể tải hình ảnh. Vui lòng kiểm tra lại URL.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="openImageInNewTab()">
+                    <i class="fas fa-external-link-alt me-2"></i>
+                    Mở trong tab mới
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .preview-image {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 2px solid #e9ecef;
+        }
+        
+        .preview-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-color: #0d6efd;
+        }
+        
+        .preview-container {
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #e9ecef;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        
+        .preview-container:not(:empty) {
+            background-color: transparent;
+            border-style: solid;
+            border-color: #dee2e6;
+        }
+        
+        .card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+            border: 0;
+        }
+        
+        .card:hover {
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            border-bottom: 0;
+            font-weight: 600;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+        
+        .image-url-input:focus + .form-text {
+            color: #0d6efd !important;
+        }
+        
+        .text-danger {
+            font-size: 0.875em;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-text {
+            font-size: 0.8rem;
+            transition: color 0.3s ease;
+        }
+        
+        .alert-sm {
+            padding: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+        
+        /* Loading animation for preview containers */
+        .preview-container .spinner-border {
+            color: #0d6efd;
+        }
+        
+        /* Improved button styles */
+        .btn {
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Card header icons */
+        .card-header i {
+            opacity: 0.9;
+        }
+        
+        /* Form layout improvements */
+        .row .col-md-4,
+        .row .col-md-6 {
+            margin-bottom: 0;
+        }
+        
+      
+    </style>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        let currentImageUrl = '';
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // CCCD number validation
+            const cccdInput = document.getElementById('cccdNumber');
+            if (cccdInput) {
+                cccdInput.addEventListener('input', function(e) {
+                    // Remove any non-digit characters
+                    e.target.value = e.target.value.replace(/[^\d]/g, '');
+                    
+                    // Limit to 12 digits
+                    if (e.target.value.length > 12) {
+                        e.target.value = e.target.value.substring(0, 12);
+                    }
+                });
+
+                cccdInput.addEventListener('keypress', function(e) {
+                    // Only allow numbers and control keys
+                    if (!/^\d$/.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                        e.preventDefault();
+                    }
+                });
+            }
+            
+            // Real-time image preview for all image URL inputs
+            const imageUrlInputs = document.querySelectorAll('.image-url-input');
+            imageUrlInputs.forEach(function(input) {
+                // Add debounce for better performance
+                let debounceTimer;
+                
+                input.addEventListener('input', function(e) {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(function() {
+                        updateImagePreview(input);
+                    }, 500); // Wait 500ms after user stops typing
+                });
+                
+                input.addEventListener('paste', function(e) {
+                    // Handle paste event with slight delay
+                    setTimeout(function() {
+                        updateImagePreview(input);
+                    }, 100);
+                });
+            });
+            
+            // Auto dismiss alerts after 5 seconds
+            const alerts = document.querySelectorAll('.alert:not(.alert-permanent)');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 5000);
+            });
+        });
+        
+        // Function to update image preview
+        function updateImagePreview(input) {
+            const url = input.value.trim();
+            const previewTargetId = input.getAttribute('data-preview-target');
+            const previewContainer = document.getElementById(previewTargetId);
+            
+            if (!previewContainer) return;
+            
+            // Clear existing preview
+            previewContainer.innerHTML = '';
+            
+            if (!url) return;
+            
+            // Validate URL format
+            try {
+                new URL(url);
+            } catch (e) {
+                // Invalid URL, don't show preview
+                return;
+            }
+            
+            // Show loading state
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'text-center p-2';
+            loadingDiv.innerHTML = `
+                <div class="spinner-border spinner-border-sm text-primary" role="status">
+                    <span class="visually-hidden">Đang tải...</span>
+                </div>
+                <small class="text-muted d-block mt-1">Đang tải ảnh...</small>
+            `;
+            previewContainer.appendChild(loadingDiv);
+            
+            // Create image element to test loading
+            const img = new Image();
+            
+            img.onload = function() {
+                // Remove loading state
+                previewContainer.innerHTML = '';
+                
+                // Create preview image
+                const previewImg = document.createElement('img');
+                previewImg.src = url;
+                previewImg.alt = getImageAltText(previewTargetId);
+                previewImg.className = 'img-thumbnail preview-image';
+                previewImg.style.cssText = 'max-width: 200px; max-height: 130px; cursor: pointer; transition: transform 0.2s ease;';
+                previewImg.onclick = function() {
+                    showImagePreview(url, getImageAltText(previewTargetId));
+                };
+                
+                // Add hover effect
+                previewImg.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05)';
+                });
+                previewImg.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+                
+                previewContainer.appendChild(previewImg);
+            };
+            
+            img.onerror = function() {
+                // Remove loading state and show error
+                previewContainer.innerHTML = `
+                    <div class="alert alert-warning alert-sm p-2 mb-0">
+                        <i class="fas fa-exclamation-triangle me-1"></i>
+                        <small>Không thể tải ảnh. Vui lòng kiểm tra URL.</small>
+                    </div>
+                `;
+            };
+            
+            // Start loading
+            img.src = url;
+        }
+        
+        // Helper function to get appropriate alt text
+        function getImageAltText(previewTargetId) {
+            switch (previewTargetId) {
+                case 'cccdFrontPreview':
+                    return 'Mặt trước CCCD';
+                case 'cccdBackPreview':
+                    return 'Mặt sau CCCD';
+                case 'healthCertPreview':
+                    return 'Giấy khám sức khỏe';
+                default:
+                    return 'Hình ảnh';
+            }
+        }
+        
+        // Image preview functionality
+        function showImagePreview(imageUrl, title) {
+            if (!imageUrl) return;
+            
+            currentImageUrl = imageUrl;
+            document.getElementById('imagePreviewModalLabel').textContent = title;
+            
+            // Reset states
+            document.getElementById('imageLoading').style.display = 'block';
+            document.getElementById('previewImage').style.display = 'none';
+            document.getElementById('imageError').style.display = 'none';
+            
+            // Create new image to test loading
+            const img = new Image();
+            img.onload = function() {
+                document.getElementById('previewImage').src = imageUrl;
+                document.getElementById('previewImage').alt = title;
+                document.getElementById('imageLoading').style.display = 'none';
+                document.getElementById('previewImage').style.display = 'block';
+            };
+            img.onerror = function() {
+                document.getElementById('imageLoading').style.display = 'none';
+                document.getElementById('imageError').style.display = 'block';
+            };
+            img.src = imageUrl;
+            
+            new bootstrap.Modal(document.getElementById('imagePreviewModal')).show();
+        }
+        
+        function openImageInNewTab() {
+            if (currentImageUrl) {
+                window.open(currentImageUrl, '_blank');
+            }
+        }
+        
+        // Form validation
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var forms = document.getElementsByClassName('needs-validation');
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+        
+        // Close modal on ESC key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('imagePreviewModal'));
+                if (modal) {
+                    modal.hide();
+                }
+            }
+        });
+    </script>
+} 
