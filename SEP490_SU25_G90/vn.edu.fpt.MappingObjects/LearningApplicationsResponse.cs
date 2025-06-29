@@ -37,6 +37,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
 
         public string? InstructorFullName { get; set; }
 
+        // Danh sách lớp học viên đang tham gia
+        public List<LearnerClassInfo> LearnerClasses { get; set; } = new List<LearnerClassInfo>();
+
         [Required(ErrorMessage = "Ngày đăng ký là bắt buộc")]
         [DataType(DataType.Date)]
         public DateTime? SubmittedAt { get; set; }
