@@ -27,7 +27,7 @@ public class LearningApplicationService : ILearningApplicationService
             result = result.Where(additional);
         }
 
-        return [.. result.Select(x => ToDto(x, null))];
+        return [.. result.Select(x => ToDto(x, null, null))];
     }
 
     public List<LearningApplication> GetAll()
@@ -40,12 +40,17 @@ public class LearningApplicationService : ILearningApplicationService
         return await _learningApplicationRepository.GetAllAsync(searchString);
     }
 
+    public async Task<List<LearnerSummaryResponse>> GetLearnerSummariesAsync(string? searchString = null)
+    {
+        return await _learningApplicationRepository.GetLearnerSummariesAsync(searchString);
+    }
+
     public async Task<LearningApplicationsResponse?> GetDetailAsync(int id)
     {
         return await _learningApplicationRepository.GetDetailAsync(id);
     }
 
-    public static LearningApplicationsResponse ToDto(LearningApplication la, User? instr = null)
+    public static LearningApplicationsResponse ToDto(LearningApplication la, User? instr = null, List<LearnerClassInfo>? learnerClasses = null)
     {
         return new LearningApplicationsResponse
         {
@@ -74,6 +79,7 @@ public class LearningApplicationService : ILearningApplicationService
             InstructorFullName = instr != null
             ? (instr.LastName ?? "") + " " + (instr.MiddleName ?? "") + " " + (instr.FirstName ?? "")
             : "",
+            LearnerClasses = learnerClasses ?? new List<LearnerClassInfo>(),
             SubmittedAt = la.SubmittedAt,
             LearningStatus = la.LearningStatus,
             LearningStatusName = la.LearningStatus == 1 ? "Đang học"
