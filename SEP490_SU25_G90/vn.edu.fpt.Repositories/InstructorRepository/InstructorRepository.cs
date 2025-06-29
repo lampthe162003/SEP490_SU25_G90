@@ -167,5 +167,50 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
         {
             return _context.LicenceTypes.ToList();
         }
+
+        public async Task<List<LearnerUserResponse>> GetAllLearnersAsync(string? searchString = null)
+        {
+            // Get learner role ID
+            var learnerRole = await _context.Roles.FirstOrDefaultAsync(r => r.RoleName.ToLower() == "learner");
+            if (learnerRole == null) return new List<LearnerUserResponse>();
+
+            // Query users with learner role
+            var query = _context.Users
+                .Include(u => u.UserRoles)
+                .Include(u => u.Cccd)
+                .Where(u => u.UserRoles.Any(ur => ur.RoleId == learnerRole.RoleId))
+                .AsQueryable();
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                query = query.Where(u =>
+                    u.FirstName.Contains(searchString) ||
+                    u.MiddleName.Contains(searchString) ||
+                    u.LastName.Contains(searchString) ||
+                    u.Email.Contains(searchString) ||
+                    u.Phone.Contains(searchString) ||
+                    (u.Cccd != null && u.Cccd.CccdNumber.Contains(searchString))
+                );
+            }
+
+            var users = await query
+                .OrderBy(u => u.LastName)
+                .ThenBy(u => u.FirstName)
+                .ToListAsync();
+
+            return users.Select(u => new LearnerUserResponse
+            {
+                UserId = u.UserId,
+                FullName = $"{u.LastName} {u.MiddleName} {u.FirstName}".Trim(),
+                Email = u.Email ?? "",
+                Phone = u.Phone ?? "",
+                CccdNumber = u.Cccd?.CccdNumber ?? "",
+                Dob = u.Dob,
+                Gender = u.Gender,
+                CccdImageUrl = u.Cccd != null ? (u.Cccd.ImageMt ?? "") + "|" + (u.Cccd.ImageMs ?? "") : "",
+                ProfileImageUrl = u.ProfileImageUrl ?? ""
+            }).ToList();
+        }
     }
 } 
