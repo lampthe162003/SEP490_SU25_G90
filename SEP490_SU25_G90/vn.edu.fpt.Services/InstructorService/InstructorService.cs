@@ -97,6 +97,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
             _instructorRepository.Update(instructor);
         }
 
+        public void UpdateInstructorInfo(int instructorId, UpdateInstructorRequest request)
+        {
+            _instructorRepository.UpdateInstructorInfo(instructorId, request);
+        }
+
         public void DeleteInstructor(int id)
         {
             _instructorRepository.Delete(id);
