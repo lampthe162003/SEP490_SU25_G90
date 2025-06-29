@@ -188,7 +188,7 @@
                                                     </button>
                                                     <button type="button" class="btn btn-sm btn-outline-warning" style="margin-right:15px"
                                                             onclick="editInstructor(@instructor.UserId)">
-                                                        Edit
+                                                        <i class="fas fa-edit me-1"></i>Chỉnh sửa
                                                     </button>
                                                     <button type="button" class="btn btn-sm btn-outline-danger" 
                                                             onclick="deleteInstructor(@instructor.UserId, '@instructor.FullName')">
@@ -278,8 +278,8 @@
         }
 
         function editInstructor(id) {
-            // Redirect to edit page  
-            window.location.href = './EditInstructor?id=' + id;
+            // Redirect to update instructor page  
+            window.location.href = './UpdateInstructor?id=' + id;
         }
 
         function deleteInstructor(id, name) {
