@@ -85,7 +85,6 @@
                                         <th scope="col">Số điện thoại</th>
                                         @* <th scope="col">CCCD</th> *@
                                         <th scope="col">Loại Bằng</th>
-                                        <th scope="col">Số học viên đảm nhiệm</th>
                                         @* <th scope="col">Địa chỉ</th> *@
                                         <th scope="col">Thao tác</th>
                                     </tr>
@@ -175,11 +174,7 @@
                                                     </button>
                                                 }
                                             </td>
-                                            <td>
-                                                <span class="badge bg-@(instructor.StudentCount > 0 ? "success" : "secondary")">
-                                                    @instructor.StudentCount học viên
-                                                </span>
-                                            </td>
+                                           
                                             @* <td>
                                                 <small class="text-muted">
                                                     @(string.IsNullOrEmpty(instructor.AddressDisplay) ? "Chưa có" : instructor.AddressDisplay)
@@ -187,11 +182,11 @@
                                             </td> *@
                                             <td>
                                                 <div class="btn-group" role="group">
-                                                    <button type="button" class="btn btn-sm btn-outline-primary" 
+                                                    <button type="button" class="btn btn-sm btn-outline-primary"  style="margin-right:15px"
                                                             onclick="viewInstructor(@instructor.UserId)">
                                                         Chi tiết
                                                     </button>
-                                                    <button type="button" class="btn btn-sm btn-outline-warning" 
+                                                    <button type="button" class="btn btn-sm btn-outline-warning" style="margin-right:15px"
                                                             onclick="editInstructor(@instructor.UserId)">
                                                         Edit
                                                     </button>
