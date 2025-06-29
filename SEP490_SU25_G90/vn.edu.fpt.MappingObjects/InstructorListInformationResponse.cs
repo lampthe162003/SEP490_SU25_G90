@@ -70,4 +70,58 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         
         public List<byte> SelectedSpecializations { get; set; } = new List<byte>();
     }
+
+    public class LearnerClassInfo
+    {
+        public int ClassId { get; set; }
+        public string ClassName { get; set; } = string.Empty;
+        public string InstructorName { get; set; } = string.Empty;
+        public string LicenceCode { get; set; } = string.Empty;
+    }
+
+    public class LicenceProgress
+    {
+        public int LearningId { get; set; }
+        public byte? LicenceTypeId { get; set; }
+        public string LicenceTypeName { get; set; } = string.Empty;
+        public DateTime? SubmittedAt { get; set; }
+        public byte? LearningStatus { get; set; }
+        public string LearningStatusName { get; set; } = string.Empty;
+        public int? TheoryScore { get; set; }
+        public int? SimulationScore { get; set; }
+        public int? ObstacleScore { get; set; }
+        public int? PracticalScore { get; set; }
+        public bool IsCompleted { get; set; }
+        public string StatusBadgeClass { get; set; } = string.Empty;
+    }
+
+    public class LearnerSummaryResponse
+    {
+        public int? LearnerId { get; set; }
+        public string LearnerFullName { get; set; } = string.Empty;
+        public string LearnerCccdNumber { get; set; } = string.Empty;
+        public DateTime? LearnerDob { get; set; }
+        public string LearnerPhone { get; set; } = string.Empty;
+        public string LearnerEmail { get; set; } = string.Empty;
+        public string LearnerCccdImageUrl { get; set; } = string.Empty;
+        public string LearnerHealthCertImageUrl { get; set; } = string.Empty;
+        public List<LicenceProgress> LicenceProgresses { get; set; } = new List<LicenceProgress>();
+        public DateTime? LatestSubmittedAt { get; set; }
+        public string OverallStatus { get; set; } = string.Empty;
+        public int CompletedLicences { get; set; }
+        public int TotalLicences { get; set; }
+    }
+
+    public class LearnerUserResponse
+    {
+        public int UserId { get; set; }
+        public string FullName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Phone { get; set; } = string.Empty;
+        public string CccdNumber { get; set; } = string.Empty;
+        public DateOnly? Dob { get; set; }
+        public bool? Gender { get; set; }
+        public string CccdImageUrl { get; set; } = string.Empty;
+        public string ProfileImageUrl { get; set; } = string.Empty;
+    }
 }
