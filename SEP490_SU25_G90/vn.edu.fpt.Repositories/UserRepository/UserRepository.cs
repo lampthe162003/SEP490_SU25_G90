@@ -49,7 +49,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.UserRepository
             => await _context.Users
             .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
-            .Where(u => u.Email.Equals(email) && u.PasswordHash.Equals(password))
+            .Where(u => u.Email.Equals(email) && u.Password.Equals(password))
             .FirstOrDefaultAsync();
 
         public async Task SaveChangesAsync()
