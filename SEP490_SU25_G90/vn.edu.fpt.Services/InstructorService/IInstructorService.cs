@@ -13,5 +13,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
         void AddSpecialization(int instructorId, byte licenceTypeId);
         void RemoveSpecialization(int instructorId, byte licenceTypeId);
         List<LicenceTypeResponse> GetAllLicenceTypes();
+        
+        // Learner methods
+        Task<List<LearnerUserResponse>> GetAllLearnersAsync(string? searchString = null);
     }
 }
