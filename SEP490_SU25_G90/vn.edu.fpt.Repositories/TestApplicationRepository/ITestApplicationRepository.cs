@@ -7,5 +7,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.TestApplicationRepository
         Task<List<TestApplication>> GetAllTestApplicationAsync();
         Task<List<TestApplication>> GetByNameAsync(string name);
         Task<List<TestApplication>> GetByCccdAsync(string cccd);
+
+        Task<TestApplication> Create(TestApplication testApplication);
     }
 }

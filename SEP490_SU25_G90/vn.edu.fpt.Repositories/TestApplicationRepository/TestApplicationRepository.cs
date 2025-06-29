@@ -48,8 +48,15 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.TestApplicationRepository
                 .Where(t => t.Learning.Learner.Cccd.CccdNumber == cccd)
                 .ToListAsync();
         }
+
+        public async Task<TestApplication> Create(TestApplication testApplication)
+        {
+            testApplication = _context.TestApplications.Add(testApplication).Entity;
+            await _context.SaveChangesAsync();
+            return testApplication;
+        }
     }
 
-  
+
 
 }

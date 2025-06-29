@@ -8,5 +8,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
         Task<List<TestApplicationListInformationResponse>> GetAllTestApplicationAsync();
         Task<List<TestApplicationListInformationResponse>> GetByNameAsync(string name);
         Task<List<TestApplicationListInformationResponse>> GetByCccdAsync(string cccd);
+
+        Task<Models.TestApplication> CreateTestApplication(CreateTestApplicationRequest request);
     }
 }

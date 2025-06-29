@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.TestApplication;
+using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication;
+using SEP490_SU25_G90.vn.edu.fpt.Services.TestScoreStandardService;
 using System.Text.Json;
 
 namespace SEP490_SU25_G90.Pages.Admins.TestApplication
@@ -16,12 +18,15 @@ namespace SEP490_SU25_G90.Pages.Admins.TestApplication
 
         private readonly ITestApplicationService _testApplicationService;
         private readonly ILearningApplicationService learningApplicationService;
+        private readonly ITestScoreStandardService testScoreStandardService;
         public CreateTestApplicationModel(ITestApplicationService testApplicationService,
-            ILearningApplicationService learningApplicationService
+            ILearningApplicationService learningApplicationService,
+            ITestScoreStandardService testScoreStandardService
             )
         {
             _testApplicationService = testApplicationService;
             this.learningApplicationService = learningApplicationService;
+            this.testScoreStandardService = testScoreStandardService;
         }
         public void OnGet()
         {
@@ -33,6 +38,77 @@ namespace SEP490_SU25_G90.Pages.Admins.TestApplication
             {
                 return Page();
             }
+
+            var testScoreStandards = testScoreStandardService.FindByLearningApplication(RequestModel.LearningApplicationId!.Value);
+            bool haveError = false;
+            foreach (var testScoreStandard in testScoreStandards)
+            {
+                if (testScoreStandard.PartName == "Theory"
+                    && RequestModel.TheoryScore.Value > testScoreStandard.MaxScore
+                    )
+                {
+                    ModelState.AddModelError($"" +
+                        $"{nameof(RequestModel)}.{nameof(RequestModel.TheoryScore)}",
+                        $"Điểm lý thuyết không được phép vượt quá {testScoreStandard.MaxScore}"
+                        );
+                    haveError = true;
+                }
+
+                if (testScoreStandard.PartName == "Simulation"
+                    && RequestModel.SimulationScore.Value > testScoreStandard.MaxScore
+                    )
+                {
+                    ModelState.AddModelError($"" +
+                        $"{nameof(RequestModel)}.{nameof(RequestModel.SimulationScore)}",
+                        $"Điểm mô phỏng không được phép vượt quá {testScoreStandard.MaxScore}"
+                        );
+                    haveError = true;
+                }
+
+                if (testScoreStandard.PartName == "Obstacle"
+                    && RequestModel.ObstacleScore.Value > testScoreStandard.MaxScore
+                    )
+                {
+                    ModelState.AddModelError($"" +
+                        $"{nameof(RequestModel)}.{nameof(RequestModel.ObstacleScore)}",
+                        $"Điểm sa hình không được phép vượt quá {testScoreStandard.MaxScore}"
+                        );
+                    haveError = true;
+                }
+
+                if (testScoreStandard.PartName == "Practical"
+                    && RequestModel.PracticalScore.Value > testScoreStandard.MaxScore
+                    )
+                {
+                    ModelState.AddModelError($"" +
+                        $"{nameof(RequestModel)}.{nameof(RequestModel.PracticalScore)}",
+                        $"Điểm đường trường không được phép vượt quá {testScoreStandard.MaxScore}"
+                        );
+                    haveError = true;
+                }
+            }
+
+            if (RequestModel.SubmitProfileDate > DateOnly.FromDateTime(DateTime.Now))
+            {
+                ModelState.AddModelError($"" +
+                       $"{nameof(RequestModel)}.{nameof(RequestModel.ExamDate)}",
+                       $"Ngày nộp hồ sơ không được vượt quá ngày hôm nay"
+                       );
+                haveError = true;
+            }
+
+            if (RequestModel.ExamDate < RequestModel.SubmitProfileDate)
+            {
+                ModelState.AddModelError($"" +
+                       $"{nameof(RequestModel)}.{nameof(RequestModel.ExamDate)}",
+                       $"Ngày thi phải lớn hơn ngày nộp hồ sơ"
+                       );
+                haveError = true;
+            }
+
+            if (haveError) return Page();
+
+            await _testApplicationService.CreateTestApplication(RequestModel);
 
             return RedirectToPage("TestApplicationList");
         }
