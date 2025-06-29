@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
-using SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
 {
@@ -37,12 +36,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                         ? (x.Learner.LastName ?? "") + " " + (x.Learner.MiddleName ?? "") + " " + (x.Learner.FirstName ?? "")
                         : "")
                     .Contains(searchString)) ||
-                    (x.Learner != null && x.Learner.Cccd != null && x.Learner.Cccd.CccdNumber != null && x.Learner.Cccd.CccdNumber.Contains(searchString)) ||
-                    (x.LicenceType != null && x.LicenceType.LicenceCode != null && x.LicenceType.LicenceCode.Contains(searchString))
+                    (x.Learner != null && x.Learner.Cccd != null && x.Learner.Cccd.CccdNumber.Contains(searchString)) ||
+                    (x.LicenceType != null && x.LicenceType.LicenceCode.Contains(searchString))
                 );
             }
 
-            var result = await (
+            var list = await (
                 from la in query
                 join cm in _context.ClassMembers on la.LearnerId equals cm.LearnerId into cmJoin
                 from cm in cmJoin.DefaultIfEmpty()
@@ -50,43 +49,45 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 from cl in clJoin.DefaultIfEmpty()
                 join instr in _context.Users on cl.InstructorId equals instr.UserId into instrJoin
                 from instr in instrJoin.DefaultIfEmpty()
-                select new LearningApplicationsResponse
+                select new { la, instr }
+            ).ToListAsync();
+
+            // Bổ sung logic tính trạng thái
+            var licenceTypeIds = list.Select(x => x.la.LicenceTypeId).Distinct().ToList();
+            var standards = await _context.TestScoreStandards
+                .Where(s => licenceTypeIds.Contains(s.LicenceTypeId))
+                .ToListAsync();
+
+            var results = list.Select(x =>
+            {
+                var la = x.la;
+                var instr = x.instr;
+                var std = standards.Where(s => s.LicenceTypeId == la.LicenceTypeId).ToList();
+
+                bool isPassed = la.TheoryScore >= std.FirstOrDefault(s => s.PartName == "Theory")?.PassScore
+                             && la.SimulationScore >= std.FirstOrDefault(s => s.PartName == "Simulation")?.PassScore
+                             && la.ObstacleScore >= std.FirstOrDefault(s => s.PartName == "Obstacle")?.PassScore
+                             && la.PracticalScore >= std.FirstOrDefault(s => s.PartName == "Practical")?.PassScore;
+
+                string statusName = la.LearningStatus == 3 ? "Đã huỷ" : isPassed ? "Hoàn thành" : "Đang học";
+
+                return new LearningApplicationsResponse
                 {
                     LearningId = la.LearningId,
                     LearnerId = la.LearnerId,
-                    LearnerFullName = la.Learner != null
-                        ? (la.Learner.LastName ?? "") + " " + (la.Learner.MiddleName ?? "") + " " + (la.Learner.FirstName ?? "")
-                        : "",
-                    LearnerCccdNumber = la.Learner != null && la.Learner.Cccd != null
-                        ? la.Learner.Cccd.CccdNumber
-                        : "",
-                    LearnerDob = la.Learner != null && la.Learner.Dob.HasValue
-                        ? la.Learner.Dob.Value.ToDateTime(TimeOnly.MinValue)
-                        : (DateTime?)null,
-                    LearnerPhone = la.Learner != null ? la.Learner.Phone : "",
-                    LearnerEmail = la.Learner != null ? la.Learner.Email : "",
-                    LearnerCccdImageUrl = la.Learner != null && la.Learner.Cccd != null
-                        ? (la.Learner.Cccd.ImageMt != null ? la.Learner.Cccd.ImageMt : "") + "|" + (la.Learner.Cccd.ImageMs != null ? la.Learner.Cccd.ImageMs : "")
-                        : "",
-                    LearnerHealthCertImageUrl = la.Learner != null && la.Learner.HealthCertificate != null
-                        ? la.Learner.HealthCertificate.ImageUrl ?? ""
-                        : "",
+                    LearnerFullName = la.Learner != null ? string.Join(" ", new[] { la.Learner.LastName, la.Learner.MiddleName, la.Learner.FirstName }.Where(n => !string.IsNullOrWhiteSpace(n))) : "",
+                    LearnerCccdNumber = la.Learner?.Cccd?.CccdNumber ?? "",
                     LicenceTypeId = la.LicenceTypeId,
-                    LicenceTypeName = la.LicenceType != null ? la.LicenceType.LicenceCode : "",
-                    InstructorId = instr != null ? instr.UserId : null,
-                    InstructorFullName = instr != null
-                        ? (instr.LastName ?? "") + " " + (instr.MiddleName ?? "") + " " + (instr.FirstName ?? "")
-                        : "",
+                    LicenceTypeName = la.LicenceType?.LicenceCode ?? "",
+                    InstructorId = instr?.UserId,
+                    InstructorFullName = instr != null ? string.Join(" ", new[] { instr.LastName, instr.MiddleName, instr.FirstName }.Where(n => !string.IsNullOrWhiteSpace(n))) : "",
                     SubmittedAt = la.SubmittedAt,
                     LearningStatus = la.LearningStatus,
-                    LearningStatusName = la.LearningStatus == 1 ? "Đang học"
-                                        : la.LearningStatus == 2 ? "Hoàn thành"
-                                        : la.LearningStatus == 3 ? "Đã huỷ"
-                                        : "Chưa xác định"
-                }
-            ).ToListAsync();
+                    LearningStatusName = statusName
+                };
+            }).ToList();
 
-            return result;
+            return results;
         }
 
         public Task<IQueryable<LearningApplication>> GetAllAsync()
@@ -112,38 +113,51 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 select u
             ).FirstOrDefaultAsync();
 
+            var standards = await _context.TestScoreStandards
+                .Where(s => s.LicenceTypeId == la.LicenceTypeId)
+                .ToListAsync();
+
+            bool isPassed = la.TheoryScore >= standards.FirstOrDefault(s => s.PartName == "Theory")?.PassScore
+                && la.SimulationScore >= standards.FirstOrDefault(s => s.PartName == "Simulation")?.PassScore
+                && la.ObstacleScore >= standards.FirstOrDefault(s => s.PartName == "Obstacle")?.PassScore
+                && la.PracticalScore >= standards.FirstOrDefault(s => s.PartName == "Practical")?.PassScore;
+
+            byte? status = isPassed ? (byte?)2 : (byte?)1;
+            string? statusName = isPassed ? "Hoàn thành" : "Đang học";
+
             return new LearningApplicationsResponse
             {
                 LearningId = la.LearningId,
                 LearnerId = la.LearnerId,
-                LearnerFullName = la.Learner != null
-                    ? (la.Learner.LastName ?? "") + " " + (la.Learner.MiddleName ?? "") + " " + (la.Learner.FirstName ?? "")
-                    : "",
-                LearnerCccdNumber = la.Learner != null && la.Learner.Cccd != null ? la.Learner.Cccd.CccdNumber : "",
-                LearnerDob = la.Learner != null && la.Learner.Dob.HasValue
-                    ? la.Learner.Dob.Value.ToDateTime(TimeOnly.MinValue)
-                    : (DateTime?)null,
-                LearnerPhone = la.Learner != null ? la.Learner.Phone : "",
-                LearnerEmail = la.Learner != null ? la.Learner.Email : "",
-                LearnerCccdImageUrl = la.Learner != null && la.Learner.Cccd != null
-                    ? (la.Learner.Cccd.ImageMt != null ? la.Learner.Cccd.ImageMt : "") + "|" + (la.Learner.Cccd.ImageMs != null ? la.Learner.Cccd.ImageMs : "")
-                    : "",
-                LearnerHealthCertImageUrl = la.Learner != null && la.Learner.HealthCertificate != null
-                    ? la.Learner.HealthCertificate.ImageUrl ?? ""
-                    : "",
+                LearnerFullName = la.Learner != null ? string.Join(" ", new[] { la.Learner.LastName, la.Learner.MiddleName, la.Learner.FirstName }.Where(x => !string.IsNullOrWhiteSpace(x))) : "",
+                LearnerCccdNumber = la.Learner?.Cccd?.CccdNumber ?? "",
+                LearnerDob = la.Learner?.Dob?.ToDateTime(TimeOnly.MinValue),
+                LearnerPhone = la.Learner?.Phone ?? "",
+                LearnerEmail = la.Learner?.Email ?? "",
+                LearnerCccdImageUrl = la.Learner?.Cccd != null ? (la.Learner.Cccd.ImageMt ?? "") + "|" + (la.Learner.Cccd.ImageMs ?? "") : "",
+                LearnerHealthCertImageUrl = la.Learner?.HealthCertificate?.ImageUrl ?? "",
                 LicenceTypeId = la.LicenceTypeId,
-                LicenceTypeName = la.LicenceType != null ? la.LicenceType.LicenceCode : "",
+                LicenceTypeName = la.LicenceType?.LicenceCode ?? "",
                 InstructorId = instructor?.UserId,
-                InstructorFullName = instructor != null
-                    ? (instructor.LastName ?? "") + " " + (instructor.MiddleName ?? "") + " " + (instructor.FirstName ?? "")
-                    : "",
+                InstructorFullName = instructor != null ? string.Join(" ", new[] { instructor.LastName, instructor.MiddleName, instructor.FirstName }.Where(x => !string.IsNullOrWhiteSpace(x))) : "",
                 SubmittedAt = la.SubmittedAt,
-                LearningStatus = la.LearningStatus,
-                LearningStatusName = la.LearningStatus == 1 ? "Đang học"
-                                        : la.LearningStatus == 2 ? "Hoàn thành"
-                                        : la.LearningStatus == 3 ? "Đã huỷ"
-                                        : "Chưa xác định"
+                LearningStatus = status,
+                LearningStatusName = statusName,
+                TheoryScore = la.TheoryScore,
+                SimulationScore = la.SimulationScore,
+                ObstacleScore = la.ObstacleScore,
+                PracticalScore = la.PracticalScore,
+                TheoryPassScore = standards.FirstOrDefault(s => s.PartName == "Theory")?.PassScore,
+                SimulationPassScore = standards.FirstOrDefault(s => s.PartName == "Simulation")?.PassScore,
+                ObstaclePassScore = standards.FirstOrDefault(s => s.PartName == "Obstacle")?.PassScore,
+                PracticalPassScore = standards.FirstOrDefault(s => s.PartName == "Practical")?.PassScore
             };
         }
+        public async Task AddAsync(LearningApplication entity)
+        {
+            _context.LearningApplications.Add(entity);
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

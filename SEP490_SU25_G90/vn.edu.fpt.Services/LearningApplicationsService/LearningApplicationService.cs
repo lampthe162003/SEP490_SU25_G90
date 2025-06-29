@@ -41,7 +41,6 @@ public class LearningApplicationService : ILearningApplicationService
         return await _learningApplicationRepository.GetAllAsync(searchString);
     }
 
-    // Thêm phương thức lấy chi tiết
     public async Task<LearningApplicationsResponse?> GetDetailAsync(int id)
     {
         return await _learningApplicationRepository.GetDetailAsync(id);
@@ -83,5 +82,8 @@ public class LearningApplicationService : ILearningApplicationService
                                         : la.LearningStatus == 3 ? "Đã huỷ"
                                         : "Chưa xác định"
         };
+    public async Task AddAsync(LearningApplication entity)
+    {
+        await _learningApplicationRepository.AddAsync(entity);
     }
 }
