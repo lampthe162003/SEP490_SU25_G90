@@ -221,5 +221,93 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.User
             };
         }
 
+        public async Task UpdateLearnerInfo(int userId, UpdateLearnerRequest request)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                // Get learner
+                var learner = await _context.Users
+                    .Include(u => u.Cccd)
+                    .Where(u => u.UserId == userId)
+                    .FirstOrDefaultAsync();
+
+                if (learner == null)
+                {
+                    throw new InvalidOperationException("Không tìm thấy thông tin học viên");
+                }
+
+                // Update basic information
+                learner.Email = request.Email;
+                learner.FirstName = request.FirstName;
+                learner.MiddleName = request.MiddleName;
+                learner.LastName = request.LastName;
+                learner.Dob = request.Dob;
+                learner.Gender = request.Gender;
+                learner.Phone = request.Phone;
+
+                // Update or create CCCD
+                if (!string.IsNullOrEmpty(request.CccdNumber) || 
+                    !string.IsNullOrEmpty(request.CccdImageFront) || 
+                    !string.IsNullOrEmpty(request.CccdImageBack))
+                {
+                    if (learner.Cccd != null)
+                    {
+                        // Update existing CCCD
+                        learner.Cccd.CccdNumber = request.CccdNumber ?? learner.Cccd.CccdNumber;
+                        learner.Cccd.ImageMt = request.CccdImageFront ?? learner.Cccd.ImageMt;
+                        learner.Cccd.ImageMs = request.CccdImageBack ?? learner.Cccd.ImageMs;
+                    }
+                    else
+                    {
+                        // Create new CCCD
+                        var newCccd = new Cccd
+                        {
+                            CccdNumber = request.CccdNumber,
+                            ImageMt = request.CccdImageFront,
+                            ImageMs = request.CccdImageBack
+                        };
+                        
+                        _context.Cccds.Add(newCccd);
+                        await _context.SaveChangesAsync(); // Save to get CCCD ID
+                        
+                        learner.CccdId = newCccd.CccdId;
+                    }
+                }
+
+                // Update or create Health Certificate
+                if (!string.IsNullOrEmpty(request.HealthCertificateImageUrl))
+                {
+                    if (learner.HealthCertificate != null)
+                    {
+                        // Update existing Health Certificate
+                        learner.HealthCertificate.ImageUrl = request.HealthCertificateImageUrl;
+                    }
+                    else
+                    {
+                        // Create new Health Certificate
+                        var newHealthCert = new HealthCertificate
+                        {
+                            ImageUrl = request.HealthCertificateImageUrl
+                        };
+                        
+                        _context.HealthCertificates.Add(newHealthCert);
+                        await _context.SaveChangesAsync(); // Save to get Health Certificate ID
+                        
+                        learner.HealthCertificateId = newHealthCert.HealthCertificateId;
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
+
     }
 }
