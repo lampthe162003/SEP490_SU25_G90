@@ -132,6 +132,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
             }).ToList();
         }
 
+        public async Task<List<LearnerUserResponse>> GetAllLearnersAsync(string? searchString = null)
+        {
+            return await _instructorRepository.GetAllLearnersAsync(searchString);
+        }
+
         private string BuildAddressDisplay(Address? address)
         {
             if (address == null) return "";
