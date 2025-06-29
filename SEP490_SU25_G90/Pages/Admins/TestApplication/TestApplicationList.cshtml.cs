@@ -1,13 +1,15 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.TestApplication;
 using SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SEP490_SU25_G90.Pages.Admins.TestApplication
 {
+    [Authorize(Roles = "admin, instructor")]
     public class TestApplicationListModel : PageModel
     {
         private readonly ITestApplicationService _testApplicationService;
