@@ -124,4 +124,41 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         public string CccdImageUrl { get; set; } = string.Empty;
         public string ProfileImageUrl { get; set; } = string.Empty;
     }
+
+    public class LearnerDetailResponse
+    {
+        public int UserId { get; set; }
+        public string FullName { get; set; } = string.Empty;
+        public string? FirstName { get; set; }
+        public string? MiddleName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+        public string? Phone { get; set; }
+        public DateOnly? Dob { get; set; }
+        public bool? Gender { get; set; }
+        public string? CccdNumber { get; set; }
+        public string? CccdImageFront { get; set; }
+        public string? CccdImageBack { get; set; }
+        public string? AddressDisplay { get; set; }
+        public string? ProfileImageUrl { get; set; }
+        public string? HealthCertificateImageUrl { get; set; }
+        public List<LearningApplicationInfo> LearningApplications { get; set; } = new List<LearningApplicationInfo>();
+    }
+    
+    public class LearningApplicationInfo
+    {
+        public int ApplicationId { get; set; }
+        public string LicenceCode { get; set; } = string.Empty;
+        public string LicenceName { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public string StatusBadgeClass { get; set; } = string.Empty;
+        public DateTime? AppliedDate { get; set; }
+        public DateTime? CompletedDate { get; set; }
+        public string? InstructorName { get; set; }
+        public string? ClassName { get; set; }
+        public int? TheoryScore { get; set; }
+        public int? SimulationScore { get; set; }
+        public int? ObstacleScore { get; set; }
+        public int? PracticalScore { get; set; }
+    }
 }
