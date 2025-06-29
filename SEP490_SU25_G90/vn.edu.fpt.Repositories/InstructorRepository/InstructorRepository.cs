@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
+using System.Linq;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
 {
@@ -67,6 +69,70 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
         {
             _context.Users.Update(instructor);
             _context.SaveChanges();
+        }
+
+        public void UpdateInstructorInfo(int instructorId, UpdateInstructorRequest request)
+        {
+            var instructor = _context.Users
+                .Include(u => u.Cccd)
+                .FirstOrDefault(u => u.UserId == instructorId);
+            
+            if (instructor != null)
+            {
+                instructor.FirstName = request.FirstName;
+                instructor.MiddleName = request.MiddleName;
+                instructor.LastName = request.LastName;
+                instructor.Dob = request.Dob;
+                instructor.Gender = request.Gender;
+                instructor.Phone = request.Phone;
+
+                // Update CCCD if any CCCD field is provided
+                if (!string.IsNullOrWhiteSpace(request.CccdNumber) || 
+                    !string.IsNullOrWhiteSpace(request.CccdImageFront) || 
+                    !string.IsNullOrWhiteSpace(request.CccdImageBack))
+                {
+                    // Validate CCCD number format if provided
+                    if (!string.IsNullOrWhiteSpace(request.CccdNumber))
+                    {
+                        if (request.CccdNumber.Length != 12 || !request.CccdNumber.All(char.IsDigit))
+                        {
+                            throw new ArgumentException("Số CCCD phải có đúng 12 chữ số");
+                        }
+                    }
+
+                    if (instructor.Cccd == null)
+                    {
+                        // Create new CCCD
+                        var newCccd = new Cccd
+                        {
+                            CccdNumber = request.CccdNumber ?? "",
+                            ImageMt = request.CccdImageFront,
+                            ImageMs = request.CccdImageBack
+                        };
+                        _context.Cccds.Add(newCccd);
+                        _context.SaveChanges(); // Save to get CccdId
+                        instructor.CccdId = newCccd.CccdId;
+                    }
+                    else
+                    {
+                        // Update existing CCCD
+                        if (!string.IsNullOrWhiteSpace(request.CccdNumber))
+                        {
+                            instructor.Cccd.CccdNumber = request.CccdNumber;
+                        }
+                        if (!string.IsNullOrWhiteSpace(request.CccdImageFront))
+                        {
+                            instructor.Cccd.ImageMt = request.CccdImageFront;
+                        }
+                        if (!string.IsNullOrWhiteSpace(request.CccdImageBack))
+                        {
+                            instructor.Cccd.ImageMs = request.CccdImageBack;
+                        }
+                    }
+                }
+                
+                _context.SaveChanges();
+            }
         }
 
         public void Delete(int id)
