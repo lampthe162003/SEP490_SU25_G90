@@ -11,6 +11,8 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.RoleRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Services.RoleService;
 using Microsoft.AspNetCore.Identity;
+using SEP490_SU25_G90.vn.edu.fpt.Repositories.TestScoreStandardRepository;
+using SEP490_SU25_G90.vn.edu.fpt.Services.TestScoreStandardService;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Commons
 {
@@ -34,6 +36,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Commons
 
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IroleService, RoleService>();
+
+            services.AddScoped<ITestScoreStandardRepository, TestScoreStandardRepository>();
+            services.AddScoped<ITestScoreStandardService, TestScoreStandardService>();
 
             services.AddScoped<IPasswordHasher<Models.User>, PasswordHasher<Models.User>>();
 
