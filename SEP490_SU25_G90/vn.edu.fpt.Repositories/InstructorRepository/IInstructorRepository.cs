@@ -16,5 +16,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
         void AddSpecialization(InstructorSpecialization specialization);
         void RemoveSpecialization(int instructorId, byte licenceTypeId);
         List<LicenceType> GetAllLicenceTypes();
+        
+        // Learner methods
+        Task<List<LearnerUserResponse>> GetAllLearnersAsync(string? searchString = null);
     }
 } 
