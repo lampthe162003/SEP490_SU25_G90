@@ -9,7 +9,7 @@ public partial class User
 
     public string? Email { get; set; }
 
-    public string? PasswordHash { get; set; }
+    public string? Password { get; set; }
 
     public string? ProfileImageUrl { get; set; }
 
@@ -46,8 +46,6 @@ public partial class User
     public virtual ICollection<LearningApplication> LearningApplications { get; set; } = new List<LearningApplication>();
 
     public virtual ICollection<News> News { get; set; } = new List<News>();
-
-    public virtual ICollection<TestApplication> TestApplications { get; set; } = new List<TestApplication>();
 
     public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 }

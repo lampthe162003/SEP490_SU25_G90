@@ -64,7 +64,7 @@ CREATE TABLE Addresses (
 CREATE TABLE Users (
     user_id INT IDENTITY PRIMARY KEY,
     email VARCHAR(100),
-    password_hash VARCHAR(255),
+    [password] VARCHAR(255),
     profile_image_url VARCHAR(500),
     first_name NVARCHAR(10),
     middle_name NVARCHAR(20),
@@ -141,12 +141,10 @@ CREATE TABLE TestApplications (
     simulation_score INT,
     obstacle_score INT,
     practical_score INT,
-    [status] BIT, -- NULL = ch?a thi, 0 = tr??t, 1 = ??u
-    signed_by INT, -- gi�o vi�n ch?m thi
-    signed_at DATETIME,
+    [status] BIT,
+    created_at DATETIME,
     notes NVARCHAR(MAX),
     FOREIGN KEY (learning_id) REFERENCES LearningApplications(learning_id),
-    FOREIGN KEY (signed_by) REFERENCES Users(user_id)
 );
 
 
@@ -180,3 +178,58 @@ CREATE TABLE TestScoreStandards (
     pass_score INT,
     FOREIGN KEY (licence_type_id) REFERENCES LicenceTypes(licence_type_id)
 );
+
+USE SEP490_SU25_G90_DB;
+GO
+
+-- Insert sample users with proper Vietnamese Unicode characters
+INSERT INTO Users (email, [password], first_name, middle_name, last_name, dob, gender, phone)
+VALUES 
+-- Learners (Học viên)
+(N'nguyen.thi.mai@example.com', 'hashed_password_1', N'Nguyễn', N'Thị', N'Mai', '2000-05-15', 0, '0912345678'),
+(N'tran.van.tuan@example.com', 'hashed_password_2', N'Trần', N'Văn', N'Tuấn', '1999-08-22', 1, '0923456789'),
+(N'le.thi.lan@example.com', 'hashed_password_3', N'Lê', N'Thị', N'Lan', '2001-03-10', 0, '0934567890'),
+
+-- Admins (Quản trị viên)
+(N'pham.duc.hai@example.com', 'hashed_admin_1', N'Phạm', N'Đức', N'Hải', '1985-11-30', 1, '0945678901'),
+(N'vu.quang.minh@example.com', 'hashed_admin_2', N'Vũ', N'Quang', N'Minh', '1988-07-25', 1, '0956789012'),
+(N'do.thanh.thuy@example.com', 'hashed_admin_3', N'Đỗ', N'Thanh', N'Thủy', '1990-04-18', 0, '0967890123'),
+
+-- Instructors (Giáo viên)
+(N'hoang.manh.hung@example.com', 'hashed_instructor_1', N'Hoàng', N'Mạnh', N'Hùng', '1980-09-12', 1, '0978901234'),
+(N'truong.thi.linh@example.com', 'hashed_instructor_2', N'Trương', N'Thị', N'Linh', '1983-06-05', 0, '0989012345'),
+(N'nguyen.ba.son@example.com', 'hashed_instructor_3', N'Nguyễn', N'Bá', N'Sơn', '1978-12-20', 1, '0990123456');
+GO
+
+-- Assign roles to users
+INSERT INTO UserRoles (user_id, role_id)
+VALUES 
+-- Assign learner role (1) to first 3 users
+(1, 1),
+(2, 1),
+(3, 1),
+
+-- Assign admin role (2) to next 3 users
+(4, 2),
+(5, 2),
+(6, 2),
+
+-- Assign instructor role (3) to last 3 users
+(7, 3),
+(8, 3),
+(9, 3);
+GO
+
+-- Verify the inserted data with proper Unicode display
+SELECT 
+    u.user_id,
+    CONCAT(u.last_name, ' ', u.middle_name, ' ', u.first_name) AS full_name,
+    u.email,
+    u.phone,
+    CASE u.gender WHEN 1 THEN N'Nam' ELSE N'Nữ' END AS gender,
+    r.role_name AS role
+FROM Users u
+JOIN UserRoles ur ON u.user_id = ur.user_id
+JOIN Roles r ON ur.role_id = r.role_id
+ORDER BY u.user_id;
+GO

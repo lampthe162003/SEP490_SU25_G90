@@ -23,13 +23,9 @@ public partial class TestApplication
 
     public bool? Status { get; set; }
 
-    public int? SignedBy { get; set; }
-
-    public DateTime? SignedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
     public string? Notes { get; set; }
 
     public virtual LearningApplication? Learning { get; set; }
-
-    public virtual User? SignedByNavigation { get; set; }
 }
