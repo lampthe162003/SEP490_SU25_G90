@@ -3,7 +3,6 @@ using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
-using System;
 using System.Linq.Expressions;
 
 public class LearningApplicationService : ILearningApplicationService
@@ -82,6 +81,7 @@ public class LearningApplicationService : ILearningApplicationService
                                         : la.LearningStatus == 3 ? "Đã huỷ"
                                         : "Chưa xác định"
         };
+    }
     public async Task AddAsync(LearningApplication entity)
     {
         await _learningApplicationRepository.AddAsync(entity);
