@@ -40,7 +40,13 @@
                     <a href="#contact">Liên hệ</a>
                 </nav>
 
-                <a asp-page="/Commons/Login" class="login-link">Đăng nhập</a>
+                @if (User.Identity.Name == null)
+
+                {
+
+                    <a asp-page="/Commons/Login" class="login-link">Đăng nhập</a>
+
+                }
             </div>
         </div>
     </header>
