@@ -1,0 +1,81 @@
+﻿@page "/Admins/LearningApplications/Create"
+@model SEP490_SU25_G90.Pages.Admins.LearningApplications.CreateLearingApplicationModel
+
+@{
+    ViewData["Title"] = "Tạo mới hồ sơ học";
+    Layout = "~/Pages/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="mb-4">Tạo mới hồ sơ học</h2>
+
+<form method="post" enctype="multipart/form-data" class="w-50">
+    <div class="mb-2">
+        <label class="form-label">Họ tên học viên:</label>
+        <input asp-for="Input.LearnerFullName" class="form-control" />
+        <span asp-validation-for="Input.LearnerFullName" class="text-danger"></span>
+    </div>
+    <div class="mb-2">
+        <label class="form-label">CCCD:</label>
+        <input asp-for="Input.LearnerCccdNumber" class="form-control" />
+        <span asp-validation-for="Input.LearnerCccdNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-2">
+        <label class="form-label">Ngày sinh:</label>
+        <input asp-for="Input.LearnerDob" class="form-control" type="date" />
+        <span asp-validation-for="Input.LearnerDob" class="text-danger"></span>
+    </div>
+    <div class="mb-2">
+        <label class="form-label">Số điện thoại:</label>
+        <input asp-for="Input.LearnerPhone" class="form-control" />
+        <span asp-validation-for="Input.LearnerPhone" class="text-danger"></span>
+    </div>
+    <div class="mb-2">
+        <label class="form-label">Email:</label>
+        <input asp-for="Input.LearnerEmail" class="form-control" />
+        <span asp-validation-for="Input.LearnerEmail" class="text-danger"></span>
+    </div>
+    <div class="mb-2">
+        <label class="form-label">Loại bằng:</label>
+        <select asp-for="Input.LicenceTypeId" class="form-select" asp-items="@(new SelectList(ViewData["LicenceTypeId"] as IEnumerable<SelectListItem>, "Value", "Text"))">
+            <option value="">-- Chọn loại bằng --</option>
+        </select>
+        <span asp-validation-for="Input.LicenceTypeId" class="text-danger"></span>
+    </div>
+    <div class="mb-2">
+        <label class="form-label">Giảng viên:</label>
+        <select asp-for="Input.InstructorId" class="form-select">
+            <option value="">-- Chọn giảng viên --</option>
+            @foreach (var instructor in Model.Instructors)
+            {
+                <option value="@instructor.UserId">@instructor.FullName</option>
+            }
+        </select>
+        <span asp-validation-for="Input.InstructorId" class="text-danger"></span>
+    </div>
+    <div class="mb-2">
+        <label class="form-label">Ngày đăng ký:</label>
+        <input asp-for="Input.SubmittedAt" class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+        <span asp-validation-for="Input.SubmittedAt" class="text-danger"></span>
+    </div>
+    <div class="mb-2">
+        <label class="form-label">Ghi chú:</label>
+        <textarea asp-for="Input.Note" class="form-control" rows="2"></textarea>
+    </div>
+    <div class="mb-2">
+        <label class="form-label">Tài liệu đính kèm:</label>
+        <div class="mb-1">
+            - Giấy khám sức khỏe: <input type="file" class="form-control d-inline-block w-auto" name="HealthCertificateFile" />
+        </div>
+        <div>
+            - Căn cước công dân (CCCD): <input type="file" class="form-control d-inline-block w-auto" name="CccdFile" />
+        </div>
+    </div>
+    <div class="mt-3 d-flex justify-content-end">
+        <a asp-page="ListLearningApplication" class="btn btn-outline-secondary me-2">Hủy</a>
+        <button type="submit" class="btn btn-success">Tạo mới</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

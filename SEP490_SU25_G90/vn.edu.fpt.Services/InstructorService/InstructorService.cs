@@ -45,6 +45,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
                 ProfileImageUrl = instructor.ProfileImageUrl,
                 CccdNumber = instructor.Cccd?.CccdNumber,
                 CccdImageUrl = instructor.Cccd?.ImageMt,
+                CccdImageUrlMs = instructor.Cccd?.ImageMs,
                 AddressDisplay = BuildAddressDisplay(instructor.Address),
                 Specializations = instructor.InstructorSpecializations.Select(ins => new LicenceTypeResponse
                 {
@@ -75,6 +76,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
                 ProfileImageUrl = instructor.ProfileImageUrl,
                 CccdNumber = instructor.Cccd?.CccdNumber,
                 CccdImageUrl = instructor.Cccd?.ImageMt,
+                CccdImageUrlMs = instructor.Cccd?.ImageMs,
                 AddressDisplay = BuildAddressDisplay(instructor.Address),
                 Specializations = instructor.InstructorSpecializations.Select(ins => new LicenceTypeResponse
                 {
@@ -93,6 +95,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
         public void UpdateInstructor(SEP490_SU25_G90.vn.edu.fpt.Models.User instructor)
         {
             _instructorRepository.Update(instructor);
+        }
+
+        public void UpdateInstructorInfo(int instructorId, UpdateInstructorRequest request)
+        {
+            _instructorRepository.UpdateInstructorInfo(instructorId, request);
         }
 
         public void DeleteInstructor(int id)
@@ -123,6 +130,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
                 LicenceTypeId = lt.LicenceTypeId,
                 LicenceCode = lt.LicenceCode
             }).ToList();
+        }
+
+        public async Task<List<LearnerUserResponse>> GetAllLearnersAsync(string? searchString = null)
+        {
+            return await _instructorRepository.GetAllLearnersAsync(searchString);
         }
 
         private string BuildAddressDisplay(Address? address)

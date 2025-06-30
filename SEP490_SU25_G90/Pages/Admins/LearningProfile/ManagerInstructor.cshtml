@@ -2,7 +2,7 @@
 @model SEP490_SU25_G90.Pages.Admins.LearningProfile.ManagerInstructorModel
 @{
     ViewData["Title"] = "Quản lý Giảng viên";
-    Layout = "~/Pages/Shared/_Layout.cshtml";
+    Layout = "~/Pages/Shared/_AdminLayout.cshtml";
 }
 
 <div class="container-fluid">
@@ -85,7 +85,6 @@
                                         <th scope="col">Số điện thoại</th>
                                         @* <th scope="col">CCCD</th> *@
                                         <th scope="col">Loại Bằng</th>
-                                        <th scope="col">Số học viên đảm nhiệm</th>
                                         @* <th scope="col">Địa chỉ</th> *@
                                         <th scope="col">Thao tác</th>
                                     </tr>
@@ -175,11 +174,7 @@
                                                     </button>
                                                 }
                                             </td>
-                                            <td>
-                                                <span class="badge bg-@(instructor.StudentCount > 0 ? "success" : "secondary")">
-                                                    @instructor.StudentCount học viên
-                                                </span>
-                                            </td>
+                                           
                                             @* <td>
                                                 <small class="text-muted">
                                                     @(string.IsNullOrEmpty(instructor.AddressDisplay) ? "Chưa có" : instructor.AddressDisplay)
@@ -187,13 +182,13 @@
                                             </td> *@
                                             <td>
                                                 <div class="btn-group" role="group">
-                                                    <button type="button" class="btn btn-sm btn-outline-primary" 
+                                                    <button type="button" class="btn btn-sm btn-outline-primary"  style="margin-right:15px"
                                                             onclick="viewInstructor(@instructor.UserId)">
                                                         Chi tiết
                                                     </button>
-                                                    <button type="button" class="btn btn-sm btn-outline-warning" 
+                                                    <button type="button" class="btn btn-sm btn-outline-warning" style="margin-right:15px"
                                                             onclick="editInstructor(@instructor.UserId)">
-                                                        Edit
+                                                        <i class="fas fa-edit me-1"></i>Chỉnh sửa
                                                     </button>
                                                     <button type="button" class="btn btn-sm btn-outline-danger" 
                                                             onclick="deleteInstructor(@instructor.UserId, '@instructor.FullName')">
@@ -283,8 +278,8 @@
         }
 
         function editInstructor(id) {
-            // Redirect to edit page  
-            window.location.href = './EditInstructor?id=' + id;
+            // Redirect to update instructor page  
+            window.location.href = './UpdateInstructor?id=' + id;
         }
 
         function deleteInstructor(id, name) {
