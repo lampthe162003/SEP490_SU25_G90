@@ -40,10 +40,9 @@ namespace SEP490_SU25_G90.Pages.Admins.User
         public List<SelectListItem> RoleSelect;
 
         [BindProperty(SupportsGet = true)]
-        [Range(1, 3, ErrorMessage = "Hãy chọn vai trò hợp lệ")]
         [Display(Name = "Vai trò")]
         [Required(ErrorMessage = "Hãy chọn vai trò hợp lệ")]
-        public byte Role {  get; set; }
+        public byte Role { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
