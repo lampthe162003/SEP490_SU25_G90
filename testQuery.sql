@@ -142,7 +142,7 @@ CREATE TABLE TestApplications (
     obstacle_score INT,
     practical_score INT,
     [status] BIT,
-    created_at DATETIME,
+    submit_profile_date DATE,
     notes NVARCHAR(MAX),
     FOREIGN KEY (learning_id) REFERENCES LearningApplications(learning_id),
 );

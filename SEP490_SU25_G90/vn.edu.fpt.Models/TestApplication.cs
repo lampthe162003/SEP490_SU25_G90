@@ -23,7 +23,7 @@ public partial class TestApplication
 
     public bool? Status { get; set; }
 
-    public DateTime? CreatedAt { get; set; }
+    public DateOnly? SubmitProfileDate { get; set; }
 
     public string? Notes { get; set; }
 
