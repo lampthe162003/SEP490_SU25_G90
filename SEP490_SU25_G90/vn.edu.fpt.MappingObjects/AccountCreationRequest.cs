@@ -15,8 +15,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         [Display(Name = "Mật khẩu")]
         public String PasswordHash { get; set; } = default!;
 
-        public string? ProfileImageUrl { get; set; }
-
         [Required(ErrorMessage = "Họ không được để trống")]
         [Display(Name = "Tên họ")]
         public string FirstName { get; set; } = default!;
@@ -42,10 +40,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
 
         [Display(Name = "Địa chỉ")]
         public virtual Address? Address { get; set; }
-
-        public virtual Cccd? Cccd { get; set; }
-
-        public virtual HealthCertificate? HealthCertificate { get; set; }
 
         public virtual ICollection<InstructorSpecialization> InstructorSpecializations { get; set; } = new List<InstructorSpecialization>();
 
