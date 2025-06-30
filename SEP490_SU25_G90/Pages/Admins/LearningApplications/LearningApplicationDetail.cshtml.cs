@@ -7,7 +7,7 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
 
 namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "admin")]
     public class LearningApplicationDetailModel : PageModel
     {
         private readonly ILearningApplicationService _learningApplicationService;

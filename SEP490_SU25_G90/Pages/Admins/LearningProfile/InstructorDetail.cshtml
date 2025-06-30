@@ -2,7 +2,7 @@
 @model SEP490_SU25_G90.Pages.Admins.LearningProfile.InstructorDetailModel
 @{
     ViewData["Title"] = "Chi tiết Giảng viên";
-    Layout = "~/Pages/Shared/_Layout.cshtml";
+     Layout = "~/Pages/Shared/_AdminLayout.cshtml";
 }
 
 <div class="container-fluid">
@@ -110,12 +110,12 @@
                                             }
                                         </span>
                                     </div>
-                                    <div class="col-12 mb-2">
+                                    @* <div class="col-12 mb-2">
                                         <strong>Số học viên:</strong> 
                                         <span class="badge bg-@(Model.Instructor.StudentCount > 0 ? "success" : "secondary") ms-2">
                                             @Model.Instructor.StudentCount học viên
                                         </span>
-                                    </div>
+                                    </div> *@
                                 </div>
                             </div>
                         </div>
@@ -271,7 +271,7 @@
                                         </h6>
                                         <div class="border rounded p-2 bg-light">
                                             <!-- Note: Trong DB chỉ có 1 ImageUrl, có thể cần tách thành 2 field riêng -->
-                                            <img src="@Model.Instructor.CccdImageUrl" alt="Mặt sau CCCD" 
+                                            <img src="@Model.Instructor.CccdImageUrlMs" alt="Mặt sau CCCD" 
                                                  class="img-fluid rounded shadow" 
                                                  style="max-height: 250px; cursor: pointer;"
                                                  onclick="showImageModal('@Model.Instructor.CccdImageUrl', 'Mặt sau CCCD')">
