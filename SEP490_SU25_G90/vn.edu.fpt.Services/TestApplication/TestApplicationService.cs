@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.TestApplication;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.TestApplicationRepository;
@@ -39,7 +40,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
                 TheoryScore = request.TheoryScore,
                 Status = null,
                 ResultImageUrl = request.Attachment == null ? null : path,
-                //SignedAt = request.SubmitProfileDate.HasValue ? request.SubmitProfileDate.Value.ToDateTime(TimeOnly.MinValue) : null,
+                SubmitProfileDate = request.SubmitProfileDate.HasValue ? request.SubmitProfileDate.Value : null,
             };
             return await _testApplicationRepository.Create(testApplication);
         }
@@ -82,8 +83,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
                 PracticalScore = obj.PracticalScore,
                 SimulationScore = obj.SimulationScore,
                 TheoryScore = obj.TheoryScore,
-                //SubmitProfileDate = obj.SignedAt.HasValue ? DateOnly.FromDateTime(obj.SignedAt.Value) : null,
-                DateOfBirth = obj.Learning.Learner.Dob.HasValue ? obj.Learning.Learner.Dob.Value.ToString("yyyy-MM-dd") : null,
+                SubmitProfileDate = obj.SubmitProfileDate.HasValue ? obj.SubmitProfileDate.Value : null,
+                DateOfBirth = obj.Learning.Learner.Dob.HasValue ? obj.Learning.Learner.Dob.Value.ToString("dd-MM-yyyy") : null,
                 FullName = obj.Learning == null || obj.Learning.Learner == null
                     ? string.Empty
                     : $"{obj.Learning.Learner.FirstName} {obj.Learning.Learner.MiddleName} {obj.Learning.Learner.LastName}",
@@ -115,7 +116,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
 
             raw.ResultImageUrl = request.Attachment == null ? raw.ResultImageUrl : path;
             raw.Notes = request.Note;
-            //raw.SignedAt = request.SubmitProfileDate.HasValue ? request.SubmitProfileDate.Value.ToDateTime(TimeOnly.MinValue) : null;
+            raw.SubmitProfileDate = request.SubmitProfileDate.HasValue ? request.SubmitProfileDate.Value : null;
             raw.Notes = request.Note;
             raw.ObstacleScore = request.ObstacleScore;
             raw.PracticalScore = request.PracticalScore;
