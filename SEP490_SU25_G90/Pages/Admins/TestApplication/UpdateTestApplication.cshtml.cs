@@ -166,7 +166,7 @@ namespace SEP490_SU25_G90.Pages.Admins.TestApplication
                             }
                             else
                             {
-                                pass3 = RequestModel.ObstacleScore.Value > testScoreStandard.PassScore;
+                                pass3 = RequestModel.ObstacleScore.Value >= testScoreStandard.PassScore;
                             }
 
                         }
@@ -190,7 +190,7 @@ namespace SEP490_SU25_G90.Pages.Admins.TestApplication
                             }
                             else
                             {
-                                pass4 = RequestModel.PracticalScore.Value > testScoreStandard.PassScore;
+                                pass4 = RequestModel.PracticalScore.Value >= testScoreStandard.PassScore;
                             }
 
                         }
