@@ -10,6 +10,7 @@ using SEP490_SU25_G90.vn.edu.fpt.Repositories.NewsRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
 using System.Text;
 using SEP490_SU25_G90.vn.edu.fpt.Services.NewsService;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,6 +61,10 @@ builder.Services.AddAuthentication(options =>
 });
 builder.Services.AddAuthorization();
 builder.Services.AddSingleton<JwtTokenGenerator>();
+
+var cultureInfo = new CultureInfo("vi-VN");
+CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
 var app = builder.Build();
 app.MapControllers();
