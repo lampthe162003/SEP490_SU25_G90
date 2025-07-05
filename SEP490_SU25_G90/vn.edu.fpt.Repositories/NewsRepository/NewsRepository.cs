@@ -14,16 +14,16 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.NewsRepository
         
         public async Task<(List<News>, int)> GetPagedNewsAsync(int page, int pageSize)
         {
-            var totalItems = await _context.News.CountAsync();
+            var totalNews = await _context.News.CountAsync();
 
-            var items = await _context.News
+            var news = await _context.News
                 .Include(n => n.Author)
                 .OrderByDescending(n => n.PostTime) 
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            return (items, totalItems);
+            return (news, totalNews);
         }
         
         public async Task<News?> GetNewsByIdAsync(int id)
