@@ -1,4 +1,4 @@
-﻿using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
+﻿using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.News;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Services.NewsService
 {

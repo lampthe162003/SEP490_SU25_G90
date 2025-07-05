@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Services.NewsService;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.News;
 
 namespace SEP490_SU25_G90.Pages.Admins.News
 {

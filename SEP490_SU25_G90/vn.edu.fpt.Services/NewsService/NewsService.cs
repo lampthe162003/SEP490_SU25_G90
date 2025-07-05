@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.News;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.NewsRepository;
 
