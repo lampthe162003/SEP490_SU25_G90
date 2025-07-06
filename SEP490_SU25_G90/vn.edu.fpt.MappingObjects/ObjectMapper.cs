@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using SEP490_SU25_G90.vn.edu.fpt.Commons;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.News;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.TestApplication;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 
@@ -29,10 +30,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
                 .ForMember(dest => dest.Learning, opt => opt.MapFrom(src => src.Learning));
 
 
-            CreateMap<News, NewsListInformationResponse>()
+            CreateMap<Models.News, NewsListInformationResponse>()
                 .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author != null ? string.Join(" ", src.Author.FirstName, src.Author.MiddleName, src.Author.LastName) : ""))
                 .ForMember(dest => dest.ShortContent, opt => opt.MapFrom(src => src.NewsContent.Length > 100 ? src.NewsContent.Substring(0,100)+ "..." : src.NewsContent));
-            CreateMap<NewsFormRequest, News>()
+            CreateMap<NewsFormRequest, Models.News>()
                 .ForMember(dest => dest.Image, opt => opt.Ignore())
                 .ForMember(dest => dest.PostTime, opt => opt.Ignore())
                 .ForMember(dest => dest.AuthorId, opt => opt.Ignore());

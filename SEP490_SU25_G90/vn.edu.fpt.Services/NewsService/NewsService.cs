@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.News;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.NewsRepository;
 
@@ -20,19 +20,19 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.NewsService
 
         public async Task<(List<NewsListInformationResponse>, int)> GetPagedNewsAsync(int page, int pageSize)
         {
-            var (news, totalItems) = await _newsRepository.GetPagedNewsAsync(page, pageSize);
+            var (news, totalNews) = await _newsRepository.GetPagedNewsAsync(page, pageSize);
 
             var result = _mapper.Map<List<NewsListInformationResponse>>(news);
-            return (result, totalItems);
+            return (result, totalNews);
         }
 
         public async Task<NewsListInformationResponse?> GetNewsByIdAsync(int id)
         {
-            var entity = await _newsRepository.GetNewsByIdAsync(id);
-            if (entity == null)
+            var news = await _newsRepository.GetNewsByIdAsync(id);
+            if (news == null)
                 return null;
 
-            return _mapper.Map<NewsListInformationResponse>(entity);
+            return _mapper.Map<NewsListInformationResponse>(news);
         }
         public async Task AddNewsAsync(NewsFormRequest request, int authorId)
         {
@@ -45,15 +45,15 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.NewsService
         }
         public async Task<NewsFormRequest?> GetNewsFormByIdAsync(int id)
         {
-            var entity = await _newsRepository.GetNewsByIdAsync(id);
-            if (entity == null) return null;
+            var news = await _newsRepository.GetNewsByIdAsync(id);
+            if (news == null) return null;
 
             return new NewsFormRequest
             {
-                NewsId = entity.NewsId,
-                Title = entity.Title,
-                NewsContent = entity.NewsContent,
-                OldImagePath = entity.Image
+                NewsId = news.NewsId,
+                Title = news.Title,
+                NewsContent = news.NewsContent,
+                OldImagePath = news.Image
             };
         }
         public async Task<bool> EditNewsAsync(NewsFormRequest request)
