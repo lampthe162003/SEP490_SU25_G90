@@ -20,10 +20,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.NewsService
 
         public async Task<(List<NewsListInformationResponse>, int)> GetPagedNewsAsync(int page, int pageSize)
         {
-            var (news, totalItems) = await _newsRepository.GetPagedNewsAsync(page, pageSize);
+            var (news, totalNews) = await _newsRepository.GetPagedNewsAsync(page, pageSize);
 
             var result = _mapper.Map<List<NewsListInformationResponse>>(news);
-            return (result, totalItems);
+            return (result, totalNews);
         }
 
         public async Task<NewsListInformationResponse?> GetNewsByIdAsync(int id)
