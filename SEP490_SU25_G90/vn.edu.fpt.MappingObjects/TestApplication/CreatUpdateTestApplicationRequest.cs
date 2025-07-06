@@ -49,6 +49,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects.TestApplication
         public string? Note { get; set; }
 
         public string? ResultImageUrl;
+        public string? Email;
+        public string? Phone;
+        public string? Address;
+        public string? Gender;
 
+        public bool? Status;
+        public string? FileUrl;
     }
 }
