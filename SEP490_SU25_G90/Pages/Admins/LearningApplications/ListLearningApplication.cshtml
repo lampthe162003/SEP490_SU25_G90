@@ -49,7 +49,9 @@
                     <td>@item.SubmittedAt?.ToString("d/M/yyyy")</td>
                     <td>@item.LearningStatusName</td>
                     <td class="text-center">
-                        <a asp-page="LearningApplicationDetail" asp-route-id="@item.LearningId" class="btn btn-info btn-sm">Xem</a>
+                        <a asp-page="LearningApplicationDetail" asp-route-id="@item.LearningId" class="btn btn-outline-secondary btn-sm" title="Xem chi tiết">
+                            <i class="fa fa-eye"></i>
+                        </a>
                     </td>
                 </tr>
                 stt++;

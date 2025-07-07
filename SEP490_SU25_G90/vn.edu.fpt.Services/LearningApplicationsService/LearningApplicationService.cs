@@ -92,4 +92,8 @@ public class LearningApplicationService : ILearningApplicationService
     {
         await _learningApplicationRepository.AddAsync(entity);
     }
+    public async Task<LearningApplicationsResponse?> FindLearnerByCccdAsync(string cccd)
+    {
+        return await _learningApplicationRepository.FindLearnerByCccdAsync(cccd);
+    }
 }
