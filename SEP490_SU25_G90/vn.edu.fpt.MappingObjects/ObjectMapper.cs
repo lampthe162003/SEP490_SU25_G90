@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using SEP490_SU25_G90.vn.edu.fpt.Commons;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.LearningMaterial;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.News;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.TestApplication;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
@@ -40,6 +41,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
            
             CreateMap<AccountCreationRequest, User>();
             CreateMap<User, AccountCreationRequest>();
+
+            CreateMap<Models.LearningMaterial, LearningMaterialListInformationResponse>()
+                .ForMember(dest => dest.LicenceTypeName, opt => opt.MapFrom(src => src.LicenceType != null ? src.LicenceType.LicenceCode : null));
         }
     }
 }
