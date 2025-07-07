@@ -56,6 +56,19 @@ builder.Services.AddAuthentication(options =>
                 context.Token = token;
             }
             return Task.CompletedTask;
+        },
+
+        OnChallenge = context =>
+        {
+            context.HandleResponse();
+            context.Response.Redirect("/Commons/Login");
+            return Task.CompletedTask;
+        },
+
+        OnForbidden = context =>
+        {
+            context.Response.Redirect("/Error");
+            return Task.CompletedTask;
         }
     };
 });
