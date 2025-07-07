@@ -34,7 +34,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
             {
                 query = query.Where(x =>
                     ((x.Learner != null
-                        ? (x.Learner.LastName ?? "") + " " + (x.Learner.MiddleName ?? "") + " " + (x.Learner.FirstName ?? "")
+                        ? (x.Learner.MiddleName ?? "") + " " + (x.Learner.FirstName ?? "") + " " + (x.Learner.LastName ?? "")
                         : "")
                     .Contains(searchString)) ||
                     (x.Learner != null && x.Learner.Cccd != null && x.Learner.Cccd.CccdNumber.Contains(searchString)) ||
