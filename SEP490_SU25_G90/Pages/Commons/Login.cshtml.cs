@@ -66,7 +66,7 @@ namespace SEP490_SU25_G90.Pages.Commons
             }
             else if (role.Equals("instructor", StringComparison.OrdinalIgnoreCase))
             {
-                return Redirect("./Learner/News/ListNews");
+                return Redirect("Instructor/LearningMaterial/List");
             }
 
             else return Redirect("./Learner/News/ListNews");
