@@ -40,20 +40,15 @@ namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
 
         public async Task<IActionResult> OnGetAsync()
         {
-            ViewData["LicenceTypeId"] = new SelectList(_context.LicenceTypes, "LicenceTypeId", "LicenceCode");
-            
-
+            ViewData["LicenceTypeId"] = new SelectList(_context.LicenceTypes, "LicenceTypeId", "LicenceCode");            
             Instructors = _instructorService.GetAllInstructors().ToList();
             return Page();
         }
 
         public async Task<IActionResult> OnPostSearchAsync()
-        {
-            
-
+        {            
             ViewData["LicenceTypeId"] = new SelectList(_context.LicenceTypes, "LicenceTypeId", "LicenceCode");
             Instructors = _instructorService.GetAllInstructors().ToList();
-
             if (string.IsNullOrWhiteSpace(SearchCccd))
             {
                 ErrorMessage = "Vui lòng nhập số CCCD.";
@@ -63,7 +58,6 @@ namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
 
             // Tìm học viên theo CCCD
             var learner = await _learningApplicationService.FindLearnerByCccdAsync(SearchCccd);
-
             if (learner == null)
             {
                 ErrorMessage = "Không tìm thấy học viên với số CCCD này.";
@@ -78,19 +72,15 @@ namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
                 ShowForm = false;
                 return Page();
             }
-
             LearnerInfo = learner;
             ShowForm = true;
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
-        {
-            
-
+        {            
             ViewData["LicenceTypeId"] = new SelectList(_context.LicenceTypes, "LicenceTypeId", "LicenceCode");
             Instructors = _instructorService.GetAllInstructors().ToList();
-
             if (LearnerInfo == null)
             {
                 ErrorMessage = "Vui lòng tìm kiếm học viên trước.";
@@ -105,7 +95,6 @@ namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
                 ShowForm = true;
                 return Page();
             }
-
             if (!ModelState.IsValid)
             {
                 ShowForm = true;
@@ -133,9 +122,7 @@ namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
                 LearningStatus = 1
                 // Các trường khác nếu cần
             };
-
             await _learningApplicationService.AddAsync(entity);
-
             return RedirectToPage("./ListLearningApplication");
         }
     }
