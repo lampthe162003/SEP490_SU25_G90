@@ -1,0 +1,40 @@
+﻿@page
+@model SEP490_SU25_G90.Pages.Learner.LearningMaterial.LearningMaterialDetailsModel
+
+@{
+    ViewData["Title"] = "LearningMaterialDetails";
+    Layout = "~/Pages/Shared/_HomeLayout.cshtml";
+}
+
+<div class="card shadow-sm p-4">
+<h2 class="fw-bold">@Model.Material?.Title</h2>
+
+<div class="mb-2 text-muted">
+    <span><strong>Loại bằng:</strong> @Model.Material?.LicenceTypeName</span><br />
+    <span><strong>Ngày tạo:</strong> @Model.Material?.CreatedAt?.ToString("yyyy-MM-dd")</span>
+</div>
+
+<div class="mb-3">
+    <h5 class="fw-bold">Mô tả</h5>
+    <p>@Model.Material?.Description</p>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.Material?.FileLink))
+{
+    <div class="mb-3">
+        <h5 class="fw-bold">Tài liệu</h5>
+        <iframe src="@Model.Material.FileLink"
+                width="100%"
+                height="600px"
+                style="border: 1px solid #ccc;"
+                allowfullscreen>
+        </iframe>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">Tài liệu hiện chưa có file.</div>
+}
+
+<a asp-page="/Learner/LearningMaterial/LearningMaterialList" class="btn btn-secondary mt-3">Quay lại</a>
+</div>

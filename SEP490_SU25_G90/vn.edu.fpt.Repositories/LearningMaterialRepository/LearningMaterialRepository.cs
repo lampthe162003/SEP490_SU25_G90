@@ -25,5 +25,35 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningMaterialRepository
 
             return (learningMaterial, totalLearningMaterial);
         }
+
+        public async Task<LearningMaterial?> GetByIdAsync(int id)
+        {
+            return await _context.LearningMaterials
+                .Include(m => m.LicenceType)
+                .FirstOrDefaultAsync(m => m.MaterialId == id);
+        }
+
+        public async Task<List<LicenceType>> GetLicenceTypesAsync()
+        {
+            return await _context.LicenceTypes.ToListAsync();
+        }
+        public async Task AddAsync(LearningMaterial material)
+        {
+            _context.LearningMaterials.Add(material);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> EditMaterialAsync(LearningMaterial material)
+        {
+            _context.LearningMaterials.Update(material);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> DeleteMaterialAsync(LearningMaterial material)
+        {
+            _context.LearningMaterials.Remove(material);
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
+        }
     }
 }

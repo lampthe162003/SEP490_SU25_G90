@@ -1,4 +1,4 @@
-﻿@page "Instructor/LearningMaterial/List"
+﻿@page "/Instructor/LearningMaterial/List"
 @model SEP490_SU25_G90.Pages.Instructors.LearningMaterial.LearningMaterialListModel
 @{
     ViewData["Title"] = "Tài Liệu Học Tập";
@@ -7,9 +7,18 @@
 
 <h1 class="text-danger fw-bold">Tài Liệu Học Tập</h1>
 
-<a asp-page="/Instructors/LearningMaterial/Create" class="btn btn-success mb-3">
+<a asp-page="/Instructors/LearningMaterial/AddLearningMaterial" class="btn btn-success mb-3">
     <i class="fas fa-plus"></i> Tạo tài liệu
 </a>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
 
 @if (!Model.Materials.Any())
 {
@@ -25,7 +34,7 @@ else
                 <th>Loại bằng</th>
                 <th>File</th>
                 <th>Ngày tạo</th>
-                <th></th>
+                <th>Thao tác</th>
             </tr>
         </thead>
         <tbody>
@@ -38,13 +47,32 @@ else
                     <td>
                         @if (!string.IsNullOrEmpty(item.FileLink))
                         {
-                            <a href="@item.FileLink" target="_blank">Download</a>
+                            <a href="@item.FileLink" download>Download</a>
                         }
                     </td>
                     <td>@item.CreatedAt?.ToString("yyyy-MM-dd")</td>
                     <td>
-                        <a asp-page="./Details" asp-route-id="@item.MaterialId">Xem</a> |
-                        <a asp-page="./Edit" asp-route-id="@item.MaterialId">Sửa</a>
+                        <div class="d-flex gap-1">
+                            <a asp-page="/Instructors/LearningMaterial/LearningMaterialDetails"
+                               asp-route-id="@item.MaterialId" class="btn btn-primary btn-sm" title="Xem">
+                                <i class="fas fa-eye"></i>
+                            </a>
+
+                            <a asp-page="/Instructors/LearningMaterial/EditLearningMaterial"
+                               asp-route-id="@item.MaterialId" class="btn btn-warning btn-sm" title="Sửa">
+                                <i class="fas fa-edit"></i>
+                            </a>
+
+                            <form method="post"
+                                  asp-page-handler="Delete"
+                                  asp-route-id="@item.MaterialId"
+                                  class="d-inline"
+                                  onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài liệu này không?');">
+                                <button type="submit" class="btn btn-danger btn-sm" title="Xóa">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
             }

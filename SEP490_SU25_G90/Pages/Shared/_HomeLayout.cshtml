@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SEP490_SU25_G90.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     @RenderSection("Styles", required: false)
 </head>
 <body>
@@ -21,21 +22,10 @@
                     <a asp-page="/Home/Index">Trang chủ</a>
                     <!-- Giới thiệu -->
                     <a href="#about">Giới thiệu</a>
-                    <!-- Đăng ký học -->
-                    <a href="#about">Đăng ký học</a>
+                  
                     <!-- Tài liệu --> 
-                    <a href="#">Tài liệu </a>                   
-                    <!-- Thi thử -->
-                    <div class="dropdown">
-                        <a href="#">Thi thử ▾</a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#b1">Thi thử B1</a></li>
-                            <li><a href="#b2">Thi thử B2</a></li>
-                            <li><a href="#c">Thi thử C</a></li>
-                            <li><a href="#c1">Thi thử C1</a></li>
-                            <li><a href="#de">Thi thử D/E</a></li>
-                        </ul>
-                    </div>
+                    <a href="/Learner/LearningMaterial/LearningMaterialList">Tài liệu </a>
+
                     <a href="/Learner/News/ListNews">Tin tức</a>
                     <a href="#contact">Liên hệ</a>
                 </nav>

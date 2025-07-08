@@ -44,6 +44,13 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
 
             CreateMap<Models.LearningMaterial, LearningMaterialListInformationResponse>()
                 .ForMember(dest => dest.LicenceTypeName, opt => opt.MapFrom(src => src.LicenceType != null ? src.LicenceType.LicenceCode : null));
+            CreateMap<LearningMaterialFormRequest, Models.LearningMaterial>()
+                .ForMember(dest => dest.FileLink, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
+
+            CreateMap<Models.LearningMaterial, LearningMaterialFormRequest>()
+                .ForMember(dest => dest.File, opt => opt.Ignore())
+                .ForMember(dest => dest.OldFilePath, opt => opt.MapFrom(src => src.FileLink));
         }
     }
 }
