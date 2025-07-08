@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SEP490_SU25_G90.Pages.Instructors.LearningMaterial
 {
-    /*[Authorize(Roles = "instructor")]*/
+    [Authorize(Roles = "instructor")]
     public class LearningMaterialDetailsModel : PageModel
     {
         private readonly ILearningMaterialService _iLearningMaterialService;

@@ -6,7 +6,7 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.LearningMaterialService;
 
 namespace SEP490_SU25_G90.Pages.Instructors.LearningMaterial
 {
-   /* [Authorize(Roles = "instructor")]*/
+    [Authorize(Roles = "instructor")]
     public class LearningMaterialListModel : PageModel
     {
         private readonly ILearningMaterialService _iLearningMaterialService;

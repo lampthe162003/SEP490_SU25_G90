@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace SEP490_SU25_G90.Pages.Instructors.LearningMaterial
 {
+    [Authorize(Roles = "instructor")]
     public class EditLearningMaterialModel : PageModel
     {
         private readonly ILearningMaterialService _learningMaterialService;
