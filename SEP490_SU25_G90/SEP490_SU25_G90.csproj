@@ -21,7 +21,6 @@
   <ItemGroup>
     <Folder Include="vn.edu.fpt.Models\" />
     <Folder Include="wwwroot\uploads\test-application\" />
-    <Folder Include="wwwroot\uploads\news\" />
   </ItemGroup>
 
   <ItemGroup>
