@@ -16,20 +16,21 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
 
         public IQueryable<User> GetAllInstructors()
         {
-            // Lấy users có InstructorSpecializations (là instructors)
             return _context.Users
                 .Include(u => u.Address)
                     .ThenInclude(a => a.Ward)
                         .ThenInclude(w => w.Province)
                             .ThenInclude(p => p.City)
                 .Include(u => u.Cccd)
-                .Include(u => u.InstructorSpecializations)
+                .Include(u => u.UserRoles)
+                .Include(u => u.InstructorSpecializations) // Giữ lại để không ảnh hưởng các tính năng khác
                     .ThenInclude(ins => ins.LicenceType)
                 //.Include(u => u.LearningApplicationInstructors)
-                    //.ThenInclude(la => la.Learner)
-                .Where(u => u.InstructorSpecializations.Any())
+                //.ThenInclude(la => la.Learner)
+                .Where(u => u.UserRoles.Any(ur => ur.RoleId == 3)) // Role Instructor
                 .AsQueryable();
         }
+
 
         public IQueryable<User> GetInstructorsByName(IQueryable<User> query, string name)
         {

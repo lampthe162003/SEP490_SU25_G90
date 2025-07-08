@@ -2,26 +2,24 @@
 
 namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
 {
-    public class LearningApplicationsResponse : IValidatableObject
+    public class LearningApplicationsResponse
     {
         public int LearningId { get; set; }
         public int? LearnerId { get; set; }
 
-        [Required(ErrorMessage = "Họ tên học viên là bắt buộc")]
+        
         public string? LearnerFullName { get; set; }
 
-        [Required(ErrorMessage = "CCCD là bắt buộc")]
+        
         public string? LearnerCccdNumber { get; set; }
 
-        [Required(ErrorMessage = "Ngày sinh là bắt buộc")]
-        [DataType(DataType.Date)]
+        
         public DateTime? LearnerDob { get; set; }
 
-        [Required(ErrorMessage = "Số điện thoại là bắt buộc")]
+        
         public string? LearnerPhone { get; set; }
 
-        [Required(ErrorMessage = "Email là bắt buộc")]
-        [EmailAddress(ErrorMessage = "Email không hợp lệ")]
+        
         public string? LearnerEmail { get; set; }
 
         public string? LearnerCccdImageUrl { get; set; }
@@ -59,16 +57,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
 
         public string? Note { get; set; }
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            if (LearnerDob != null && SubmittedAt != null)
-            {
-                if (LearnerDob >= SubmittedAt)
-                {
-                    yield return new ValidationResult("Ngày sinh phải trước ngày đăng ký.",
-                        new[] { nameof(LearnerDob), nameof(SubmittedAt) });
-                }
-            }
-        }
+        
     }
 }
