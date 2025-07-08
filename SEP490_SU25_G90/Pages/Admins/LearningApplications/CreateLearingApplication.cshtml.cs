@@ -111,6 +111,12 @@ namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
                 ShowForm = true;
                 return Page();
             }
+            if (LearnerInfo.InstructorId == null)
+            {
+                ModelState.AddModelError("LearnerInfo.InstructorId", "Vui lòng chọn giảng viên.");
+                ShowForm = true;
+                return Page();
+            }
 
             // Tạo hồ sơ học mới
             var entity = new LearningApplication
@@ -118,6 +124,13 @@ namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
                 LearnerId = LearnerInfo.LearnerId ?? 0,
                 LicenceTypeId = LearnerInfo.LicenceTypeId,
                 SubmittedAt = LearnerInfo.SubmittedAt,
+                //InstructorId = LearnerInfo.InstructorId
+                // Điểm mặc định là 0 vì chưa thi
+                TheoryScore = 0,
+                SimulationScore = 0,
+                ObstacleScore = 0,
+                PracticalScore = 0,
+                LearningStatus = 1
                 // Các trường khác nếu cần
             };
 
