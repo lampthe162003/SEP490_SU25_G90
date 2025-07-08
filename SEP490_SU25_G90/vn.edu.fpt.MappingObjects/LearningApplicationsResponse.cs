@@ -2,7 +2,7 @@
 
 namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
 {
-    public class LearningApplicationsResponse : IValidatableObject
+    public class LearningApplicationsResponse
     {
         public int LearningId { get; set; }
         public int? LearnerId { get; set; }
