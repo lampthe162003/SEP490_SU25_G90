@@ -1,0 +1,43 @@
+﻿@page "/Instructor/LearningMaterial/Add"
+@model SEP490_SU25_G90.Pages.Instructors.LearningMaterial.AddLearningMaterialModel
+@{
+    ViewData["Title"] = "Tạo tài liệu";
+    Layout = "_InstructorLayout";
+}
+
+<h1 class="text-success">Tạo tài liệu học</h1>
+
+<form method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label asp-for="Input.Title" class="form-label">Tiêu đề</label>
+        <input asp-for="Input.Title" class="form-control" />
+        <span asp-validation-for="Input.Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Input.Description" class="form-label">Mô tả</label>
+        <textarea asp-for="Input.Description" class="form-control"></textarea>
+        <span asp-validation-for="Input.Description" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Input.LicenceTypeId" class="form-label">Loại bằng</label>
+        <select asp-for="Input.LicenceTypeId" class="form-select" asp-items="Model.LicenceTypeOptions">
+            <option value="">-- Chọn loại bằng --</option>
+        </select>
+        <span asp-validation-for="Input.LicenceTypeId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Input.File" class="form-label">Tệp PDF</label>
+        <input asp-for="Input.File" class="form-control" type="file" accept=".pdf" />
+        <span asp-validation-for="Input.File" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Tạo</button>
+    <a asp-page="/Instructors/LearningMaterial/List" class="btn btn-secondary">Quay lại</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
