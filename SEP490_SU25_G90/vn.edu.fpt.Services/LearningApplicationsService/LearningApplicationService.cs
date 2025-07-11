@@ -14,12 +14,7 @@ public class LearningApplicationService : ILearningApplicationService
         _learningApplicationRepository = learningApplicationRepository;
     }
 
-    private string BuildFullName(User user)
-    {
-        // Đúng format: FirstName + MiddleName + LastName
-        return string.Join(" ", new[] { user.FirstName, user.MiddleName, user.LastName }
-            .Where(n => !string.IsNullOrWhiteSpace(n)));
-    }
+    
 
     public async Task<List<LearningApplicationsResponse>> FindByCCCD(string cccd, Expression<Func<LearningApplication, bool>>? additional = null)
     {
