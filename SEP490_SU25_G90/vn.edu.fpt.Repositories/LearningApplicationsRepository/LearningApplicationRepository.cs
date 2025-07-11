@@ -34,8 +34,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
             {
                 query = query.Where(x =>
                     ((x.Learner != null
-                        ? (x.Learner.MiddleName ?? "") + " " + (x.Learner.FirstName ?? "") + " " + (x.Learner.LastName ?? "")
-                        : "")
+                    ? string.Join(" ", new[] { x.Learner.LastName, x.Learner.MiddleName, x.Learner.FirstName }.Where(n => !string.IsNullOrWhiteSpace(n)))
+                    : "")
                     .Contains(searchString)) ||
                     (x.Learner != null && x.Learner.Cccd != null && x.Learner.Cccd.CccdNumber.Contains(searchString)) ||
                     (x.LicenceType != null && x.LicenceType.LicenceCode.Contains(searchString))
@@ -170,9 +170,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 LearnerCccdImageUrl = la.Learner?.Cccd != null ? (la.Learner.Cccd.ImageMt ?? "") + "|" + (la.Learner.Cccd.ImageMs ?? "") : "",
                 LearnerHealthCertImageUrl = la.Learner?.HealthCertificate?.ImageUrl ?? "",
                 LicenceTypeId = la.LicenceTypeId,
-                LicenceTypeName = la.LicenceType?.LicenceCode ?? "",
-                InstructorId = instructor?.UserId,
-                InstructorFullName = instructor != null ? string.Join(" ", new[] { instructor.LastName, instructor.MiddleName, instructor.FirstName }.Where(x => !string.IsNullOrWhiteSpace(x))) : "",
+                LicenceTypeName = la.LicenceType?.LicenceCode ?? "",                
                 SubmittedAt = la.SubmittedAt,
                 LearningStatus = la.LearningStatus,
                 LearningStatusName = statusName,
@@ -325,9 +323,20 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
 
         public async Task AddAsync(LearningApplication entity)
         {
-            _context.LearningApplications.Add(entity);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.LearningApplications.Add(entity);
+                await _context.SaveChangesAsync();
+                Console.WriteLine(" Hồ sơ học đã được lưu thành công");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(" Lỗi khi thêm hồ sơ học: " + ex.Message);
+                throw;
+            }
         }
+
+
         public async Task<LearningApplicationsResponse?> FindLearnerByCccdAsync(string cccd)
         {
             var user = await _context.Users

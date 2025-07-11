@@ -33,22 +33,19 @@ namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
         [BindProperty]
         public LearningApplicationsResponse? LearnerInfo { get; set; }
 
-        public List<InstructorListInformationResponse> Instructors { get; set; } = new();
-
         public string? ErrorMessage { get; set; }
         public bool ShowForm { get; set; } = false;
 
         public async Task<IActionResult> OnGetAsync()
         {
-            ViewData["LicenceTypeId"] = new SelectList(_context.LicenceTypes, "LicenceTypeId", "LicenceCode");            
-            Instructors = _instructorService.GetAllInstructors().ToList();
+            ViewData["LicenceTypeId"] = new SelectList(_context.LicenceTypes, "LicenceTypeId", "LicenceCode");
             return Page();
         }
 
         public async Task<IActionResult> OnPostSearchAsync()
-        {            
+        {
             ViewData["LicenceTypeId"] = new SelectList(_context.LicenceTypes, "LicenceTypeId", "LicenceCode");
-            Instructors = _instructorService.GetAllInstructors().ToList();
+
             if (string.IsNullOrWhiteSpace(SearchCccd))
             {
                 ErrorMessage = "Vui lòng nhập số CCCD.";
@@ -56,7 +53,6 @@ namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
                 return Page();
             }
 
-            // Tìm học viên theo CCCD
             var learner = await _learningApplicationService.FindLearnerByCccdAsync(SearchCccd);
             if (learner == null)
             {
@@ -65,22 +61,24 @@ namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
                 return Page();
             }
 
-            // Kiểm tra trạng thái hồ sơ
-            if (learner.LearningStatusName == "Đang học" || learner.LearningStatusName == "Hoàn thành" || learner.LearningStatusName == "Đã huỷ")
+            // Cho phép tạo mới nếu không phải đang học hoặc đã hoàn thành
+            if (learner.LearningStatusName == "Đang học" || learner.LearningStatusName == "Hoàn thành")
             {
                 ErrorMessage = $"Học viên đã có hồ sơ với trạng thái: {learner.LearningStatusName}. Không thể tạo mới.";
                 ShowForm = false;
                 return Page();
             }
+
             LearnerInfo = learner;
+            LearnerInfo.SubmittedAt ??= DateTime.Today; // Nếu chưa có thì gán mặc định
             ShowForm = true;
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
-        {            
+        {
             ViewData["LicenceTypeId"] = new SelectList(_context.LicenceTypes, "LicenceTypeId", "LicenceCode");
-            Instructors = _instructorService.GetAllInstructors().ToList();
+
             if (LearnerInfo == null)
             {
                 ErrorMessage = "Vui lòng tìm kiếm học viên trước.";
@@ -88,42 +86,50 @@ namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
                 return Page();
             }
 
-            // Validate ngày sinh phải trước ngày đăng ký
-            if (LearnerInfo.LearnerDob != null && LearnerInfo.SubmittedAt != null && LearnerInfo.LearnerDob >= LearnerInfo.SubmittedAt)
+            // Gán ngày đăng ký mặc định nếu chưa có
+            if (!LearnerInfo.SubmittedAt.HasValue)
+            {
+                LearnerInfo.SubmittedAt = DateTime.Today;
+            }
+
+            // Kiểm tra ngày sinh < ngày đăng ký
+            if (LearnerInfo.LearnerDob != null && LearnerInfo.SubmittedAt != null &&
+                LearnerInfo.LearnerDob >= LearnerInfo.SubmittedAt)
             {
                 ModelState.AddModelError("LearnerInfo.LearnerDob", "Ngày sinh phải trước ngày đăng ký.");
-                ShowForm = true;
-                return Page();
             }
+
+            // Kiểm tra lỗi model state
             if (!ModelState.IsValid)
             {
-                ShowForm = true;
-                return Page();
-            }
-            if (LearnerInfo.InstructorId == null)
-            {
-                ModelState.AddModelError("LearnerInfo.InstructorId", "Vui lòng chọn giảng viên.");
+                foreach (var kv in ModelState)
+                {
+                    foreach (var err in kv.Value.Errors)
+                    {
+                        Console.WriteLine($"[ModelState ERROR] {kv.Key}: {err.ErrorMessage}");
+                    }
+                }
                 ShowForm = true;
                 return Page();
             }
 
-            // Tạo hồ sơ học mới
+            // Tạo entity và lưu
             var entity = new LearningApplication
             {
                 LearnerId = LearnerInfo.LearnerId ?? 0,
                 LicenceTypeId = LearnerInfo.LicenceTypeId,
                 SubmittedAt = LearnerInfo.SubmittedAt,
-                //InstructorId = LearnerInfo.InstructorId
-                // Điểm mặc định là 0 vì chưa thi
                 TheoryScore = 0,
                 SimulationScore = 0,
                 ObstacleScore = 0,
                 PracticalScore = 0,
                 LearningStatus = 1
-                // Các trường khác nếu cần
             };
+
             await _learningApplicationService.AddAsync(entity);
+            TempData["SuccessMessage"] = "Tạo hồ sơ học thành công!";
             return RedirectToPage("./ListLearningApplication");
         }
+
     }
 }
