@@ -34,7 +34,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
             {
                 query = query.Where(x =>
                     ((x.Learner != null
-                        ? (x.Learner.LastName ?? "") + " " + (x.Learner.MiddleName ?? "") + " " + (x.Learner.FirstName ?? "")
+                        ? (x.Learner.MiddleName ?? "") + " " + (x.Learner.FirstName ?? "") + " " + (x.Learner.LastName ?? "")
                         : "")
                     .Contains(searchString)) ||
                     (x.Learner != null && x.Learner.Cccd != null && x.Learner.Cccd.CccdNumber.Contains(searchString)) ||
@@ -328,6 +328,45 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
             _context.LearningApplications.Add(entity);
             await _context.SaveChangesAsync();
         }
+        public async Task<LearningApplicationsResponse?> FindLearnerByCccdAsync(string cccd)
+        {
+            var user = await _context.Users
+                .Include(u => u.Cccd)
+                .Include(u => u.HealthCertificate)
+                .FirstOrDefaultAsync(u => u.Cccd != null && u.Cccd.CccdNumber == cccd);
 
+            if (user == null)
+                return null;
+
+            // Kiểm tra trạng thái hồ sơ học gần nhất (nếu có)
+            var latestApp = await _context.LearningApplications
+                .Where(la => la.LearnerId == user.UserId)
+                .OrderByDescending(la => la.SubmittedAt)
+                .FirstOrDefaultAsync();
+
+            string? statusName = null;
+            if (latestApp != null)
+            {
+                if (latestApp.LearningStatus == 3)
+                    statusName = "Đã huỷ";
+                else if (latestApp.LearningStatus == 2)
+                    statusName = "Hoàn thành";
+                else if (latestApp.LearningStatus == 1)
+                    statusName = "Đang học";
+            }
+
+            return new LearningApplicationsResponse
+            {
+                LearnerId = user.UserId,
+                LearnerFullName = string.Join(" ", new[] { user.LastName, user.MiddleName, user.FirstName }.Where(x => !string.IsNullOrWhiteSpace(x))),
+                LearnerCccdNumber = user.Cccd?.CccdNumber,
+                LearnerDob = user.Dob?.ToDateTime(TimeOnly.MinValue),
+                LearnerPhone = user.Phone,
+                LearnerEmail = user.Email,
+                LearnerCccdImageUrl = user.Cccd?.ImageMt, // hoặc ghép cả mặt trước/mặt sau nếu cần
+                LearnerHealthCertImageUrl = user.HealthCertificate?.ImageUrl,
+                LearningStatusName = statusName
+            };
+        }
     }
 }

@@ -11,5 +11,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
         Task<LearningApplicationsResponse?> GetDetailAsync(int id);
         Task<IQueryable<LearningApplication>> GetAllAsync();
         Task AddAsync(LearningApplication entity);
-    }
+        Task<LearningApplicationsResponse?> FindLearnerByCccdAsync(string cccd);
+    
+}
 }

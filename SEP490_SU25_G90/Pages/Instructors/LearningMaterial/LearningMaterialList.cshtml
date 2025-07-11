@@ -1,0 +1,113 @@
+﻿@page "/Instructor/LearningMaterial/List"
+@model SEP490_SU25_G90.Pages.Instructors.LearningMaterial.LearningMaterialListModel
+@{
+    ViewData["Title"] = "Tài Liệu Học Tập";
+    Layout = "_InstructorLayout";
+}
+
+<h1 class="text-danger fw-bold">Tài Liệu Học Tập</h1>
+
+<a asp-page="/Instructors/LearningMaterial/AddLearningMaterial" class="btn btn-success mb-3">
+    <i class="fas fa-plus"></i> Tạo tài liệu
+</a>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+@if (!Model.Materials.Any())
+{
+    <div class="alert alert-info">Không có tài liệu nào.</div>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>Tiêu đề</th>
+                <th>Mô tả</th>
+                <th>Loại bằng</th>
+                <th>File</th>
+                <th>Ngày tạo</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Materials)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.Description</td>
+                    <td>@item.LicenceTypeName</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.FileLink))
+                        {
+                            <a href="@item.FileLink" download>Download</a>
+                        }
+                    </td>
+                    <td>@item.CreatedAt?.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <a asp-page="/Instructors/LearningMaterial/LearningMaterialDetails"
+                               asp-route-id="@item.MaterialId" class="btn btn-primary btn-sm" title="Xem">
+                                <i class="fas fa-eye"></i>
+                            </a>
+
+                            <a asp-page="/Instructors/LearningMaterial/EditLearningMaterial"
+                               asp-route-id="@item.MaterialId" class="btn btn-warning btn-sm" title="Sửa">
+                                <i class="fas fa-edit"></i>
+                            </a>
+
+                            <form method="post"
+                                  asp-page-handler="Delete"
+                                  asp-route-id="@item.MaterialId"
+                                  class="d-inline"
+                                  onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài liệu này không?');">
+                                <button type="submit" class="btn btn-danger btn-sm" title="Xóa">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="d-flex justify-content-center">
+            <ul class="pagination">
+                @if (Model.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-page="/Instructors/LearningMaterial/LearningMaterialList" asp-route-CurrentPage="@(Model.CurrentPage - 1)">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                }
+
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                        <a class="page-link" asp-page="/Instructors/LearningMaterial/LearningMaterialList" asp-route-CurrentPage="@i">@i</a>
+                    </li>
+                }
+
+                @if (Model.CurrentPage < Model.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-page="/Instructors/LearningMaterial/LearningMaterialList" asp-route-CurrentPage="@(Model.CurrentPage + 1)">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+}

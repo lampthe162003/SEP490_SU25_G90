@@ -8,8 +8,10 @@ using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.NewsRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
-using System.Text;
 using SEP490_SU25_G90.vn.edu.fpt.Services.NewsService;
+using System.Globalization;
+using System.Security.Claims;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,7 +44,8 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         ValidIssuer = jwtIssuer,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+        RoleClaimType = ClaimTypes.Role
     };
 
     options.Events = new JwtBearerEvents
@@ -55,11 +58,28 @@ builder.Services.AddAuthentication(options =>
                 context.Token = token;
             }
             return Task.CompletedTask;
+        },
+
+        OnChallenge = context =>
+        {
+            context.HandleResponse();
+            context.Response.Redirect("/Commons/Login");
+            return Task.CompletedTask;
+        },
+
+        OnForbidden = context =>
+        {
+            context.Response.Redirect("/Error");
+            return Task.CompletedTask;
         }
     };
 });
 builder.Services.AddAuthorization();
 builder.Services.AddSingleton<JwtTokenGenerator>();
+
+var cultureInfo = new CultureInfo("vi-VN");
+CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
 var app = builder.Build();
 app.MapControllers();

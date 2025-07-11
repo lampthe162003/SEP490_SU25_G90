@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
-using SEP490_SU25_G90.vn.edu.fpt.Services.NewsService;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.News;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
+using SEP490_SU25_G90.vn.edu.fpt.Services.NewsService;
 
 namespace SEP490_SU25_G90.Pages.Admins.News
 {
+    [Authorize(Roles = "admin")]
     public class EditNewsModel : PageModel
     {
         private readonly INewsService _newsService;
