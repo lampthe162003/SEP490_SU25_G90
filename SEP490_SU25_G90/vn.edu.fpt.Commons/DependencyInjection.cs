@@ -16,6 +16,7 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication;
 using SEP490_SU25_G90.vn.edu.fpt.Services.TestScoreStandardService;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.LicenseTypeRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Services.User;
+using SEP490_SU25_G90.vn.edu.fpt.Services.LicenseTypeService;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Commons
 {
@@ -38,6 +39,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Commons
 
             services.AddScoped<IInstructorRepository, InstructorRepository>();
             services.AddScoped<IInstructorService, InstructorService>();
+
+            services.AddScoped<ILicenseTypeRepository, LicenseTypeRepository>();
+            services.AddScoped<ILicenseTypeService, LicenseTypeService>();
 
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IroleService, RoleService>();
