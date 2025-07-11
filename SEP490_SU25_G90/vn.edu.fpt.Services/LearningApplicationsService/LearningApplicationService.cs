@@ -57,7 +57,7 @@ public class LearningApplicationService : ILearningApplicationService
             LearningId = la.LearningId,
             LearnerId = la.LearnerId,
             LearnerFullName = la.Learner != null
-                        ? (la.Learner.LastName ?? "") + " " + (la.Learner.MiddleName ?? "") + " " + (la.Learner.FirstName ?? "")
+                        ? string.Join(" ", new[] { la.Learner.LastName, la.Learner.MiddleName, la.Learner.FirstName }.Where(x => !string.IsNullOrWhiteSpace(x)))
                         : "",
             LearnerCccdNumber = la.Learner != null && la.Learner.Cccd != null
                         ? la.Learner.Cccd.CccdNumber
@@ -74,11 +74,7 @@ public class LearningApplicationService : ILearningApplicationService
                         ? la.Learner.HealthCertificate.ImageUrl ?? ""
                         : "",
             LicenceTypeId = la.LicenceTypeId,
-            LicenceTypeName = la.LicenceType != null ? la.LicenceType.LicenceCode : "",
-            InstructorId = instr != null ? instr.UserId : null,
-            InstructorFullName = instr != null
-            ? (instr.LastName ?? "") + " " + (instr.MiddleName ?? "") + " " + (instr.FirstName ?? "")
-            : "",
+            LicenceTypeName = la.LicenceType != null ? la.LicenceType.LicenceCode : "",                        
             LearnerClasses = learnerClasses ?? new List<LearnerClassInfo>(),
             SubmittedAt = la.SubmittedAt,
             LearningStatus = la.LearningStatus,

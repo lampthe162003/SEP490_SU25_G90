@@ -8,47 +8,56 @@
 
 <h2 class="mb-4">Tạo mới hồ sơ học</h2>
 
-<!-- Form tìm kiếm học viên bằng CCCD -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
 <form method="post" asp-page-handler="Search" class="mb-4 w-50">
     <div class="input-group">
-        <input type="text" name="SearchCccd" class="form-control" placeholder="Nhập số CCCD để tìm học viên..." value="@Model.SearchCccd" />
+        <input type="text" name="SearchCccd" class="form-control" placeholder="Nhập số CCCD..." value="@Model.SearchCccd" />
         <button type="submit" class="btn btn-primary">Tìm kiếm</button>
     </div>
 </form>
 
-@if (!string.IsNullOrEmpty(Model.ErrorMessage))
-{
-    <div class="alert alert-danger">@Model.ErrorMessage</div>
-}
-
 @if (Model.ShowForm && Model.LearnerInfo != null)
 {
     <form method="post" enctype="multipart/form-data">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="SearchCccd" />
+        <div asp-validation-summary="All" class="text-danger"></div>
 
         <div class="row">
-            <!-- Cột trái: thông tin học viên -->
             <div class="col-md-6">
                 <div class="mb-2">
-                    <label class="form-label">Họ tên học viên:</label>
-                    <input class="form-control" value="@Model.LearnerInfo.LearnerFullName" readonly />
+                    <label asp-for="LearnerInfo.LearnerFullName" class="form-label">Họ tên học viên:</label>
+                    <input class="form-control" asp-for="LearnerInfo.LearnerFullName" readonly />
                 </div>
+
                 <div class="mb-2">
-                    <label class="form-label">CCCD:</label>
-                    <input class="form-control" value="@Model.LearnerInfo.LearnerCccdNumber" readonly />
+                    <label asp-for="LearnerInfo.LearnerCccdNumber" class="form-label">CCCD:</label>
+                    <input class="form-control" asp-for="LearnerInfo.LearnerCccdNumber" readonly />
                 </div>
+
                 <div class="mb-2">
-                    <label class="form-label">Ngày sinh:</label>
-                    <input class="form-control" value="@(Model.LearnerInfo.LearnerDob?.ToString("dd/MM/yyyy"))" readonly />
+                    <label asp-for="LearnerInfo.LearnerDob" class="form-label">Ngày sinh:</label>
+                    <input class="form-control" readonly value="@Model.LearnerInfo.LearnerDob?.ToString("dd/MM/yyyy")" />
+                    <input type="hidden" asp-for="LearnerInfo.LearnerDob" />
                 </div>
+
                 <div class="mb-2">
-                    <label class="form-label">Số điện thoại:</label>
-                    <input class="form-control" value="@Model.LearnerInfo.LearnerPhone" readonly />
+                    <label asp-for="LearnerInfo.LearnerPhone" class="form-label">Số điện thoại:</label>
+                    <input class="form-control" asp-for="LearnerInfo.LearnerPhone" readonly />
                 </div>
+
                 <div class="mb-2">
-                    <label class="form-label">Email:</label>
-                    <input class="form-control" value="@Model.LearnerInfo.LearnerEmail" readonly />
+                    <label asp-for="LearnerInfo.LearnerEmail" class="form-label">Email:</label>
+                    <input class="form-control" asp-for="LearnerInfo.LearnerEmail" readonly />
                 </div>
+
+                <input type="hidden" asp-for="LearnerInfo.LearnerId" />
+                <input type="hidden" asp-for="LearnerInfo.LearnerCccdImageUrl" />
+                <input type="hidden" asp-for="LearnerInfo.LearnerHealthCertImageUrl" />
+
                 <div class="mb-2">
                     <label asp-for="LearnerInfo.LicenceTypeId" class="form-label">Loại bằng</label>
                     <select asp-for="LearnerInfo.LicenceTypeId" class="form-select" asp-items="ViewBag.LicenceTypeId">
@@ -56,41 +65,32 @@
                     </select>
                     <span asp-validation-for="LearnerInfo.LicenceTypeId" class="text-danger"></span>
                 </div>
-                <div class="mb-2">
-                    <label asp-for="LearnerInfo.InstructorId" class="form-label">Giảng viên</label>
-                    <select asp-for="LearnerInfo.InstructorId" class="form-select">
-                        <option value="">-- Chọn giảng viên --</option>
-                        @foreach (var instructor in Model.Instructors)
-                        {
-                            <option value="@instructor.UserId">@instructor.FullName</option>
-                        }
-                    </select>
-                </div>
+
                 <div class="mb-2">
                     <label asp-for="LearnerInfo.SubmittedAt" class="form-label">Ngày đăng ký</label>
-                    <input asp-for="LearnerInfo.SubmittedAt" class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    <input asp-for="LearnerInfo.SubmittedAt" class="form-control" type="date" />
                     <span asp-validation-for="LearnerInfo.SubmittedAt" class="text-danger"></span>
                 </div>
             </div>
 
-            <!-- Cột phải: ảnh -->
             <div class="col-md-6">
                 <div class="mb-3">
                     <label class="form-label">Ảnh CCCD:</label><br />
                     @if (!string.IsNullOrEmpty(Model.LearnerInfo.LearnerCccdImageUrl))
                     {
-                        <img src="@Model.LearnerInfo.LearnerCccdImageUrl" alt="Ảnh CCCD" style="max-width:100%; height:auto;" />
+                        <img src="@Model.LearnerInfo.LearnerCccdImageUrl" class="img-fluid" />
                     }
                     else
                     {
                         <div class="text-muted">Chưa có ảnh</div>
                     }
                 </div>
+
                 <div class="mb-3">
                     <label class="form-label">Ảnh giấy khám sức khỏe:</label><br />
                     @if (!string.IsNullOrEmpty(Model.LearnerInfo.LearnerHealthCertImageUrl))
                     {
-                        <img src="@Model.LearnerInfo.LearnerHealthCertImageUrl" alt="Ảnh giấy khám sức khỏe" style="max-width:100%; height:auto;" />
+                        <img src="@Model.LearnerInfo.LearnerHealthCertImageUrl" class="img-fluid" />
                     }
                     else
                     {
@@ -104,10 +104,7 @@
             <a asp-page="ListLearningApplication" class="btn btn-outline-secondary btn-lg me-2">Hủy</a>
             <button type="submit" class="btn btn-success btn-lg">Tạo mới</button>
         </div>
-
-
     </form>
-
 }
 
 @section Scripts {
