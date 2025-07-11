@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Azure.Core;
 using Microsoft.EntityFrameworkCore;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.TestApplication;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.TestApplicationRepository;
 
@@ -51,16 +52,61 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
             return _mapper.Map<List<TestApplicationListInformationResponse>>(list);
         }
 
-        public async Task<List<TestApplicationListInformationResponse>> GetByCccdAsync(string cccd)
+        public async Task<Pagination<TestApplicationListInformationResponse>> SearchAll(TestApplicationSearchRequest request)
         {
-            var list = await _testApplicationRepository.GetByCccdAsync(cccd);
-            return _mapper.Map<List<TestApplicationListInformationResponse>>(list);
-        }
+            var dataSrc = _testApplicationRepository.GetAll();
+            var data = dataSrc
+               .Include(t => t.Learning)
+                   .ThenInclude(la => la.Learner)
+                       .ThenInclude(u => u.Cccd)
+               .Include(t => t.Learning)
+               .AsQueryable();
+            if (request.LicenseTypeId.HasValue)
+            {
+                data = data.Where(x => x.Learning.LicenceTypeId == request.LicenseTypeId.Value);
+            }
 
-        public async Task<List<TestApplicationListInformationResponse>> GetByNameAsync(string name)
-        {
-            var list = await _testApplicationRepository.GetByNameAsync(name);
-            return _mapper.Map<List<TestApplicationListInformationResponse>>(list);
+            if (request.Status.HasValue)
+            {
+                if (request.Status == 0)
+                {
+                    data = data.Where(x => x.Status == null);
+                }
+                else
+                if (request.Status == 1)
+                {
+                    data = data.Where(x => x.Status == true);
+                }
+                else
+                {
+                    data = data.Where(x => x.Status == false);
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Search))
+            {
+                var normallizedName = request.Search.Trim();
+                data = data.Where(t => t.Learning.Learner.FirstName.Contains(normallizedName) ||
+                            t.Learning.Learner.MiddleName.Contains(normallizedName) ||
+                            t.Learning.Learner.LastName.Contains(normallizedName) ||
+                            t.Learning.Learner.Cccd.CccdNumber.Contains(normallizedName)
+                            );
+            }
+
+            var totalCount = await data.CountAsync();
+            var paginatedData = await data
+                .Skip(request.Skip)
+                .Take(TestApplicationSearchRequest.Take)
+                .ToListAsync();
+            var mappedData = _mapper.Map<List<TestApplicationListInformationResponse>>(paginatedData);
+            return new Pagination<TestApplicationListInformationResponse>()
+            {
+                Data = mappedData,
+                Total = totalCount,
+                TotalPage = totalCount % TestApplicationSearchRequest.Take == 0
+                ? totalCount / TestApplicationSearchRequest.Take
+                : ((totalCount / TestApplicationSearchRequest.Take) + 1)
+            };
         }
 
         public async Task<CreatUpdateTestApplicationRequest> FindById(int id)
@@ -70,6 +116,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
                 .Include(x => x.Learning)
                 .ThenInclude(x => x.Learner)
                 .ThenInclude(x => x.Cccd)
+                .Include(x => x.Learning)
+                .ThenInclude(x => x.Learner)
+                .ThenInclude(x => x.Address.Ward.Province.City)
                 .Include(x => x.Learning)
                 .ThenInclude(x => x.LicenceType)
                 .FirstOrDefaultAsync(x => x.TestId == id);
@@ -89,7 +138,15 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
                     ? string.Empty
                     : $"{obj.Learning.Learner.FirstName} {obj.Learning.Learner.MiddleName} {obj.Learning.Learner.LastName}",
                 LicenseType = obj.Learning?.LicenceType?.LicenceCode ?? string.Empty,
-                ResultImageUrl = obj.ResultImageUrl
+                ResultImageUrl = obj.ResultImageUrl,
+                Email = obj.Learning.Learner?.Email,
+                Phone = obj.Learning.Learner?.Phone,
+                Address = string.Join(",", (new List<string>() {  obj.Learning.Learner?.Address?.HouseNumber,
+obj.Learning.Learner?.Address?.RoadName, obj.Learning.Learner?.Address?.Ward.WardName, obj.Learning.Learner?.Address?.Ward.Province.ProvinceName,
+obj.Learning.Learner?.Address?.Ward.Province.City.CityName}).Where(x => !string.IsNullOrWhiteSpace(x))),
+                Gender = obj.Learning.Learner.Gender == true ? "Nam" : "Nữ",
+                Status = obj.Status,
+                FileUrl = obj.ResultImageUrl
             };
         }
 
