@@ -15,7 +15,6 @@ namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
     {
         private readonly Sep490Su25G90DbContext _context;
         private readonly ILearningApplicationService _learningApplicationService;
-        private readonly IInstructorService _instructorService;
 
         public CreateLearingApplicationModel(
             Sep490Su25G90DbContext context,
@@ -24,7 +23,6 @@ namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
         {
             _context = context;
             _learningApplicationService = learningApplicationService;
-            _instructorService = instructorService;
         }
 
         [BindProperty]
@@ -35,12 +33,23 @@ namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
 
         public string? ErrorMessage { get; set; }
         public bool ShowForm { get; set; } = false;
+        public bool IsEligibleToCreate { get; set; } = false;
+
 
         public async Task<IActionResult> OnGetAsync()
         {
             ViewData["LicenceTypeId"] = new SelectList(_context.LicenceTypes, "LicenceTypeId", "LicenceCode");
+            // Gán ngày hôm nay mặc định khi chưa tìm học viên
+            if (LearnerInfo == null)
+            {
+                LearnerInfo = new LearningApplicationsResponse
+                {
+                    SubmittedAt = DateTime.Today
+                };
+            }
             return Page();
         }
+
 
         public async Task<IActionResult> OnPostSearchAsync()
         {
@@ -57,25 +66,37 @@ namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
             if (learner == null)
             {
                 ErrorMessage = "Không tìm thấy học viên với số CCCD này.";
-                ShowForm = false;
+                ShowForm = true;
+                LearnerInfo = null;
+                IsEligibleToCreate = false;
                 return Page();
             }
 
-            // Cho phép tạo mới nếu không phải đang học hoặc đã hoàn thành
+            // Luôn hiển thị thông tin học viên
+            LearnerInfo = learner;
+            LearnerInfo.SubmittedAt ??= DateTime.Today;
+            ShowForm = true;
+
+            // Nếu học viên đã có hồ sơ không hợp lệ
             if (learner.LearningStatusName == "Đang học" || learner.LearningStatusName == "Hoàn thành")
             {
                 ErrorMessage = $"Học viên đã có hồ sơ với trạng thái: {learner.LearningStatusName}. Không thể tạo mới.";
-                ShowForm = false;
+                IsEligibleToCreate = false;
                 return Page();
             }
 
-            LearnerInfo = learner;
-            LearnerInfo.SubmittedAt ??= DateTime.Today; // Nếu chưa có thì gán mặc định
-            ShowForm = true;
+            // Cho phép tạo mới
+            IsEligibleToCreate = true;
             return Page();
+
+
+            //LearnerInfo = learner;
+            //LearnerInfo.SubmittedAt ??= DateTime.Today; // Nếu chưa có thì gán mặc định
+            //ShowForm = true;
+            //return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostCreateAsync()
         {
             ViewData["LicenceTypeId"] = new SelectList(_context.LicenceTypes, "LicenceTypeId", "LicenceCode");
 
@@ -123,11 +144,12 @@ namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
                 SimulationScore = 0,
                 ObstacleScore = 0,
                 PracticalScore = 0,
-                LearningStatus = 1
+                LearningStatus = 1,
+                TestEligibility = false
             };
 
             await _learningApplicationService.AddAsync(entity);
-            TempData["SuccessMessage"] = "Tạo hồ sơ học thành công!";
+            TempData["SuccessMessage"] = $"Đã tạo hồ sơ thành công cho học viên {LearnerInfo?.LearnerFullName}";
             return RedirectToPage("./ListLearningApplication");
         }
 

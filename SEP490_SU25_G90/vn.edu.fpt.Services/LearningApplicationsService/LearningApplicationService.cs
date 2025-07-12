@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿// File: LearningApplicationService.cs
+using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository;
@@ -13,6 +14,8 @@ public class LearningApplicationService : ILearningApplicationService
         _learningApplicationRepository = learningApplicationRepository;
     }
 
+    
+
     public async Task<List<LearningApplicationsResponse>> FindByCCCD(string cccd, Expression<Func<LearningApplication, bool>>? additional = null)
     {
         var result = (await _learningApplicationRepository
@@ -22,12 +25,13 @@ public class LearningApplicationService : ILearningApplicationService
             .Include(x => x.TestApplications)
             .Include(x => x.LicenceType)
             .Where(x => x.Learner.Cccd != null && x.Learner.Cccd.CccdNumber.Equals(cccd));
+
         if (additional != null)
         {
             result = result.Where(additional);
         }
 
-        return [.. result.Select(x => ToDto(x, null, null))];
+        return result.Select(x => ToDto(x, null, null)).ToList();
     }
 
     public List<LearningApplication> GetAll()
@@ -56,38 +60,32 @@ public class LearningApplicationService : ILearningApplicationService
         {
             LearningId = la.LearningId,
             LearnerId = la.LearnerId,
-            LearnerFullName = la.Learner != null
-                        ? string.Join(" ", new[] { la.Learner.LastName, la.Learner.MiddleName, la.Learner.FirstName }.Where(x => !string.IsNullOrWhiteSpace(x)))
-                        : "",
-            LearnerCccdNumber = la.Learner != null && la.Learner.Cccd != null
-                        ? la.Learner.Cccd.CccdNumber
-                        : "",
-            LearnerDob = la.Learner != null && la.Learner.Dob.HasValue
-                        ? la.Learner.Dob.Value.ToDateTime(TimeOnly.MinValue)
-                        : (DateTime?)null,
-            LearnerPhone = la.Learner != null ? la.Learner.Phone : "",
-            LearnerEmail = la.Learner != null ? la.Learner.Email : "",
-            LearnerCccdImageUrl = la.Learner != null && la.Learner.Cccd != null
-                        ? (la.Learner.Cccd.ImageMt != null ? la.Learner.Cccd.ImageMt : "") + "|" + (la.Learner.Cccd.ImageMs != null ? la.Learner.Cccd.ImageMs : "")
-                        : "",
-            LearnerHealthCertImageUrl = la.Learner != null && la.Learner.HealthCertificate != null
-                        ? la.Learner.HealthCertificate.ImageUrl ?? ""
-                        : "",
+            LearnerFullName = la.Learner != null ?
+                string.Join(" ", new[] { la.Learner.FirstName, la.Learner.MiddleName, la.Learner.LastName }.Where(x => !string.IsNullOrWhiteSpace(x))) : "",
+            LearnerCccdNumber = la.Learner?.Cccd?.CccdNumber ?? "",
+            LearnerDob = la.Learner?.Dob?.ToDateTime(TimeOnly.MinValue),
+            LearnerPhone = la.Learner?.Phone ?? "",
+            LearnerEmail = la.Learner?.Email ?? "",
+            LearnerCccdImageUrl = la.Learner?.Cccd != null ?
+                (la.Learner.Cccd.ImageMt ?? "") + "|" + (la.Learner.Cccd.ImageMs ?? "") : "",
+            LearnerHealthCertImageUrl = la.Learner?.HealthCertificate?.ImageUrl ?? "",
             LicenceTypeId = la.LicenceTypeId,
-            LicenceTypeName = la.LicenceType != null ? la.LicenceType.LicenceCode : "",                        
+            LicenceTypeName = la.LicenceType?.LicenceCode ?? "",
             LearnerClasses = learnerClasses ?? new List<LearnerClassInfo>(),
             SubmittedAt = la.SubmittedAt,
             LearningStatus = la.LearningStatus,
-            LearningStatusName = la.LearningStatus == 1 ? "Đang học"
-                                        : la.LearningStatus == 2 ? "Hoàn thành"
-                                        : la.LearningStatus == 3 ? "Đã huỷ"
-                                        : "Chưa xác định"
+            LearningStatusName = la.LearningStatus == 1 ? "Đang học" :
+                                 la.LearningStatus == 2 ? "Hoàn thành" :
+                                 la.LearningStatus == 3 ? "Đã huỷ" :
+                                 "Chưa xác định"
         };
     }
+
     public async Task AddAsync(LearningApplication entity)
     {
         await _learningApplicationRepository.AddAsync(entity);
     }
+
     public async Task<LearningApplicationsResponse?> FindLearnerByCccdAsync(string cccd)
     {
         return await _learningApplicationRepository.FindLearnerByCccdAsync(cccd);
