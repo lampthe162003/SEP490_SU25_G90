@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 
 namespace SEP490_SU25_G90.Pages.Learner.News
 {
-    [Authorize(Roles = "learner")]
     public class ListNewsModel : PageModel
     {
         private readonly INewsService _iNewsService;
