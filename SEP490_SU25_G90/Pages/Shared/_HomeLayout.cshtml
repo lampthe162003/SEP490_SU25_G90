@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,6 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     @RenderSection("Styles", required: false)
 </head>
+
 <body>
     <!-- Header -->
     <header class="header">
@@ -22,8 +24,8 @@
                     <a asp-page="/Home/Index">Trang chủ</a>
                     <!-- Giới thiệu -->
                     <a href="#about">Giới thiệu</a>
-                  
-                    <!-- Tài liệu --> 
+
+                    <!-- Tài liệu -->
                     <a href="/Learner/LearningMaterial/LearningMaterialList">Tài liệu </a>
 
                     <a href="/Learner/News/ListNews">Tin tức</a>
@@ -33,6 +35,23 @@
                 @if (User.Identity.Name == null)
                 {
                     <a asp-page="/Commons/Login" class="login-link">Đăng nhập</a>
+                }
+                else
+                {
+                    <div class="user-menu">
+                        <div class="user-info">
+                            <div class="username">
+                                <div><strong>@User.Identity.Name</strong></div>
+                                <div class="role">Học viên</div>
+                            </div>
+                            <i class="fas fa-user-circle fa-2x" id="userIcon"></i>
+                        </div>
+                        <div class="user-dropdown" id="userDropdown">
+                            <a href="#">Hồ sơ người dùng</a>
+                            <a href="#">Đổi mật khẩu</a>
+                            <a href="/Logout">Đăng xuất</a>
+                        </div>
+                    </div>
                 }
             </div>
         </div>
@@ -54,8 +73,27 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        $(document).ready(function () {
+            // Toggle user dropdown
+            $('#userIcon').click(function (e) {
+                e.stopPropagation();
+                $('#userDropdown').toggleClass('show');
+            });
+
+            // Close dropdown when clicking outside
+            $(document).click(function () {
+                $('#userDropdown').removeClass('show');
+            });
+
+            // Prevent dropdown from closing when clicking inside
+            $('#userDropdown').click(function (e) {
+                e.stopPropagation();
+            });
+        });
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>

@@ -30,4 +30,5 @@ public partial class LearningApplication
     public virtual LicenceType? LicenceType { get; set; }
 
     public virtual ICollection<TestApplication> TestApplications { get; set; } = new List<TestApplication>();
+
 }
