@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SEP490_SU25_G90.vn.edu.fpt.Commons;
+using SEP490_SU25_G90.vn.edu.fpt.Commons.AuthorizationHandler;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository;
@@ -74,8 +76,15 @@ builder.Services.AddAuthentication(options =>
         }
     };
 });
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("GuestOrLearnerPolicy", policy =>
+    {
+        policy.Requirements.Add(new GuestOrLearnerRequirement());
+    });
+});
 builder.Services.AddSingleton<JwtTokenGenerator>();
+builder.Services.AddSingleton<IAuthorizationHandler, GuestOrLearnerHandler>();
 
 var cultureInfo = new CultureInfo("vi-VN");
 CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
@@ -95,10 +104,16 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-app.MapGet("/", context =>
+app.MapGet("/", async context =>
 {
+    if (context.User.IsInRole("admin"))
+    {
+        context.Response.Redirect("/Admin/Dashboard");
+        return;
+    }
+    
     context.Response.Redirect("/Home/Index");
-    return Task.CompletedTask;
+    return;
 });
 app.UseHttpsRedirection();
 app.UseStaticFiles();

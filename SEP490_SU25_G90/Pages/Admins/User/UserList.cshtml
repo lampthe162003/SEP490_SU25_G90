@@ -34,15 +34,6 @@
             <th>
                 Email
             </th>
-            <th>
-                Ngày Sinh
-            </th>
-            <th>
-                Giới Tính
-            </th>
-            <th>
-                SĐT
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -59,9 +50,6 @@
                     }
             </td>
             <td>@item.Email</td>
-            <td>@item.Dob</td>
-            <td>@(item.Gender == true ? "Nam" : "Nữ")</td>
-            <td>@item.Phone</td>
             <td>
                 <a asp-page="./Edit" asp-route-id="@item.UserId">Sửa</a> |
                 <a asp-page="./Details" asp-route-id="@item.UserId">Chi Tiết</a> 
