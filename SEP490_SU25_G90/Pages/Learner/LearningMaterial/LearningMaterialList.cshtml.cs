@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.LearningMaterial;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace SEP490_SU25_G90.Pages.Learner.LearningMaterial
 {
+    [Authorize(Policy = "GuestOrLearnerPolicy")]
     public class LearningMaterialListModel : PageModel
     {
         private readonly ILearningMaterialService _iLearningMaterialService;
