@@ -15,13 +15,11 @@ namespace SEP490_SU25_G90.Pages.Commons
 {
     public class LoginModel : PageModel
     {
-        private readonly SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext _context;
         private readonly IUserService _userService;
         private readonly JwtTokenGenerator _jwt;
 
-        public LoginModel(SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext context, IUserService service, JwtTokenGenerator jwt)
+        public LoginModel(IUserService service, JwtTokenGenerator jwt)
         {
-            _context = context;
             _jwt = jwt;
             _userService = service;
         }
