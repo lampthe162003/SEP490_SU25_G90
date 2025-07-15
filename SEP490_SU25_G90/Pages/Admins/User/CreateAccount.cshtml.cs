@@ -51,7 +51,7 @@ namespace SEP490_SU25_G90.Pages.Admins.User
         }
 
         [BindProperty]
-        public AccountCreationRequest User { get; set; } = default!;
+        public AccountCreationRequest NewUser { get; set; } = default!;
 
         // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
@@ -61,7 +61,7 @@ namespace SEP490_SU25_G90.Pages.Admins.User
                 return Page();
             }
 
-            await _userService.CreateAccount(User, Role);
+            await _userService.CreateAccount(NewUser, Role);
 
             return RedirectToPage("./UserList");
         }

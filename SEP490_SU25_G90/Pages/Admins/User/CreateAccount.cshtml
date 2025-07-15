@@ -15,46 +15,46 @@
         <form method="post" autocomplete="off">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="User.Email" class="control-label"></label>
-                <input asp-for="User.Email" class="form-control" autocomplete="new-email" />
-                <span asp-validation-for="User.Email" class="text-danger"></span>
+                <label asp-for="NewUser.Email" class="control-label"></label>
+                <input asp-for="NewUser.Email" class="form-control" autocomplete="new-email" />
+                <span asp-validation-for="NewUser.Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="User.PasswordHash" class="control-label"></label>
-                <input asp-for="User.PasswordHash" class="form-control" autocomplete="new-password" />
-                <span asp-validation-for="User.PasswordHash" class="text-danger"></span>
+                <label asp-for="NewUser.PasswordHash" class="control-label"></label>
+                <input asp-for="NewUser.PasswordHash" class="form-control" autocomplete="new-password" />
+                <span asp-validation-for="NewUser.PasswordHash" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="User.FirstName" class="control-label"></label>
-                <input asp-for="User.FirstName" class="form-control" />
-                <span asp-validation-for="User.FirstName" class="text-danger"></span>
+                <label asp-for="NewUser.FirstName" class="control-label"></label>
+                <input asp-for="NewUser.FirstName" class="form-control" />
+                <span asp-validation-for="NewUser.FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="User.MiddleName" class="control-label"></label>
-                <input asp-for="User.MiddleName" class="form-control" />
-                <span asp-validation-for="User.MiddleName" class="text-danger"></span>
+                <label asp-for="NewUser.MiddleName" class="control-label"></label>
+                <input asp-for="NewUser.MiddleName" class="form-control" />
+                <span asp-validation-for="NewUser.MiddleName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="User.LastName" class="control-label"></label>
-                <input asp-for="User.LastName" class="form-control" />
-                <span asp-validation-for="User.LastName" class="text-danger"></span>
+                <label asp-for="NewUser.LastName" class="control-label"></label>
+                <input asp-for="NewUser.LastName" class="form-control" />
+                <span asp-validation-for="NewUser.LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="User.Dob" class="control-label"></label>
-                <input asp-for="User.Dob" class="form-control" />
-                <span asp-validation-for="User.Dob" class="text-danger"></span>
+                <label asp-for="NewUser.Dob" class="control-label"></label>
+                <input asp-for="NewUser.Dob" class="form-control" />
+                <span asp-validation-for="NewUser.Dob" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="User.Gender" class="control-label"></label>
-                <select asp-for="User.Gender" asp-items="Model.GenderSelect" class="form-control">
+                <label asp-for="NewUser.Gender" class="control-label"></label>
+                <select asp-for="NewUser.Gender" asp-items="Model.GenderSelect" class="form-control">
                     <option value="">-- Chọn --</option>
                 </select>
-                <span asp-validation-for="User.Gender" class="text-danger"></span>
+                <span asp-validation-for="NewUser.Gender" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="User.Phone" class="control-label"></label>
-                <input asp-for="User.Phone" class="form-control" />
-                <span asp-validation-for="User.Phone" class="text-danger"></span>
+                <label asp-for="NewUser.Phone" class="control-label"></label>
+                <input asp-for="NewUser.Phone" class="form-control" />
+                <span asp-validation-for="NewUser.Phone" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Role" class="control-label"></label>
