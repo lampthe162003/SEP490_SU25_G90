@@ -11,5 +11,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.UserRepository
         public Task Update(User user);
         public Task<User> GetLoginDetails(string email, string password);
         public Task SaveChangesAsync();
+        public Task<User> GetUserById(int id);
     }
 }

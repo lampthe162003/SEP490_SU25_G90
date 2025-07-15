@@ -309,5 +309,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.User
             }
         }
 
+        public async Task UpdatePasswordAsync(int userId, string newPassword)
+        {
+            var user = await (_userRepository.GetUserById(userId) ?? throw new ArgumentNullException("Người dùng không tồn tại."));
+            user.Password = newPassword;
+            await _userRepository.Update(user);
+        }
     }
 }
