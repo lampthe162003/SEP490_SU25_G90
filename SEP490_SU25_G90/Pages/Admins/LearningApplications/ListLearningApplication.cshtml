@@ -37,7 +37,7 @@
             <th class="text-center">Giảng viên</th>
             <th class="text-center">Ngày đăng kí</th>
             <th class="text-center">Trạng thái</th>
-            <th class="text-center">Thao tác</th>
+            <th class="text-center">Chi tiết hồ sơ</th>
         </tr>
     </thead>
     <tbody>
@@ -47,15 +47,15 @@
             {
                 <tr>
                     <td class="text-center">@stt</td>
-                    <td>@item.LearnerFullName</td>
-                    <td>@item.LearnerCccdNumber</td>
-                    <td>@item.LicenceTypeName</td>
-                    <td>@item.InstructorFullName</td>
-                    <td>@item.SubmittedAt?.ToString("d/M/yyyy")</td>
-                    <td>@item.LearningStatusName</td>
+                    <td class="text-center">@item.LearnerFullName</td>
+                    <td class="text-center">@item.LearnerCccdNumber</td>              
+                    <td class="text-center">@item.LicenceTypeName</td>
+                    <td class="text-center">@item.InstructorFullName</td>
+                    <td class="text-center">@item.SubmittedAt?.ToString("d/M/yyyy")</td>
+                    <td class="text-center">@item.LearningStatusName</td>
                     <td class="text-center">
                         <a asp-page="LearningApplicationDetail" asp-route-id="@item.LearningId" class="btn btn-outline-secondary btn-sm" title="Xem chi tiết">
-                            <i class="fa fa-eye"></i>
+                            <i class="fa fa-eye fa-lg text-primary"></i>
                         </a>
                     </td>
                 </tr>
