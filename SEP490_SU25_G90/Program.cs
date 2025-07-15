@@ -71,7 +71,7 @@ builder.Services.AddAuthentication(options =>
 
         OnForbidden = context =>
         {
-            context.Response.Redirect("/Error");
+            context.Response.Redirect("/Error403");
             return Task.CompletedTask;
         }
     };
