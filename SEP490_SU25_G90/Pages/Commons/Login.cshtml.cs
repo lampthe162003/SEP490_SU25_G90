@@ -37,6 +37,9 @@ namespace SEP490_SU25_G90.Pages.Commons
         [Required(ErrorMessage = "Mật khẩu không được để trống")]
         public String Password { get; set; } = default!;
 
+        [BindProperty(SupportsGet = true)]
+        public bool SavePasswordCheck { get; set; } = false;
+
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             return Page();
@@ -57,19 +60,31 @@ namespace SEP490_SU25_G90.Pages.Commons
                 ModelState.AddModelError(string.Empty, "Tài khoản hoặc mật khẩu không đúng. Vui lòng thử lại.");
                 return Page();
             }
-            string role = user.UserRoles.First().Role.RoleName;
-            var token = _jwt.GenerateToken(user.UserId, Email, role);
-            Response.Cookies.Append("jwt", token, new CookieOptions { HttpOnly = true });
-            if (role.Equals("admin", StringComparison.OrdinalIgnoreCase))
+            string? role = user.UserRoles.First().Role.RoleName;
+            if (role == null)
             {
-                return Redirect("Admin/Dashboard");
-            }
-            else if (role.Equals("instructor", StringComparison.OrdinalIgnoreCase))
-            {
-                return Redirect("Instructor/LearningMaterial/List");
+                return Redirect("/Error403");
             }
 
-            else return Redirect("./Learner/News/ListNews");
+            try
+            {
+                var token = _jwt.GenerateToken(user.UserId, Email, role, SavePasswordCheck);
+                Response.Cookies.Append("jwt", token, new CookieOptions { HttpOnly = true });
+                if (role.Equals("admin", StringComparison.OrdinalIgnoreCase))
+                {
+                    return Redirect("Admin/Dashboard");
+                }
+                else if (role.Equals("instructor", StringComparison.OrdinalIgnoreCase))
+                {
+                    return Redirect("Instructor/LearningMaterial/List");
+                }
+
+                else return Redirect("./Learner/News/ListNews");
+            }
+            catch (InvalidOperationException)
+            {
+                return Redirect("/Error500");
+            }
         }
     }
 }
