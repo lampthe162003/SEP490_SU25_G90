@@ -6,8 +6,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
     {
         public int UserId { get; set; }
 
-        public string? Username { get; set; }
-
         public string? Email { get; set; }
 
         public string? FullName { get; set; }
