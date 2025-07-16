@@ -315,5 +315,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.User
             user.Password = newPassword;
             await _userRepository.Update(user);
         }
+
+        public async Task<UserListInformationResponse> GetUserDetailsAsync(int userId)
+        {
+            var user = _mapper.Map<UserListInformationResponse>(await _userRepository.GetUserById(userId));
+            return user;
+        }
     }
 }
