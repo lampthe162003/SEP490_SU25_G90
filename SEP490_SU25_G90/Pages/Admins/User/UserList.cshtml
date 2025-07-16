@@ -14,7 +14,7 @@
                     <i class="fas fa-chalkboard-teacher text-primary me-2"></i>
                     Quản lý người dùng
                 </h2>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAccountModal">
+                <button type="button" class="btn btn-primary" onclick="window.location.href='/Admin/Users/Create'">
                     <i class="fas fas-plus me-2"></i> 
                     Tạo tài khoản mới
                 </button>
@@ -66,7 +66,7 @@
                                         <th scope="col">Họ Tên</th>
                                         <th scope="col">Vai Trò</th>
                                         <th scope="col">Email</th>
-                                        <th scope="col"></th>
+                                        <th scope="col">Thao Tác</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -82,8 +82,12 @@
                                             </td>
                                             <td>@item.Email</td>
                                             <td>
-                                                <a asp-page="#" asp-route-id="@item.UserId"></a>
-                                                <a asp-page="#" asp-route-id="@item.UserId"></a>
+                                                <a asp-page="./UserDetails" asp-route-id="@item.UserId">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </a>
+                                                <a asp-page="#" asp-route-id="@item.UserId">
+                                                    <i class="fa-solid fa-pen"></i>
+                                                </a>
                                             </td>
                                         </tr>
                                     }
