@@ -23,8 +23,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.EmailService
 
             var message = new MailMessage(fromEmail, receiver)
             {
-                Subject = "Your Password Reset Code",
-                Body = $"Your reset code is: {resetCode}",
+                Subject = "Mã xác nhận quên mật khẩu",
+                Body = $"Mã xác nhận của bạn là: {resetCode}",
                 IsBodyHtml = false
             };
 
