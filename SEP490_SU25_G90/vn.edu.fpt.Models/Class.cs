@@ -15,6 +15,8 @@ public partial class Class
 
     public virtual ICollection<ClassMember> ClassMembers { get; set; } = new List<ClassMember>();
 
+    public virtual ICollection<ClassSchedule> ClassSchedules { get; set; } = new List<ClassSchedule>();
+
     public virtual User? Instructor { get; set; }
 
     public virtual LicenceType? LicenceType { get; set; }
