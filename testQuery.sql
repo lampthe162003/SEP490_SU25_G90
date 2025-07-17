@@ -211,3 +211,39 @@ CREATE TABLE TestScoreStandards
     FOREIGN KEY (licence_type_id) REFERENCES LicenceTypes(licence_type_id)
 );
 
+CREATE TABLE ScheduleSlots
+(
+    slot_id INT PRIMARY KEY,
+    start_time TIME,
+    end_time TIME
+)
+
+CREATE TABLE ClassSchedules
+(
+    schedule_id INT IDENTITY PRIMARY KEY,
+    class_id INT,
+    slot_id INT,
+    schedule_date DATE,
+    FOREIGN KEY (class_id) REFERENCES Classes(class_id),
+    FOREIGN KEY (slot_id) REFERENCES ScheduleSlots(slot_id)
+);
+
+CREATE TABLE Cars 
+(
+    car_id INT IDENTITY PRIMARY KEY,
+    license_plate NVARCHAR(13),
+    car_make NVARCHAR(50),
+    car_model NVARCHAR(50)
+)
+
+CREATE TABLE CarAssignments
+(
+    assignment_id INT IDENTITY PRIMARY KEY,
+    car_id INT NOT NULL,
+    instructor_id INT NOT NULL,
+    slot_id INT NOT NULL,
+    schedule_date DATE,
+    FOREIGN KEY (car_id) REFERENCES Cars(car_id),
+    FOREIGN KEY (instructor_id) REFERENCES Users(user_id),
+    FOREIGN KEY (slot_id) REFERENCES ScheduleSlots(slot_id)
+);
