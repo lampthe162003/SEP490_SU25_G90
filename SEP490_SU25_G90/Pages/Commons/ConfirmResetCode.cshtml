@@ -1,0 +1,44 @@
+﻿@page "/ConfirmResetCode"
+@model SEP490_SU25_G90.Pages.Commons.ConfirmResetCodeModel
+@{
+    ViewData["Title"] = "Xác nhận mã";
+    Layout = "_HomeLayout";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <div class="card shadow">
+                <div class="card-header text-center bg-success text-white">
+                    <h5>Enter Reset Code</h5>
+                </div>
+
+                <div class="card-body">
+                    <p class="text-success text-center mb-4">
+                        Mã xác nhận đã được gửi đến email của bạn: <strong>@Model.Email</strong>
+                    </p>
+
+                    <form method="post">
+                        <input type="hidden" asp-for="Email" />
+
+                        <div class="mb-3">
+                            <label asp-for="ResetCode" class="form-label">Mã xác nhận</label>
+                            <input asp-for="ResetCode" class="form-control" placeholder="Enter the 6-digit code" />
+                            <span asp-validation-for="ResetCode" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">Xác nhận</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
