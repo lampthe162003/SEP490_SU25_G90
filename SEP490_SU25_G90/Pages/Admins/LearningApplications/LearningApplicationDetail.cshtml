@@ -133,14 +133,7 @@
         </div>        
     </div>
 </div>
-@if (User.IsInRole("instructor"))
-{
-    <div class="mt-3">
-        <a asp-page="./UpdateScore" asp-route-id="@app?.LearningId" class="btn btn-warning">
-            <i class="fa fa-edit"></i> Sửa điểm
-        </a>
-    </div>
-}
+
 
 <div class="mt-4">
     <a asp-page="./ListLearningApplication" class="btn btn-secondary">Quay lại</a>
