@@ -58,7 +58,7 @@
             <tbody>
                 <tr>
                     <td>Lý thuyết</td>
-                    <td>@app?.TheoryPassScore</td>
+                    <td>@(app?.TheoryPassScore)/@(app?.TheoryMaxScore)</td>
                     <td>@app?.TheoryScore</td>
                     <td>
                         @if (app?.TheoryScore >= app?.TheoryPassScore)
@@ -73,7 +73,7 @@
                 </tr>
                 <tr>
                     <td>Mô phỏng</td>
-                    <td>@app?.SimulationPassScore</td>
+                    <td>@(app?.SimulationPassScore)/@(app?.SimulationMaxScore)</td>
                     <td>@app?.SimulationScore</td>
                     <td>
                         @if (app?.SimulationScore >= app?.SimulationPassScore)
@@ -88,7 +88,7 @@
                 </tr>
                 <tr>
                     <td>Đường trường</td>
-                    <td>@app?.ObstaclePassScore</td>
+                    <td>@(app?.ObstaclePassScore)/@(app?.ObstacleMaxScore)</td>
                     <td>@app?.ObstacleScore</td>
                     <td>
                         @if (app?.ObstacleScore >= app?.ObstaclePassScore)
@@ -103,7 +103,7 @@
                 </tr>
                 <tr>
                     <td>Sa hình</td>
-                    <td>@app?.PracticalPassScore</td>
+                    <td>@(app?.PracticalPassScore)/@(app?.PracticalMaxScore)</td>
                     <td>@app?.PracticalScore</td>
                     <td>
                         @if (app?.PracticalScore >= app?.PracticalPassScore)
