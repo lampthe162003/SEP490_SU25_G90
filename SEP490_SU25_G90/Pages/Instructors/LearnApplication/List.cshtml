@@ -1,0 +1,52 @@
+﻿@page "/Instructors/LearnApplication/List"
+@model SEP490_SU25_G90.Pages.Instructors.LearnApplication.ListLearningApplicationsModel
+
+@{
+    ViewData["Title"] = "Danh sách hồ sơ học viên";
+    Layout = "~/Pages/Shared/_InstructorLayout.cshtml";
+    int stt = 1;
+}
+
+<h2 class="mb-4">Danh sách hồ sơ học viên</h2>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
+        <tr>
+            <th class="text-center">#</th>
+            <th class="text-center">Tên học viên</th>
+            <th class="text-center">CCCD</th>
+            <th class="text-center">Loại bằng</th>
+            <th class="text-center">Ngày đăng ký</th>
+            <th class="text-center">Trạng thái</th>
+            <th class="text-center">Chi tiết</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.LearningApplications.Any())
+        {
+            @foreach (var item in Model.LearningApplications)
+            {
+                <tr>
+                    <td class="text-center">@stt</td>
+                    <td class="text-center">@item.LearnerFullName</td>
+                    <td class="text-center">@item.LearnerCccdNumber</td>
+                    <td class="text-center">@item.LicenceTypeName</td>
+                    <td class="text-center">@item.SubmittedAt?.ToString("dd/MM/yyyy")</td>
+                    <td class="text-center">@item.LearningStatusName</td>
+                    <td class="text-center">
+                        <a asp-page="LearningApplicationDetail" asp-route-id="@item.LearningId" class="btn btn-outline-primary btn-sm">
+                            <i class="fa fa-eye"></i> Xem
+                        </a>
+                    </td>
+                </tr>
+                stt++;
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="7" class="text-center text-muted">Không có hồ sơ học nào.</td>
+            </tr>
+        }
+    </tbody>
+</table>

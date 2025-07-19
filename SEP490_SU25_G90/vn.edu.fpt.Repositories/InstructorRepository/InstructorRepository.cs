@@ -228,5 +228,46 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
             return true;
         }
 
+
+        public async Task<List<LearningApplicationsResponse>> GetLearningApplicationsByInstructorAsync(int instructorId)
+        {
+            var learnerIds = await _context.ClassMembers
+                .Where(cm => cm.Class.InstructorId == instructorId)
+                .Select(cm => cm.LearnerId)
+                .Distinct()
+                .ToListAsync();
+
+            var applications = await _context.LearningApplications
+                .Where(app => learnerIds.Contains(app.LearnerId))
+                .Include(app => app.Learner).ThenInclude(l => l.Cccd)
+                .Include(app => app.Learner).ThenInclude(l => l.HealthCertificate)
+                .Include(app => app.LicenceType)
+                .ToListAsync();
+
+            return applications.Select(app => new LearningApplicationsResponse
+            {
+                LearningId = app.LearningId,
+                LearnerId = app.LearnerId,
+                LearnerFullName = app.Learner != null ? string.Join(" ", new[] { app.Learner.LastName, app.Learner.MiddleName, app.Learner.FirstName }.Where(n => !string.IsNullOrWhiteSpace(n))) : "",
+                LearnerCccdNumber = app.Learner?.Cccd?.CccdNumber,
+                LearnerEmail = app.Learner?.Email,
+                LicenceTypeId = app.LicenceTypeId,
+                LicenceTypeName = app.LicenceType?.LicenceCode,
+                SubmittedAt = app.SubmittedAt,
+                LearningStatus = app.LearningStatus,
+                LearningStatusName = app.LearningStatus switch
+                {
+                    1 => "Đang học",
+                    2 => "Hoàn thành",
+                    3 => "Đã huỷ",
+                    _ => "Chưa xác định"
+                },
+                TheoryScore = app.TheoryScore,
+                SimulationScore = app.SimulationScore,
+                ObstacleScore = app.ObstacleScore,
+                PracticalScore = app.PracticalScore
+            }).ToList();
+        }
+
     }
 } 

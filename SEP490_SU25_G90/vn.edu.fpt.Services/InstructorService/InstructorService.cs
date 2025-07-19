@@ -171,6 +171,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
         {
             return await _instructorRepository.UpdateLearnerScoresAsync(learningId, theory, simulation, obstacle, practical);
         }
+        public async Task<List<LearningApplicationsResponse>> GetLearningApplicationsByInstructorAsync(int instructorId)
+        {
+            return await _instructorRepository.GetLearningApplicationsByInstructorAsync(instructorId);
+        }
 
     }
 }
