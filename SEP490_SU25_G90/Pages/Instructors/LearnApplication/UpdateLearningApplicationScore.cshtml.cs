@@ -23,6 +23,8 @@ namespace SEP490_SU25_G90.Pages.Instructors.LearnApplication
 
         [BindProperty]
         public LearningApplication LearningApplication { get; set; } = default!;
+        public string LearnerFullName { get; set; } = "";
+        public string LicenceTypeName { get; set; } = "";
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
