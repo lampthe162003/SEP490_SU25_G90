@@ -10,5 +10,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.User
         public Task<List<LearnerUserResponse>> GetAllLearnersAsync();
         public Task<LearnerDetailResponse?> GetLearnerById(int id);
         public Task UpdateLearnerInfo(int userId, UpdateLearnerRequest request);
+        public Task UpdatePasswordAsync(int userId, string newPassword);
+        public Task<UserListInformationResponse> GetUserDetailsAsync(int userId);
+        public Task<LoginInformationResponse> GetLoginDetailsByEmail(string email);
+        public Task ResetPasswordAsync(string email, string newPassword);
+        public Task<bool> DoesUserWithEmailExist(string email);
     }
 }

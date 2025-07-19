@@ -1,4 +1,4 @@
-﻿namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
+﻿namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects.News
 {
     public class NewsListInformationResponse
     {

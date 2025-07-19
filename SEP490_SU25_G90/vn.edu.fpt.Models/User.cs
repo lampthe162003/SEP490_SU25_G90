@@ -33,6 +33,8 @@ public partial class User
 
     public virtual Address? Address { get; set; }
 
+    public virtual ICollection<CarAssignment> CarAssignments { get; set; } = new List<CarAssignment>();
+
     public virtual Cccd? Cccd { get; set; }
 
     public virtual ICollection<ClassMember> ClassMembers { get; set; } = new List<ClassMember>();
