@@ -213,5 +213,20 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 ProfileImageUrl = u.ProfileImageUrl ?? ""
             }).ToList();
         }
+
+        public async Task<bool> UpdateLearnerScoresAsync(int learningId, int? theory, int? simulation, int? obstacle, int? practical)
+        {
+            var learningApp = await _context.LearningApplications.FirstOrDefaultAsync(x => x.LearningId == learningId);
+            if (learningApp == null) return false;
+
+            learningApp.TheoryScore = theory;
+            learningApp.SimulationScore = simulation;
+            learningApp.ObstacleScore = obstacle;
+            learningApp.PracticalScore = practical;
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
     }
 } 

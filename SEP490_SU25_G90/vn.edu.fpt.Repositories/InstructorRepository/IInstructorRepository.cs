@@ -19,5 +19,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
         
         // Learner methods
         Task<List<LearnerUserResponse>> GetAllLearnersAsync(string? searchString = null);
+        Task<bool> UpdateLearnerScoresAsync(int learningId, int? theory, int? simulation, int? obstacle, int? practical);
+
     }
 } 
