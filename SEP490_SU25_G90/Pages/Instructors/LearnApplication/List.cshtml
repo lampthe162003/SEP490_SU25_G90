@@ -4,97 +4,71 @@
 @{
     ViewData["Title"] = "Danh sách hồ sơ học viên";
     Layout = "~/Pages/Shared/_InstructorLayout.cshtml";
-    int stt = 1;
+    int stt = (Model.CurrentPage - 1) * 5 + 1; // Tính STT phân trang
 }
 
-<h2 class="mb-4"><i class="fa fa-list-alt me-2"></i>Danh sách hồ sơ học viên</h2>
+<h2 class="mb-4">Danh sách hồ sơ học viên</h2>
 
-<form method="get" class="row g-3 align-items-end bg-light p-3 rounded shadow-sm mb-4">
+<form method="get" class="row g-2 mb-3">
     <div class="col-md-4">
-        <label class="form-label fw-semibold">Tìm kiếm</label>
-        <div class="input-group">
-            <span class="input-group-text"><i class="fa fa-search"></i></span>
-            <input type="text" name="SearchString" value="@Model.SearchString" class="form-control" placeholder="Tên hoặc CCCD..." />
-        </div>
+        <input type="text" name="SearchString" value="@Model.SearchString" class="form-control"
+               placeholder="Tìm theo tên hoặc CCCD..." />
     </div>
     <div class="col-md-3">
-        <label class="form-label fw-semibold">Trạng thái</label>
         <select name="StatusFilter" class="form-select" onchange="this.form.submit()">
-            <option value="">-- Tất cả --</option>
+            <option value="">-- Tất cả trạng thái --</option>
             <option value="1" selected="@(Model.StatusFilter == 1)">Đang học</option>
             <option value="2" selected="@(Model.StatusFilter == 2)">Hoàn thành</option>
             <option value="3" selected="@(Model.StatusFilter == 3)">Đã huỷ</option>
         </select>
     </div>
     <div class="col-md-2">
-        <label class="form-label invisible">Lọc</label>
-        <button type="submit" class="btn btn-primary w-100">
-            <i class="fa fa-filter me-1"></i>Lọc
-        </button>
+        <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
     </div>
 </form>
 
-
-<div class="table-responsive">
-    <table class="table table-hover align-middle table-bordered rounded shadow-sm">
-        <thead class="table-primary">
-            <tr class="text-center">
-                <th>#</th>
-                <th>Tên học viên</th>
-                <th>CCCD</th>
-                <th>Loại bằng</th>
-                <th>Ngày đăng ký</th>
-                <th>Trạng thái</th>
-                <th>Chi tiết</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.LearningApplications.Any())
-            {
-                @foreach (var item in Model.LearningApplications)
-                {
-                    <tr class="text-center">
-                        <td>@stt</td>
-                        <td>@item.LearnerFullName</td>
-                        <td>@item.LearnerCccdNumber</td>
-                        <td>@item.LicenceTypeName</td>
-                        <td>@item.SubmittedAt?.ToString("dd/MM/yyyy")</td>
-                        <td>
-                            @if (item.LearningStatus == 1)
-                            {
-                                <span class="badge bg-warning text-dark">Đang học</span>
-                            }
-                            else if (item.LearningStatus == 2)
-                            {
-                                <span class="badge bg-success">Hoàn thành</span>
-                            }
-                            else if (item.LearningStatus == 3)
-                            {
-                                <span class="badge bg-danger">Đã huỷ</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-secondary">Không xác định</span>
-                            }
-                        </td>
-                        <td>
-                            <a asp-page="LearningApplicationDetail" asp-route-id="@item.LearningId" class="btn btn-outline-primary btn-sm">
-                                <i class="fa fa-eye"></i> Xem
-                            </a>
-                        </td>
-                    </tr>
-                    stt++;
-                }
-            }
-            else
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
+        <tr>
+            <th class="text-center">#</th>
+            <th class="text-center">Tên học viên</th>
+            <th class="text-center">CCCD</th>
+            <th class="text-center">Loại bằng</th>
+            <th class="text-center">Ngày đăng ký</th>
+            <th class="text-center">Trạng thái</th>
+            <th class="text-center">Chi tiết</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.LearningApplications.Any())
+        {
+            @foreach (var item in Model.LearningApplications)
             {
                 <tr>
-                    <td colspan="7" class="text-center text-muted">Không có hồ sơ học nào.</td>
+                    <td class="text-center">@stt</td>
+                    <td class="text-center">@item.LearnerFullName</td>
+                    <td class="text-center">@item.LearnerCccdNumber</td>
+                    <td class="text-center">@item.LicenceTypeName</td>
+                    <td class="text-center">@item.SubmittedAt?.ToString("dd/MM/yyyy")</td>
+                    <td class="text-center">@item.LearningStatusName</td>
+                    <td class="text-center">
+                        <a asp-page="LearningApplicationDetail" asp-route-id="@item.LearningId" class="btn btn-outline-primary btn-sm">
+                            <i class="fa fa-eye"></i> Xem
+                        </a>
+                    </td>
                 </tr>
+                stt++;
             }
-        </tbody>
-    </table>
-</div>
+        }
+        else
+        {
+            <tr>
+                <td colspan="7" class="text-center text-muted">Không có hồ sơ học nào.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 @if (Model.TotalPages > 1)
 {
     <nav aria-label="Page navigation" class="mt-3">
@@ -119,4 +93,22 @@
             </li>
         </ul>
     </nav>
+}
+
+@section Styles {
+    <style>
+        .pagination .page-item .page-link {
+            color: #007bff;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #aaa;
+        }
+    </style>
 }
