@@ -24,8 +24,11 @@ namespace SEP490_SU25_G90.Pages.Instructors.LearnApplication
         }
 
         public List<LearningApplicationsResponse> LearningApplications { get; set; } = new();
+        [BindProperty(SupportsGet = true)]
+        public string? SearchString { get; set; }
 
-        // Fix: Replace 'Username' with 'Email' or another appropriate property that exists in the 'User' class.
+        [BindProperty(SupportsGet = true)]
+        public int? StatusFilter { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -46,7 +49,25 @@ namespace SEP490_SU25_G90.Pages.Instructors.LearnApplication
             }
 
             var instructorId = instructor.UserId;
+            var allApps = await _instructorService.GetLearningApplicationsByInstructorAsync(instructorId);
 
+            // Lọc theo SearchString (Tên hoặc CCCD)
+            if (!string.IsNullOrWhiteSpace(SearchString))
+            {
+                var searchLower = SearchString.ToLower();
+                allApps = allApps.Where(app =>
+                    (!string.IsNullOrWhiteSpace(app.LearnerFullName) && app.LearnerFullName.ToLower().Contains(searchLower)) ||
+                    (!string.IsNullOrWhiteSpace(app.LearnerCccdNumber) && app.LearnerCccdNumber.ToLower().Contains(searchLower))
+                ).ToList();
+            }
+
+            // Lọc theo trạng thái
+            if (StatusFilter.HasValue)
+            {
+                allApps = allApps.Where(app => app.LearningStatus == StatusFilter.Value).ToList();
+            }
+
+            LearningApplications = allApps;
             // Lấy danh sách hồ sơ học của học viên trong lớp của giảng viên này
             LearningApplications = await _instructorService.GetLearningApplicationsByInstructorAsync(instructorId);
             return Page();

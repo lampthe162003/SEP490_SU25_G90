@@ -8,6 +8,22 @@
 }
 
 <h2 class="mb-4">Danh sách hồ sơ học viên</h2>
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <input type="text" name="SearchString" value="@Model.SearchString" class="form-control" placeholder="Tìm theo tên hoặc CCCD..." />
+    </div>
+    <div class="col-md-3">
+        <select name="StatusFilter" class="form-select">
+            <option value="">-- Tất cả trạng thái --</option>
+            <option value="1" selected="@(Model.StatusFilter == 1)">Đang học</option>
+            <option value="2" selected="@(Model.StatusFilter == 2)">Hoàn thành</option>
+            <option value="3" selected="@(Model.StatusFilter == 3)">Đã huỷ</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
+    </div>
+</form>
 
 <table class="table table-bordered table-hover">
     <thead class="table-light">
