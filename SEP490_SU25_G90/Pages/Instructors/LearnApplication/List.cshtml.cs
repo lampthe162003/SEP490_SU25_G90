@@ -1,76 +1,64 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
-using System.Threading.Tasks;
 
-namespace SEP490_SU25_G90.Pages.Instructors.LearnApplication
+public class ListLearningApplicationsModel : PageModel
 {
-    [Authorize(Roles = "instructor")]
-    public class ListLearningApplicationsModel : PageModel
+    private readonly IInstructorService _instructorService;
+    private readonly Sep490Su25G90DbContext _context;
+
+    public ListLearningApplicationsModel(IInstructorService instructorService, Sep490Su25G90DbContext context)
     {
-        private readonly IInstructorService _instructorService;
-        private readonly Sep490Su25G90DbContext _context; // Inject DbContext để truy UserId
+        _instructorService = instructorService;
+        _context = context;
+    }
 
-        public ListLearningApplicationsModel(
-            IInstructorService instructorService,
-            Sep490Su25G90DbContext context)
+    public List<LearningApplicationsResponse> LearningApplications { get; set; } = new();
+    public string? SearchString { get; set; }
+    public int? StatusFilter { get; set; }
+
+    public int CurrentPage { get; set; } = 1;
+    public int TotalPages { get; set; }
+
+    public async Task<IActionResult> OnGetAsync(string? searchString, int? statusFilter, int pageNumber = 1)
+    {
+        var username = User.Identity?.Name;
+        if (string.IsNullOrEmpty(username)) return Unauthorized();
+
+        var instructor = await _context.Users.FirstOrDefaultAsync(u => u.Email == username);
+        if (instructor == null) return Unauthorized();
+
+        SearchString = searchString;
+        StatusFilter = statusFilter;
+        CurrentPage = pageNumber;
+
+        var allApplications = await _instructorService.GetLearningApplicationsByInstructorAsync(instructor.UserId);
+
+        if (!string.IsNullOrWhiteSpace(SearchString))
         {
-            _instructorService = instructorService;
-            _context = context;
+            allApplications = allApplications.Where(app =>
+                (!string.IsNullOrWhiteSpace(app.LearnerFullName) && app.LearnerFullName.Contains(SearchString, StringComparison.OrdinalIgnoreCase)) ||
+                (!string.IsNullOrWhiteSpace(app.LearnerCccdNumber) && app.LearnerCccdNumber.Contains(SearchString))
+            ).ToList();
         }
 
-        public List<LearningApplicationsResponse> LearningApplications { get; set; } = new();
-        [BindProperty(SupportsGet = true)]
-        public string? SearchString { get; set; }
-
-        [BindProperty(SupportsGet = true)]
-        public int? StatusFilter { get; set; }
-
-        public async Task<IActionResult> OnGetAsync()
+        if (StatusFilter.HasValue)
         {
-            // Lấy tên người dùng hiện tại
-            var username = User.Identity?.Name;
-            if (string.IsNullOrEmpty(username))
-            {
-                return Unauthorized();
-            }
-
-            // Truy vấn lấy instructorId từ email
-            var instructor = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == username); 
-
-            if (instructor == null)
-            {
-                return Unauthorized();
-            }
-
-            var instructorId = instructor.UserId;
-            var allApps = await _instructorService.GetLearningApplicationsByInstructorAsync(instructorId);
-
-            // Lọc theo SearchString (Tên hoặc CCCD)
-            if (!string.IsNullOrWhiteSpace(SearchString))
-            {
-                var searchLower = SearchString.ToLower();
-                allApps = allApps.Where(app =>
-                    (!string.IsNullOrWhiteSpace(app.LearnerFullName) && app.LearnerFullName.ToLower().Contains(searchLower)) ||
-                    (!string.IsNullOrWhiteSpace(app.LearnerCccdNumber) && app.LearnerCccdNumber.ToLower().Contains(searchLower))
-                ).ToList();
-            }
-
-            // Lọc theo trạng thái
-            if (StatusFilter.HasValue)
-            {
-                allApps = allApps.Where(app => app.LearningStatus == StatusFilter.Value).ToList();
-            }
-
-            LearningApplications = allApps;
-            // Lấy danh sách hồ sơ học của học viên trong lớp của giảng viên này
-            LearningApplications = await _instructorService.GetLearningApplicationsByInstructorAsync(instructorId);
-            return Page();
+            allApplications = allApplications
+                .Where(app => app.LearningStatus == StatusFilter)
+                .ToList();
         }
+
+        int pageSize = 5; // Bạn có thể thay đổi
+        TotalPages = (int)Math.Ceiling(allApplications.Count / (double)pageSize);
+        LearningApplications = allApplications
+            .Skip((CurrentPage - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        return Page();
     }
 }
