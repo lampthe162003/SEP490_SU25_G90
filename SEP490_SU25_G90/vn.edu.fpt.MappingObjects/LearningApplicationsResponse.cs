@@ -16,7 +16,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         [Required(ErrorMessage = "Loại bằng là bắt buộc")]
         public byte? LicenceTypeId { get; set; }
         public string? LicenceTypeName { get; set; }
-        //[Required(ErrorMessage = "Giảng viên là bắt buộc")]
         public int? InstructorId { get; set; }
         public string? InstructorFullName { get; set; }
         // Danh sách lớp học viên đang tham gia
@@ -34,8 +33,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         public int? SimulationPassScore { get; set; }
         public int? ObstaclePassScore { get; set; }
         public int? PracticalPassScore { get; set; }
+        public int? TheoryMaxScore { get; set; }
+        public int? SimulationMaxScore { get; set; }
+        public int? ObstacleMaxScore { get; set; }
+        public int? PracticalMaxScore { get; set; }
         public string? Note { get; set; }
-
-        
     }
 }
