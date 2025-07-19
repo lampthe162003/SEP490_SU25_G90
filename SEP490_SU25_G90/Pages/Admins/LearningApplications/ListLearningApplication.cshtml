@@ -15,24 +15,30 @@
 <h2 class="mb-4">Danh sách hồ sơ học viên</h2>
 
 <!-- Tìm kiếm và lọc -->
-<form method="get" class="mb-3 d-flex flex-wrap align-items-center gap-2">
-    <input type="text" name="SearchString" value="@Model.SearchString" class="form-control" placeholder="Tìm theo tên, CCCD, loại bằng..." />
+<form method="get" class="row mb-3">
+    <div class="col-md-6">
+        <input type="text" name="SearchString" value="@Model.SearchString" class="form-control" placeholder="Tìm theo tên, CCCD, loại bằng..." />
+    </div>
 
-    <select name="StatusFilter" class="form-select" onchange="this.form.submit()" style="max-width:180px;">
-        <option value="">-- Tất cả trạng thái --</option>
-        <option value="1" selected="@(Model.StatusFilter == 1)">Đang học</option>
-        <option value="2" selected="@(Model.StatusFilter == 2)">Hoàn thành</option>
-        <option value="3" selected="@(Model.StatusFilter == 3)">Đã huỷ</option>
-    </select>
+    <div class="col-md-3">
+        <select name="StatusFilter" class="form-select" onchange="this.form.submit()">
+            <option value="">-- Tất cả trạng thái --</option>
+            <option value="1" selected="@(Model.StatusFilter == 1)">Đang học</option>
+            <option value="2" selected="@(Model.StatusFilter == 2)">Hoàn thành</option>
+            <option value="3" selected="@(Model.StatusFilter == 3)">Đã huỷ</option>
+        </select>
+    </div>
 
-    <button type="submit" class="btn btn-primary">
-        <i class="fa fa-search"></i> Tìm kiếm
-    </button>
-
-    <a asp-page="CreateLearingApplication" class="btn btn-success">
-        <i class="fa fa-plus"></i> Tạo hồ sơ
-    </a>
+    <div class="col-md-3 d-flex justify-content-end gap-2">
+        <button type="submit" class="btn btn-primary btn-lg px-4">
+            <i class="fa fa-search"></i> Tìm kiếm
+        </button>
+        <a asp-page="CreateLearingApplication" class="btn btn-success btn-lg px-4">
+            <i class="fa fa-plus"></i> Tạo hồ sơ
+        </a>
+    </div>
 </form>
+
 
 <!-- Bảng danh sách -->
 <table class="table table-bordered table-hover">
@@ -117,14 +123,25 @@
 <!-- Style nâng cao -->
 @section Styles {
     <style>
-        /* Form filter */
-        form.d-flex input,
-        form.d-flex select {
-            border-radius: 6px;
-            height: 40px;
+        h2 {
+            font-weight: 600;
+            color: #2c3e50;
         }
 
-        /* Table styles */
+        /* Input + filter */
+        input.form-control,
+        select.form-select {
+            height: 45px;
+            border-radius: 6px;
+        }
+
+        .btn-lg {
+            font-size: 1rem;
+            padding: 10px 24px;
+            border-radius: 6px;
+        }
+
+        /* Table */
         table.table th,
         table.table td {
             vertical-align: middle;
@@ -144,7 +161,7 @@
             text-align: center;
         }
 
-        /* Trạng thái */
+        /* Status badge */
         .status-badge {
             padding: 4px 12px;
             border-radius: 12px;
@@ -184,3 +201,4 @@
         }
     </style>
 }
+
