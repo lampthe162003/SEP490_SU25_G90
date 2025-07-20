@@ -23,14 +23,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
 
         public async Task<List<LearningApplicationsResponse>> GetAllAsync(string? searchString = null)
         {
-            // 1. Load toàn bộ dữ liệu cần thiết từ DB
             var learningApplications = await _context.LearningApplications
                 .Include(x => x.Learner).ThenInclude(l => l.Cccd)
                 .Include(x => x.Learner).ThenInclude(l => l.HealthCertificate)
                 .Include(x => x.LicenceType)
                 .ToListAsync();
 
-            // 2. Lọc theo searchString (nếu có)
             if (!string.IsNullOrWhiteSpace(searchString))
             {
                 string lowered = searchString.Trim().ToLower();
@@ -48,7 +46,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                     .ToList();
             }
 
-            // 3. Group by learner
             var learnerGroups = learningApplications
                 .GroupBy(la => la.LearnerId)
                 .ToList();
@@ -62,7 +59,16 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 .Where(s => licenceTypeIds.Contains(s.LicenceTypeId))
                 .ToListAsync();
 
-            // 4. Tạo danh sách kết quả từ hồ sơ gần nhất của mỗi học viên
+            // 🔎 Lấy giảng viên cho từng learner
+            var instructorMap = await (
+            from la in _context.LearningApplications
+            join cm in _context.ClassMembers on la.LearnerId equals cm.LearnerId
+            join c in _context.Classes on cm.ClassId equals c.ClassId
+            join u in _context.Users on c.InstructorId equals u.UserId
+            select new { la.LearningId, Instructor = u }
+                    ).ToDictionaryAsync(x => x.LearningId, x => x.Instructor);
+
+            // ✅ Tạo danh sách kết quả
             var results = learnerGroups.Select(group =>
             {
                 var mostRecent = group
@@ -83,6 +89,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                     _ => isPassed ? "Hoàn thành" : "Chưa bắt đầu"
                 };
 
+                //  Instructor info
+                //  Không cần kiểm tra HasValue nếu chắc chắn LearnerId luôn có
+                User? instructor = null;
+                instructorMap.TryGetValue(mostRecent.LearnerId, out instructor);
                 return new LearningApplicationsResponse
                 {
                     LearningId = mostRecent.LearningId,
@@ -104,12 +114,18 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                     LearnerClasses = new List<LearnerClassInfo>(),
                     SubmittedAt = mostRecent.SubmittedAt,
                     LearningStatus = mostRecent.LearningStatus,
-                    LearningStatusName = statusName
+                    LearningStatusName = statusName,
+                    InstructorId = instructor?.UserId,
+                    InstructorFullName = instructor != null
+                        ? string.Join(" ", new[] { instructor.FirstName, instructor.MiddleName, instructor.LastName }
+                            .Where(x => !string.IsNullOrWhiteSpace(x)))
+                        : ""
                 };
             }).ToList();
 
             return results;
         }
+
 
 
         public Task<IQueryable<LearningApplication>> GetAllAsync()
