@@ -248,7 +248,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
             {
                 LearningId = app.LearningId,
                 LearnerId = app.LearnerId,
-                LearnerFullName = app.Learner != null ? string.Join(" ", new[] { app.Learner.LastName, app.Learner.MiddleName, app.Learner.FirstName }.Where(n => !string.IsNullOrWhiteSpace(n))) : "",
+                LearnerFullName = app.Learner != null ? string.Join(" ", new[] { app.Learner.FirstName, app.Learner.MiddleName, app.Learner.LastName }.Where(n => !string.IsNullOrWhiteSpace(n))) : "",
                 LearnerCccdNumber = app.Learner?.Cccd?.CccdNumber,
                 LearnerEmail = app.Learner?.Email,
                 LicenceTypeId = app.LicenceTypeId,
