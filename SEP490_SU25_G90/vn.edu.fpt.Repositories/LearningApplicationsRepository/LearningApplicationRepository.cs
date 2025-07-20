@@ -23,14 +23,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
 
         public async Task<List<LearningApplicationsResponse>> GetAllAsync(string? searchString = null)
         {
-            // 1. Load toàn bộ dữ liệu cần thiết từ DB
             var learningApplications = await _context.LearningApplications
                 .Include(x => x.Learner).ThenInclude(l => l.Cccd)
                 .Include(x => x.Learner).ThenInclude(l => l.HealthCertificate)
                 .Include(x => x.LicenceType)
                 .ToListAsync();
 
-            // 2. Lọc theo searchString (nếu có)
             if (!string.IsNullOrWhiteSpace(searchString))
             {
                 string lowered = searchString.Trim().ToLower();
@@ -48,7 +46,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                     .ToList();
             }
 
-            // 3. Group by learner
             var learnerGroups = learningApplications
                 .GroupBy(la => la.LearnerId)
                 .ToList();
@@ -62,7 +59,16 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 .Where(s => licenceTypeIds.Contains(s.LicenceTypeId))
                 .ToListAsync();
 
-            // 4. Tạo danh sách kết quả từ hồ sơ gần nhất của mỗi học viên
+            // 🔎 Lấy giảng viên cho từng learner
+            var instructorMap = await (
+            from la in _context.LearningApplications
+            join cm in _context.ClassMembers on la.LearnerId equals cm.LearnerId
+            join c in _context.Classes on cm.ClassId equals c.ClassId
+            join u in _context.Users on c.InstructorId equals u.UserId
+            select new { la.LearningId, Instructor = u }
+                    ).ToDictionaryAsync(x => x.LearningId, x => x.Instructor);
+
+            // ✅ Tạo danh sách kết quả
             var results = learnerGroups.Select(group =>
             {
                 var mostRecent = group
@@ -83,6 +89,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                     _ => isPassed ? "Hoàn thành" : "Chưa bắt đầu"
                 };
 
+                //  Instructor info
+                //  Không cần kiểm tra HasValue nếu chắc chắn LearnerId luôn có
+                User? instructor = null;
+                instructorMap.TryGetValue(mostRecent.LearnerId, out instructor);
                 return new LearningApplicationsResponse
                 {
                     LearningId = mostRecent.LearningId,
@@ -104,12 +114,18 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                     LearnerClasses = new List<LearnerClassInfo>(),
                     SubmittedAt = mostRecent.SubmittedAt,
                     LearningStatus = mostRecent.LearningStatus,
-                    LearningStatusName = statusName
+                    LearningStatusName = statusName,
+                    InstructorId = instructor?.UserId,
+                    InstructorFullName = instructor != null
+                        ? string.Join(" ", new[] { instructor.FirstName, instructor.MiddleName, instructor.LastName }
+                            .Where(x => !string.IsNullOrWhiteSpace(x)))
+                        : ""
                 };
             }).ToList();
 
             return results;
         }
+
 
 
         public Task<IQueryable<LearningApplication>> GetAllAsync()
@@ -128,16 +144,20 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
             if (la == null) return null;
 
             var instructor = await (
-                from cm in _context.ClassMembers
-                join cl in _context.Classes on cm.ClassId equals cl.ClassId
-                join u in _context.Users on cl.InstructorId equals u.UserId
-                where cm.LearnerId == la.LearnerId
-                select u
+            from cm in _context.ClassMembers
+            join cl in _context.Classes on cm.ClassId equals cl.ClassId
+            join u in _context.Users on cl.InstructorId equals u.UserId
+            where cm.LearnerId == la.LearnerId
+            select u
             ).FirstOrDefaultAsync();
 
             var standards = await _context.TestScoreStandards
                 .Where(s => s.LicenceTypeId == la.LicenceTypeId)
                 .ToListAsync();
+            int? theoryMaxScore = standards.FirstOrDefault(s => s.PartName == "Theory")?.MaxScore;
+            int? simulationMaxScore = standards.FirstOrDefault(s => s.PartName == "Simulation")?.MaxScore;
+            int? obstacleMaxScore = standards.FirstOrDefault(s => s.PartName == "Obstacle")?.MaxScore;
+            int? practicalMaxScore = standards.FirstOrDefault(s => s.PartName == "Practical")?.MaxScore;
 
             bool isPassed = la.TheoryScore >= standards.FirstOrDefault(s => s.PartName == "Theory")?.PassScore
                 && la.SimulationScore >= standards.FirstOrDefault(s => s.PartName == "Simulation")?.PassScore
@@ -185,7 +205,16 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 TheoryPassScore = standards.FirstOrDefault(s => s.PartName == "Theory")?.PassScore,
                 SimulationPassScore = standards.FirstOrDefault(s => s.PartName == "Simulation")?.PassScore,
                 ObstaclePassScore = standards.FirstOrDefault(s => s.PartName == "Obstacle")?.PassScore,
-                PracticalPassScore = standards.FirstOrDefault(s => s.PartName == "Practical")?.PassScore
+                PracticalPassScore = standards.FirstOrDefault(s => s.PartName == "Practical")?.PassScore,
+                TheoryMaxScore = theoryMaxScore,
+                SimulationMaxScore = simulationMaxScore,
+                ObstacleMaxScore = obstacleMaxScore,
+                PracticalMaxScore = practicalMaxScore,
+                InstructorId = instructor?.UserId,
+                InstructorFullName = instructor != null
+                    ? string.Join(" ", new[] { instructor.FirstName, instructor.MiddleName, instructor.LastName }
+                        .Where(x => !string.IsNullOrWhiteSpace(x)))
+                    : ""
             };
         }
         public async Task<List<LearnerSummaryResponse>> GetLearnerSummariesAsync(string? searchString = null)
