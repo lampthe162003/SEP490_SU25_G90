@@ -15,6 +15,8 @@ public partial class CarAssignment
 
     public DateOnly? ScheduleDate { get; set; }
 
+    public bool? CarStatus { get; set; }
+
     public virtual Car Car { get; set; } = null!;
 
     public virtual User Instructor { get; set; } = null!;
