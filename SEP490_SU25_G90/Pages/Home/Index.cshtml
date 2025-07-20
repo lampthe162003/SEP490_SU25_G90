@@ -47,11 +47,81 @@
 <!-- Nội dung chính -->
 <div class="container my-5">
     <main role="main">
-        <section class="section" id="about">
+        @if (Model.Introduction != null)
+        {
+            <section class="section" id="about">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <!-- Hình ảnh -->
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <div class="position-relative">
+                                <img src="@Model.Introduction.Image" alt="Giới thiệu" class="img-fluid rounded shadow" />
+                                <span class="position-absolute top-50 start-50 translate-middle">
+                                    <i class="bi bi-play-circle-fill fs-1 text-white"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Nội dung giới thiệu -->
+                        <div class="col-md-6 text-start">
+                            <h6 class="text-uppercase fw-bold text-primary">Giới thiệu</h6>
+                            <h2 class="fw-bold">@Html.Raw(Model.Introduction.Title)</h2>
+                            <p>
+                                @Html.Raw(Model.Introduction.NewsContent)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        }
+
+        <section class="py-5 bg-light">
             <div class="container">
-                <h3>Giới thiệu</h3>
-                <p>Trung Tâm Lái Xe Bắc Hà tự hào là nơi đào tạo hàng đầu tại Việt Nam...</p>
+                <div class="row mb-4">
+                    <div class="col-lg-6">
+                        <h2 class="fw-bold">Tại sao bạn nên học lái xe ô tô tại Trung tâm Đào tạo & Sát hạch Bắc Hà?</h2>
+                        <p>
+                            Thế mạnh nổi trội nhất mà Trung tâm đang sở hữu đó chính là đội ngũ giáo viên hùng hậu được đào tạo nghiệp vụ sư phạm và chuyên môn cao với nhiều năm kinh nghiệm giảng dạy, có tâm huyết và nhiệt tình.
+                        </p>
+                        <p>
+                            Hãy đến với Trung tâm Đào tạo & Sát hạch Bắc Hà để trải nghiệm và cảm nhận chất lượng dịch vụ hàng đầu của chúng tôi.
+                        </p>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="row g-4">
+                            <div class="col-sm-6">
+                                <div class="p-3 shadow rounded bg-white text-center h-100">
+                                    <img src="https://img.icons8.com/ios/50/car--v1.png" alt="Kinh nghiệm" width="40">
+                                    <h5 class="mt-3">15+</h5>
+                                    <p>15 năm kinh nghiệm đào tạo chuyên nghiệp</p>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="p-3 shadow rounded bg-white text-center h-100">
+                                    <img src="https://img.icons8.com/ios/50/classroom.png" alt="Học viên" width="40">
+                                    <h5 class="mt-3">300.000+</h5>
+                                    <p>Học viên tốt nghiệp và được cấp GPLX</p>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="p-3 shadow rounded bg-white text-center h-100">
+                                    <img src="https://img.icons8.com/ios/50/pass.png" alt="Tỷ lệ đậu" width="40">
+                                    <h5 class="mt-3">100%</h5>
+                                    <p>Tỷ lệ học và thi đậu</p>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="p-3 shadow rounded bg-white text-center h-100">
+                                    <img src="https://img.icons8.com/ios/50/teacher.png" alt="Giáo viên" width="40">
+                                    <h5 class="mt-3">300+</h5>
+                                    <p>Đội ngũ giáo viên tận tâm, chuyên môn cao</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
+
     </main>
 </div>
