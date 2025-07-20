@@ -144,11 +144,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
             if (la == null) return null;
 
             var instructor = await (
-                from cm in _context.ClassMembers
-                join cl in _context.Classes on cm.ClassId equals cl.ClassId
-                join u in _context.Users on cl.InstructorId equals u.UserId
-                where cm.LearnerId == la.LearnerId
-                select u
+            from cm in _context.ClassMembers
+            join cl in _context.Classes on cm.ClassId equals cl.ClassId
+            join u in _context.Users on cl.InstructorId equals u.UserId
+            where cm.LearnerId == la.LearnerId
+            select u
             ).FirstOrDefaultAsync();
 
             var standards = await _context.TestScoreStandards
@@ -209,7 +209,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 TheoryMaxScore = theoryMaxScore,
                 SimulationMaxScore = simulationMaxScore,
                 ObstacleMaxScore = obstacleMaxScore,
-                PracticalMaxScore = practicalMaxScore
+                PracticalMaxScore = practicalMaxScore,
+                InstructorId = instructor?.UserId,
+                InstructorFullName = instructor != null
+                    ? string.Join(" ", new[] { instructor.FirstName, instructor.MiddleName, instructor.LastName }
+                        .Where(x => !string.IsNullOrWhiteSpace(x)))
+                    : ""
             };
         }
         public async Task<List<LearnerSummaryResponse>> GetLearnerSummariesAsync(string? searchString = null)
