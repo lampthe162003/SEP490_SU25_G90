@@ -243,6 +243,7 @@ CREATE TABLE CarAssignments
     instructor_id INT NOT NULL,
     slot_id INT NOT NULL,
     schedule_date DATE,
+    car_status BIT,
     FOREIGN KEY (car_id) REFERENCES Cars(car_id),
     FOREIGN KEY (instructor_id) REFERENCES Users(user_id),
     FOREIGN KEY (slot_id) REFERENCES ScheduleSlots(slot_id)

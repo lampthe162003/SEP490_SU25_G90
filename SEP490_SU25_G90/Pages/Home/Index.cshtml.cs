@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.News;
+using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Services.NewsService;
 
 namespace SEP490_SU25_G90.Pages
@@ -19,10 +20,16 @@ namespace SEP490_SU25_G90.Pages
         }
 
         public NewsListInformationResponse? Introduction { get; set; }
+        
+        [BindProperty]
+        public IList<NewsListInformationResponse> BlogPosts { get; set; } = default!;
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
             Introduction = await _newsService.GetNewsByIdAsync(15);
+            BlogPosts = await _newsService.GetTopNewsAsync();
+
+            return Page();
         }
     }
 }

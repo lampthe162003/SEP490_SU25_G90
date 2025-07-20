@@ -77,16 +77,21 @@
                                             <td>
                                                 @foreach (var role in item.UserRoles)
                                                 {
-                                                    @(role.Role.RoleName + " ")
+                                                    @if (role.Role.RoleId == 3)
+                                                    {
+                                                        @("giảng viên ")
+                                                    }
+                                                    else if (role.Role.RoleId == 1)
+                                                    {
+                                                        @("học viên ")
+                                                    }
+                                                    else @(role.Role.RoleName + " ")
                                                 }
                                             </td>
                                             <td>@item.Email</td>
                                             <td>
-                                                <a asp-page="./UserDetails" asp-route-id="@item.UserId">
+                                                <a class="btn btn-outline-primary" asp-page="./UserDetails" asp-route-id="@item.UserId">
                                                     <i class="fa-solid fa-eye"></i>
-                                                </a>
-                                                <a asp-page="#" asp-route-id="@item.UserId">
-                                                    <i class="fa-solid fa-pen"></i>
                                                 </a>
                                             </td>
                                         </tr>

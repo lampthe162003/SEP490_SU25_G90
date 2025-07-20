@@ -21,9 +21,9 @@ namespace SEP490_SU25_G90.Pages.Admins.User
 
         public UserListInformationResponse UserDetails { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(int userId)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
-            UserDetails = await _userService.GetUserDetailsAsync(userId);
+            UserDetails = await _userService.GetUserDetailsAsync(id);
             return Page();
         }
     }
