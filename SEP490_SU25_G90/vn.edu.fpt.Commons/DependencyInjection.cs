@@ -19,6 +19,8 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.User;
 using SEP490_SU25_G90.vn.edu.fpt.Services.LicenseTypeService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.EmailService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.ResetCodeService;
+using SEP490_SU25_G90.vn.edu.fpt.Repositories.CarAssignmentRepository;
+using SEP490_SU25_G90.vn.edu.fpt.Services.CarAssignmentService;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Commons
 {
@@ -50,6 +52,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Commons
 
             services.AddScoped<ITestScoreStandardRepository, TestScoreStandardRepository>();
             services.AddScoped<ITestScoreStandardService, TestScoreStandardService>();
+
+            services.AddScoped<ICarAssignmentRepository, CarAssignmentRepository>();
+            services.AddScoped<ICarAssignmentService, CarAssignmentService>();
 
             services.AddScoped<IPasswordHasher<Models.User>, PasswordHasher<Models.User>>();
 
