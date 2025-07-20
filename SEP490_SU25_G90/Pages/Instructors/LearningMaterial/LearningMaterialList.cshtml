@@ -47,9 +47,12 @@ else
                     <td>
                         @if (!string.IsNullOrEmpty(item.FileLink))
                         {
-                            <a href="@item.FileLink" download>Download</a>
+                            <a href="@item.FileLink" download class="btn btn-outline-primary btn-sm" title="Tải xuống">
+                                <i class="fas fa-download"></i>
+                            </a>
                         }
                     </td>
+
                     <td>@item.CreatedAt?.ToString("yyyy-MM-dd")</td>
                     <td>
                         <div class="d-flex gap-1">
