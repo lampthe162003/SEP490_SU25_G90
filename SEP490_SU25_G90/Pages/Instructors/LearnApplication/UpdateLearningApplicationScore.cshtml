@@ -1,0 +1,65 @@
+﻿@page "/Instructors/LearnApplication/UpdateScore/{id:int}"
+@model SEP490_SU25_G90.Pages.Instructors.LearnApplication.UpdateLearningApplicationDetailsModel
+
+@{
+    ViewData["Title"] = "Cập nhật điểm học viên";
+    Layout = "~/Pages/Shared/_InstructorLayout.cshtml";
+}
+
+<h2 class="mb-4">Cập nhật điểm cho học viên</h2>
+
+<div class="card shadow p-4">
+    <form method="post" class="needs-validation" novalidate>
+        <input type="hidden" asp-for="LearningApplication.LearningId" />
+
+        <div class="mb-3">
+            <label class="form-label"><b>Họ tên học viên:</b></label>
+            <input class="form-control" value="@Model.LearnerFullName" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label"><b>Loại bằng:</b></label>
+            <input class="form-control" value="@Model.LicenceTypeName" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label"><b>Ngày đăng ký:</b></label>
+            <input class="form-control" value="@Model.LearningApplication.SubmittedAt?.ToString("dd/MM/yyyy")" readonly />
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="LearningApplication.TheoryScore" class="form-label">Điểm lý thuyết</label>
+                <input asp-for="LearningApplication.TheoryScore" class="form-control" type="number" min="0" max="100" />
+                <span asp-validation-for="LearningApplication.TheoryScore" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="LearningApplication.SimulationScore" class="form-label">Điểm mô phỏng</label>
+                <input asp-for="LearningApplication.SimulationScore" class="form-control" type="number" min="0" max="100" />
+                <span asp-validation-for="LearningApplication.SimulationScore" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="LearningApplication.ObstacleScore" class="form-label">Điểm đường trường</label>
+                <input asp-for="LearningApplication.ObstacleScore" class="form-control" type="number" min="0" max="100" />
+                <span asp-validation-for="LearningApplication.ObstacleScore" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="LearningApplication.PracticalScore" class="form-label">Điểm sa hình</label>
+                <input asp-for="LearningApplication.PracticalScore" class="form-control" type="number" min="0" max="100" />
+                <span asp-validation-for="LearningApplication.PracticalScore" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Lưu điểm</button>
+            <a asp-page="/Admins/LearningApplications/Detail" asp-route-id="@Model.LearningApplication.LearningId" class="btn btn-secondary ms-2">Quay lại</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
