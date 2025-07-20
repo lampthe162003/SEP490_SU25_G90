@@ -138,6 +138,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
             var standards = await _context.TestScoreStandards
                 .Where(s => s.LicenceTypeId == la.LicenceTypeId)
                 .ToListAsync();
+            int? theoryMaxScore = standards.FirstOrDefault(s => s.PartName == "Theory")?.MaxScore;
+            int? simulationMaxScore = standards.FirstOrDefault(s => s.PartName == "Simulation")?.MaxScore;
+            int? obstacleMaxScore = standards.FirstOrDefault(s => s.PartName == "Obstacle")?.MaxScore;
+            int? practicalMaxScore = standards.FirstOrDefault(s => s.PartName == "Practical")?.MaxScore;
 
             bool isPassed = la.TheoryScore >= standards.FirstOrDefault(s => s.PartName == "Theory")?.PassScore
                 && la.SimulationScore >= standards.FirstOrDefault(s => s.PartName == "Simulation")?.PassScore
@@ -185,7 +189,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 TheoryPassScore = standards.FirstOrDefault(s => s.PartName == "Theory")?.PassScore,
                 SimulationPassScore = standards.FirstOrDefault(s => s.PartName == "Simulation")?.PassScore,
                 ObstaclePassScore = standards.FirstOrDefault(s => s.PartName == "Obstacle")?.PassScore,
-                PracticalPassScore = standards.FirstOrDefault(s => s.PartName == "Practical")?.PassScore
+                PracticalPassScore = standards.FirstOrDefault(s => s.PartName == "Practical")?.PassScore,
+                TheoryMaxScore = theoryMaxScore,
+                SimulationMaxScore = simulationMaxScore,
+                ObstacleMaxScore = obstacleMaxScore,
+                PracticalMaxScore = practicalMaxScore
             };
         }
         public async Task<List<LearnerSummaryResponse>> GetLearnerSummariesAsync(string? searchString = null)
