@@ -142,8 +142,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
                 Email = obj.Learning.Learner?.Email,
                 Phone = obj.Learning.Learner?.Phone,
                 Address = string.Join(",", (new List<string>() {  obj.Learning.Learner?.Address?.HouseNumber,
-obj.Learning.Learner?.Address?.RoadName, obj.Learning.Learner?.Address?.Ward.WardName, obj.Learning.Learner?.Address?.Ward.Province.ProvinceName,
-obj.Learning.Learner?.Address?.Ward.Province.City.CityName}).Where(x => !string.IsNullOrWhiteSpace(x))),
+                obj.Learning.Learner?.Address?.RoadName, obj.Learning.Learner?.Address?.Ward.WardName, obj.Learning.Learner?.Address?.Ward.Province.ProvinceName,
+                obj.Learning.Learner?.Address?.Ward.Province.City.CityName}).Where(x => !string.IsNullOrWhiteSpace(x))),
                 Gender = obj.Learning.Learner.Gender == true ? "Nam" : "Nữ",
                 Status = obj.Status,
                 FileUrl = obj.ResultImageUrl
