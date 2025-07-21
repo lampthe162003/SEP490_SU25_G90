@@ -251,3 +251,12 @@ a:hover {
   padding: 2px 0;
   font-size: 13px;
 }
+#about .text-start {
+    text-align: left;
+}
+
+#about p {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+}

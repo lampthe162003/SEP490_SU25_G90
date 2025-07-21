@@ -7,6 +7,9 @@ INSERT INTO Roles VALUES
 INSERT INTO LicenceTypes VALUES 
 (1, 'B1'), (2, 'B2'), (3, 'C'), (4, 'D'), (5, 'E');
 
+INSERT [dbo].[ScheduleSlots]
+VALUES (1, '08:00:00', '09:30:00'), (2, '10:00:00', '11:30:00'), (3, '13:30:00', '15:00:00'), (4, '15:30:00', '17:00:00')
+
 INSERT INTO Cities(city_id, city_name) VALUES
 (01, N'Hà Nội'),
 (02, N'Hà Giang'),
@@ -1807,3 +1810,402 @@ VALUES
 (7, 3),
 (8, 3),
 (9, 3);
+
+SET IDENTITY_INSERT [dbo].[News] ON 
+
+INSERT [dbo].[News] ([news_id], [title], [news_content], [author_id], [post_time], [image]) VALUES (1, N'<p>Học l&aacute;i xe &ocirc; t&ocirc; hạng B1&nbsp;</p>
+', N'<p>1. Điều kiện với người học l&aacute;i xe &ocirc; t&ocirc; hạng B1.&nbsp;</p>
+
+<ul>
+	<li>
+	<p>L&agrave; c&ocirc;ng d&acirc;n Việt Nam, người nước ngo&agrave;i được ph&eacute;p cư tr&uacute; hoặc đang l&agrave;m việc, học tập tại Việt Nam.&nbsp;</p>
+	</li>
+	<li>
+	<p>Đủ 18 tuổi (t&iacute;nh đến ng&agrave;y dự thi s&aacute;t hạch l&aacute;i xe), đủ điều kiện sức khoẻ theo quy định.</p>
+	</li>
+</ul>
+
+<p>&nbsp;2. Hồ sơ của người học l&aacute;i xe &ocirc; t&ocirc; B1.&nbsp;</p>
+
+<ul>
+	<li>
+	<p>Bản sao giấy chứng minh hoặc căn cước, trường hợp l&agrave;m mất giấy tờ c&oacute; thể thay thế bằng bản sao hộ chiếu c&ograve;n hạn sử dụng;&nbsp;</p>
+	</li>
+	<li>
+	<p>Giấy kiểm tra sức khỏe từ c&aacute;c cơ sở y tế c&oacute; thẩm quyền cấp;</p>
+	</li>
+	<li>
+	<p>Tờ đơn đề nghị học, thi s&aacute;t hạch v&agrave; cấp giấy ph&eacute;p l&aacute;i xe&nbsp;B1;</p>
+	</li>
+	<li>
+	<p>Ảnh thẻ 3x4 (nền ảnh m&agrave;u xanh, người kh&ocirc;ng đeo k&iacute;nh, mặc &aacute;o c&oacute; cổ).&nbsp;</p>
+	</li>
+</ul>
+
+<p>3. Thời gian v&agrave; học ph&iacute; học l&aacute;i xe B1.&nbsp;</p>
+
+<ul>
+	<li>
+	<p>Thời gian kh&oacute;a học:&nbsp;3&nbsp;th&aacute;ng.&nbsp;</p>
+	</li>
+	<li>
+	<p>Học ph&iacute; đ&agrave;o tạo: 5.000.000 VNĐ</p>
+	</li>
+</ul>
+
+<p>4. Lệ ph&iacute; thi v&agrave; lệ ph&iacute; cấp GPLX.&nbsp;&nbsp;</p>
+
+<ul>
+	<li>
+	<p>Phần thi l&yacute; thuyết:&nbsp;100.000 VNĐ&nbsp;&nbsp;</p>
+	</li>
+	<li>
+	<p>Phần thi m&ocirc; phỏng:&nbsp;100.000 VNĐ</p>
+	</li>
+	<li>
+	<p>Phần thi thực h&agrave;nh:&nbsp;350.000 VNĐ&nbsp;&nbsp;</p>
+	</li>
+	<li>
+	<p>Phần thi đường trường:&nbsp;80.000 VNĐ&nbsp;</p>
+	</li>
+	<li>
+	<p>Lệ ph&iacute; cấp GPLX:&nbsp;135.000 VNĐ&nbsp;&nbsp;</p>
+	</li>
+</ul>
+
+<p>&nbsp;&nbsp;Tổng lệ ph&iacute; thi:&nbsp;765.000 VNĐ&nbsp;</p>
+
+<p>5. Lệ ph&iacute; thu&ecirc; xe s&aacute;t hạch trong ng&agrave;y tổng &ocirc;n.&nbsp;</p>
+
+<p>Trước ng&agrave;y thi s&aacute;t hạch l&aacute;i xe Trung t&acirc;m sẽ tổ chức một số ng&agrave;y tổng &ocirc;n luyện gi&uacute;p học vi&ecirc;n &ocirc;n luyện lại kỹ năng l&aacute;i xe tr&ecirc;n xe s&aacute;t hạch c&oacute; thiết bị chấm điểm tự động.</p>
+
+<p>Chi ph&iacute; thu&ecirc; xe để &ocirc;n luyện :</p>
+
+<ul>
+	<li>
+	<p>Hạng B2 :&nbsp;350.000 VNĐ/tiếng</p>
+	</li>
+</ul>
+
+<p>Ch&uacute; &yacute;:&nbsp;Hồ sơ nộp v&agrave;o Trung t&acirc;m qua địa email:&nbsp;<a href="mailto:info@laixebacha.com">laixebacha@gmail.com</a>&nbsp;gồm (04 ảnh 3 x 4 v&agrave; chứng minh thư nh&acirc;n d&acirc;n scan) sau khi nộp hồ sơ bạn sẽ được th&ocirc;ng b&aacute;o chi tiết về lịch học, lịch thi.</p>
+
+<p>&nbsp;</p>
+
+<p>Để được tư vấn trực tiếp vui l&ograve;ng li&ecirc;n hệ:</p>
+
+<p>TRUNG T&Acirc;M Đ&Agrave;O TẠO &amp; S&Aacute;T HẠCH L&Aacute;I XE BẮC H&Agrave;</p>
+
+<p>Hotline:&nbsp;&nbsp;0934.333.000</p>
+
+<p>Email:&nbsp;<a href="mailto:info@laixebacha.com">laixebacha@gmail.com</a></p>
+
+<p>Website:&nbsp;http://laixebacha.com</p>
+
+<p>Địa chỉ:&nbsp;89, Ng&ocirc; Gia Tự, Phường Tam Sơn, Th&agrave;nh phố Từ Sơn, Tỉnh Bắc Ninh</p>
+', 4, CAST(N'2025-07-19T10:11:56.483' AS DateTime), N'images/news1.jpg')
+INSERT [dbo].[News] ([news_id], [title], [news_content], [author_id], [post_time], [image]) VALUES (2, N'<p>Học l&aacute;i xe &ocirc; t&ocirc; hạng C</p>
+', N'<p>1. Điều kiện với người học l&aacute;i xe &ocirc; t&ocirc; hạng C.&nbsp;</p>
+
+<ul>
+	<li>
+	<p>L&agrave; c&ocirc;ng d&acirc;n Việt Nam, người nước ngo&agrave;i được ph&eacute;p cư tr&uacute; hoặc đang l&agrave;m việc, học tập tại Việt Nam.&nbsp;</p>
+	</li>
+	<li>
+	<p>Đủ 21 tuổi (t&iacute;nh đến ng&agrave;y dự thi s&aacute;t hạch l&aacute;i xe), đủ điều kiện sức khoẻ theo quy định.&nbsp;</p>
+	</li>
+</ul>
+
+<p><img alt="" src="http://laixebacha.com/uploads/news/c22.PNG" /></p>
+
+<p>2. Hồ sơ của người học l&aacute;i xe &ocirc; t&ocirc; C.&nbsp;</p>
+
+<ul>
+	<li>
+	<p>Bản sao giấy chứng minh hoặc căn cước, trường hợp l&agrave;m mất giấy tờ c&oacute; thể thay thế bằng bản sao hộ chiếu c&ograve;n hạn sử dụng;</p>
+	</li>
+	<li>
+	<p>Bản sao hộ chiếu c&ograve;n hạn tr&ecirc;n 06 th&aacute;ng v&agrave; thẻ tạm tr&uacute;/thường tr&uacute; hoặc chứng minh thư ngoại giao/c&ocirc;ng vụ đối với người nước ngo&agrave;i cư tr&uacute;, l&agrave;m việc tại Việt Nam;</p>
+	</li>
+	<li>
+	<p>Giấy kiểm tra sức khỏe từ c&aacute;c cơ sở y tế c&oacute; thẩm quyền cấp;</p>
+	</li>
+	<li>
+	<p>Tờ đơn đề nghị học, thi s&aacute;t hạch v&agrave; cấp giấy ph&eacute;p l&aacute;i xe&nbsp;C;</p>
+	</li>
+	<li>
+	<p>Ảnh thẻ 3x4 (nền ảnh m&agrave;u xanh, người kh&ocirc;ng đeo k&iacute;nh, mặc &aacute;o c&oacute; cổ).&nbsp;</p>
+	</li>
+</ul>
+
+<p>3. Thời gian v&agrave; học ph&iacute; học l&aacute;i xe C.&nbsp;</p>
+
+<ul>
+	<li>
+	<p>Thời gian kh&oacute;a học:&nbsp;6 th&aacute;ng.&nbsp;</p>
+	</li>
+	<li>
+	<p>Học ph&iacute; đ&agrave;o tạo:&nbsp;9.000.000 VNĐ&nbsp;</p>
+	</li>
+</ul>
+
+<p>4. Lệ ph&iacute; thi v&agrave; lệ ph&iacute; cấp GPLX.&nbsp;&nbsp;</p>
+
+<ul>
+	<li>
+	<p>Phần thi l&yacute; thuyết:&nbsp;100.000 VNĐ&nbsp;&nbsp;</p>
+	</li>
+	<li>
+	<p>Phần thi m&ocirc; phỏng:&nbsp;100.000 VNĐ</p>
+	</li>
+	<li>
+	<p>Phần thi thực h&agrave;nh:&nbsp;350.000 VNĐ&nbsp;&nbsp;</p>
+	</li>
+	<li>
+	<p>Phần thi đường trường:&nbsp;80.000 VNĐ&nbsp;</p>
+	</li>
+	<li>
+	<p>Lệ ph&iacute; cấp GPLX:&nbsp;135.000 VNĐ&nbsp;&nbsp;</p>
+	</li>
+</ul>
+
+<p>&nbsp;&nbsp;Tổng lệ ph&iacute; thi:&nbsp;765.000 VNĐ&nbsp;</p>
+
+<p>5. Lệ ph&iacute; thu&ecirc; xe s&aacute;t hạch trong ng&agrave;y tổng &ocirc;n.&nbsp;</p>
+
+<p>&nbsp;Trước ng&agrave;y thi s&aacute;t hạch l&aacute;i xe Trung t&acirc;m sẽ tổ chức một số ng&agrave;y tổng &ocirc;n luyện gi&uacute;p học vi&ecirc;n &ocirc;n luyện lại kỹ năng l&aacute;i xe tr&ecirc;n xe s&aacute;t hạch c&oacute; thiết bị chấm điểm tự động.</p>
+
+<p>&nbsp;Chi ph&iacute; thu&ecirc; xe để &ocirc;n luyện:</p>
+
+<p>Hạng C :&nbsp;350.000 VNĐ/tiếng</p>
+
+<p>Ch&uacute; &yacute;:&nbsp;Hồ sơ nộp v&agrave;o Trung t&acirc;m qua địa email:&nbsp;<a href="mailto:info@laixebacha.com">laixebacha@gmail.com</a>&nbsp;gồm (04 ảnh 3 x 4 v&agrave; chứng minh thư nh&acirc;n d&acirc;n scan) sau khi nộp hồ sơ bạn sẽ được th&ocirc;ng b&aacute;o chi tiết về lịch học, lịch thi.</p>
+
+<p>&nbsp;</p>
+
+<p>Để được tư vấn trực tiếp vui l&ograve;ng li&ecirc;n hệ:</p>
+
+<p>TRUNG T&Acirc;M Đ&Agrave;O TẠO &amp; S&Aacute;T HẠCH L&Aacute;I XE BẮC H&Agrave;</p>
+
+<p>Hotline:&nbsp;0934.333.000</p>
+
+<p>Email:&nbsp;<a href="mailto:info@laixebacha.com">laixebacha@gmail.com</a></p>
+
+<p>Website:&nbsp;http://laixebacha.com</p>
+
+<p>Địa chỉ:&nbsp;89, Ng&ocirc; Gia Tự, Phường Tam Sơn, Th&agrave;nh phố Từ Sơn, Tỉnh Bắc Ninh</p>
+', 4, CAST(N'2025-07-19T10:10:17.230' AS DateTime), N'images/news2.jpg')
+INSERT [dbo].[News] ([news_id], [title], [news_content], [author_id], [post_time], [image]) VALUES (3, N'<p>Học l&aacute;i xe &ocirc; t&ocirc; hạng B2</p>
+', N'<p>1. Điều kiện với người học l&aacute;i xe &ocirc; t&ocirc; hạng B2.&nbsp;</p>
+
+<ul>
+	<li>
+	<p>L&agrave; c&ocirc;ng d&acirc;n Việt Nam, người nước ngo&agrave;i được ph&eacute;p cư tr&uacute; hoặc đang l&agrave;m việc, học tập tại Việt Nam.&nbsp;</p>
+	</li>
+	<li>
+	<p>Đủ 18 tuổi (t&iacute;nh đến ng&agrave;y dự thi s&aacute;t hạch l&aacute;i xe), đủ điều kiện sức khoẻ theo quy định.</p>
+	</li>
+</ul>
+
+<p>&nbsp;2. Hồ sơ của người học l&aacute;i xe &ocirc; t&ocirc; B2.&nbsp;</p>
+
+<ul>
+	<li>
+	<p>Bản sao giấy chứng minh hoặc căn cước, trường hợp l&agrave;m mất giấy tờ c&oacute; thể thay thế bằng bản sao hộ chiếu c&ograve;n hạn sử dụng;&nbsp;</p>
+	</li>
+	<li>
+	<p>Giấy kiểm tra sức khỏe từ c&aacute;c cơ sở y tế c&oacute; thẩm quyền cấp;</p>
+	</li>
+	<li>
+	<p>Tờ đơn đề nghị học, thi s&aacute;t hạch v&agrave; cấp giấy ph&eacute;p l&aacute;i xe&nbsp;B2;</p>
+	</li>
+	<li>
+	<p>Ảnh thẻ 3x4 (nền ảnh m&agrave;u xanh, người kh&ocirc;ng đeo k&iacute;nh, mặc &aacute;o c&oacute; cổ).&nbsp;</p>
+	</li>
+</ul>
+
+<p>3. Thời gian v&agrave; học ph&iacute; học l&aacute;i xe B2.&nbsp;</p>
+
+<ul>
+	<li>
+	<p>Thời gian kh&oacute;a học:&nbsp;3&nbsp;th&aacute;ng.&nbsp;</p>
+	</li>
+	<li>
+	<p>Học ph&iacute; đ&agrave;o tạo:&nbsp;7.000.000 VNĐ</p>
+	</li>
+</ul>
+
+<p>4. Lệ ph&iacute; thi v&agrave; lệ ph&iacute; cấp GPLX.&nbsp;&nbsp;</p>
+
+<ul>
+	<li>
+	<p>Phần thi l&yacute; thuyết:&nbsp;100.000 VNĐ&nbsp;&nbsp;</p>
+	</li>
+	<li>
+	<p>Phần thi m&ocirc; phỏng:&nbsp;100.000 VNĐ</p>
+	</li>
+	<li>
+	<p>Phần thi thực h&agrave;nh:&nbsp;350.000 VNĐ&nbsp;&nbsp;</p>
+	</li>
+	<li>
+	<p>Phần thi đường trường:&nbsp;80.000 VNĐ&nbsp;</p>
+	</li>
+	<li>
+	<p>Lệ ph&iacute; cấp GPLX:&nbsp;135.000 VNĐ&nbsp;&nbsp;</p>
+	</li>
+</ul>
+
+<p>&nbsp;&nbsp;Tổng lệ ph&iacute; thi:&nbsp;765.000 VNĐ&nbsp;</p>
+
+<p>5. Lệ ph&iacute; thu&ecirc; xe s&aacute;t hạch trong ng&agrave;y tổng &ocirc;n.&nbsp;</p>
+
+<p>Trước ng&agrave;y thi s&aacute;t hạch l&aacute;i xe Trung t&acirc;m sẽ tổ chức một số ng&agrave;y tổng &ocirc;n luyện gi&uacute;p học vi&ecirc;n &ocirc;n luyện lại kỹ năng l&aacute;i xe tr&ecirc;n xe s&aacute;t hạch c&oacute; thiết bị chấm điểm tự động.</p>
+
+<p>Chi ph&iacute; thu&ecirc; xe để &ocirc;n luyện :</p>
+
+<ul>
+	<li>
+	<p>Hạng B2 :&nbsp;350.000 VNĐ/tiếng</p>
+	</li>
+</ul>
+
+<p>Ch&uacute; &yacute;:&nbsp;Hồ sơ nộp v&agrave;o Trung t&acirc;m qua địa email:&nbsp;<a href="mailto:info@laixebacha.com">laixebacha@gmail.com</a>&nbsp;gồm (04 ảnh 3 x 4 v&agrave; chứng minh thư nh&acirc;n d&acirc;n scan) sau khi nộp hồ sơ bạn sẽ được th&ocirc;ng b&aacute;o chi tiết về lịch học, lịch thi.</p>
+
+<p>&nbsp;</p>
+
+<p>Để được tư vấn trực tiếp vui l&ograve;ng li&ecirc;n hệ:</p>
+
+<p>TRUNG T&Acirc;M Đ&Agrave;O TẠO &amp; S&Aacute;T HẠCH L&Aacute;I XE BẮC H&Agrave;</p>
+
+<p>Hotline:&nbsp;&nbsp;0934.333.000</p>
+
+<p>Email:&nbsp;<a href="mailto:info@laixebacha.com">laixebacha@gmail.com</a></p>
+
+<p>Website:&nbsp;http://laixebacha.com</p>
+
+<p>Địa chỉ:&nbsp;89, Ng&ocirc; Gia Tự, Phường Tam Sơn, Th&agrave;nh phố Từ Sơn, Tỉnh Bắc Ninh</p>
+', 5, CAST(N'2025-07-19T10:10:08.910' AS DateTime), N'images/news3.jpg')
+INSERT [dbo].[News] ([news_id], [title], [news_content], [author_id], [post_time], [image]) VALUES (4, N'<p>Học bằng l&aacute;i xe hạng D</p>
+', N'<p>1. Điều kiện với người học l&aacute;i xe &ocirc; t&ocirc; hạng D.&nbsp;</p>
+
+<ul>
+	<li>
+	<p>Độ tuổi:&nbsp;Người học phải đủ 24 tuổi trở l&ecirc;n.&nbsp;</p>
+	</li>
+	<li>
+	<p>Bằng l&aacute;i xe:&nbsp;Cần c&oacute; bằng l&aacute;i xe hạng B2 hoặc C.&nbsp;</p>
+	</li>
+	<li>
+	<p>Kinh nghiệm l&aacute;i xe:&nbsp;Cần c&oacute; kinh nghiệm l&aacute;i xe &iacute;t nhất 3 năm v&agrave; số km l&aacute;i xe an to&agrave;n theo quy định.&nbsp;</p>
+	</li>
+</ul>
+
+<p>&nbsp;2. Nội dung đ&agrave;o tạo:</p>
+
+<ul>
+	<li>
+	<p>Học l&yacute; thuyết về luật giao th&ocirc;ng đường bộ, cấu tạo v&agrave; sửa chữa th&ocirc;ng thường xe &ocirc; t&ocirc;, nghiệp vụ vận tải, kỹ thuật l&aacute;i xe, v&agrave; c&aacute;c t&igrave;nh huống giao th&ocirc;ng thường gặp.</p>
+	</li>
+	<li>
+	<p>Học thực h&agrave;nh tr&ecirc;n s&acirc;n tập v&agrave; tr&ecirc;n đường giao th&ocirc;ng, tập trung v&agrave;o c&aacute;c kỹ năng l&aacute;i xe an to&agrave;n, xử l&yacute; c&aacute;c t&igrave;nh huống khẩn cấp v&agrave; điều khiển xe kh&aacute;ch.&nbsp;</p>
+	</li>
+</ul>
+
+<p>3. Thời gian đ&agrave;o tạo:</p>
+
+<ul>
+	<li>
+	<p>Thời gian học thực h&agrave;nh v&agrave; l&yacute; thuyết khoảng 336 giờ.</p>
+	</li>
+	<li>
+	<p>Sau khi ho&agrave;n th&agrave;nh kh&oacute;a học, học vi&ecirc;n sẽ tham gia kỳ thi s&aacute;t hạch do Sở GTVT tổ chức.&nbsp;</p>
+	</li>
+</ul>
+
+<p>4. Chi ph&iacute; đ&agrave;o tạo:</p>
+
+<ul>
+	<li>
+	<p>Chi ph&iacute; đ&agrave;o tạo n&acirc;ng hạng từ B2 l&ecirc;n D khoảng hơn 5.500.000 đồng/bộ hồ sơ.</p>
+	</li>
+	<li>
+	<p>Bao gồm học ph&iacute; v&agrave; lệ ph&iacute; thi s&aacute;t hạch.&nbsp;</p>
+	</li>
+</ul>
+
+<p>Lưu &yacute;:</p>
+
+<ul>
+	<li>
+	<p>Khi c&oacute; bằng l&aacute;i xe hạng D, bạn c&oacute; thể l&aacute;i c&aacute;c loại xe kh&aacute;ch từ 10 đến 30 chỗ ngồi, bao gồm cả xe kh&aacute;ch giường nằm.&nbsp;</p>
+	</li>
+	<li>
+	<p>Bạn cũng được ph&eacute;p l&aacute;i c&aacute;c loại xe tương đương với hạng B2 v&agrave; C.&nbsp;</p>
+	</li>
+	<li>
+	<p>Bạn c&oacute; thể tham khảo c&aacute;c s&acirc;n tập l&aacute;i xe v&agrave; trung t&acirc;m đ&agrave;o tạo l&aacute;i xe uy t&iacute;n tại H&agrave; Nội để đăng k&yacute; kh&oacute;a học.&nbsp;</p>
+	</li>
+</ul>
+', 5, CAST(N'2025-07-19T10:09:57.503' AS DateTime), N'images/news5.jpg')
+INSERT [dbo].[News] ([news_id], [title], [news_content], [author_id], [post_time], [image]) VALUES (5, N'<p>Kh&oacute;a đ&agrave;o tạo l&aacute;i xe hạng E</p>
+', N'<p>Kh&oacute;a đ&agrave;o tạo l&aacute;i xe hạng E&nbsp;l&agrave; kh&oacute;a học n&acirc;ng hạng bằng l&aacute;i xe, cho ph&eacute;p người l&aacute;i điều khiển c&aacute;c loại xe &ocirc; t&ocirc; chở người tr&ecirc;n 30 chỗ (kh&ocirc;ng kể chỗ người l&aacute;i) v&agrave; c&aacute;c loại xe quy định cho c&aacute;c hạng B1, B2, C, D. Để tham gia kh&oacute;a học n&agrave;y, người học cần đ&aacute;p ứng c&aacute;c điều kiện nhất định về độ tuổi v&agrave; kinh nghiệm l&aacute;i xe.&nbsp;</p>
+
+<p>Điều kiện tham gia kh&oacute;a đ&agrave;o tạo l&aacute;i xe hạng E:</p>
+
+<ul>
+	<li>
+	<p><strong>Độ tuổi:</strong>&nbsp;Người học phải đủ 27 tuổi trở l&ecirc;n t&iacute;nh đến ng&agrave;y dự s&aacute;t hạch.&nbsp;</p>
+	</li>
+	<li>
+	<p><strong>Kinh nghiệm l&aacute;i xe:</strong></p>
+
+	<ul>
+		<li>
+		<p>Từ hạng C l&ecirc;n E: C&oacute; 05 năm kinh nghiệm l&aacute;i xe &ocirc; t&ocirc; v&agrave; 100.000 km l&aacute;i xe an to&agrave;n.&nbsp;</p>
+		</li>
+		<li>
+		<p>Từ hạng D l&ecirc;n E: C&oacute; 03 năm kinh nghiệm l&aacute;i xe &ocirc; t&ocirc; v&agrave; 50.000 km l&aacute;i xe an to&agrave;n.&nbsp;</p>
+		</li>
+	</ul>
+	</li>
+	<li>
+	<p><strong>Sức khỏe:</strong>&nbsp;Đảm bảo đủ điều kiện sức khỏe theo quy định.&nbsp;</p>
+	</li>
+</ul>
+
+<p>Nội dung kh&oacute;a học:</p>
+
+<ul>
+	<li>
+	<p><strong>Thời gian đ&agrave;o tạo:</strong></p>
+
+	<p>Tổng thời gian học l&agrave; 336 giờ, bao gồm 56 giờ học l&yacute; thuyết v&agrave; 280 giờ học thực h&agrave;nh.</p>
+	</li>
+	<li>
+	<p><strong>Nội dung học:</strong></p>
+
+	<ul>
+		<li>
+		<p>Học l&yacute; thuyết về luật giao th&ocirc;ng đường bộ, kỹ thuật l&aacute;i xe, cấu tạo v&agrave; sửa chữa xe, v&agrave; c&aacute;c kiến thức li&ecirc;n quan kh&aacute;c.</p>
+		</li>
+		<li>
+		<p>Thực h&agrave;nh l&aacute;i xe tr&ecirc;n c&aacute;c loại xe hạng E, bao gồm cả l&aacute;i xe trong h&igrave;nh v&agrave; l&aacute;i xe tr&ecirc;n đường trường.&nbsp;</p>
+		</li>
+	</ul>
+	</li>
+</ul>
+
+<p>Lưu &yacute;:</p>
+
+<ul>
+	<li>
+	<p>Người học cần chuẩn bị đầy đủ hồ sơ theo quy định của cơ sở đ&agrave;o tạo l&aacute;i xe.&nbsp;</p>
+	</li>
+	<li>
+	<p>Chi ph&iacute; học bằng l&aacute;i xe hạng E c&oacute; thể dao động t&ugrave;y thuộc v&agrave;o cơ sở đ&agrave;o tạo v&agrave; c&aacute;c dịch vụ đi k&egrave;m.&nbsp;</p>
+	</li>
+	<li>
+	<p>Sau khi ho&agrave;n th&agrave;nh kh&oacute;a học v&agrave; đạt kết quả s&aacute;t hạch, người học sẽ được cấp bằng l&aacute;i xe hạng E.&nbsp;</p>
+	</li>
+</ul>
+', 6, CAST(N'2025-07-19T10:09:34.133' AS DateTime), N'images/news7.jpg')
+SET IDENTITY_INSERT [dbo].[News] OFF

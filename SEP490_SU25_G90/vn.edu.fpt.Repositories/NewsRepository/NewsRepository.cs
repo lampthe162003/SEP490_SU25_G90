@@ -52,5 +52,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.NewsRepository
             var result = await _context.SaveChangesAsync();
             return result > 0;
         }
+
+        public async Task<IList<News>> GetNewsListAsync()
+        {
+            return await _context.News.ToListAsync();
+        }
     }
 }

@@ -25,5 +25,13 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.CarAssignmentService
         Task<bool> IsCarAvailableAsync(int carId, DateOnly date, int slotId);
         Task<bool> CanInstructorRentCarAsync(int instructorId, DateOnly date, int slotId);
         Task<List<CarAssignmentResponse>> GetCarAssignmentsByInstructorAsync(int instructorId, DateOnly date, int slotId);
+
+        public Task<IList<CarAssignmentInformationResponse>> GetAllCarAssignments();
+        public Task<IList<CarAssignmentInformationResponse>> GetAssignmentsByCarId(int carId);
+        public Task<CarAssignmentInformationResponse> GetAssignmentById(int assignmentId);
+        public Task AddCarAssignment(CarAssignment carAssignment);
+        public Task UpdateCarAssignment(CarAssignment carAssignment);
+        public Task DeleteCarAssignment(CarAssignment carAssignment);
     }
-} 
+}
+
