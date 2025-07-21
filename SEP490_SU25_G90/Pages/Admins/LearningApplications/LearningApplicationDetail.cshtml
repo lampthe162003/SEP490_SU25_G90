@@ -7,146 +7,146 @@
     var app = Model.LearningApplication;
 }
 
-<h2>Thông tin chi tiết hồ sơ học</h2>
+<h2 class="mb-4">Thông tin chi tiết hồ sơ học</h2>
+
 <div class="row">
+    <!-- Thông tin học viên -->
     <div class="col-md-7">
-        <table class="table table-bordered">
-            <tr>
-                <td><b>Tên học viên:</b> @app?.LearnerFullName</td>
-            </tr>
-            <tr>
-                <td><b>CCCD:</b> @app?.LearnerCccdNumber</td>
-            </tr>
-            <tr>
-                <td><b>Ngày sinh:</b> @app?.LearnerDob?.ToString("dd/MM/yyyy")</td>
-            </tr>
-            <tr>
-                <td><b>Số điện thoại:</b> @app?.LearnerPhone</td>
-            </tr>
-            <tr>
-                <td><b>Email:</b> @app?.LearnerEmail</td>
-            </tr>
-            <tr>
-                <td><b>Loại bằng đăng ký:</b> @app?.LicenceTypeName</td>
-            </tr>
-            <tr>
-                <td><b>Giảng viên phụ trách:</b> @app?.InstructorFullName</td>
-            </tr>
-            <tr>
-                <td><b>Ngày đăng ký học:</b> @(app?.SubmittedAt?.ToString("dd/MM/yyyy"))</td>
-            </tr>
-            <tr>
-                <td><b>Trạng thái hồ sơ:</b> @app?.LearningStatusName</td>
-            </tr>
-            <tr>
-                <td><b>Ghi chú nội bộ:</b> (Ghi chú thêm của quản trị viên)</td>
-            </tr>
-        </table>    
+        <div class="card mb-3 shadow-sm">
+            <div class="card-header bg-info text-white">
+                <strong>Thông tin học viên</strong>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless mb-0">
+                    <tr><td><b>Tên học viên:</b> @app?.LearnerFullName</td></tr>
+                    <tr><td><b>CCCD:</b> @app?.LearnerCccdNumber</td></tr>
+                    <tr><td><b>Ngày sinh:</b> @app?.LearnerDob?.ToString("dd/MM/yyyy")</td></tr>
+                    <tr><td><b>Số điện thoại:</b> @app?.LearnerPhone</td></tr>
+                    <tr><td><b>Email:</b> @app?.LearnerEmail</td></tr>
+                    <tr><td><b>Loại bằng đăng ký:</b> @app?.LicenceTypeName</td></tr>
+                    <tr><td><b>Giảng viên phụ trách:</b> @app?.InstructorFullName</td></tr>
+                    <tr><td><b>Ngày đăng ký học:</b> @app?.SubmittedAt?.ToString("dd/MM/yyyy")</td></tr>
+                    <tr>
+                        <td>
+                            <b>Trạng thái hồ sơ:</b>
+                            <span class="badge bg-secondary">@app?.LearningStatusName</span>
+                        </td>
+                    </tr>
+                    <tr><td><b>Ghi chú nội bộ:</b> (Ghi chú thêm của quản trị viên)</td></tr>
+                </table>
+            </div>
+        </div>
     </div>
 
+    <!-- Điểm thi & tài liệu -->
     <div class="col-md-5">
-        <h4>Điểm thi</h4>
-        <table class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>Phần thi</th>
-                    <th>Điểm đạt</th>
-                    <th>Điểm học viên</th>
-                    <th>Trạng thái</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Lý thuyết</td>
-                    <td>@app?.TheoryPassScore</td>
-                    <td>@app?.TheoryScore</td>
-                    <td>
-                        @if (app?.TheoryScore >= app?.TheoryPassScore)
-                        {
-                            <span class="text-success">Đạt</span>
-                        }
-                        else
-                        {
-                            <span class="text-danger">Chưa đạt</span>
-                        }
-                    </td>
-                </tr>
-                <tr>
-                    <td>Mô phỏng</td>
-                    <td>@app?.SimulationPassScore</td>
-                    <td>@app?.SimulationScore</td>
-                    <td>
-                        @if (app?.SimulationScore >= app?.SimulationPassScore)
-                        {
-                            <span class="text-success">Đạt</span>
-                        }
-                        else
-                        {
-                            <span class="text-danger">Chưa đạt</span>
-                        }
-                    </td>
-                </tr>
-                <tr>
-                    <td>Đường trường</td>
-                    <td>@app?.ObstaclePassScore</td>
-                    <td>@app?.ObstacleScore</td>
-                    <td>
-                        @if (app?.ObstacleScore >= app?.ObstaclePassScore)
-                        {
-                            <span class="text-success">Đạt</span>
-                        }
-                        else
-                        {
-                            <span class="text-danger">Chưa đạt</span>
-                        }
-                    </td>
-                </tr>
-                <tr>
-                    <td>Sa hình</td>
-                    <td>@app?.PracticalPassScore</td>
-                    <td>@app?.PracticalScore</td>
-                    <td>
-                        @if (app?.PracticalScore >= app?.PracticalPassScore)
-                        {
-                            <span class="text-success">Đạt</span>
-                        }
-                        else
-                        {
-                            <span class="text-danger">Chưa đạt</span>
-                        }
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div>
-            <b>Tài liệu đính kèm:</b>
-            <ul style="margin-bottom: 0;">
-                <li>
-                    Giấy khám sức khỏe:
-                    <span class="text-muted">@(!string.IsNullOrWhiteSpace(app?.LearnerHealthCertImageUrl) ? "Đã nộp" : "Chưa có")</span>
-                </li>
-                <li>
-                    Căn cước công dân (CCCD):
-                    <span class="text-muted">@(!string.IsNullOrWhiteSpace(app?.LearnerCccdImageUrl) ? "Đã nộp" : "Chưa có")</span>
-                </li>
-            </ul>
+        <div class="card mb-3 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <strong>Điểm thi</strong>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Phần thi</th>
+                            <th>Điểm đạt</th>
+                            <th>Điểm học viên</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Lý thuyết</td>
+                            <td>@(app?.TheoryPassScore)/@(app?.TheoryMaxScore)</td>
+                            <td>@app?.TheoryScore</td>
+                            <td>
+                                <span class="@(app?.TheoryScore >= app?.TheoryPassScore ? "text-success fw-bold" : "text-danger fw-bold")">
+                                    @(app?.TheoryScore >= app?.TheoryPassScore ? "Đạt" : "Chưa đạt")
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Mô phỏng</td>
+                            <td>@(app?.SimulationPassScore)/@(app?.SimulationMaxScore)</td>
+                            <td>@app?.SimulationScore</td>
+                            <td>
+                                <span class="@(app?.SimulationScore >= app?.SimulationPassScore ? "text-success fw-bold" : "text-danger fw-bold")">
+                                    @(app?.SimulationScore >= app?.SimulationPassScore ? "Đạt" : "Chưa đạt")
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Đường trường</td>
+                            <td>@(app?.ObstaclePassScore)/@(app?.ObstacleMaxScore)</td>
+                            <td>@app?.ObstacleScore</td>
+                            <td>
+                                <span class="@(app?.ObstacleScore >= app?.ObstaclePassScore ? "text-success fw-bold" : "text-danger fw-bold")">
+                                    @(app?.ObstacleScore >= app?.ObstaclePassScore ? "Đạt" : "Chưa đạt")
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Sa hình</td>
+                            <td>@(app?.PracticalPassScore)/@(app?.PracticalMaxScore)</td>
+                            <td>@app?.PracticalScore</td>
+                            <td>
+                                <span class="@(app?.PracticalScore >= app?.PracticalPassScore ? "text-success fw-bold" : "text-danger fw-bold")">
+                                    @(app?.PracticalScore >= app?.PracticalPassScore ? "Đạt" : "Chưa đạt")
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="mt-3">
-            <b>Các nút hành động:</b>
-            <ul style="margin-bottom: 0;">
-                <li>
-                    [Chỉnh sửa hồ sơ]
-                    <span class="text-muted">(hiển thị nếu trạng thái còn chỉnh sửa được)</span>
-                </li>
-                <li>
-                    [Phân công giảng viên]
-                    <span class="text-muted">(hiển thị nếu chưa có giảng viên)</span>
-                </li>
-            </ul>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-secondary text-white">
+                <strong>Tài liệu đính kèm</strong>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        Giấy khám sức khỏe:
+                        <span class="text-muted">@(!string.IsNullOrWhiteSpace(app?.LearnerHealthCertImageUrl) ? "Đã nộp" : "Chưa có")</span>
+                    </li>
+                    <li class="list-group-item">
+                        CCCD:
+                        <span class="text-muted">@(!string.IsNullOrWhiteSpace(app?.LearnerCccdImageUrl) ? "Đã nộp" : "Chưa có")</span>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="mt-4">
-    <a asp-page="./ListLearningApplication" class="btn btn-secondary">Quay lại</a>
+    <a asp-page="./ListLearningApplication" class="btn btn-outline-secondary">
+        <i class="fa fa-arrow-left"></i> Quay lại
+    </a>
 </div>
+
+@section Styles {
+    <style>
+        .card {
+            border-radius: 10px;
+        }
+
+        .card-header {
+            font-size: 1.1rem;
+        }
+
+        .badge {
+            font-size: 0.95rem;
+            padding: 6px 12px;
+        }
+
+        .table td, .table th {
+            vertical-align: middle;
+        }
+
+        ul.list-group li {
+            font-size: 0.95rem;
+        }
+    </style>
+}

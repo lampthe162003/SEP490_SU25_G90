@@ -17,6 +17,14 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.TestScoreStandardService;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.LicenseTypeRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Services.User;
 using SEP490_SU25_G90.vn.edu.fpt.Services.LicenseTypeService;
+using SEP490_SU25_G90.vn.edu.fpt.Services.EmailService;
+using SEP490_SU25_G90.vn.edu.fpt.Services.ResetCodeService;
+using SEP490_SU25_G90.vn.edu.fpt.Repositories.ScheduleSlotRepository;
+using SEP490_SU25_G90.vn.edu.fpt.Services.ScheduleSlotService;
+using SEP490_SU25_G90.vn.edu.fpt.Repositories.CarRepository;
+using SEP490_SU25_G90.vn.edu.fpt.Services.CarService;
+using SEP490_SU25_G90.vn.edu.fpt.Repositories.CarAssignmentRepository;
+using SEP490_SU25_G90.vn.edu.fpt.Services.CarAssignmentService;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Commons
 {
@@ -51,6 +59,18 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Commons
 
             services.AddScoped<IPasswordHasher<Models.User>, PasswordHasher<Models.User>>();
 
+            services.AddScoped<IEmailService, EmailService>();
+
+            services.AddSingleton<IResetCodeStorageService, ResetCodeStorageService>();
+
+            services.AddScoped<IScheduleSlotRepository, ScheduleSlotRepository>();
+            services.AddScoped<IScheduleSlotService, ScheduleSlotService>();
+
+            services.AddScoped<ICarRepository, CarRepository>();
+            services.AddScoped<ICarService, CarService>();
+
+            services.AddScoped<ICarAssignmentRepository, CarAssignmentRepository>();
+            services.AddScoped<ICarAssignmentService, CarAssignmentService>();
 
             return services;
         }

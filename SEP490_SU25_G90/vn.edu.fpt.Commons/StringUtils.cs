@@ -20,5 +20,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Commons
             var parts = fullName?.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             return parts != null && parts.Length > 2 ? string.Join(" ", parts.Skip(1).Take(parts.Length - 2)) : null;
         }
+
+        internal static string Generate6DigitCode()
+        {
+            var random = new Random();
+            return random.Next(100000, 999999).ToString();
+        }
     }
 }

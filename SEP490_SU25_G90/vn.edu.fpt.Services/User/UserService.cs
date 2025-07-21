@@ -309,5 +309,36 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.User
             }
         }
 
+        public async Task UpdatePasswordAsync(int userId, string newPassword)
+        {
+            var user = await (_userRepository.GetUserById(userId) ?? throw new ArgumentNullException("Người dùng không tồn tại."));
+            user.Password = newPassword;
+            await _userRepository.Update(user);
+        }
+
+        public async Task<UserListInformationResponse> GetUserDetailsAsync(int userId)
+        {
+            var user = _mapper.Map<UserListInformationResponse>(await _userRepository.GetUserById(userId));
+            return user;
+        }
+
+        public async Task<LoginInformationResponse> GetLoginDetailsByEmail(string email)
+        {
+            var user = _mapper.Map<LoginInformationResponse>(await _userRepository.GetUserByEmail(email));
+            return user;
+        }
+
+        public async Task ResetPasswordAsync(string email, string newPassword)
+        {
+            var user = await _userRepository.GetUserByEmail(email);
+            user.Password = newPassword;
+            await _userRepository.Update(user);
+        }
+
+        public async Task<bool> DoesUserWithEmailExist(string email)
+        {
+            var user = await _userRepository.GetUserByEmail(email);
+            return user != null;
+        }
     }
 }

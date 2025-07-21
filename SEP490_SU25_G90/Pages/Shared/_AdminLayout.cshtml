@@ -8,7 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewBag.Title</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin-dashboard.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
 </head>
@@ -36,13 +35,13 @@
             <div class="section-title">SU25_SEP490</div>
             <div class="user-menu">
                 <div class="username">
-                    <div><strong>@User.Identity.Name</strong></div>
+                    <div><strong>@User.Identity?.Name</strong></div>
                     <div class="role">Admin</div>
                 </div>
                 <i class="fas fa-user-circle fa-2x" id="userIcon"></i>
                 <div class="user-dropdown" id="userDropdown">
                     <a href="#">Hồ sơ người dùng</a>
-                    <a href="#">Đổi mật khẩu</a>
+                    <a href="/ChangePassword">Đổi mật khẩu</a>
                     <a href="/Logout">Đăng xuất</a>
                 </div>
             </div>

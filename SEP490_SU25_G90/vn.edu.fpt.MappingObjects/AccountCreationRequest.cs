@@ -13,7 +13,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         [MinLength(8, ErrorMessage = "Mật khẩu phải có ít nhất 8 ký tự.")]
         [Required(ErrorMessage = "Mật khẩu không được để trống")]
         [Display(Name = "Mật khẩu")]
-        public String PasswordHash { get; set; } = default!;
+        public String Password { get; set; } = default!;
 
         [Required(ErrorMessage = "Họ không được để trống")]
         [Display(Name = "Tên họ")]

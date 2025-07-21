@@ -1,7 +1,7 @@
 ﻿@page "/Login"
 @model SEP490_SU25_G90.Pages.Commons.LoginModel
 @{
-    Layout = "_Layout";
+    Layout = "_HomeLayout";
     ViewData["Title"] = "Đăng nhập";
 }
 
@@ -9,12 +9,12 @@
     <div class="row justify-content-center">
         <div class="col-md-6 bg-light p-4 rounded shadow">
             <h3 class="text-center text-primary mb-4">Đăng nhập tài khoản</h3>
-            <form method="post">
+            <form method="post" id="loginForm">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                 <div class="form-group mb-3">
                     <label asp-for="Email">Email</label>
-                    <input asp-for="Email" class="form-control" />
+                    <input asp-for="Email" class="form-control" id="email" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
 
@@ -25,7 +25,7 @@
                 </div>
 
                 <div class="form-check mb-3">
-                    <input class="form-check-input" />
+                    <input asp-for="SavePasswordCheck" class="form-check-input" type="checkbox"/>
                     <label class="form-check-label" >Lưu tài khoản</label>
                 </div>
                 @if (!ViewData.ModelState.IsValid)
@@ -39,7 +39,7 @@
                 }
 
                 <div class="d-flex justify-content-between mb-3">
-                    <a asp-page="">Quên mật khẩu?</a>
+                    <a href="#" onclick="redirectToForgetPassword()">Quên mật khẩu?</a>
                 </div>
 
                 <div class="form-group d-grid">
@@ -54,4 +54,17 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        function redirectToForgetPassword() {
+            const email = document.getElementById("email").value;
+
+            if (email) {
+                window.location.href = `/ForgetPassword?email=${encodeURIComponent(email)}`;
+            }
+            else {
+                window.location.href = `/ForgetPassword`;
+            }
+        }
+    </script>
 }

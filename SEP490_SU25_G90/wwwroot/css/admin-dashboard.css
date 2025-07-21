@@ -92,6 +92,14 @@
     cursor: pointer;
 }
 
+#userIcon {
+  transition: all 0.3s ease;
+}
+
+#userIcon:hover {
+  transform: scale(1.1);
+}
+
 .user-dropdown {
     position: absolute;
     top: 100%;
@@ -103,6 +111,10 @@
     min-width: 180px;
     display: none;
     z-index: 1000;
+}
+
+.user-dropdown.show {
+  display: block;
 }
 
     .user-dropdown a {
@@ -118,6 +130,7 @@
 
 .username {
     text-align: right;
+    margin-right: 10px;
 }
 
 .role {

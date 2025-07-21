@@ -1,0 +1,83 @@
+﻿@page "/Instructor/Car/Schedule"
+@model SEP490_SU25_G90.Pages.Instructors.Car.CarScheduleDetailsModel
+@{
+    ViewData["Title"] = "Lịch đăng ký mượn xe";
+    Layout = "_InstructorLayout";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Lịch đăng ký mượn xe</h2>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped text-center align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Time Slot</th>
+                    @foreach (var day in Model.DaysOfWeek)
+                    {
+                        <th>@day.ToString("dd/MM/yyyy")</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var slot in Model.ScheduleSlots)
+                {
+                    <tr>
+                        <th>@slot.StartTime?.ToString("HH\\:mm") - @slot.EndTime?.ToString("HH\\:mm")</th>
+                        @foreach (var date in Model.DaysOfWeek)
+                        {
+                            var key = (date, slot.SlotId);
+                            var assignment = Model.CarAssignments.ContainsKey(key) ? Model.CarAssignments[key] : null;
+                            var buttonColor = assignment?.CarStatus == true ? "btn-success" : "btn-secondary";
+                            var buttonLabel = assignment?.CarStatus == true ? "Rented" : "Free";
+
+                            <td>
+                                <button type="button" class="btn btn-sm @buttonColor rounded-pill" data-bs-toggle="modal" data-bs-target="#assignmentModal"
+                                        data-carid="@assignment?.CarId"
+                                        data-instructorid="@assignment?.InstructorId"
+                                        data-date="@date"
+                                        data-slotid="@slot.SlotId"
+                                        data-status="@(assignment?.CarStatus == true ? "Rented" : "Free")">
+                                    @buttonLabel
+                                </button>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="assignmentModal" tabindex="-1" aria-labelledby="assignmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="assignmentModalLabel">Assignment Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Car ID:</strong> <span id="modalCarId"></span></p>
+                <p><strong>Instructor ID:</strong> <span id="modalInstructorId"></span></p>
+                <p><strong>Slot ID:</strong> <span id="modalSlotId"></span></p>
+                <p><strong>Date:</strong> <span id="modalDate"></span></p>
+                <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        var assignmentModal = document.getElementById('assignmentModal');
+        assignmentModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            document.getElementById('modalCarId').textContent = button.getAttribute('data-carid') ?? 'N/A';
+            document.getElementById('modalInstructorId').textContent = button.getAttribute('data-instructorid') ?? 'N/A';
+            document.getElementById('modalSlotId').textContent = button.getAttribute('data-slotid');
+            document.getElementById('modalDate').textContent = button.getAttribute('data-date');
+            document.getElementById('modalStatus').textContent = button.getAttribute('data-status');
+        });
+    </script>
+}

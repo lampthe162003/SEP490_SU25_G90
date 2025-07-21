@@ -10,5 +10,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.NewsService
         Task<NewsFormRequest?> GetNewsFormByIdAsync(int id);
         Task<bool> EditNewsAsync(NewsFormRequest request);
         Task<bool> DeleteNewsAsync(int id);
+        Task<IList<NewsListInformationResponse>> GetTopNewsAsync();
     }
 }

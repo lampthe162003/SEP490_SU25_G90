@@ -129,6 +129,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.NewsService
             //Trả về đường dẫn tương đối để lưu DB
             return "/uploads/news/" + uniqueFileName;
         }
+
+        public async Task<IList<NewsListInformationResponse>> GetTopNewsAsync()
+        {
+            var topNews = await _newsRepository.GetNewsListAsync();
+            return _mapper.Map<IList<NewsListInformationResponse>>(topNews.OrderBy(news => news.NewsId).Take(5).ToList());
+        }
     }
 }
 

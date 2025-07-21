@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SEP490_SU25_G90.Pages.Learner.News
 {
-    [Authorize(Roles = "learner")]
+    [Authorize(Policy = "GuestOrLearnerPolicy")]
     public class ListNewsModel : PageModel
     {
         private readonly INewsService _iNewsService;

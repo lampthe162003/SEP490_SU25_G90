@@ -56,5 +56,15 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.UserRepository
         {
             await _context.SaveChangesAsync();
         }
+
+        public async Task<User> GetUserById(int id)
+        {
+            return await _context.Users.FindAsync(id);
+        }
+
+        public async Task<User> GetUserByEmail(string email)
+        {
+            return await _context.Users.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
+        }
     }
 }

@@ -9,5 +9,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.NewsRepository
         Task AddNewsAsync(News news);
         Task<bool> EditNewsAsync(News news);
         Task<bool> DeleteNewsAsync(News news);
+        Task<IList<News>> GetNewsListAsync();
     }
 }

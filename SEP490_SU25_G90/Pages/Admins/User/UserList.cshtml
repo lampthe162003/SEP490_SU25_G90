@@ -6,67 +6,102 @@
     ViewData["Title"] = "Danh sách người dùng";
 }
 
-<h1>Danh sách người dùng</h1>
-<br />
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h3 mb-0">
+                    <i class="fas fa-chalkboard-teacher text-primary me-2"></i>
+                    Quản lý người dùng
+                </h2>
+                <button type="button" class="btn btn-primary" onclick="window.location.href='/Admin/Users/Create'">
+                    <i class="fas fas-plus me-2"></i> 
+                    Tạo tài khoản mới
+                </button>
+            </div>
 
-<form>
-    <h3>Tìm kiếm</h3>
-    <p>
-        <label>
-            <pre>Họ Tên     <input type="text" asp-for="NameSearch" /></pre>
-            <pre>Email      <input type="text" asp-for="EmailSearch" ></pre>
-            <pre>           <input type="submit" value="Tìm" /></pre>
-        </label>
-    </p>
-</form>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-search me-2"></i>
+                        Tìm kiếm
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="NameSearch" class="form-label">Họ Tên</label>
+                                <input asp-for="NameSearch" class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="EmailSearch" class="form-label">Email</label>
+                                <input asp-for="EmailSearch" class="form-control" />
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-search me-2"></i>
+                                    Tìm kiếm
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-<a asp-page="./CreateAccount">Tạo tài khoản mới</a>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Họ Tên
-            </th>
-            <th>
-                Vai Trò
-            </th>
-            <th>
-                Email
-            </th>
-            <th>
-                Ngày Sinh
-            </th>
-            <th>
-                Giới Tính
-            </th>
-            <th>
-                SĐT
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.User) {
-            <tr>
-                <td>
-                    @item.FullName
-                </td>
-                <td>
-                    @foreach (var role in item.UserRoles)
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-list me-2"></i>
+                        Danh sách người dùng
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.Users.Any())
                     {
-                        @(role.Role.RoleName + " ")
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col">Họ Tên</th>
+                                        <th scope="col">Vai Trò</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Thao Tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Users)
+                                    {
+                                        <tr>
+                                            <td>@item.FullName</td>
+                                            <td>
+                                                @foreach (var role in item.UserRoles)
+                                                {
+                                                    @if (role.Role.RoleId == 3)
+                                                    {
+                                                        @("giảng viên ")
+                                                    }
+                                                    else if (role.Role.RoleId == 1)
+                                                    {
+                                                        @("học viên ")
+                                                    }
+                                                    else @(role.Role.RoleName + " ")
+                                                }
+                                            </td>
+                                            <td>@item.Email</td>
+                                            <td>
+                                                <a class="btn btn-outline-primary" asp-page="./UserDetails" asp-route-id="@item.UserId">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     }
-            </td>
-            <td>@item.Email</td>
-            <td>@item.Dob</td>
-            <td>@(item.Gender == true ? "Nam" : "Nữ")</td>
-            <td>@item.Phone</td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.UserId">Sửa</a> |
-                <a asp-page="./Details" asp-route-id="@item.UserId">Chi Tiết</a> 
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
