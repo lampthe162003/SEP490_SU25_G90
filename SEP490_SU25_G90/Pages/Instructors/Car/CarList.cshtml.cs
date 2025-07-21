@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -7,6 +8,7 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.ScheduleSlotService;
 
 namespace SEP490_SU25_G90.Pages.Instructors.Car
 {
+    [Authorize(Roles = "instructor")]
     public class CarListModel : PageModel
     {
         

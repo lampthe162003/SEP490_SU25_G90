@@ -1,4 +1,6 @@
-﻿using SEP490_SU25_G90.vn.edu.fpt.Models;
+﻿using AutoMapper;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.CarAssignment;
+using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.CarAssignmentRepository;
 using System.Threading.Tasks;
 
@@ -7,10 +9,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.CarAssignmentService
     public class CarAssignmentService : ICarAssignmentService
     {
         private readonly ICarAssignmentRepository _carAssignmentRepository;
+        private readonly IMapper _mapper;
 
-        public CarAssignmentService(ICarAssignmentRepository carAssignmentRepository)
+        public CarAssignmentService(ICarAssignmentRepository carAssignmentRepository, IMapper mapper)
         {
             _carAssignmentRepository = carAssignmentRepository;
+            _mapper = mapper;
         }
 
         public async Task AddCarAssignment(CarAssignment carAssignment)
@@ -27,19 +31,24 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.CarAssignmentService
             await _carAssignmentRepository.DeleteCarAssignmentAsync(carAssignment);
         }
 
-        public async Task<IList<CarAssignment>> GetAllCarAssignments()
+        public async Task<IList<CarAssignmentInformationResponse>> GetAllCarAssignments()
         {
-            return await _carAssignmentRepository.GetAllCarAssignmentsAsync();
+            var assignments = await _carAssignmentRepository.GetAllCarAssignmentsAsync();
+            foreach (var carAssignment in assignments)
+            {
+
+            }
+            return _mapper.Map<IList<CarAssignmentInformationResponse>>(await _carAssignmentRepository.GetAllCarAssignmentsAsync());
         }
 
-        public async Task<CarAssignment> GetAssignmentById(int assignmentId)
+        public async Task<CarAssignmentInformationResponse> GetAssignmentById(int assignmentId)
         {
-            return await _carAssignmentRepository.GetAssignmentByIdAsync(assignmentId);
+            return _mapper.Map<CarAssignmentInformationResponse>(await _carAssignmentRepository.GetAssignmentByIdAsync(assignmentId));
         }
 
-        public async Task<IList<CarAssignment>> GetAssignmentsByCarId(int carId)
+        public async Task<IList<CarAssignmentInformationResponse>> GetAssignmentsByCarId(int carId)
         {
-            return await _carAssignmentRepository.GetAllAssignmentsByCarIdAsync(carId);
+            return _mapper.Map<IList<CarAssignmentInformationResponse>>(await _carAssignmentRepository.GetAllAssignmentsByCarIdAsync(carId));
         }
 
         public async Task UpdateCarAssignment(CarAssignment carAssignment)

@@ -26,17 +26,23 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.CarAssignmentRepository
 
         public async Task<IList<CarAssignment>> GetAllAssignmentsByCarIdAsync(int carId)
         {
-            return await _context.CarAssignments.Where(ca => ca.CarId == carId).ToListAsync();
+            return await _context.CarAssignments
+                .Include(ca => ca.Instructor)
+                .Where(ca => ca.CarId == carId)
+                .ToListAsync();
         }
 
         public async Task<IList<CarAssignment>> GetAllCarAssignmentsAsync()
         {
-            return await _context.CarAssignments.ToListAsync();
+            return await _context.CarAssignments.Include(ca => ca.Instructor).ToListAsync();
         }
 
         public async Task<CarAssignment> GetAssignmentByIdAsync(int assignmentId)
         {
-            return await _context.CarAssignments.FindAsync(assignmentId);
+            return await _context.CarAssignments
+                .Include(ca => ca.Instructor)
+                .Where(ca => ca.AssignmentId == assignmentId)
+                .FirstOrDefaultAsync();
         }
 
         public async Task UpdateCarAssignmentAsync(CarAssignment carAssignment)
