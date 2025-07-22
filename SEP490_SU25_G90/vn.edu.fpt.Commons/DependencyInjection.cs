@@ -25,6 +25,8 @@ using SEP490_SU25_G90.vn.edu.fpt.Repositories.CarRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Services.CarService;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.CarAssignmentRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Services.CarAssignmentService;
+using SEP490_SU25_G90.vn.edu.fpt.Repositories.CarRepository;
+using SEP490_SU25_G90.vn.edu.fpt.Services.CarService;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Commons
 {
@@ -56,6 +58,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Commons
 
             services.AddScoped<ITestScoreStandardRepository, TestScoreStandardRepository>();
             services.AddScoped<ITestScoreStandardService, TestScoreStandardService>();
+
+            services.AddScoped<ICarAssignmentRepository, CarAssignmentRepository>();
+            services.AddScoped<ICarAssignmentService, CarAssignmentService>();
+
+            services.AddScoped<ICarRepository, CarRepository>();
+            services.AddScoped<ICarService, CarService>();
 
             services.AddScoped<IPasswordHasher<Models.User>, PasswordHasher<Models.User>>();
 
