@@ -77,7 +77,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.NewsService
                 return false;
             }
 
-            // Xóa ảnh nếu tồn tại
             if (!string.IsNullOrEmpty(news.Image))
             {
                 var fullImagePath = Path.Combine(_env.WebRootPath, news.Image.TrimStart('/').Replace("/", Path.DirectorySeparatorChar.ToString()));
