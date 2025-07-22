@@ -16,25 +16,25 @@ namespace SEP490_SU25_G90.Pages.Instructors.LearningMaterial
     [Authorize(Roles = "instructor")]
     public class EditLearningMaterialModel : PageModel
     {
-        private readonly ILearningMaterialService _learningMaterialService;
+        private readonly ILearningMaterialService _ilearningMaterialService;
 
         public EditLearningMaterialModel(ILearningMaterialService learningMaterialService)
         {
-            _learningMaterialService = learningMaterialService;
+            _ilearningMaterialService = learningMaterialService;
         }
 
         [BindProperty]
-        public LearningMaterialFormRequest Input { get; set; } = new();
+        public LearningMaterialFormRequest Edit { get; set; } = new();
         public List<SelectListItem> LicenceTypeOptions { get; set; } = new();
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            var form = await _learningMaterialService.GetFormByIdAsync(id);
+            var form = await _ilearningMaterialService.GetFormByIdAsync(id);
             if (form == null) return NotFound();
 
-            Input = form;
+            Edit = form;
 
-            var licenceTypes = await _learningMaterialService.GetLicenceTypesAsync();
+            var licenceTypes = await _ilearningMaterialService.GetLicenceTypesAsync();
             LicenceTypeOptions = licenceTypes.Select(x => new SelectListItem
             {
                 Value = x.LicenceTypeId.ToString(),
@@ -48,7 +48,7 @@ namespace SEP490_SU25_G90.Pages.Instructors.LearningMaterial
             if (!ModelState.IsValid)
                 return Page();
 
-            var success = await _learningMaterialService.EditMaterialAsync(Input);
+            var success = await _ilearningMaterialService.EditMaterialAsync(Edit);
             if (!success) return NotFound();
 
             return RedirectToPage("/Instructors/LearningMaterial/LearningMaterialList");
