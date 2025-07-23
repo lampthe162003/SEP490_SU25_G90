@@ -8,28 +8,28 @@
 <h2>Chỉnh sửa Tin Tức</h2>
 
 <form method="post" enctype="multipart/form-data">
-    <input type="hidden" asp-for="Input.NewsId" />
-    <input type="hidden" asp-for="Input.OldImagePath" />
+    <input type="hidden" asp-for="Edit.NewsId" />
+    <input type="hidden" asp-for="Edit.OldImagePath" />
 
     <div class="mb-3">
         <label class="form-label">Tiêu đề</label>
-        <textarea asp-for="Input.Title" class="form-control ckeditor"></textarea>
-        <span asp-validation-for="Input.Title" class="text-danger"></span>
+        <textarea asp-for="Edit.Title" class="form-control ckeditor"></textarea>
+        <span asp-validation-for="Edit.Title" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label class="form-label">Nội dung</label>
-        <textarea asp-for="Input.NewsContent" class="form-control ckeditor"></textarea>
-        <span asp-validation-for="Input.NewsContent" class="text-danger"></span>
+        <textarea asp-for="Edit.NewsContent" class="form-control ckeditor"></textarea>
+        <span asp-validation-for="Edit.NewsContent" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label class="form-label">Ảnh</label>
-        <input type="file" asp-for="Input.Image" class="form-control" />
-        @if (!string.IsNullOrEmpty(Model.Input.OldImagePath))
+        <input type="file" asp-for="Edit.Image" class="form-control" />
+        @if (!string.IsNullOrEmpty(Model.Edit.OldImagePath))
         {
             <div class="mt-2">
-                <img src="@Model.Input.OldImagePath" width="200" />
+                <img src="@Model.Edit.OldImagePath" width="200" />
             </div>
         }
     </div>
