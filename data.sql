@@ -7,6 +7,9 @@ INSERT INTO Roles VALUES
 INSERT INTO LicenceTypes VALUES 
 (1, 'B1'), (2, 'B2'), (3, 'C'), (4, 'D'), (5, 'E');
 
+INSERT [dbo].[ScheduleSlots]
+VALUES (1, '08:00:00', '09:30:00'), (2, '10:00:00', '11:30:00'), (3, '13:30:00', '15:00:00'), (4, '15:30:00', '17:00:00')
+
 INSERT INTO Cities(city_id, city_name) VALUES
 (01, N'Hà Nội'),
 (02, N'Hà Giang'),
@@ -2206,4 +2209,3 @@ INSERT [dbo].[News] ([news_id], [title], [news_content], [author_id], [post_time
 </ul>
 ', 6, CAST(N'2025-07-19T10:09:34.133' AS DateTime), N'images/news7.jpg')
 SET IDENTITY_INSERT [dbo].[News] OFF
-GO

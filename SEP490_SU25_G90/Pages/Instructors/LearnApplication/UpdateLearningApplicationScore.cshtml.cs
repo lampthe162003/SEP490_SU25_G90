@@ -58,7 +58,7 @@ namespace SEP490_SU25_G90.Pages.Instructors.LearnApplication
 
             LearningApplication = learningapplication;
             LearnerFullName = learningapplication.Learner != null
-                ? string.Join(" ", new[] { learningapplication.Learner.LastName, learningapplication.Learner.MiddleName, learningapplication.Learner.FirstName }.Where(x => !string.IsNullOrWhiteSpace(x)))
+                ? string.Join(" ", new[] { learningapplication.Learner.FirstName, learningapplication.Learner.MiddleName, learningapplication.Learner.LastName }.Where(x => !string.IsNullOrWhiteSpace(x)))
                 : "Không xác định";
 
             LicenceTypeName = learningapplication.LicenceType?.LicenceCode ?? "Không xác định";
