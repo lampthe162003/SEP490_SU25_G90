@@ -1,74 +1,82 @@
-﻿@page
-@model SEP490_SU25_G90.Pages.Instructors.LearnApplication.DetailsModel
+﻿@page "/Instructors/LearnApplication/Detail/{id:int}"
+@model SEP490_SU25_G90.Pages.Instructors.LearnApplication.DetailModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Chi tiết hồ sơ học viên";
     Layout = "~/Pages/Shared/_InstructorLayout.cshtml";
 }
 
-<h1>Details</h1>
+<h2 class="mb-4">Chi tiết hồ sơ học viên</h2>
 
-<div>
-    <h4>LearningApplication</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.LearningApplication.SubmittedAt)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.LearningApplication.SubmittedAt)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.LearningApplication.TheoryScore)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.LearningApplication.TheoryScore)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.LearningApplication.SimulationScore)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.LearningApplication.SimulationScore)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.LearningApplication.ObstacleScore)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.LearningApplication.ObstacleScore)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.LearningApplication.PracticalScore)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.LearningApplication.PracticalScore)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.LearningApplication.LearningStatus)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.LearningApplication.LearningStatus)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.LearningApplication.TestEligibility)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.LearningApplication.TestEligibility)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.LearningApplication.Learner)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.LearningApplication.Learner.UserId)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.LearningApplication.LicenceType)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.LearningApplication.LicenceType.LicenceTypeId)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-page="./Edit" asp-route-id="@Model.LearningApplication.LearningId">Edit</a> |
-    <a asp-page="./Index">Back to List</a>
-</div>
+@if (Model.Detail != null)
+{
+    <div class="card shadow p-4">
+
+        <div class="mb-3">
+            <label><b>Họ tên học viên:</b></label>
+            <div>@Model.Detail.LearnerFullName</div>
+        </div>
+
+        <div class="mb-3">
+            <label><b>Năm sinh:</b></label>
+            <div>@Model.Detail.LearnerDob?.Year</div>
+        </div>
+
+        <div class="mb-3">
+            <label><b>Số CCCD:</b></label>
+            <div>@Model.Detail.LearnerCccdNumber</div>
+        </div>
+
+        <div class="mb-3">
+            <label><b>Loại bằng đăng ký:</b></label>
+            <div>@Model.Detail.LicenceTypeName</div>
+        </div>
+
+        <div class="mb-3">
+            <label><b>Lớp học:</b></label>
+            <div>
+                @if (Model.Detail.LearnerClasses != null && Model.Detail.LearnerClasses.Count > 0)
+                {
+                    foreach (var cls in Model.Detail.LearnerClasses)
+                    {
+                        <div>- @cls.ClassName</div>
+                    }
+                }
+                else
+                {
+                    <div>Không có lớp học</div>
+                }
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label><b>Điểm lý thuyết:</b></label>
+                <div>@Model.Detail.TheoryScore</div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label><b>Điểm mô phỏng:</b></label>
+                <div>@Model.Detail.SimulationScore</div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label><b>Điểm đường trường:</b></label>
+                <div>@Model.Detail.ObstacleScore</div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label><b>Điểm sa hình:</b></label>
+                <div>@Model.Detail.PracticalScore</div>
+            </div>
+        </div>
+
+        <a asp-page="List" class="btn btn-secondary">Quay lại</a>
+    </div>
+}
+else
+{
+    <div class="alert alert-danger">Không tìm thấy hồ sơ học viên.</div>
+}
