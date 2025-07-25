@@ -10,8 +10,7 @@
 
 <div class="card shadow p-4">
     <form method="post" class="needs-validation" novalidate>
-        <input type="hidden" asp-for="LearningApplication.LearningId" />
-
+        <input type="hidden" asp-for="LearningId" />
         <div class="mb-3">
             <label class="form-label"><b>Họ tên học viên:</b></label>
             <input class="form-control" value="@Model.LearnerFullName" readonly />
@@ -29,27 +28,27 @@
 
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label asp-for="LearningApplication.TheoryScore" class="form-label">Điểm lý thuyết</label>
-                <input asp-for="LearningApplication.TheoryScore" class="form-control" type="number" min="0" max="100" />
-                <span asp-validation-for="LearningApplication.TheoryScore" class="text-danger"></span>
+                <label asp-for="TheoryScore" class="form-label">Điểm lý thuyết</label>
+                <input asp-for="TheoryScore" class="form-control" type="number" min="0" max="100" />
+                <span asp-validation-for="TheoryScore" class="text-danger"></span>
             </div>
 
             <div class="col-md-6 mb-3">
-                <label asp-for="LearningApplication.SimulationScore" class="form-label">Điểm mô phỏng</label>
-                <input asp-for="LearningApplication.SimulationScore" class="form-control" type="number" min="0" max="100" />
-                <span asp-validation-for="LearningApplication.SimulationScore" class="text-danger"></span>
+                <label asp-for="SimulationScore" class="form-label">Điểm mô phỏng</label>
+                <input asp-for="SimulationScore" class="form-control" type="number" min="0" max="100" />
+                <span asp-validation-for="SimulationScore" class="text-danger"></span>
             </div>
 
             <div class="col-md-6 mb-3">
-                <label asp-for="LearningApplication.ObstacleScore" class="form-label">Điểm đường trường</label>
-                <input asp-for="LearningApplication.ObstacleScore" class="form-control" type="number" min="0" max="100" />
-                <span asp-validation-for="LearningApplication.ObstacleScore" class="text-danger"></span>
+                <label asp-for="ObstacleScore" class="form-label">Điểm đường trường</label>
+                <input asp-for="ObstacleScore" class="form-control" type="number" min="0" max="100" />
+                <span asp-validation-for="ObstacleScore" class="text-danger"></span>
             </div>
 
             <div class="col-md-6 mb-3">
-                <label asp-for="LearningApplication.PracticalScore" class="form-label">Điểm sa hình</label>
-                <input asp-for="LearningApplication.PracticalScore" class="form-control" type="number" min="0" max="100" />
-                <span asp-validation-for="LearningApplication.PracticalScore" class="text-danger"></span>
+                <label asp-for="PracticalScore" class="form-label">Điểm sa hình</label>
+                <input asp-for="PracticalScore" class="form-control" type="number" min="0" max="100" />
+                <span asp-validation-for="PracticalScore" class="text-danger"></span>
             </div>
         </div>
 

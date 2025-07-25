@@ -219,13 +219,56 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
             var learningApp = await _context.LearningApplications.FirstOrDefaultAsync(x => x.LearningId == learningId);
             if (learningApp == null) return false;
 
+            // Lấy chuẩn điểm từ TestScoreStandards
+            var standards = await _context.TestScoreStandards
+                .Where(s => s.LicenceTypeId == learningApp.LicenceTypeId)
+                .ToListAsync();
+
+            bool isValid = true;
+            if (standards.FirstOrDefault(s => s.PartName == "Theory") is { } theoryStd && theory.HasValue)
+                isValid &= theory.Value <= theoryStd.MaxScore;
+
+            if (standards.FirstOrDefault(s => s.PartName == "Simulation") is { } simStd && simulation.HasValue)
+                isValid &= simulation.Value <= simStd.MaxScore;
+
+            if (standards.FirstOrDefault(s => s.PartName == "Obstacle") is { } obsStd && obstacle.HasValue)
+                isValid &= obstacle.Value <= obsStd.MaxScore;
+
+            if (standards.FirstOrDefault(s => s.PartName == "Practical") is { } pracStd && practical.HasValue)
+                isValid &= practical.Value <= pracStd.MaxScore;
+
+            if (!isValid)
+                return false;
+
+            // Nếu hợp lệ thì lưu
             learningApp.TheoryScore = theory;
             learningApp.SimulationScore = simulation;
             learningApp.ObstacleScore = obstacle;
             learningApp.PracticalScore = practical;
 
-            await _context.SaveChangesAsync();
-            return true;
+            try
+            {
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException ex)
+            {
+                // Lỗi liên quan đến database (ví dụ: ràng buộc khóa ngoại, lỗi dữ liệu)
+                Console.WriteLine($"DbUpdateException: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+                }
+                // Bạn có thể log exception này vào hệ thống logging của bạn
+                return false;
+            }
+            catch (Exception ex)
+            {
+                // Lỗi chung khác
+                Console.WriteLine($"General Exception: {ex.Message}");
+                // Bạn có thể log exception này
+                return false;
+            }
         }
 
 
