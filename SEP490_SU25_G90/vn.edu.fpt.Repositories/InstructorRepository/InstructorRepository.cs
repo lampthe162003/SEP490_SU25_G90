@@ -290,5 +290,33 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
             }).ToList();
         }
 
+        public async Task<LearningApplicationsResponse?> GetLearningApplicationDetailAsync(int learningId)
+        {
+            var app = await _context.LearningApplications
+                .Include(x => x.Learner).ThenInclude(l => l.Cccd)
+                .Include(x => x.LicenceType)
+                .Include(x => x.Class)
+                .FirstOrDefaultAsync(x => x.LearningId == learningId);
+
+            if (app == null) return null;
+
+            return new LearningApplicationDetailResponse
+            {
+                LearnerFullName = string.Join(" ", new[] {
+            app.Learner?.FirstName,
+            app.Learner?.MiddleName,
+            app.Learner?.LastName
+        }.Where(s => !string.IsNullOrWhiteSpace(s))),
+                YearOfBirth = app.Learner?.Dob.Year ?? 0,
+                CccdNumber = app.Learner?.Cccd?.CccdNumber ?? "Không có",
+                LicenceTypeName = app.LicenceType?.LicenceCode ?? "Không rõ",
+                ClassName = app.Class?.ClassName ?? "Không rõ",
+                TheoryScore = app.TheoryScore,
+                SimulationScore = app.SimulationScore,
+                ObstacleScore = app.ObstacleScore,
+                PracticalScore = app.PracticalScore
+            };
+        }
+
     }
 } 
