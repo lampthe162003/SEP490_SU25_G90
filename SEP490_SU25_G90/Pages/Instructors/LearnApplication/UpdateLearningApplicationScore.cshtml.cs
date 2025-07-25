@@ -81,7 +81,7 @@ namespace SEP490_SU25_G90.Pages.Instructors.LearnApplication
 
             if (!result)
             {
-                TempData["ErrorMessage"] = "Cập nhật điểm thất bại. Điểm có thể vượt mức cho phép.";
+                TempData["ErrorMessage"] = "Cập nhật điểm thất bại. Điểm không thể vượt mức tối đa.";
                 return Page();
             }
 
