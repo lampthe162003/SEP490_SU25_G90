@@ -1,41 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using SEP490_SU25_G90.vn.edu.fpt.Models;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
+using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
+using System.Threading.Tasks;
 
 namespace SEP490_SU25_G90.Pages.Instructors.LearnApplication
 {
-    public class DetailsModel : PageModel
+    [Authorize(Roles = "instructor")]
+    public class DetailModel : PageModel
     {
+        private readonly IInstructorService _instructorService;
         private readonly SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext _context;
-
-        public DetailsModel(SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext context)
+        public DetailModel(IInstructorService instructorService, SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext context)
         {
+            _instructorService = instructorService;
             _context = context;
         }
 
-        public LearningApplication LearningApplication { get; set; } = default!;
+        public LearningApplicationsResponse? Detail { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
-            if (id == null)
+            Detail = await _instructorService.GetLearningApplicationDetailAsync(id);
+            if (Detail == null)
             {
                 return NotFound();
             }
 
-            var learningapplication = await _context.LearningApplications.FirstOrDefaultAsync(m => m.LearningId == id);
-            if (learningapplication == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                LearningApplication = learningapplication;
-            }
             return Page();
         }
     }
