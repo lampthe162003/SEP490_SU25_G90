@@ -295,28 +295,44 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
             var app = await _context.LearningApplications
                 .Include(x => x.Learner).ThenInclude(l => l.Cccd)
                 .Include(x => x.LicenceType)
-                .Include(x => x.Class)
                 .FirstOrDefaultAsync(x => x.LearningId == learningId);
 
             if (app == null) return null;
 
-            return new LearningApplicationDetailResponse
+            // Tìm các lớp học viên đang học (thông qua bảng ClassMembers)
+            var learnerClasses = await _context.ClassMembers
+                .Include(cm => cm.Class)
+                .Where(cm => cm.LearnerId == app.LearnerId)
+                .Select(cm => new LearnerClassInfo
+                {
+                    ClassName = cm.Class.ClassName
+                })
+                .ToListAsync();
+
+            return new LearningApplicationsResponse
             {
+                LearningId = app.LearningId,
+                LearnerId = app.LearnerId,
                 LearnerFullName = string.Join(" ", new[] {
-            app.Learner?.FirstName,
-            app.Learner?.MiddleName,
-            app.Learner?.LastName
-        }.Where(s => !string.IsNullOrWhiteSpace(s))),
-                YearOfBirth = app.Learner?.Dob.Year ?? 0,
-                CccdNumber = app.Learner?.Cccd?.CccdNumber ?? "Không có",
-                LicenceTypeName = app.LicenceType?.LicenceCode ?? "Không rõ",
-                ClassName = app.Class?.ClassName ?? "Không rõ",
+                app.Learner?.FirstName,
+                app.Learner?.MiddleName,
+                app.Learner?.LastName
+                    }.Where(s => !string.IsNullOrWhiteSpace(s))),
+                LearnerDob = app.Learner?.Dob != null
+                ? app.Learner.Dob.Value.ToDateTime(TimeOnly.MinValue)
+                : null,
+                LearnerCccdNumber = app.Learner?.Cccd?.CccdNumber,
+                LicenceTypeId = app.LicenceTypeId,
+                LicenceTypeName = app.LicenceType?.LicenceCode,
                 TheoryScore = app.TheoryScore,
                 SimulationScore = app.SimulationScore,
                 ObstacleScore = app.ObstacleScore,
-                PracticalScore = app.PracticalScore
+                PracticalScore = app.PracticalScore,
+                LearnerClasses = learnerClasses
             };
         }
+
+
 
     }
 } 
