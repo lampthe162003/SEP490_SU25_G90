@@ -216,15 +216,15 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
 
         public async Task<bool> UpdateLearnerScoresAsync(int learningId, int? theory, int? simulation, int? obstacle, int? practical)
         {
-            var learningApp = await _context.LearningApplications.FirstOrDefaultAsync(x => x.LearningId == learningId);
-            if (learningApp == null) return false;
+            var app = await _context.LearningApplications.FirstOrDefaultAsync(x => x.LearningId == learningId);
+            if (app == null) return false;
 
-            // Lấy chuẩn điểm từ TestScoreStandards
             var standards = await _context.TestScoreStandards
-                .Where(s => s.LicenceTypeId == learningApp.LicenceTypeId)
+                .Where(s => s.LicenceTypeId == app.LicenceTypeId)
                 .ToListAsync();
 
             bool isValid = true;
+
             if (standards.FirstOrDefault(s => s.PartName == "Theory") is { } theoryStd && theory.HasValue)
                 isValid &= theory.Value <= theoryStd.MaxScore;
 
@@ -237,39 +237,17 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
             if (standards.FirstOrDefault(s => s.PartName == "Practical") is { } pracStd && practical.HasValue)
                 isValid &= practical.Value <= pracStd.MaxScore;
 
-            if (!isValid)
-                return false;
+            if (!isValid) return false;
 
-            // Nếu hợp lệ thì lưu
-            learningApp.TheoryScore = theory;
-            learningApp.SimulationScore = simulation;
-            learningApp.ObstacleScore = obstacle;
-            learningApp.PracticalScore = practical;
+            app.TheoryScore = theory;
+            app.SimulationScore = simulation;
+            app.ObstacleScore = obstacle;
+            app.PracticalScore = practical;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (Microsoft.EntityFrameworkCore.DbUpdateException ex)
-            {
-                // Lỗi liên quan đến database (ví dụ: ràng buộc khóa ngoại, lỗi dữ liệu)
-                Console.WriteLine($"DbUpdateException: {ex.Message}");
-                if (ex.InnerException != null)
-                {
-                    Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
-                }
-                // Bạn có thể log exception này vào hệ thống logging của bạn
-                return false;
-            }
-            catch (Exception ex)
-            {
-                // Lỗi chung khác
-                Console.WriteLine($"General Exception: {ex.Message}");
-                // Bạn có thể log exception này
-                return false;
-            }
+            await _context.SaveChangesAsync();
+            return true;
         }
+
 
 
         public async Task<List<LearningApplicationsResponse>> GetLearningApplicationsByInstructorAsync(int instructorId)
