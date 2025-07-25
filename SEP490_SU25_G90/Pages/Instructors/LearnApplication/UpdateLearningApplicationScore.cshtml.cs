@@ -86,7 +86,7 @@ namespace SEP490_SU25_G90.Pages.Instructors.LearnApplication
             }
 
             TempData["SuccessMessage"] = "Cập nhật điểm thành công.";
-            return RedirectToPage("/Instructors/LearnApplication/List");
+            return RedirectToPage("/Instructors/LearnApplication/Details", new { id = LearningId });
         }
     }
 }

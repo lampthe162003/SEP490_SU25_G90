@@ -5,6 +5,15 @@
     ViewData["Title"] = "Chi tiết hồ sơ học viên";
     Layout = "~/Pages/Shared/_InstructorLayout.cshtml";
 }
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
 
 <h2 class="mb-4">Chi tiết hồ sơ học viên</h2>
 
@@ -18,8 +27,8 @@
         </div>
 
         <div class="mb-3">
-            <label><b>Năm sinh:</b></label>
-            <div>@Model.Detail.LearnerDob?.Year</div>
+            <label><b>Ngày sinh:</b></label>
+            <div>@Model.Detail.LearnerDob?.ToString("dd/MM/yyyy")</div>
         </div>
 
         <div class="mb-3">
@@ -73,7 +82,10 @@
             </div>
         </div>
 
-        <a asp-page="List" class="btn btn-secondary">Quay lại</a>
+        <div class="mt-4">
+            <a asp-page="UpdateLearningApplicationScore" asp-route-id="@Model.Detail.LearningId" class="btn btn-primary me-2">Sửa điểm</a>
+            <a asp-page="List" class="btn btn-secondary">Quay lại</a>
+        </div>
     </div>
 }
 else
