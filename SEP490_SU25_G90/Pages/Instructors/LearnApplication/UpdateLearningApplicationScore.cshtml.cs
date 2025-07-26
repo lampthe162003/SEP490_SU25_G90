@@ -24,65 +24,69 @@ namespace SEP490_SU25_G90.Pages.Instructors.LearnApplication
             _context = context;
         }
 
-        [BindProperty]
-        public LearningApplication LearningApplication { get; set; } = default!;
-        public string LearnerFullName { get; set; } = "";
-        public string LicenceTypeName { get; set; } = "";
+        [BindProperty] public int LearningId { get; set; }
+        [BindProperty] public int? TheoryScore { get; set; }
+        [BindProperty] public int? SimulationScore { get; set; }
+        [BindProperty] public int? ObstacleScore { get; set; }
+        [BindProperty] public int? PracticalScore { get; set; }
 
-        // Add the missing properties to resolve the CS0103 errors
-        [BindProperty]
-        public int LearningId { get; set; }
+        public string LearnerName { get; set; } = "";
+        public string LicenceCode { get; set; } = "";
+        public DateTime? SubmittedAt { get; set; }
 
-        [BindProperty]
-        public int? TheoryScore { get; set; }
+        // Dùng để bind điểm tối đa theo từng phần
+        public Dictionary<string, int> MaxScores { get; set; } = new();
 
-        [BindProperty]
-        public int? SimulationScore { get; set; }
-
-        [BindProperty]
-        public int? ObstacleScore { get; set; }
-
-        [BindProperty]
-        public int? PracticalScore { get; set; }
-
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
-            if (id == null) return NotFound();
+            var app = await _context.LearningApplications
+                .Include(x => x.Learner)
+                .Include(x => x.LicenceType)
+                .FirstOrDefaultAsync(x => x.LearningId == id);
 
-            var learningapplication = await _context.LearningApplications
-                .Include(l => l.Learner)
-                .Include(l => l.LicenceType)
-                .FirstOrDefaultAsync(m => m.LearningId == id);
+            if (app == null) return NotFound();
 
-            if (learningapplication == null) return NotFound();
+            LearningId = app.LearningId;
+            TheoryScore = app.TheoryScore;
+            SimulationScore = app.SimulationScore;
+            ObstacleScore = app.ObstacleScore;
+            PracticalScore = app.PracticalScore;
 
-            LearningApplication = learningapplication;
-            LearnerFullName = learningapplication.Learner != null
-                ? string.Join(" ", new[] { learningapplication.Learner.FirstName, learningapplication.Learner.MiddleName, learningapplication.Learner.LastName }.Where(x => !string.IsNullOrWhiteSpace(x)))
-                : "Không xác định";
+            LearnerName = $"{app.Learner?.FirstName} {app.Learner?.MiddleName} {app.Learner?.LastName}".Trim();
+            LicenceCode = app.LicenceType?.LicenceCode ?? "";
+            SubmittedAt = app.SubmittedAt;
 
-            LicenceTypeName = learningapplication.LicenceType?.LicenceCode ?? "Không xác định";
+            // Lấy điểm tối đa từ bảng TestScoreStandards
+            var standards = await _context.TestScoreStandards
+                .Where(s => s.LicenceTypeId == app.LicenceTypeId)
+                .ToListAsync();
 
-            // Initialize LearningId for the form
-            LearningId = learningapplication.LearningId;
+            foreach (var std in standards)
+            {
+                MaxScores[std.PartName] = (int)std.MaxScore;
+            }
 
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid) return Page();
-
-            var success = await _instructorService.UpdateLearnerScoresAsync(LearningId, TheoryScore, SimulationScore, ObstacleScore, PracticalScore);
-
-            if (!success)
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError(string.Empty, "Không tìm thấy hồ sơ để cập nhật.");
+                ModelState.AddModelError(string.Empty, "Dữ liệu không hợp lệ.");
+                return Page();
+            }
+
+            var result = await _instructorService.UpdateLearnerScoresAsync(LearningId, TheoryScore, SimulationScore, ObstacleScore, PracticalScore);
+
+            if (!result)
+            {
+                TempData["ErrorMessage"] = "Cập nhật điểm thất bại. Điểm không thể vượt mức tối đa.";
                 return Page();
             }
 
             TempData["SuccessMessage"] = "Cập nhật điểm thành công.";
-            return RedirectToPage("./Admins/LearningApplications/List"); 
+            return RedirectToPage("/Instructors/LearnApplication/Details", new { id = LearningId });
         }
     }
 }

@@ -54,7 +54,7 @@ namespace SEP490_SU25_G90.Pages.Instructors.LearnApplication
                     .ToList();
             }
 
-            int pageSize = 5; // Bạn có thể thay đổi
+            int pageSize = 5; 
             TotalPages = (int)Math.Ceiling(allApplications.Count / (double)pageSize);
             LearningApplications = allApplications
                 .Skip((CurrentPage - 1) * pageSize)

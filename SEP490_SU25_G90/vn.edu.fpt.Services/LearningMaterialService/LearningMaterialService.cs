@@ -18,6 +18,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.LearningMaterialService
             _env = env;
         }
 
+        // Lấy danh sách tài liệu có phân trang
         public async Task<(List<LearningMaterialListInformationResponse>, int)> GetPagedMaterialsAsync(int page, int pageSize)
         {
             var (learningMaterial, totalLearningMaterial) = await _iLearningMaterialRepository.GetPagedMaterialsAsync(page, pageSize);
@@ -25,22 +26,29 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.LearningMaterialService
             return (result, totalLearningMaterial);
         }
 
+        // Lấy chi tiết tài liệu theo ID 
         public async Task<LearningMaterialListInformationResponse?> GetMaterialByIdAsync(int id)
         {
             var learningMaterial = await _iLearningMaterialRepository.GetByIdAsync(id);
             return _mapper.Map<LearningMaterialListInformationResponse>(learningMaterial);
         }
+
+        // Lấy danh sách loại giấy phép sử dụng tài liệu
         public async Task<List<LicenceType>> GetLicenceTypesAsync()
         {
             return await _iLearningMaterialRepository.GetLicenceTypesAsync();
         }
+
+        // Thêm mới tài liệu học tập (kèm lưu file nếu có)
         public async Task AddMaterialAsync(LearningMaterialFormRequest request)
         {
             var material = _mapper.Map<LearningMaterial>(request);
             material.CreatedAt = DateTime.Now;
-            material.FileLink = await SaveFileAsync(request.File);
+            material.FileLink = await SaveFileAsync(request.File); // Lưu file vào server
             await _iLearningMaterialRepository.AddAsync(material);
         }
+
+        // Lấy dữ liệu (LearningMaterialFormRequest) để hiển thị lên giao diện sửa tài liệu
         public async Task<LearningMaterialFormRequest?> GetFormByIdAsync(int id)
         {
             var material = await _iLearningMaterialRepository.GetByIdAsync(id);
@@ -55,6 +63,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.LearningMaterialService
                 OldFilePath = material.FileLink
             };
         }
+
+        // Sửa thông tin tài liệu học tập
         public async Task<bool> EditMaterialAsync(LearningMaterialFormRequest request)
         {
             var material = await _iLearningMaterialRepository.GetByIdAsync(request.MaterialId);
@@ -66,6 +76,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.LearningMaterialService
 
             return await _iLearningMaterialRepository.EditMaterialAsync(material);
         }
+
+        // Xoá tài liệu học tập khỏi hệ thống (kèm xóa file trên server nếu có)
         public async Task<bool> DeleteLearningMaterialAsync(int id)
         {
             var material = await _iLearningMaterialRepository.GetByIdAsync(id);
@@ -85,6 +97,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.LearningMaterialService
             return await _iLearningMaterialRepository.DeleteMaterialAsync(material);
         }
 
+        // Lưu file tài liệu lên  /wwwroot/uploads/learningmaterial, xử lý trùng tên bằng cách thêm hậu tố (1), (2), ...
         private async Task<string?> SaveFileAsync(IFormFile? file, string? oldFilePath = null)
         {
             if (file == null) return oldFilePath;
@@ -99,7 +112,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.LearningMaterialService
                 }
             }
 
-            // ✅ Lấy tên gốc của file
+            // Lấy tên gốc của file
             var originalFileName = Path.GetFileName(file.FileName);
             var folder = Path.Combine(_env.WebRootPath, "uploads", "learningmaterial");
             Directory.CreateDirectory(folder);
@@ -122,7 +135,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.LearningMaterialService
             using var stream = new FileStream(path, FileMode.Create);
             await file.CopyToAsync(stream);
 
-            // ✅ Trả về đường dẫn tương đối
+            // Trả về đường dẫn -> lưu DB
             return "/uploads/learningmaterial/" + uniqueFileName;
         }
     }

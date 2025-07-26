@@ -216,17 +216,38 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
 
         public async Task<bool> UpdateLearnerScoresAsync(int learningId, int? theory, int? simulation, int? obstacle, int? practical)
         {
-            var learningApp = await _context.LearningApplications.FirstOrDefaultAsync(x => x.LearningId == learningId);
-            if (learningApp == null) return false;
+            var app = await _context.LearningApplications.FirstOrDefaultAsync(x => x.LearningId == learningId);
+            if (app == null) return false;
 
-            learningApp.TheoryScore = theory;
-            learningApp.SimulationScore = simulation;
-            learningApp.ObstacleScore = obstacle;
-            learningApp.PracticalScore = practical;
+            var standards = await _context.TestScoreStandards
+                .Where(s => s.LicenceTypeId == app.LicenceTypeId)
+                .ToListAsync();
+
+            bool isValid = true;
+
+            if (standards.FirstOrDefault(s => s.PartName == "Theory") is { } theoryStd && theory.HasValue)
+                isValid &= theory.Value <= theoryStd.MaxScore;
+
+            if (standards.FirstOrDefault(s => s.PartName == "Simulation") is { } simStd && simulation.HasValue)
+                isValid &= simulation.Value <= simStd.MaxScore;
+
+            if (standards.FirstOrDefault(s => s.PartName == "Obstacle") is { } obsStd && obstacle.HasValue)
+                isValid &= obstacle.Value <= obsStd.MaxScore;
+
+            if (standards.FirstOrDefault(s => s.PartName == "Practical") is { } pracStd && practical.HasValue)
+                isValid &= practical.Value <= pracStd.MaxScore;
+
+            if (!isValid) return false;
+
+            app.TheoryScore = theory;
+            app.SimulationScore = simulation;
+            app.ObstacleScore = obstacle;
+            app.PracticalScore = practical;
 
             await _context.SaveChangesAsync();
             return true;
         }
+
 
 
         public async Task<List<LearningApplicationsResponse>> GetLearningApplicationsByInstructorAsync(int instructorId)
@@ -269,5 +290,46 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
             }).ToList();
         }
 
+        public async Task<LearningApplicationsResponse?> GetLearningApplicationDetailAsync(int learningId)
+        {
+            var app = await _context.LearningApplications
+                .Include(x => x.Learner).ThenInclude(l => l.Cccd)
+                .Include(x => x.LicenceType)
+                .FirstOrDefaultAsync(x => x.LearningId == learningId);
+
+            if (app == null) return null;
+
+            // Tìm các lớp học viên đang học (thông qua bảng ClassMembers)
+            var learnerClasses = await _context.ClassMembers
+                .Include(cm => cm.Class)
+                .Where(cm => cm.LearnerId == app.LearnerId)
+                .Select(cm => new LearnerClassInfo
+                {
+                    ClassName = cm.Class.ClassName
+                })
+                .ToListAsync();
+
+            return new LearningApplicationsResponse
+            {
+                LearningId = app.LearningId,
+                LearnerId = app.LearnerId,
+                LearnerFullName = string.Join(" ", new[] {
+                app.Learner?.FirstName,
+                app.Learner?.MiddleName,
+                app.Learner?.LastName
+                    }.Where(s => !string.IsNullOrWhiteSpace(s))),
+                LearnerDob = app.Learner?.Dob != null
+                ? app.Learner.Dob.Value.ToDateTime(TimeOnly.MinValue)
+                : null,
+                LearnerCccdNumber = app.Learner?.Cccd?.CccdNumber,
+                LicenceTypeId = app.LicenceTypeId,
+                LicenceTypeName = app.LicenceType?.LicenceCode,
+                TheoryScore = app.TheoryScore,
+                SimulationScore = app.SimulationScore,
+                ObstacleScore = app.ObstacleScore,
+                PracticalScore = app.PracticalScore,
+                LearnerClasses = learnerClasses
+            };
+        }
     }
 } 
