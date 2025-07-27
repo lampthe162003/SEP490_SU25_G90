@@ -245,13 +245,13 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
 
             if (!isValid) return false;
 
-            // ✅ Cập nhật điểm
+            // Cập nhật điểm
             app.TheoryScore = theory;
             app.SimulationScore = simulation;
             app.ObstacleScore = obstacle;
             app.PracticalScore = practical;
 
-            // ✅ Nếu đạt chuẩn thì cập nhật trạng thái hoàn thành
+            // Nếu đạt chuẩn thì cập nhật trạng thái hoàn thành
             bool passed =
                 theory.HasValue && theoryStd != null && theory.Value >= theoryStd.PassScore &&
                 simulation.HasValue && simStd != null && simulation.Value >= simStd.PassScore &&
