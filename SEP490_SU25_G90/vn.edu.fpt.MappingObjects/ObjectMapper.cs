@@ -1,15 +1,18 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using SEP490_SU25_G90.vn.edu.fpt.Commons;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.CarAssignment;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.LearningMaterial;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.News;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.TestApplication;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.UserDto;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
 {
     public class ObjectMapper : Profile
     {
+
         public ObjectMapper() 
         {
             CreateMap<LoginInformationResponse, User>();
@@ -51,6 +54,18 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
             CreateMap<Models.LearningMaterial, LearningMaterialFormRequest>()
                 .ForMember(dest => dest.File, opt => opt.Ignore())
                 .ForMember(dest => dest.OldFilePath, opt => opt.MapFrom(src => src.FileLink));
+
+            CreateMap<Models.User, CarBorrowerInformationResponse>()
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src =>
+                string.Join(" ", new[] { src.FirstName, src.MiddleName, src.LastName }
+                .Where(name => !string.IsNullOrWhiteSpace(name)))));
+            CreateMap<CarBorrowerInformationResponse, Models.User>()
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => StringUtils.GetFirstName(src.FullName)))
+                .ForMember(dest => dest.MiddleName, opt => opt.MapFrom(src => StringUtils.GetMiddleName(src.FullName)))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => StringUtils.GetLastName(src.FullName)));
+
+            CreateMap<Models.CarAssignment, CarAssignmentInformationResponse>();
+            CreateMap<CarAssignmentInformationResponse, Models.CarAssignment>();
         }
     }
 }

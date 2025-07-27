@@ -9,40 +9,40 @@
 <h1>Chỉnh sửa Tài liệu học</h1>
 
 <form method="post" enctype="multipart/form-data">
-    <input type="hidden" asp-for="Input.MaterialId" />
-    <input type="hidden" asp-for="Input.OldFilePath" />
+    <input type="hidden" asp-for="Edit.MaterialId" />
+    <input type="hidden" asp-for="Edit.OldFilePath" />
 
     <div class="mb-3">
-        <label asp-for="Input.Title" class="form-label"></label>
-        <input asp-for="Input.Title" class="form-control" />
-        <span asp-validation-for="Input.Title" class="text-danger"></span>
+        <label asp-for="Edit.Title" class="form-label"></label>
+        <input asp-for="Edit.Title" class="form-control" />
+        <span asp-validation-for="Edit.Title" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="Input.Description" class="form-label"></label>
-        <textarea asp-for="Input.Description" class="form-control"></textarea>
-        <span asp-validation-for="Input.Description" class="text-danger"></span>
+        <label asp-for="Edit.Description" class="form-label"></label>
+        <textarea asp-for="Edit.Description" class="form-control"></textarea>
+        <span asp-validation-for="Edit.Description" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="Input.LicenceTypeId" class="form-label">Loại bằng</label>
-        <select asp-for="Input.LicenceTypeId" class="form-select" asp-items="Model.LicenceTypeOptions">
+        <label asp-for="Edit.LicenceTypeId" class="form-label">Loại bằng</label>
+        <select asp-for="Edit.LicenceTypeId" class="form-select" asp-items="Model.LicenceTypeOptions">
             <option value="">-- Chọn loại bằng --</option>
         </select>
-        <span asp-validation-for="Input.LicenceTypeId" class="text-danger"></span>
+        <span asp-validation-for="Edit.LicenceTypeId" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="Input.File" class="form-label">Tệp PDF mới (nếu thay đổi)</label>
-        <input asp-for="Input.File" type="file" class="form-control" />
-        <span asp-validation-for="Input.File" class="text-danger"></span>
+        <label asp-for="Edit.File" class="form-label">Tệp PDF mới (nếu thay đổi)</label>
+        <input asp-for="Edit.File" type="file" class="form-control" />
+        <span asp-validation-for="Edit.File" class="text-danger"></span>
 
-        @if (!string.IsNullOrEmpty(Model.Input.OldFilePath))
+        @if (!string.IsNullOrEmpty(Model.Edit.OldFilePath))
         {
             <div class="mt-2">
                 <strong>File hiện tại:</strong>
-                <a href="@Model.Input.OldFilePath" target="_blank">
-                    @System.IO.Path.GetFileName(Model.Input.OldFilePath)
+                <a href="@Model.Edit.OldFilePath" target="_blank">
+                    @System.IO.Path.GetFileName(Model.Edit.OldFilePath)
                 </a>
             </div>
         }

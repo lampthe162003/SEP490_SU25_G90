@@ -33,7 +33,7 @@
                             <td>
                                 <button type="button" class="btn btn-sm @buttonColor rounded-pill" data-bs-toggle="modal" data-bs-target="#assignmentModal"
                                         data-carid="@assignment?.CarId"
-                                        data-instructorid="@assignment?.InstructorId"
+                                        data-instructorid="@assignment?.Instructor.FullName"
                                         data-date="@date"
                                         data-slotid="@slot.SlotId"
                                         data-status="@(assignment?.CarStatus == true ? "Rented" : "Free")">
@@ -57,10 +57,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p><strong>Car ID:</strong> <span id="modalCarId"></span></p>
-                <p><strong>Instructor ID:</strong> <span id="modalInstructorId"></span></p>
-                <p><strong>Slot ID:</strong> <span id="modalSlotId"></span></p>
-                <p><strong>Date:</strong> <span id="modalDate"></span></p>
+                <p><strong>Ngày:</strong> <span id="modalDate"></span></p>
+                <p><strong>Giáo viên mượn:</strong> <span id="modalInstructorId"></span></p>
+                <p><strong>Tiết:</strong> <span id="modalSlotId"></span></p>
                 <p><strong>Status:</strong> <span id="modalStatus"></span></p>
             </div>
         </div>
@@ -73,7 +72,6 @@
         var assignmentModal = document.getElementById('assignmentModal');
         assignmentModal.addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget;
-            document.getElementById('modalCarId').textContent = button.getAttribute('data-carid') ?? 'N/A';
             document.getElementById('modalInstructorId').textContent = button.getAttribute('data-instructorid') ?? 'N/A';
             document.getElementById('modalSlotId').textContent = button.getAttribute('data-slotid');
             document.getElementById('modalDate').textContent = button.getAttribute('data-date');

@@ -18,6 +18,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.NewsService
             _env = env;
         }
 
+        // Lấy danh sách tin tức theo phân trang
         public async Task<(List<NewsListInformationResponse>, int)> GetPagedNewsAsync(int page, int pageSize)
         {
             var (news, totalNews) = await _newsRepository.GetPagedNewsAsync(page, pageSize);
@@ -26,6 +27,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.NewsService
             return (result, totalNews);
         }
 
+        // Lấy thông tin chi tiết tin tức theo ID
         public async Task<NewsListInformationResponse?> GetNewsByIdAsync(int id)
         {
             var news = await _newsRepository.GetNewsByIdAsync(id);
@@ -34,15 +36,19 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.NewsService
 
             return _mapper.Map<NewsListInformationResponse>(news);
         }
+
+        // Thêm mới tin tức vào hệ thống
         public async Task AddNewsAsync(NewsFormRequest request, int authorId)
         {
             var news = _mapper.Map<News>(request);
             news.AuthorId = authorId;
             news.PostTime = DateTime.Now;
-            news.Image = await SaveImageAsync(request.Image);
+            news.Image = await SaveImageAsync(request.Image); // Lưu ảnh nếu có
 
             await _newsRepository.AddNewsAsync(news);
         }
+
+        // Lấy thông tin tin tức (NewsFormRequest) theo ID để hiển thị lên giao diện sửa
         public async Task<NewsFormRequest?> GetNewsFormByIdAsync(int id)
         {
             var news = await _newsRepository.GetNewsByIdAsync(id);
@@ -56,6 +62,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.NewsService
                 OldImagePath = news.Image
             };
         }
+
+        // Cập nhật thông tin tin tức
         public async Task<bool> EditNewsAsync(NewsFormRequest request)
         {
             var news = await _newsRepository.GetNewsByIdAsync(request.NewsId);
@@ -69,6 +77,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.NewsService
             return await _newsRepository.EditNewsAsync(news);
         }
 
+        // Xóa tin tức theo ID (kèm xóa ảnh nếu có)
         public async Task<bool> DeleteNewsAsync(int id)
         {
             var news = await _newsRepository.GetNewsByIdAsync(id);
@@ -77,7 +86,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.NewsService
                 return false;
             }
 
-            // Xóa ảnh nếu tồn tại
             if (!string.IsNullOrEmpty(news.Image))
             {
                 var fullImagePath = Path.Combine(_env.WebRootPath, news.Image.TrimStart('/').Replace("/", Path.DirectorySeparatorChar.ToString()));
@@ -90,6 +98,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.NewsService
             return await _newsRepository.DeleteNewsAsync(news);
         }
 
+        // Lưu ảnh tin tức lên /wwwroot/uploads/news, tránh trùng tên bằng cách thêm hậu tố (1), (2), ...
         private async Task<string?> SaveImageAsync(IFormFile? file, string? oldImagePath = null)
         {
             if (file == null) return oldImagePath;
@@ -126,7 +135,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.NewsService
             using var stream = new FileStream(path, FileMode.Create);
             await file.CopyToAsync(stream);
 
-            //Trả về đường dẫn tương đối để lưu DB
+            //Trả về đường dẫn -> lưu DB
             return "/uploads/news/" + uniqueFileName;
         }
 

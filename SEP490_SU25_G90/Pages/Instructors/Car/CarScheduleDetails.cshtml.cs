@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.CarAssignment;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Services.CarAssignmentService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.ScheduleSlotService;
@@ -11,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace SEP490_SU25_G90.Pages.Instructors.Car
 {
+    [Authorize(Roles = "instructor")]
     public class CarScheduleDetailsModel : PageModel
     {
         private readonly IScheduleSlotService _scheduleSlotService;
@@ -29,7 +32,7 @@ namespace SEP490_SU25_G90.Pages.Instructors.Car
         public List<DateOnly> DaysOfWeek { get; set; } = default!;
 
         [BindProperty]
-        public Dictionary<(DateOnly Date, int SlotId), CarAssignment> CarAssignments { get; set; } = default!;
+        public Dictionary<(DateOnly Date, int SlotId), CarAssignmentInformationResponse> CarAssignments { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
@@ -45,14 +48,15 @@ namespace SEP490_SU25_G90.Pages.Instructors.Car
             
             var assignments = await _carAssignmentService.GetAssignmentsByCarId(id);
             CarAssignments = assignments
-                .Select(a => new CarAssignment
+                .Select(a => new CarAssignmentInformationResponse
                 {
                     AssignmentId = a.AssignmentId,
                     CarId = a.CarId,
                     InstructorId = a.InstructorId,
                     SlotId = a.SlotId,
                     ScheduleDate = a.ScheduleDate,
-                    CarStatus = a.CarStatus
+                    CarStatus = a.CarStatus,
+                    Instructor = a.Instructor
                 })
                 .ToDictionary(
                     a => ((DateOnly)a.ScheduleDate, a.SlotId),
