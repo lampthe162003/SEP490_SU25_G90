@@ -223,30 +223,50 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 .Where(s => s.LicenceTypeId == app.LicenceTypeId)
                 .ToListAsync();
 
+            // Gán các chuẩn điểm ra biến
+            var theoryStd = standards.FirstOrDefault(s => s.PartName == "Theory");
+            var simStd = standards.FirstOrDefault(s => s.PartName == "Simulation");
+            var obsStd = standards.FirstOrDefault(s => s.PartName == "Obstacle");
+            var pracStd = standards.FirstOrDefault(s => s.PartName == "Practical");
+
             bool isValid = true;
 
-            if (standards.FirstOrDefault(s => s.PartName == "Theory") is { } theoryStd && theory.HasValue)
+            if (theory.HasValue && theoryStd != null)
                 isValid &= theory.Value <= theoryStd.MaxScore;
 
-            if (standards.FirstOrDefault(s => s.PartName == "Simulation") is { } simStd && simulation.HasValue)
+            if (simulation.HasValue && simStd != null)
                 isValid &= simulation.Value <= simStd.MaxScore;
 
-            if (standards.FirstOrDefault(s => s.PartName == "Obstacle") is { } obsStd && obstacle.HasValue)
+            if (obstacle.HasValue && obsStd != null)
                 isValid &= obstacle.Value <= obsStd.MaxScore;
 
-            if (standards.FirstOrDefault(s => s.PartName == "Practical") is { } pracStd && practical.HasValue)
+            if (practical.HasValue && pracStd != null)
                 isValid &= practical.Value <= pracStd.MaxScore;
 
             if (!isValid) return false;
 
+            // Cập nhật điểm
             app.TheoryScore = theory;
             app.SimulationScore = simulation;
             app.ObstacleScore = obstacle;
             app.PracticalScore = practical;
 
+            // Nếu đạt chuẩn thì cập nhật trạng thái hoàn thành
+            bool passed =
+                theory.HasValue && theoryStd != null && theory.Value >= theoryStd.PassScore &&
+                simulation.HasValue && simStd != null && simulation.Value >= simStd.PassScore &&
+                obstacle.HasValue && obsStd != null && obstacle.Value >= obsStd.PassScore &&
+                practical.HasValue && pracStd != null && practical.Value >= pracStd.PassScore;
+
+            if (passed)
+            {
+                app.LearningStatus = 2; // Hoàn thành
+            }
+
             await _context.SaveChangesAsync();
             return true;
         }
+
 
 
 
