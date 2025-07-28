@@ -114,7 +114,7 @@
                                     <th>Loại xe thi</th>
                                     <th>Mẫu xe</th>
                                     <th>Biển số xe</th>
-                                    <th>Trạng thái</th>
+                                    @* <th>Trạng thái</th> *@
                                     <th>Thống kê thuê</th>
                                     <th>Thao tác</th>
                                 </tr>
@@ -129,7 +129,7 @@
                                             <td>@car.CarMake</td>
                                             <td>@car.CarModel</td>
                                             <td><strong>@car.LicensePlate</strong></td>
-                                            <td>
+                                            @* <td>
                                                 @if (car.IsCurrentlyRented)
                                                 {
                                                     <span class="badge bg-danger">Đang được thuê</span>
@@ -142,7 +142,7 @@
                                                 {
                                                     <span class="badge bg-success">Xe trống</span>
                                                 }
-                                            </td>
+                                            </td> *@
                                             <td>
                                                 <small>
                                                     Tổng: <strong>@car.TotalAssignments</strong> lượt<br>
