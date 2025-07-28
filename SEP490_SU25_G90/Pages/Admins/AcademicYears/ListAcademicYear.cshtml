@@ -1,0 +1,26 @@
+﻿@page
+@model SEP490_SU25_G90.Pages.Admins.AcademicYears.ListAcademicYearModel
+@{
+    ViewData["Title"] = "Quản lý khóa học";
+   
+}
+<div class="container py-4">
+    <h2 class="text-center mb-4">Danh sách khóa học</h2>
+
+    <!-- Bảng danh sách -->
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Tên khóa học</th>
+                <th>Viết tắt</th>
+                <th>Ngày bắt đầu</th>
+                <th>Ngày kết thúc</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody id="academicYearBody">
+            <!-- Dữ liệu sẽ được chèn bằng JavaScript -->
+        </tbody>
+    </table>
+    <</div>
