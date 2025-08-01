@@ -9,6 +9,41 @@ INSERT INTO LicenceTypes VALUES
 
 INSERT [dbo].[ScheduleSlots]
 VALUES (1, '08:00:00', '09:30:00'), (2, '10:00:00', '11:30:00'), (3, '13:30:00', '15:00:00'), (4, '15:30:00', '17:00:00')
+-- Insert TestCoreStandards
+--  B1	
+INSERT INTO TestScoreStandards (licence_type_id, part_name, max_score, pass_score) VALUES
+(1, N'Theory', 30, 26),
+(1, N'Simulation', 50, 35),
+(1, N'Obstacle', 100, 80),
+(1, N'Practical', 100, 80);
+
+--  B2
+INSERT INTO TestScoreStandards (licence_type_id, part_name, max_score, pass_score) VALUES
+(2, N'Theory', 35, 32),
+(2, N'Simulation', 50, 35),
+(2, N'Obstacle', 100, 80),
+(2, N'Practical', 100, 80);
+
+--  C
+INSERT INTO TestScoreStandards (licence_type_id, part_name, max_score, pass_score) VALUES
+(3, N'Theory', 40, 36),
+(3, N'Simulation', 50, 35),
+(3, N'Obstacle', 100, 80),
+(3, N'Practical', 100, 80);
+
+--  D
+INSERT INTO TestScoreStandards (licence_type_id, part_name, max_score, pass_score) VALUES
+(4, N'Theory', 45, 40),
+(4, N'Simulation', 50, 35),
+(4, N'Obstacle', 100, 80),
+(4, N'Practical', 100, 80);
+
+--  E
+INSERT INTO TestScoreStandards (licence_type_id, part_name, max_score, pass_score) VALUES
+(5, N'Theory', 45, 40),
+(5, N'Simulation', 50, 35),
+(5, N'Obstacle', 100, 80),
+(5, N'Practical', 100, 80);
 
 INSERT INTO Cities(city_id, city_name) VALUES
 (01, N'Hà Nội'),
