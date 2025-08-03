@@ -260,7 +260,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
 
             if (passed)
             {
-                app.LearningStatus = 2; // Hoàn thành
+                app.LearningStatus = 4; // Hoàn thành
             }
 
             await _context.SaveChangesAsync();
@@ -299,8 +299,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 LearningStatusName = app.LearningStatus switch
                 {
                     1 => "Đang học",
-                    2 => "Hoàn thành",
-                    3 => "Đã huỷ",
+                    2 => "Bảo lưu",
+                    3 => "Học lại",
+                    4 => "Hoàn thành",
                     _ => "Chưa xác định"
                 },
                 TheoryScore = app.TheoryScore,

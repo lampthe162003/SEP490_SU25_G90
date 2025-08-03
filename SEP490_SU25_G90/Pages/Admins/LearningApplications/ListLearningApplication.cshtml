@@ -24,8 +24,9 @@
         <select name="StatusFilter" class="form-select" onchange="this.form.submit()">
             <option value="">-- Tất cả trạng thái --</option>
             <option value="1" selected="@(Model.StatusFilter == 1)">Đang học</option>
-            <option value="2" selected="@(Model.StatusFilter == 2)">Hoàn thành</option>
-            <option value="3" selected="@(Model.StatusFilter == 3)">Đã huỷ</option>
+            <option value="2" selected="@(Model.StatusFilter == 2)">Bảo lưu</option>
+            <option value="3" selected="@(Model.StatusFilter == 3)">Học lại</option>
+            <option value="4" selected="@(Model.StatusFilter == 4)">Hoàn thành</option>
         </select>
     </div>
 
@@ -183,6 +184,11 @@
         .status-3 {
             background-color: #f8d7da;
             color: #721c24;
+        }
+
+        .status-4 {
+            background-color: #cce5ff; /*bổ sung trạng thái Hoàn thành */
+            color: #004085;
         }
 
         /* Pagination */

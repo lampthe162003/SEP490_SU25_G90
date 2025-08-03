@@ -8,6 +8,14 @@
 }
 
 <h2 class="mb-4">Thông tin chi tiết hồ sơ học</h2>
+@if (!string.IsNullOrWhiteSpace(Model.StatusMessage))  // Đúng vì StatusMessage là property của PageModel
+{
+    <div class="alert alert-info alert-dismissible fade show mt-2" role="alert">
+        @Model.StatusMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 
 <div class="row">
     <!-- Thông tin học viên -->
@@ -30,8 +38,36 @@
                         <td>
                             <b>Trạng thái hồ sơ:</b>
                             <span class="badge bg-secondary">@app?.LearningStatusName</span>
+
+                            <!-- Nút Sửa -->
+                            <button type="button" class="btn btn-sm btn-outline-primary ms-2" onclick="toggleStatusForm()">
+                                <i class="fa fa-edit"></i> Sửa
+                            </button>
+
+                            <!-- Form cập nhật trạng thái (ẩn mặc định) -->
+                            <form id="statusForm" method="post" asp-page-handler="UpdateStatus" class="mt-2 d-none">
+                                <input type="hidden" asp-for="Id" value="@app?.LearningId" />
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <select asp-for="NewStatus" class="form-select form-select-sm">
+                                            <option value="1">Đang học</option>
+                                            <option value="2">Bảo lưu</option>
+                                            <option value="3">Học lại</option>
+                                            <option value="4">Hoàn thành</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="submit" class="btn btn-sm btn-success">
+                                            <i class="fa fa-save"></i> Cập nhật trạng thái
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                         </td>
                     </tr>
+
+
+
                     <tr><td><b>Ghi chú nội bộ:</b> (Ghi chú thêm của quản trị viên)</td></tr>
                 </table>
             </div>
@@ -120,33 +156,20 @@
     </div>
 </div>
 
+
+
 <div class="mt-4">
     <a asp-page="./ListLearningApplication" class="btn btn-outline-secondary">
         <i class="fa fa-arrow-left"></i> Quay lại
     </a>
 </div>
 
-@section Styles {
-    <style>
-        .card {
-            border-radius: 10px;
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleStatusForm() {
+            const form = document.getElementById('statusForm');
+            form.classList.toggle('d-none');
         }
-
-        .card-header {
-            font-size: 1.1rem;
-        }
-
-        .badge {
-            font-size: 0.95rem;
-            padding: 6px 12px;
-        }
-
-        .table td, .table th {
-            vertical-align: middle;
-        }
-
-        ul.list-group li {
-            font-size: 0.95rem;
-        }
-    </style>
+    </script>
 }
