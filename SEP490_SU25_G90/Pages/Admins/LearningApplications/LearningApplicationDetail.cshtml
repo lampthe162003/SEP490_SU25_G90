@@ -30,6 +30,9 @@
                         <td>
                             <b>Trạng thái hồ sơ:</b>
                             <span class="badge bg-secondary">@app?.LearningStatusName</span>
+                            <button type="button" class="btn btn-sm btn-outline-primary ms-2" data-bs-toggle="modal" data-bs-target="#statusModal">
+                                <i class="fa fa-edit"></i> Sửa
+                            </button>
                         </td>
                     </tr>
                     <tr><td><b>Ghi chú nội bộ:</b> (Ghi chú thêm của quản trị viên)</td></tr>
@@ -120,33 +123,42 @@
     </div>
 </div>
 
+<!-- Modal cập nhật trạng thái -->
+<form method="post" asp-page-handler="UpdateStatus">
+    <input type="hidden" name="LearningId" value="@app?.LearningId" />
+    <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="statusModalLabel">Cập nhật trạng thái hồ sơ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="LearningStatus" class="form-label">Trạng thái</label>
+                        <select name="LearningStatus" class="form-select" id="LearningStatus">
+                            <option value="1" selected="@(app?.LearningStatus == 1)">Đang học</option>
+                            <option value="2" selected="@(app?.LearningStatus == 2)">Bảo lưu</option>
+                            <option value="3" selected="@(app?.LearningStatus == 3)">Học lại</option>
+                            <option value="4" selected="@(app?.LearningStatus == 4)">Hoàn thành</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Cập nhật</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
 <div class="mt-4">
     <a asp-page="./ListLearningApplication" class="btn btn-outline-secondary">
         <i class="fa fa-arrow-left"></i> Quay lại
     </a>
 </div>
 
-@section Styles {
-    <style>
-        .card {
-            border-radius: 10px;
-        }
-
-        .card-header {
-            font-size: 1.1rem;
-        }
-
-        .badge {
-            font-size: 0.95rem;
-            padding: 6px 12px;
-        }
-
-        .table td, .table th {
-            vertical-align: middle;
-        }
-
-        ul.list-group li {
-            font-size: 0.95rem;
-        }
-    </style>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 }

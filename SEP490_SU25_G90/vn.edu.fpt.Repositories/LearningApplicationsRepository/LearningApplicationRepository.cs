@@ -429,5 +429,33 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
             };
         }
 
+        public async Task<bool> UpdateStatusAsync(int learningId, byte newStatus)
+        {
+            var app = await _context.LearningApplications
+                .FirstOrDefaultAsync(x => x.LearningId == learningId);
+
+            if (app == null)
+                return false;
+
+            // Cập nhật trạng thái mới
+            app.LearningStatus = newStatus;
+
+            // Nếu là Bảo lưu (2) thì xóa học viên khỏi lớp (nếu có)
+            if (newStatus == 2) // Bảo lưu
+            {
+                var classMember = await _context.ClassMembers
+                    .FirstOrDefaultAsync(cm => cm.LearnerId == app.LearnerId);
+
+                if (classMember != null)
+                {
+                    _context.ClassMembers.Remove(classMember);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+
     }
 }
