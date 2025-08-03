@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace SEP490_SU25_G90.Pages.Admins.CarAssignment
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class CarAssignmentListModel : PageModel
     {
         private readonly ICarAssignmentService _carAssignmentService;

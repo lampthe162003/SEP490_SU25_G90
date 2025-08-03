@@ -7,7 +7,7 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.CarService;
 
 namespace SEP490_SU25_G90.Pages.Admins.Car
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class CarListModel : PageModel
     {
         private readonly ICarService _carService;

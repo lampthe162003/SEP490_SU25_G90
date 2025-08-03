@@ -144,7 +144,7 @@ namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
                 SimulationScore = 0,
                 ObstacleScore = 0,
                 PracticalScore = 0,
-                LearningStatus = 1,
+                LearningStatus = 0,
                 TestEligibility = false
             };
 
