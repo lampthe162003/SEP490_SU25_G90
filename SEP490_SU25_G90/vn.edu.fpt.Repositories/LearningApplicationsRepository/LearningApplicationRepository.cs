@@ -147,16 +147,17 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
             if (la == null) return null;
 
             var instructor = await (
-            from cm in _context.ClassMembers
-            join cl in _context.Classes on cm.ClassId equals cl.ClassId
-            join u in _context.Users on cl.InstructorId equals u.UserId
-            where cm.LearnerId == la.LearnerId
-            select u
+                from cm in _context.ClassMembers
+                join cl in _context.Classes on cm.ClassId equals cl.ClassId
+                join u in _context.Users on cl.InstructorId equals u.UserId
+                where cm.LearnerId == la.LearnerId
+                select u
             ).FirstOrDefaultAsync();
 
             var standards = await _context.TestScoreStandards
                 .Where(s => s.LicenceTypeId == la.LicenceTypeId)
                 .ToListAsync();
+
             int? theoryMaxScore = standards.FirstOrDefault(s => s.PartName == "Theory")?.MaxScore;
             int? simulationMaxScore = standards.FirstOrDefault(s => s.PartName == "Simulation")?.MaxScore;
             int? obstacleMaxScore = standards.FirstOrDefault(s => s.PartName == "Obstacle")?.MaxScore;
@@ -167,34 +168,30 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 && la.ObstacleScore >= standards.FirstOrDefault(s => s.PartName == "Obstacle")?.PassScore
                 && la.PracticalScore >= standards.FirstOrDefault(s => s.PartName == "Practical")?.PassScore;
 
-            string statusName;
-            if (la.LearningStatus == 3)
+            string statusName = la.LearningStatus switch
             {
-                statusName = "Đã huỷ";
-            }
-            else if (isPassed)
-            {
-                statusName = "Hoàn thành";
-            }
-            else if (la.LearningStatus == 1)
-            {
-                statusName = "Đang học";
-            }
-            else
-            {
-                statusName = "Chưa bắt đầu";
-            }
+                1 => "Đang học",
+                2 => "Bảo lưu",
+                3 => "Học lại",
+                4 => "Hoàn thành",
+                _ => isPassed ? "Hoàn thành" : "Chưa bắt đầu"
+            };
 
             return new LearningApplicationsResponse
             {
                 LearningId = la.LearningId,
                 LearnerId = la.LearnerId,
-                LearnerFullName = la.Learner != null ? string.Join(" ", new[] { la.Learner.FirstName, la.Learner.MiddleName, la.Learner.LastName }.Where(x => !string.IsNullOrWhiteSpace(x))) : "",
+                LearnerFullName = la.Learner != null
+                    ? string.Join(" ", new[] { la.Learner.FirstName, la.Learner.MiddleName, la.Learner.LastName }
+                        .Where(x => !string.IsNullOrWhiteSpace(x)))
+                    : "",
                 LearnerCccdNumber = la.Learner?.Cccd?.CccdNumber ?? "",
                 LearnerDob = la.Learner?.Dob?.ToDateTime(TimeOnly.MinValue),
                 LearnerPhone = la.Learner?.Phone ?? "",
                 LearnerEmail = la.Learner?.Email ?? "",
-                LearnerCccdImageUrl = la.Learner?.Cccd != null ? (la.Learner.Cccd.ImageMt ?? "") + "|" + (la.Learner.Cccd.ImageMs ?? "") : "",
+                LearnerCccdImageUrl = la.Learner?.Cccd != null
+                    ? (la.Learner.Cccd.ImageMt ?? "") + "|" + (la.Learner.Cccd.ImageMs ?? "")
+                    : "",
                 LearnerHealthCertImageUrl = la.Learner?.HealthCertificate?.ImageUrl ?? "",
                 LicenceTypeId = la.LicenceTypeId,
                 LicenceTypeName = la.LicenceType?.LicenceCode ?? "",
@@ -220,6 +217,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                     : ""
             };
         }
+
         public async Task<List<LearnerSummaryResponse>> GetLearnerSummariesAsync(string? searchString = null)
         {
             // 1. Query LearningApplications với search
