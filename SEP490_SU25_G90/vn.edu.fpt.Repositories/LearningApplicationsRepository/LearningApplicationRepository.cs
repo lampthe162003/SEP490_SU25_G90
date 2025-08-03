@@ -71,9 +71,13 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
             // ✅ Tạo danh sách kết quả
             var results = learnerGroups.Select(group =>
             {
+                // Thay vì chỉ lấy bản ghi mới nhất theo thời gian
                 var mostRecent = group
+                    .Where(x => x.LearningStatus > 0) // Ưu tiên bản ghi có trạng thái hợp lệ
                     .OrderByDescending(la => la.SubmittedAt ?? DateTime.MinValue)
-                    .First();
+                    .FirstOrDefault()
+                    ?? group.OrderByDescending(la => la.SubmittedAt ?? DateTime.MinValue).First(); // fallback
+
 
                 var std = standards.Where(s => s.LicenceTypeId == mostRecent.LicenceTypeId).ToList();
 
@@ -174,7 +178,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 2 => "Bảo lưu",
                 3 => "Học lại",
                 4 => "Hoàn thành",
-                _ => isPassed ? "Hoàn thành" : "Chưa bắt đầu"
+                _ => "Không xác định"
             };
 
             return new LearningApplicationsResponse
@@ -451,6 +455,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                     _context.ClassMembers.Remove(classMember);
                 }
             }
+            Console.WriteLine($"⚠️ [DEBUG] Cập nhật trạng thái: {learningId} -> {newStatus}");
 
             await _context.SaveChangesAsync();
             return true;

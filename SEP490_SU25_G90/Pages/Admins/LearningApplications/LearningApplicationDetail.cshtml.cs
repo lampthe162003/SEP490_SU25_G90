@@ -8,7 +8,6 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
 namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
 {
     [Authorize(Roles = "admin")]
-
     public class LearningApplicationDetailModel : PageModel
     {
         private readonly ILearningApplicationService _learningApplicationService;
@@ -19,6 +18,15 @@ namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
         }
 
         public LearningApplicationsResponse? LearningApplication { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public int? Id { get; set; }
+
+        [BindProperty]
+        public byte NewStatus { get; set; }
+
+        [TempData]
+        public string? StatusMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -37,5 +45,26 @@ namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
             return Page();
         }
 
+        public async Task<IActionResult> OnPostUpdateStatusAsync()
+        {
+            if (Id == null)
+            {
+                return NotFound();
+            }
+
+            if (NewStatus < 1 || NewStatus > 4)
+            {
+                StatusMessage = "⚠️ Trạng thái không hợp lệ.";
+                return RedirectToPage(new { id = Id });
+            }
+
+            var result = await _learningApplicationService.UpdateStatusAsync(Id.Value, NewStatus);
+
+            StatusMessage = result
+                ? "✅ Cập nhật trạng thái thành công."
+                : "❌ Cập nhật trạng thái thất bại.";
+
+            return RedirectToPage(new { id = Id });
+        }
     }
 }
