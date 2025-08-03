@@ -404,18 +404,21 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
             string? statusName = null;
             if (latestApp != null)
             {
-                if (latestApp.LearningStatus == 3)
-                    statusName = "Đã huỷ";
-                else if (latestApp.LearningStatus == 2)
-                    statusName = "Hoàn thành";
-                else if (latestApp.LearningStatus == 1)
-                    statusName = "Đang học";
+                statusName = latestApp.LearningStatus switch
+                {
+                    1 => "Đang học",
+                    2 => "Bảo lưu",
+                    3 => "Học lại",
+                    4 => "Hoàn thành",
+                    _ => "Không xác định"
+                };
             }
 
             return new LearningApplicationsResponse
             {
                 LearnerId = user.UserId,
-                LearnerFullName = string.Join(" ", new[] { user.FirstName, user.MiddleName, user.LastName }.Where(x => !string.IsNullOrWhiteSpace(x))),
+                LearnerFullName = string.Join(" ", new[] { user.FirstName, user.MiddleName, user.LastName }
+                    .Where(x => !string.IsNullOrWhiteSpace(x))),
                 LearnerCccdNumber = user.Cccd?.CccdNumber,
                 LearnerDob = user.Dob?.ToDateTime(TimeOnly.MinValue),
                 LearnerPhone = user.Phone,
@@ -425,5 +428,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 LearningStatusName = statusName
             };
         }
+
     }
 }
