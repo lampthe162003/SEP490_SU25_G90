@@ -241,7 +241,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                     (x.Learner != null && x.Learner.Cccd != null && x.Learner.Cccd.CccdNumber.ToLower().Contains(loweredSearch)) ||
                     (x.LicenceType != null && x.LicenceType.LicenceCode.ToLower().Contains(loweredSearch))
                 );
-
             }
 
             var learningApplications = await query.ToListAsync();
@@ -275,25 +274,30 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
 
                     string statusName;
                     string badgeClass;
-                    if (la.LearningStatus == 3)
+
+                    // 🟡 Cập nhật trạng thái mới
+                    switch (la.LearningStatus)
                     {
-                        statusName = "Đã huỷ";
-                        badgeClass = "badge bg-danger";
-                    }
-                    else if (isPassed)
-                    {
-                        statusName = "Hoàn thành";
-                        badgeClass = "badge bg-success";
-                    }
-                    else if (la.LearningStatus == 1)
-                    {
-                        statusName = "Đang học";
-                        badgeClass = "badge bg-primary";
-                    }
-                    else
-                    {
-                        statusName = "Chưa bắt đầu";
-                        badgeClass = "badge bg-warning text-dark";
+                        case 1:
+                            statusName = "Đang học";
+                            badgeClass = "badge bg-primary";
+                            break;
+                        case 2:
+                            statusName = "Bảo lưu";
+                            badgeClass = "badge bg-warning text-dark";
+                            break;
+                        case 3:
+                            statusName = "Học lại";
+                            badgeClass = "badge bg-danger";
+                            break;
+                        case 4:
+                            statusName = "Hoàn thành";
+                            badgeClass = "badge bg-success";
+                            break;
+                        default:
+                            statusName = isPassed ? "Hoàn thành" : "Chưa bắt đầu";
+                            badgeClass = isPassed ? "badge bg-success" : "badge bg-secondary";
+                            break;
                     }
 
                     return new LicenceProgress
@@ -318,11 +322,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 var totalCount = licenceProgresses.Count;
 
                 string overallStatus;
-                if (licenceProgresses.Any(lp => lp.LearningStatusName == "Đang học"))
+                if (licenceProgresses.Any(lp => lp.LearningStatus == 1))
                 {
                     overallStatus = "Đang học";
                 }
-                else if (completedCount == totalCount && totalCount > 0)
+                else if (licenceProgresses.All(lp => lp.LearningStatus == 4))
                 {
                     overallStatus = "Hoàn thành tất cả";
                 }
@@ -330,9 +334,13 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 {
                     overallStatus = $"Hoàn thành {completedCount}/{totalCount}";
                 }
-                else if (licenceProgresses.Any(lp => lp.LearningStatusName == "Đã huỷ"))
+                else if (licenceProgresses.Any(lp => lp.LearningStatus == 2))
                 {
-                    overallStatus = "Có bằng bị huỷ";
+                    overallStatus = "Có bằng bảo lưu";
+                }
+                else if (licenceProgresses.Any(lp => lp.LearningStatus == 3))
+                {
+                    overallStatus = "Có bằng học lại";
                 }
                 else
                 {
@@ -359,6 +367,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
 
             return results;
         }
+
 
         public async Task AddAsync(LearningApplication entity)
         {
