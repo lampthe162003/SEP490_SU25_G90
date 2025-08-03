@@ -75,8 +75,9 @@ public class LearningApplicationService : ILearningApplicationService
             SubmittedAt = la.SubmittedAt,
             LearningStatus = la.LearningStatus,
             LearningStatusName = la.LearningStatus == 1 ? "Đang học" :
-                                 la.LearningStatus == 2 ? "Hoàn thành" :
-                                 la.LearningStatus == 3 ? "Đã huỷ" :
+                                 la.LearningStatus == 2 ? "Bảo lưu" :
+                                 la.LearningStatus == 3 ? "Học lại" :
+                                 la.LearningStatus == 4 ? "Hoàn Thành" :
                                  "Chưa xác định"
         };
     }

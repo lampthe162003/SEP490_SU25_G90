@@ -61,12 +61,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
 
             // 🔎 Lấy giảng viên cho từng learner
             var instructorMap = await (
-            from la in _context.LearningApplications
-            join cm in _context.ClassMembers on la.LearnerId equals cm.LearnerId
-            join c in _context.Classes on cm.ClassId equals c.ClassId
-            join u in _context.Users on c.InstructorId equals u.UserId
-            select new { la.LearningId, Instructor = u }
-                    ).ToDictionaryAsync(x => x.LearningId, x => x.Instructor);
+                from la in _context.LearningApplications
+                join cm in _context.ClassMembers on la.LearnerId equals cm.LearnerId
+                join c in _context.Classes on cm.ClassId equals c.ClassId
+                join u in _context.Users on c.InstructorId equals u.UserId
+                select new { la.LearningId, Instructor = u }
+            ).ToDictionaryAsync(x => x.LearningId, x => x.Instructor);
 
             // ✅ Tạo danh sách kết quả
             var results = learnerGroups.Select(group =>
@@ -84,8 +84,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
 
                 string statusName = mostRecent.LearningStatus switch
                 {
-                    3 => "Đã huỷ",
                     1 => "Đang học",
+                    2 => "Bảo lưu",
+                    3 => "Học lại",
+                    4 => "Hoàn thành",
                     _ => isPassed ? "Hoàn thành" : "Chưa bắt đầu"
                 };
 
@@ -125,6 +127,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
 
             return results;
         }
+
 
 
 
