@@ -91,4 +91,10 @@ public class LearningApplicationService : ILearningApplicationService
     {
         return await _learningApplicationRepository.FindLearnerByCccdAsync(cccd);
     }
+
+    public Task<bool> UpdateStatusAsync(int learningId, byte newStatus)
+    {
+        return _learningApplicationRepository.UpdateStatusAsync(learningId, newStatus);
+    }
+
 }

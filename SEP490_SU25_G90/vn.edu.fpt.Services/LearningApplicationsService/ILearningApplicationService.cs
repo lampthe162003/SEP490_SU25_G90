@@ -13,6 +13,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService
         Task<List<LearningApplicationsResponse>> FindByCCCD(string cccd, Expression<Func<LearningApplication, bool>>? additional = null);
         Task AddAsync(LearningApplication entity);
         Task<LearningApplicationsResponse?> FindLearnerByCccdAsync(string cccd);
+        Task<bool> UpdateStatusAsync(int learningId, byte newStatus);
     }
 }
 
