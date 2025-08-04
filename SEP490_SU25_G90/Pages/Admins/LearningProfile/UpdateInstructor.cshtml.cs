@@ -5,7 +5,7 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
 
 namespace SEP490_SU25_G90.Pages.Admins.LearningProfile
 {
-    //[Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin")]
     public class UpdateInstructorModel : PageModel
     {
         private readonly IInstructorService _instructorService;

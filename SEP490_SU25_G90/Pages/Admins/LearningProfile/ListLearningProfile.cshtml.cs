@@ -8,7 +8,7 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.User;
 
 namespace SEP490_SU25_G90.Pages.Admins.LearningProfile
 {
-    //[Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin")]
     public class ListLearningProfileModel : PageModel
     {
         private readonly IUserService _userService;
