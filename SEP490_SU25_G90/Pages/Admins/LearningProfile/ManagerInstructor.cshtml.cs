@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -7,6 +8,7 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
 
 namespace SEP490_SU25_G90.Pages.Admins.LearningProfile
 {
+    [Authorize(Roles = "admin")]
     public class ManagerInstructorModel : PageModel
     {
         private readonly IInstructorService _instructorService;
