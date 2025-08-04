@@ -25,6 +25,8 @@ public partial class LearningApplication
 
     public bool? TestEligibility { get; set; }
 
+    public virtual ICollection<ClassMember> ClassMembers { get; set; } = new List<ClassMember>();
+
     public virtual User Learner { get; set; } = null!;
 
     public virtual LicenceType? LicenceType { get; set; }

@@ -147,7 +147,7 @@ CREATE TABLE ClassMembers
     class_id INT,
     learner_id INT,
     FOREIGN KEY (class_id) REFERENCES Classes(class_id),
-    FOREIGN KEY (learner_id) REFERENCES Users(user_id)
+    FOREIGN KEY (learner_id) REFERENCES LearningApplications(learning_id)
 );
 
 

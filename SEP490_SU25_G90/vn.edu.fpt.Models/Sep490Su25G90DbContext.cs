@@ -60,25 +60,14 @@ public partial class Sep490Su25G90DbContext : DbContext
     public virtual DbSet<Ward> Wards { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            var config = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .Build();
-
-            var connectionString = config.GetConnectionString("DefaultConnection");
-
-            optionsBuilder.UseSqlServer(connectionString);
-        }
-    }
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=(local);Database=SEP490_SU25_G90_DB;user=Verliezer;pwd=123456;TrustServerCertificate=true");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Address>(entity =>
         {
-            entity.HasKey(e => e.AddressId).HasName("PK__Addresse__CAA247C8ACC0E4E2");
+            entity.HasKey(e => e.AddressId).HasName("PK__Addresse__CAA247C867AEBE11");
 
             entity.Property(e => e.AddressId).HasColumnName("address_id");
             entity.Property(e => e.HouseNumber)
@@ -96,7 +85,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<Car>(entity =>
         {
-            entity.HasKey(e => e.CarId).HasName("PK__Cars__4C9A0DB3EEB3B9D7");
+            entity.HasKey(e => e.CarId).HasName("PK__Cars__4C9A0DB3BE99E1D9");
 
             entity.Property(e => e.CarId).HasColumnName("car_id");
             entity.Property(e => e.CarMake)
@@ -112,7 +101,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<CarAssignment>(entity =>
         {
-            entity.HasKey(e => e.AssignmentId).HasName("PK__CarAssig__DA891814F6A0A1D5");
+            entity.HasKey(e => e.AssignmentId).HasName("PK__CarAssig__DA89181407036D99");
 
             entity.Property(e => e.AssignmentId).HasColumnName("assignment_id");
             entity.Property(e => e.CarId).HasColumnName("car_id");
@@ -139,7 +128,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<Cccd>(entity =>
         {
-            entity.HasKey(e => e.CccdId).HasName("PK__CCCD__E13426B72A8D6FA5");
+            entity.HasKey(e => e.CccdId).HasName("PK__CCCD__E13426B7C2477DE6");
 
             entity.ToTable("CCCD");
 
@@ -159,7 +148,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<City>(entity =>
         {
-            entity.HasKey(e => e.CityId).HasName("PK__Cities__031491A8BF3503A7");
+            entity.HasKey(e => e.CityId).HasName("PK__Cities__031491A81DD91A35");
 
             entity.Property(e => e.CityId)
                 .ValueGeneratedNever()
@@ -171,7 +160,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<Class>(entity =>
         {
-            entity.HasKey(e => e.ClassId).HasName("PK__Classes__FDF4798630D9DC8A");
+            entity.HasKey(e => e.ClassId).HasName("PK__Classes__FDF47986B3A06026");
 
             entity.Property(e => e.ClassId).HasColumnName("class_id");
             entity.Property(e => e.ClassName)
@@ -193,7 +182,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<ClassMember>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ClassMem__3213E83FA93EB112");
+            entity.HasKey(e => e.Id).HasName("PK__ClassMem__3213E83F20267857");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.ClassId).HasColumnName("class_id");
@@ -210,7 +199,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<ClassSchedule>(entity =>
         {
-            entity.HasKey(e => e.ScheduleId).HasName("PK__ClassSch__C46A8A6F068419E0");
+            entity.HasKey(e => e.ScheduleId).HasName("PK__ClassSch__C46A8A6FCAB82086");
 
             entity.Property(e => e.ScheduleId).HasColumnName("schedule_id");
             entity.Property(e => e.ClassId).HasColumnName("class_id");
@@ -228,7 +217,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<HealthCertificate>(entity =>
         {
-            entity.HasKey(e => e.HealthCertificateId).HasName("PK__HealthCe__9EBB8D85EB91F261");
+            entity.HasKey(e => e.HealthCertificateId).HasName("PK__HealthCe__9EBB8D85188E3C82");
 
             entity.Property(e => e.HealthCertificateId).HasColumnName("health_certificate_id");
             entity.Property(e => e.ImageUrl)
@@ -238,7 +227,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<InstructorSpecialization>(entity =>
         {
-            entity.HasKey(e => e.IsId).HasName("PK__Instruct__ADF81AD3943C0059");
+            entity.HasKey(e => e.IsId).HasName("PK__Instruct__ADF81AD37B046DB1");
 
             entity.Property(e => e.IsId).HasColumnName("is_id");
             entity.Property(e => e.InstructorId).HasColumnName("instructor_id");
@@ -255,7 +244,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<LearningApplication>(entity =>
         {
-            entity.HasKey(e => e.LearningId).HasName("PK__Learning__C996F2D5A34A5138");
+            entity.HasKey(e => e.LearningId).HasName("PK__Learning__C996F2D590EA9329");
 
             entity.Property(e => e.LearningId).HasColumnName("learning_id");
             entity.Property(e => e.LearnerId).HasColumnName("learner_id");
@@ -283,7 +272,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<LearningMaterial>(entity =>
         {
-            entity.HasKey(e => e.MaterialId).HasName("PK__Learning__6BFE1D285FBA2859");
+            entity.HasKey(e => e.MaterialId).HasName("PK__Learning__6BFE1D28AC9684AA");
 
             entity.Property(e => e.MaterialId).HasColumnName("material_id");
             entity.Property(e => e.CreatedAt)
@@ -304,7 +293,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<LicenceType>(entity =>
         {
-            entity.HasKey(e => e.LicenceTypeId).HasName("PK__LicenceT__959FF8937AA67103");
+            entity.HasKey(e => e.LicenceTypeId).HasName("PK__LicenceT__959FF8932672A675");
 
             entity.Property(e => e.LicenceTypeId).HasColumnName("licence_type_id");
             entity.Property(e => e.LicenceCode)
@@ -315,7 +304,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<News>(entity =>
         {
-            entity.HasKey(e => e.NewsId).HasName("PK__News__4C27CCD80E16B9AC");
+            entity.HasKey(e => e.NewsId).HasName("PK__News__4C27CCD8CB507649");
 
             entity.Property(e => e.NewsId).HasColumnName("news_id");
             entity.Property(e => e.AuthorId).HasColumnName("author_id");
@@ -338,7 +327,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<Province>(entity =>
         {
-            entity.HasKey(e => e.ProvinceId).HasName("PK__Province__08DCB60F0A89545D");
+            entity.HasKey(e => e.ProvinceId).HasName("PK__Province__08DCB60F6922491F");
 
             entity.Property(e => e.ProvinceId)
                 .ValueGeneratedNever()
@@ -355,7 +344,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.RoleId).HasName("PK__Roles__760965CC603C4588");
+            entity.HasKey(e => e.RoleId).HasName("PK__Roles__760965CC8BFECF1A");
 
             entity.Property(e => e.RoleId).HasColumnName("role_id");
             entity.Property(e => e.RoleName)
@@ -365,7 +354,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<ScheduleSlot>(entity =>
         {
-            entity.HasKey(e => e.SlotId).HasName("PK__Schedule__971A01BB66F83B43");
+            entity.HasKey(e => e.SlotId).HasName("PK__Schedule__971A01BBBB46F5E9");
 
             entity.Property(e => e.SlotId)
                 .ValueGeneratedNever()
@@ -376,7 +365,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<TestApplication>(entity =>
         {
-            entity.HasKey(e => e.TestId).HasName("PK__TestAppl__F3FF1C028A331493");
+            entity.HasKey(e => e.TestId).HasName("PK__TestAppl__F3FF1C026F861FBB");
 
             entity.Property(e => e.TestId).HasColumnName("test_id");
             entity.Property(e => e.ExamDate).HasColumnName("exam_date");
@@ -400,7 +389,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<TestScoreStandard>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__TestScor__3213E83F18BE66B5");
+            entity.HasKey(e => e.Id).HasName("PK__TestScor__3213E83F65A85512");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.LicenceTypeId).HasColumnName("licence_type_id");
@@ -417,7 +406,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Users__B9BE370F98B236BB");
+            entity.HasKey(e => e.UserId).HasName("PK__Users__B9BE370FE61FF9D5");
 
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.AddressId).HasColumnName("address_id");
@@ -466,7 +455,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<UserRole>(entity =>
         {
-            entity.HasKey(e => e.UserRoleId).HasName("PK__UserRole__B8D9ABA2CFBDAB09");
+            entity.HasKey(e => e.UserRoleId).HasName("PK__UserRole__B8D9ABA29E493B45");
 
             entity.Property(e => e.UserRoleId).HasColumnName("user_role_id");
             entity.Property(e => e.RoleId).HasColumnName("role_id");
@@ -485,7 +474,7 @@ public partial class Sep490Su25G90DbContext : DbContext
 
         modelBuilder.Entity<Ward>(entity =>
         {
-            entity.HasKey(e => e.WardId).HasName("PK__Wards__396B899D8641823B");
+            entity.HasKey(e => e.WardId).HasName("PK__Wards__396B899D7A4C03EF");
 
             entity.Property(e => e.WardId)
                 .ValueGeneratedNever()
