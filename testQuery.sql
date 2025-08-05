@@ -129,15 +129,16 @@ CREATE TABLE LearningApplications
     FOREIGN KEY (licence_type_id) REFERENCES LicenceTypes(licence_type_id)
 );
 
-
 CREATE TABLE Classes
 (
     class_id INT IDENTITY PRIMARY KEY,
     instructor_id INT,
     licence_type_id TINYINT,
     class_name NVARCHAR(30),
+    [start_date] DATE,
+    end_date DATE,
     FOREIGN KEY (instructor_id) REFERENCES Users(user_id),
-    FOREIGN KEY (licence_type_id) REFERENCES LicenceTypes(licence_type_id)
+    FOREIGN KEY (licence_type_id) REFERENCES LicenceTypes(licence_type_id),
 );
 
 CREATE TABLE ClassMembers

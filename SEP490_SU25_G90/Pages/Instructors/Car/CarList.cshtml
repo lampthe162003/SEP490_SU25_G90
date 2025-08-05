@@ -61,7 +61,8 @@
                                         <th scope="col">Loại Xe</th>
                                         <th scope="col">Mẫu Xe</th>
                                         <th scope="col">Biển Số Xe</th>
-                                        <th scope="col">Lịch Đăng Ký Mượn</th>
+                                        <th scope="col" class="w-50">Tình trạng mượn xe</th>
+                                        <th scope="col">Chi tiết</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -71,6 +72,17 @@
                                             <td>@item.CarMake</td>
                                             <td>@item.CarModel</td>
                                             <td>@item.LicensePlate</td>
+                                            <td class="text-center">
+                                                <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                                    @for (int i = 1; i <= 4; i++)
+                                                    {
+                                                        @* var isRented = car.RentedTimeSpans.Contains(i); // Assume RentedTimeSpans is a List<int> *@
+                                                        @* var btnClass = isRented ? "btn btn-sm btn-danger" : "btn btn-sm btn-outline-primary"; *@
+
+                                                        @* <button type="button" class="@btnClass" style="min-width: 40px;">@i</button> *@
+                                                    }
+                                                </div>
+                                            </td>
                                             <td>
                                                 <a class="btn btn-outline-primary" asp-page="./CarScheduleDetails" asp-route-id="@item.CarId">
                                                     <i class="fa-solid fa-eye"></i>

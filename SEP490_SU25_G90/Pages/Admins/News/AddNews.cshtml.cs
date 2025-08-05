@@ -25,8 +25,6 @@ namespace SEP490_SU25_G90.Pages.Admins.News
         [BindProperty]
         public NewsFormRequest Input { get; set; } = new();
 
-        public void OnGet() { }
-
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)

@@ -37,7 +37,7 @@ namespace SEP490_SU25_G90.Pages.Admins.News
             TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
         }
 
-        public async Task<IActionResult> OnPostDeleteAsync(int id, string imagePath)
+        public async Task<IActionResult> OnPostDeleteAsync(int id)
         {
             var success = await _iNewsService.DeleteNewsAsync(id);
 

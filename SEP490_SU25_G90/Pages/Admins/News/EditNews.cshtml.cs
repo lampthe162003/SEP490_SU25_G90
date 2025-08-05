@@ -18,13 +18,13 @@ namespace SEP490_SU25_G90.Pages.Admins.News
         }
 
         [BindProperty]
-        public NewsFormRequest Input { get; set; } = new();
+        public NewsFormRequest Edit { get; set; } = new();
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
             var result = await _newsService.GetNewsFormByIdAsync(id);
             if (result == null) return NotFound();
-            Input = result;
+            Edit = result;
             return Page();
         }
 
@@ -32,7 +32,7 @@ namespace SEP490_SU25_G90.Pages.Admins.News
         {
             if (!ModelState.IsValid) return Page();
 
-            var success = await _newsService.EditNewsAsync(Input);
+            var success = await _newsService.EditNewsAsync(Edit);
             if (!success)
             {
                 TempData["ErrorMessage"] = "Không tìm thấy bài viết cần sửa.";
