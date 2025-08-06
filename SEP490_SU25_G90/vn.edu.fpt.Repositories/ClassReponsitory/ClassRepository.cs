@@ -145,6 +145,66 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
         }
 
         /// <summary>
+        /// Lấy chi tiết lớp học theo ID
+        /// </summary>
+        public async Task<ClassDetailResponse?> GetClassDetailAsync(int classId)
+        {
+            var classDetail = await _context.Classes
+                .Include(c => c.Instructor)
+                .Include(c => c.LicenceType)
+                .Include(c => c.ClassMembers)
+                    .ThenInclude(cm => cm.Learner)
+                        .ThenInclude(la => la != null ? la.Learner : null)
+                .FirstOrDefaultAsync(c => c.ClassId == classId);
+
+            if (classDetail == null)
+                return null;
+
+            var response = new ClassDetailResponse
+            {
+                ClassId = classDetail.ClassId,
+                ClassName = classDetail.ClassName,
+                InstructorId = classDetail.InstructorId,
+                InstructorName = classDetail.Instructor != null ?
+                    $"{classDetail.Instructor.FirstName} {classDetail.Instructor.MiddleName} {classDetail.Instructor.LastName}".Trim() :
+                    "Chưa phân công",
+                InstructorPhone = classDetail.Instructor?.Phone,
+                InstructorEmail = classDetail.Instructor?.Email,
+                LicenceCode = classDetail.LicenceType?.LicenceCode ?? "",
+                StartDate = classDetail.StartDate?.ToDateTime(TimeOnly.MinValue),
+                EndDate = classDetail.EndDate?.ToDateTime(TimeOnly.MinValue),
+                Status = GetClassStatus(classDetail.StartDate, classDetail.EndDate),
+                TotalStudents = classDetail.ClassMembers.Count,
+                Members = classDetail.ClassMembers
+                    .Where(cm => cm.Learner?.Learner != null)
+                    .Select(cm => new ClassMemberResponse
+                    {
+                        UserId = cm.Learner!.Learner!.UserId,
+                        StudentCode = cm.Learner.Learner.UserId.ToString("D9"), // Generate student code from UserId
+                        FullName = $"{cm.Learner.Learner.FirstName} {cm.Learner.Learner.MiddleName} {cm.Learner.Learner.LastName}".Trim(),
+                        Email = cm.Learner.Learner.Email,
+                        Phone = cm.Learner.Learner.Phone,
+                        ProfileImageUrl = !string.IsNullOrEmpty(cm.Learner.Learner.ProfileImageUrl) 
+                            ? cm.Learner.Learner.ProfileImageUrl 
+                            : "https://cdn-icons-png.flaticon.com/512/6596/6596121.png",
+                        LearningStatus = "Đang học", // Default status, có thể customize sau
+                        JoinDate = DateTime.Now // Có thể lấy từ CreatedDate nếu có
+                    })
+                    .ToList()
+            };
+
+            return response;
+        }
+
+        /// <summary>
+        /// Kiểm tra lớp học có tồn tại không
+        /// </summary>
+        public async Task<bool> ClassExistsAsync(int classId)
+        {
+            return await _context.Classes.AnyAsync(c => c.ClassId == classId);
+        }
+
+        /// <summary>
         /// Xác định trạng thái của lớp học dựa trên ngày bắt đầu và kết thúc
         /// </summary>
         private static string GetClassStatus(DateOnly? startDate, DateOnly? endDate)
