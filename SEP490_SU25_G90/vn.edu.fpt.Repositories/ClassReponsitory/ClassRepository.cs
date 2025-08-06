@@ -40,6 +40,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
                 query = query.Where(c => c.LicenceTypeId == searchRequest.LicenceTypeId.Value);
             }
 
+            // Tìm kiếm theo InstructorId
+            if (searchRequest.InstructorId.HasValue)
+            {
+                query = query.Where(c => c.InstructorId == searchRequest.InstructorId.Value);
+            }
+
             // Tìm kiếm theo ngày bắt đầu
             if (searchRequest.StartDate.HasValue)
             {
@@ -98,6 +104,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
             if (searchRequest.LicenceTypeId.HasValue)
             {
                 query = query.Where(c => c.LicenceTypeId == searchRequest.LicenceTypeId.Value);
+            }
+
+            if (searchRequest.InstructorId.HasValue)
+            {
+                query = query.Where(c => c.InstructorId == searchRequest.InstructorId.Value);
             }
 
             if (searchRequest.StartDate.HasValue)
