@@ -16,6 +16,11 @@ namespace SEP490_SU25_G90.Pages.Instructors
             _instructorService = instructorService;
         }
 
+        [BindProperty(SupportsGet = true)]
+        public int? SelectedYear { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public DateOnly? StartOfWeekInput { get; set; }
         public List<DateOnly> DatesOfWeek { get; set; } = new();
         public List<InstructorScheduleResponse> ScheduleData { get; set; } = new();
         public DateOnly StartOfWeek { get; set; }
@@ -33,7 +38,17 @@ namespace SEP490_SU25_G90.Pages.Instructors
             // Xác định ngày đầu tuần (Thứ Hai tuần hiện tại)
             var today = DateTime.Today;
             int diff = today.DayOfWeek == DayOfWeek.Sunday ? -6 : DayOfWeek.Monday - today.DayOfWeek;
-            StartOfWeek = DateOnly.FromDateTime(today.AddDays(diff));
+
+            // Nếu có chọn tuần thì dùng tuần đó, ngược lại dùng ngày hôm nay
+            var baseDate = StartOfWeekInput?.ToDateTime(TimeOnly.MinValue) ?? today;
+
+            // Nếu có chọn năm thì cập nhật baseDate sang năm đó, giữ nguyên tuần
+            if (SelectedYear.HasValue)
+            {
+                baseDate = new DateTime(SelectedYear.Value, baseDate.Month, baseDate.Day);
+            }
+
+            StartOfWeek = DateOnly.FromDateTime(baseDate.AddDays(diff));
             EndOfWeek = StartOfWeek.AddDays(6);
 
             // Tạo danh sách ngày trong tuần (Thứ 2 - Chủ nhật)

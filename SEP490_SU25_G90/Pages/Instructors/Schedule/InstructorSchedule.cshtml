@@ -10,6 +10,47 @@
 }
 
 <h2 class="mb-4">@ViewData["Title"]</h2>
+<!-- Tuần được chọn -->
+<form method="get" class="mb-3 d-flex align-items-center gap-3">
+    <label for="yearSelector" class="form-label mb-0"><b>Chọn năm:</b></label>
+    <select id="yearSelector" name="SelectedYear" class="form-select w-auto me-3" onchange="this.form.submit()">
+        @{
+            int currentYear = DateTime.Now.Year;
+            for (int y = currentYear - 2; y <= currentYear + 1; y++)
+            {
+                <option value="@y" selected="@(Model.SelectedYear == y)">@y</option>
+            }
+        }
+    </select>
+
+    <label for="weekSelector" class="form-label mb-0"><b>Chọn tuần:</b></label>
+    <select id="weekSelector" name="StartOfWeekInput" class="form-select w-auto" onchange="this.form.submit()">
+        @{
+            int year = Model.SelectedYear ?? DateTime.Now.Year;
+
+            // Tìm thứ 2 đầu tiên trong năm
+            DateTime jan1 = new DateTime(year, 1, 1);
+            int offset = (int)DayOfWeek.Monday - (int)jan1.DayOfWeek;
+            if (offset < 0) offset += 7;
+            DateTime firstMonday = jan1.AddDays(offset);
+
+            int weekIndex = 0;
+            for (int i = 0; i < 53; i++)
+            {
+                var monday = firstMonday.AddDays(i * 7);
+                if (monday.Year != year) break;
+
+                var sunday = monday.AddDays(6);
+                string value = monday.ToString("yyyy-MM-dd");
+                string text = $"Tuần {++weekIndex}: {monday:dd/MM} - {sunday:dd/MM}";
+                bool selected = Model.StartOfWeekInput.HasValue && DateOnly.FromDateTime(monday) == Model.StartOfWeekInput.Value;
+                <option value="@value" selected="@selected">@text</option>
+            }
+        }
+    </select>
+    <span class="text-muted"> (Hiển thị: @weekRange)</span>
+</form>
+
 <h5 class="mb-4 text-muted">@weekRange</h5>
 
 <table class="table table-bordered text-center">
@@ -23,14 +64,14 @@
         </tr>
     </thead>
     <tbody>
-        @for (int slot = 0; slot < 4; slot++)
+        @for (int slot = 1; slot < 5; slot++)
         {
             string timeRange = slot switch
             {
-                0 => "07:30 - 09:00",
-                1 => "09:15 - 10:45",
-                2 => "14:00 - 15:30",
-                3 => "15:45 - 17:15",
+                1 => "07:30 - 09:00",
+                2 => "09:15 - 10:45",
+                3 => "14:00 - 15:30",
+                4 => "15:45 - 17:15",
                 _ => ""
             };
             <tr>
