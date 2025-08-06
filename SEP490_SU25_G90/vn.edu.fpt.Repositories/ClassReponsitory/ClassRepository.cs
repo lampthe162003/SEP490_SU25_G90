@@ -186,7 +186,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
                         Phone = cm.Learner.Learner.Phone,
                         ProfileImageUrl = !string.IsNullOrEmpty(cm.Learner.Learner.ProfileImageUrl) 
                             ? cm.Learner.Learner.ProfileImageUrl 
-                            : "https://cdn-icons-png.flaticon.com/512/6596/6596121.png",
+                            : "https://cdn.vectorstock.com/i/1000v/51/87/student-avatar-user-profile-icon-vector-47025187.jpg",
                         LearningStatus = "Đang học", // Default status, có thể customize sau
                         JoinDate = DateTime.Now // Có thể lấy từ CreatedDate nếu có
                     })
