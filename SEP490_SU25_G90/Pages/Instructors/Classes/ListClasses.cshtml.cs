@@ -60,8 +60,8 @@ namespace SEP490_SU25_G90.Pages.Instructors.Classes
             try
             {
                 // Get instructor ID from JWT claims
-                //var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var userIdClaim = "7"; // --> Fix cứng tạm khi chưa login đc
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                //var userIdClaim = "7"; // --> Fix cứng tạm khi chưa login đc
                 if (string.IsNullOrEmpty(userIdClaim))
                 {
                     ModelState.AddModelError("", "Không tìm thấy thông tin giảng viên.");
