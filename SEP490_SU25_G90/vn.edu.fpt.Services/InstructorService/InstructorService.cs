@@ -180,5 +180,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
             return await _instructorRepository.GetLearningApplicationDetailAsync(learningId);
         }
 
+        public async Task<List<InstructorScheduleResponse>> GetWeeklyScheduleAsync(int instructorId, DateOnly startOfWeek)
+        {
+            return await _instructorRepository.GetWeeklyScheduleAsync(instructorId, startOfWeek);
+        }
     }
 }
