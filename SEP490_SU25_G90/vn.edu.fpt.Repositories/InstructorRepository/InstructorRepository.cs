@@ -352,5 +352,27 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 LearnerClasses = learnerClasses
             };
         }
+
+        public async Task<List<InstructorScheduleResponse>> GetWeeklyScheduleAsync(int instructorId, DateOnly startOfWeek)
+        {
+            var endOfWeek = startOfWeek.AddDays(6);
+
+            var schedule = await _context.ClassSchedules
+                .Include(cs => cs.Class)
+                .Where(cs => cs.Class.InstructorId == instructorId &&
+                             cs.ScheduleDate.HasValue &&
+                             cs.ScheduleDate.Value >= startOfWeek &&
+                             cs.ScheduleDate.Value <= endOfWeek)
+                .Select(cs => new InstructorScheduleResponse
+                {
+                    ScheduleDate = cs.ScheduleDate!.Value,
+                    SlotId = cs.SlotId ?? 0,
+                    ClassName = cs.Class.ClassName
+                })
+                .ToListAsync();
+
+            return schedule;
+        }
+
     }
 } 

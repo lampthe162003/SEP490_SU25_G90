@@ -1,0 +1,49 @@
+﻿@page
+@model SEP490_SU25_G90.Pages.Instructors.Schedule.InstructorScheduleModel
+
+@{
+    ViewData["Title"] = "InstructorSchedule";
+    Layout = "~/Pages/Shared/_InstructorLayout.cshtml";
+}
+
+<h1>InstructorSchedule</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ClassSchedule[0].ScheduleDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ClassSchedule[0].Class)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ClassSchedule[0].Slot)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.ClassSchedule) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ScheduleDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Class.ClassId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Slot.SlotId)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.ScheduleId">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.ScheduleId">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.ScheduleId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
