@@ -17,10 +17,11 @@ namespace SEP490_SU25_G90.Pages.Instructors
         }
 
         [BindProperty(SupportsGet = true)]
-        public int? SelectedYear { get; set; }
+        public int? Year { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public DateOnly? StartOfWeekInput { get; set; }
+
         public List<DateOnly> DatesOfWeek { get; set; } = new();
         public List<InstructorScheduleResponse> ScheduleData { get; set; } = new();
         public DateOnly StartOfWeek { get; set; }
@@ -28,35 +29,38 @@ namespace SEP490_SU25_G90.Pages.Instructors
 
         public async Task<IActionResult> OnGetAsync()
         {
-            // Lấy ID của giảng viên từ JWT claims
+            // Lấy ID giảng viên từ JWT
             var userIdClaim = User.FindFirst("user_id")?.Value;
             if (!int.TryParse(userIdClaim, out int instructorId) || instructorId == 0)
             {
                 return Unauthorized();
             }
 
-            // Xác định ngày đầu tuần (Thứ Hai tuần hiện tại)
             var today = DateTime.Today;
-            int diff = today.DayOfWeek == DayOfWeek.Sunday ? -6 : DayOfWeek.Monday - today.DayOfWeek;
 
-            // Nếu có chọn tuần thì dùng tuần đó, ngược lại dùng ngày hôm nay
+            // Nếu chưa có năm chọn, dùng năm hiện tại
+            Year ??= today.Year;
+
+            // Nếu chưa có tuần được chọn, dùng tuần hiện tại
             var baseDate = StartOfWeekInput?.ToDateTime(TimeOnly.MinValue) ?? today;
 
-            // Nếu có chọn năm thì cập nhật baseDate sang năm đó, giữ nguyên tuần
-            if (SelectedYear.HasValue)
+            // Nếu baseDate không nằm trong năm được chọn => gán lại về tuần đầu năm đó
+            if (baseDate.Year != Year.Value)
             {
-                baseDate = new DateTime(SelectedYear.Value, baseDate.Month, baseDate.Day);
+                baseDate = new DateTime(Year.Value, 1, 1);
             }
 
+            // Tính ngày thứ Hai của tuần đó
+            int diff = baseDate.DayOfWeek == DayOfWeek.Sunday ? -6 : DayOfWeek.Monday - baseDate.DayOfWeek;
             StartOfWeek = DateOnly.FromDateTime(baseDate.AddDays(diff));
             EndOfWeek = StartOfWeek.AddDays(6);
 
-            // Tạo danh sách ngày trong tuần (Thứ 2 - Chủ nhật)
+            // Tạo danh sách các ngày trong tuần
             DatesOfWeek = Enumerable.Range(0, 7)
                 .Select(i => StartOfWeek.AddDays(i))
                 .ToList();
 
-            // Lấy thời khóa biểu
+            // Lấy lịch dạy của giảng viên
             ScheduleData = await _instructorService.GetWeeklyScheduleAsync(instructorId, StartOfWeek);
 
             return Page();

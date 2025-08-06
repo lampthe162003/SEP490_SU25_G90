@@ -10,15 +10,16 @@
 }
 
 <h2 class="mb-4">@ViewData["Title"]</h2>
-<!-- Tuần được chọn -->
+
+<!-- Chọn năm và tuần -->
 <form method="get" class="mb-3 d-flex align-items-center gap-3">
     <label for="yearSelector" class="form-label mb-0"><b>Chọn năm:</b></label>
-    <select id="yearSelector" name="SelectedYear" class="form-select w-auto me-3" onchange="this.form.submit()">
+    <select id="yearSelector" name="Year" class="form-select w-auto me-3" onchange="this.form.submit()">
         @{
             int currentYear = DateTime.Now.Year;
             for (int y = currentYear - 2; y <= currentYear + 1; y++)
             {
-                <option value="@y" selected="@(Model.SelectedYear == y)">@y</option>
+                <option value="@y" selected="@(Model.Year == y)">@y</option>
             }
         }
     </select>
@@ -26,33 +27,46 @@
     <label for="weekSelector" class="form-label mb-0"><b>Chọn tuần:</b></label>
     <select id="weekSelector" name="StartOfWeekInput" class="form-select w-auto" onchange="this.form.submit()">
         @{
-            int year = Model.SelectedYear ?? DateTime.Now.Year;
+            int year = Model.Year ?? DateTime.Now.Year;
+            DateTime start = new DateTime(year, 1, 1);
 
             // Tìm thứ 2 đầu tiên trong năm
-            DateTime jan1 = new DateTime(year, 1, 1);
-            int offset = (int)DayOfWeek.Monday - (int)jan1.DayOfWeek;
-            if (offset < 0) offset += 7;
-            DateTime firstMonday = jan1.AddDays(offset);
-
-            int weekIndex = 0;
-            for (int i = 0; i < 53; i++)
+            while (start.DayOfWeek != DayOfWeek.Monday)
             {
-                var monday = firstMonday.AddDays(i * 7);
-                if (monday.Year != year) break;
+                start = start.AddDays(1);
+            }
 
-                var sunday = monday.AddDays(6);
+            DateTime current = start;
+            DateTime endOfYear = new DateTime(year, 12, 31);
+
+            while (current <= endOfYear)
+            {
+                var monday = current;
+                var sunday = current.AddDays(6);
                 string value = monday.ToString("yyyy-MM-dd");
-                string text = $"Tuần {++weekIndex}: {monday:dd/MM} - {sunday:dd/MM}";
-                bool selected = Model.StartOfWeekInput.HasValue && DateOnly.FromDateTime(monday) == Model.StartOfWeekInput.Value;
+                string text = $"{monday:dd/MM} - {sunday:dd/MM}";
+
+                bool selected;
+                if (Model.StartOfWeekInput.HasValue)
+                {
+                    selected = DateOnly.FromDateTime(monday) == Model.StartOfWeekInput.Value;
+                }
+                else
+                {
+                    selected = DateOnly.FromDateTime(monday) == Model.StartOfWeek;
+                }
+
                 <option value="@value" selected="@selected">@text</option>
+                current = current.AddDays(7);
             }
         }
     </select>
-    <span class="text-muted"> (Hiển thị: @weekRange)</span>
 </form>
 
 <h5 class="mb-4 text-muted">@weekRange</h5>
 
+<!-- Lịch -->
+<div class="table-wrapper">
 <table class="table table-bordered text-center">
     <thead class="table-primary">
         <tr>
@@ -98,11 +112,70 @@
         }
     </tbody>
 </table>
+</div>
 
 @section Styles {
     <style>
         table th, table td {
             vertical-align: middle;
+            text-align: center;
+        }
+
+        /* Dropdown chỉnh sửa giao diện */
+        select.form-select {
+            padding-right: 2rem; /* chừa chỗ cho mũi tên */
+            appearance: none; /* ẩn mũi tên mặc định (Chrome, Edge) */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23333'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 10px 6px;
+        }
+
+        /* Đặt kích thước tối thiểu cho dropdown */
+        select.form-select {
+            min-width: 140px;
+            max-width: 200px;
+        }
+
+        /* Padding cho header + slot */
+        th {
+            padding: 12px;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 8px;
+        }
+
+            /* Slot thời gian */
+            td span.text-muted {
+                display: block;
+                font-size: 0.85rem;
+                color: #666;
+            }
+
+        /* Table */
+        .table th,
+        .table td {
+            border: 1px solid #dee2e6;
+        }
+
+        .table-primary {
+            background-color: #dbeeff;
+        }
+
+        /* Hiệu ứng hover */
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Responsive hạn chế (có thể dùng horizontal scroll nếu bảng quá rộng) */
+        .table-responsive {
+            overflow-x: auto;
         }
     </style>
 }
+
+
