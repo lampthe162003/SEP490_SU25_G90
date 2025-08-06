@@ -60,7 +60,7 @@ namespace SEP490_SU25_G90.Pages.Instructors.Classes
             try
             {
                 // Get instructor ID from JWT claims
-                var userIdClaim = User.FindFirst("user_id")?.Value;
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 //var userIdClaim = "7"; // --> Fix cứng tạm khi chưa login đc
                 if (string.IsNullOrEmpty(userIdClaim))
                 {
