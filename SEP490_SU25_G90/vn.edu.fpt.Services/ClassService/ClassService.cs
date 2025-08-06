@@ -49,5 +49,28 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.ClassService
         {
             return await _classRepository.GetAllLicenceTypesAsync();
         }
+
+        /// <summary>
+        /// Lấy chi tiết lớp học theo ID
+        /// </summary>
+        public async Task<ClassDetailResponse?> GetClassDetailAsync(int classId)
+        {
+            // Validate input
+            if (classId <= 0)
+                return null;
+
+            return await _classRepository.GetClassDetailAsync(classId);
+        }
+
+        /// <summary>
+        /// Kiểm tra lớp học có tồn tại không
+        /// </summary>
+        public async Task<bool> ClassExistsAsync(int classId)
+        {
+            if (classId <= 0)
+                return false;
+
+            return await _classRepository.ClassExistsAsync(classId);
+        }
     }
 }
