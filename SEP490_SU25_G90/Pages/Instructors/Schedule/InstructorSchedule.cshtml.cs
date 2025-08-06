@@ -1,38 +1,50 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
-using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace SEP490_SU25_G90.Pages.Instructors.Schedule
+namespace SEP490_SU25_G90.Pages.Instructors
 {
     [Authorize(Roles = "instructor")]
     public class InstructorScheduleModel : PageModel
     {
-        private readonly SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext _context;
         private readonly IInstructorService _instructorService;
 
-        public InstructorScheduleModel(SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext context, IInstructorService instructorService)
+        public InstructorScheduleModel(IInstructorService instructorService)
         {
-            _context = context;
             _instructorService = instructorService;
         }
-        public List<InstructorScheduleResponse> ScheduleData { get; set; } = new();
+
         public List<DateOnly> DatesOfWeek { get; set; } = new();
+        public List<InstructorScheduleResponse> ScheduleData { get; set; } = new();
+        public DateOnly StartOfWeek { get; set; }
+        public DateOnly EndOfWeek { get; set; }
 
-        public IList<ClassSchedule> ClassSchedule { get;set; } = default!;
-
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
-            ClassSchedule = await _context.ClassSchedules
-                .Include(c => c.Class)
-                .Include(c => c.Slot).ToListAsync();
+            // Lấy ID của giảng viên từ JWT claims
+            var userIdClaim = User.FindFirst("user_id")?.Value;
+            if (!int.TryParse(userIdClaim, out int instructorId) || instructorId == 0)
+            {
+                return Unauthorized();
+            }
+
+            // Xác định ngày đầu tuần (Thứ Hai tuần hiện tại)
+            var today = DateTime.Today;
+            int diff = today.DayOfWeek == DayOfWeek.Sunday ? -6 : DayOfWeek.Monday - today.DayOfWeek;
+            StartOfWeek = DateOnly.FromDateTime(today.AddDays(diff));
+            EndOfWeek = StartOfWeek.AddDays(6);
+
+            // Tạo danh sách ngày trong tuần (Thứ 2 - Chủ nhật)
+            DatesOfWeek = Enumerable.Range(0, 7)
+                .Select(i => StartOfWeek.AddDays(i))
+                .ToList();
+
+            // Lấy thời khóa biểu
+            ScheduleData = await _instructorService.GetWeeklyScheduleAsync(instructorId, StartOfWeek);
+
+            return Page();
         }
     }
 }

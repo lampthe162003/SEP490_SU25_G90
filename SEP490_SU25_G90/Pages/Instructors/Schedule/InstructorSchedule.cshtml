@@ -1,49 +1,67 @@
-﻿@page
-@model SEP490_SU25_G90.Pages.Instructors.Schedule.InstructorScheduleModel
+﻿@page "/Instructor/Schedule"
+@model SEP490_SU25_G90.Pages.Instructors.InstructorScheduleModel
+@using SEP490_SU25_G90.vn.edu.fpt.MappingObjects
 
 @{
-    ViewData["Title"] = "InstructorSchedule";
+    ViewData["Title"] = "Thời khóa biểu giảng viên";
     Layout = "~/Pages/Shared/_InstructorLayout.cshtml";
+    var weekRange = $"Tuần ({Model.StartOfWeek:dd/MM} - {Model.EndOfWeek:dd/MM})";
+    var weekdays = new[] { "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật" };
 }
 
-<h1>InstructorSchedule</h1>
+<h2 class="mb-4">@ViewData["Title"]</h2>
+<h5 class="mb-4 text-muted">@weekRange</h5>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
+<table class="table table-bordered text-center">
+    <thead class="table-primary">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ClassSchedule[0].ScheduleDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ClassSchedule[0].Class)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ClassSchedule[0].Slot)
-            </th>
-            <th></th>
+            <th style="width: 100px">Slot</th>
+            @for (int i = 0; i < Model.DatesOfWeek.Count; i++)
+            {
+                <th>@weekdays[i]<br /><span class="text-muted">@Model.DatesOfWeek[i].ToString("dd/MM")</span></th>
+            }
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.ClassSchedule) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ScheduleDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Class.ClassId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Slot.SlotId)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.ScheduleId">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.ScheduleId">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.ScheduleId">Delete</a>
-            </td>
-        </tr>
-}
+        @for (int slot = 0; slot < 4; slot++)
+        {
+            string timeRange = slot switch
+            {
+                0 => "07:30 - 09:00",
+                1 => "09:15 - 10:45",
+                2 => "14:00 - 15:30",
+                3 => "15:45 - 17:15",
+                _ => ""
+            };
+            <tr>
+                <td>
+                    <b>Slot @slot</b><br />
+                    <span class="text-muted">@timeRange</span>
+                </td>
+                @for (int day = 0; day < 7; day++)
+                {
+                    var date = Model.DatesOfWeek[day];
+                    var schedule = Model.ScheduleData.FirstOrDefault(x => x.ScheduleDate == date && x.SlotId == slot);
+                    <td>
+                        @if (schedule != null)
+                        {
+                            <div><b>@schedule.ClassName</b></div>
+                        }
+                        else
+                        {
+                            <span>-</span>
+                        }
+                    </td>
+                }
+            </tr>
+        }
     </tbody>
 </table>
+
+@section Styles {
+    <style>
+        table th, table td {
+            vertical-align: middle;
+        }
+    </style>
+}
