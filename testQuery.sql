@@ -229,7 +229,7 @@ CREATE TABLE ClassSchedules
     FOREIGN KEY (slot_id) REFERENCES ScheduleSlots(slot_id)
 );
 
-CREATE TABLE Cars 
+CREATE TABLE Cars
 (
     car_id INT IDENTITY PRIMARY KEY,
     license_plate NVARCHAR(13),
