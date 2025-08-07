@@ -6,13 +6,14 @@ using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.Class;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Services.ClassService;
+using System.Security.Claims;
 
-namespace SEP490_SU25_G90.Pages.Admins.Classes
+namespace SEP490_SU25_G90.Pages.Instructors.Classes
 {
     /// <summary>
-    /// Page model cho màn hình danh sách lớp học (Admin)
+    /// Page model cho màn hình danh sách lớp học (instructor)
     /// </summary>
-    //[Authorize(Roles = "admin")]
+    //[Authorize(Roles = "instructor")]
     public class ListClassesModel : PageModel
     {
         private readonly IClassService _classService;
@@ -58,8 +59,31 @@ namespace SEP490_SU25_G90.Pages.Admins.Classes
         {
             try
             {
+                // Get instructor ID from JWT claims
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                //var userIdClaim = "7"; // --> Fix cứng tạm khi chưa login đc
+                if (string.IsNullOrEmpty(userIdClaim))
+                {
+                    ModelState.AddModelError("", "Không tìm thấy thông tin giảng viên.");
+                    Classes = new Pagination<ClassListResponse>();
+                    await LoadDropdownDataAsync();
+                    return;
+                }
+
+                // Parse instructor ID
+                if (!int.TryParse(userIdClaim, out int instructorId))
+                {
+                    ModelState.AddModelError("", "Thông tin giảng viên không hợp lệ.");
+                    Classes = new Pagination<ClassListResponse>();
+                    await LoadDropdownDataAsync();
+                    return;
+                }
+
                 // Validate search parameters
                 ValidateSearchRequest();
+
+                // Set instructor ID in search request to filter only this instructor's classes
+                SearchRequest.InstructorId = instructorId;
 
                 // Load danh sách lớp học
                 Classes = await _classService.GetClassesAsync(SearchRequest);
