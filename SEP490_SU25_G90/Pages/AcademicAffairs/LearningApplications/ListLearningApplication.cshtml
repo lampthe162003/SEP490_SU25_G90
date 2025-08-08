@@ -1,9 +1,9 @@
-﻿@page "/Staff/LearningApplications/List"
-@model SEP490_SU25_G90.Pages.Staff.LearningApplications.ListLearningApplicationsModel
+﻿@page "/AcademicAffairs/LearningApplications/List"
+@model SEP490_SU25_G90.Pages.AcademicAffairs.LearningApplications.ListLearningApplicationsModel
 
 @{
     ViewData["Title"] = "Danh sách hồ sơ học";
-    Layout = "~/Pages/Shared/_StaffLayout.cshtml";
+    Layout = "~/Pages/Shared/_AcademicAffairsLayout.cshtml";
     var stt = (Model.PageNumber - 1) * Model.PageSize + 1;
 }
 
