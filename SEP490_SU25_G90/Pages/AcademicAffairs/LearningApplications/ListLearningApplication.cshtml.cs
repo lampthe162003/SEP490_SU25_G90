@@ -6,7 +6,7 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SEP490_SU25_G90.Pages.Staff.LearningApplications
+namespace SEP490_SU25_G90.Pages.AcademicAffairs.LearningApplications
 {
     [Authorize(Roles = "staff")]
     public class ListLearningApplicationsModel : PageModel
