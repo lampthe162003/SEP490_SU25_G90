@@ -8,9 +8,9 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
 using System.Threading.Tasks;
 
-namespace SEP490_SU25_G90.Pages.Staff.LearningApplications
+namespace SEP490_SU25_G90.Pages.AcademicAffairs.LearningApplications
 {
-    [Authorize(Roles = "staff")]
+    [Authorize(Roles = "academicaffairs")]
     public class CreateLearingApplicationModel : PageModel
     {
         private readonly Sep490Su25G90DbContext _context;
