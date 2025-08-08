@@ -129,16 +129,23 @@ CREATE TABLE LearningApplications
     FOREIGN KEY (licence_type_id) REFERENCES LicenceTypes(licence_type_id)
 );
 
+CREATE TABLE Courses (
+    course_id INT IDENTITY PRIMARY KEY,
+    course_name NVARCHAR(100),
+    [start_date] DATE,
+    end_date DATE,
+    licence_type_id TINYINT,
+    FOREIGN KEY (licence_type_id) REFERENCES LicenceTypes(licence_type_id)
+)
+
 CREATE TABLE Classes
 (
     class_id INT IDENTITY PRIMARY KEY,
     instructor_id INT,
-    licence_type_id TINYINT,
     class_name NVARCHAR(30),
-    [start_date] DATE,
-    end_date DATE,
+    course_id INT,
     FOREIGN KEY (instructor_id) REFERENCES Users(user_id),
-    FOREIGN KEY (licence_type_id) REFERENCES LicenceTypes(licence_type_id),
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id)
 );
 
 CREATE TABLE ClassMembers
@@ -150,6 +157,20 @@ CREATE TABLE ClassMembers
     FOREIGN KEY (learner_id) REFERENCES LearningApplications(learning_id)
 );
 
+CREATE TABLE Attendance
+(
+    attendance_id INT IDENTITY PRIMARY KEY,
+    learner_id INT NOT NULL,
+    class_id INT NOT NULL,
+    session_date DATE NOT NULL,
+    attendance_status BIT, --0: absent; 1: present
+    practical_duration_hours FLOAT, -- total hours practiced
+    practical_distance FLOAT, -- kilometers
+    note NVARCHAR(255),
+    FOREIGN KEY (learner_id) REFERENCES LearningApplications(learning_id),
+    FOREIGN KEY (class_id) REFERENCES Classes(class_id),
+    UNIQUE (learner_id, class_id, session_date) -- avoid duplicates
+);
 
 CREATE TABLE InstructorSpecializations
 (
