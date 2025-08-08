@@ -5,7 +5,7 @@ using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication;
 using SEP490_SU25_G90.vn.edu.fpt.Services.TestScoreStandardService;
 
-namespace SEP490_SU25_G90.Pages.Staff.TestApplication
+namespace SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication
 {
     public class TestApplicationDetailModel : PageModel
     {

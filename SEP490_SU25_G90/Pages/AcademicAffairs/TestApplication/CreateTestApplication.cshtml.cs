@@ -8,9 +8,9 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication;
 using SEP490_SU25_G90.vn.edu.fpt.Services.TestScoreStandardService;
 using System.Text.Json;
 
-namespace SEP490_SU25_G90.Pages.Staff.TestApplication
+namespace SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication
 {
-    [Authorize(Roles = "staff, instructor")]
+    [Authorize(Roles = "academicaffairs, instructor")]
     public class CreateTestApplicationModel : PageModel
     {
         [BindProperty]
