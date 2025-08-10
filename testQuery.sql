@@ -124,6 +124,8 @@ CREATE TABLE LearningApplications
     practical_score INT,
     learning_status TINYINT,
     -- 1 = dang hoc, 2 = bao luu, 3 = hoc lai, 4 = ho�n th�nh
+    practical_duration_hours FLOAT, -- total hours practiced
+    practical_distance FLOAT, -- kilometers
     test_eligibility BIT,
     FOREIGN KEY (learner_id) REFERENCES Users(user_id),
     FOREIGN KEY (licence_type_id) REFERENCES LicenceTypes(licence_type_id)
