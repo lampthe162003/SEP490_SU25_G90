@@ -37,6 +37,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         public int? SimulationMaxScore { get; set; }
         public int? ObstacleMaxScore { get; set; }
         public int? PracticalMaxScore { get; set; }
-        public string? Note { get; set; }
+        public double TotalPracticalHours { get; set; }
+        public double TotalPracticalKm { get; set; }
+
+
     }
 }

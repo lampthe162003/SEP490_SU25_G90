@@ -145,7 +145,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.LearningApplications
                 ObstacleScore = 0,
                 PracticalScore = 0,
                 LearningStatus = 0,
-                TestEligibility = false
+                TestEligibility = false              
             };
 
             await _learningApplicationService.AddAsync(entity);

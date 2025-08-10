@@ -162,6 +162,18 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 .Where(s => s.LicenceTypeId == la.LicenceTypeId)
                 .ToListAsync();
 
+            var totals = await _context.Attendances
+                .Where(a => a.LearnerId == la.LearnerId && a.AttendanceStatus == true) // chỉ lấy buổi có mặt
+                .GroupBy(a => a.LearnerId)
+                .Select(g => new
+                {
+                    TotalHours = g.Sum(x => x.PracticalDurationHours) ?? 0,
+                    TotalKm = g.Sum(x => x.PracticalDistance) ?? 0
+                })
+                .FirstOrDefaultAsync();
+
+            double totalHours = totals?.TotalHours ?? 0;
+            double totalKm = totals?.TotalKm ?? 0;
             int? theoryMaxScore = standards.FirstOrDefault(s => s.PartName == "Theory")?.MaxScore;
             int? simulationMaxScore = standards.FirstOrDefault(s => s.PartName == "Simulation")?.MaxScore;
             int? obstacleMaxScore = standards.FirstOrDefault(s => s.PartName == "Obstacle")?.MaxScore;
@@ -218,7 +230,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 InstructorFullName = instructor != null
                     ? string.Join(" ", new[] { instructor.FirstName, instructor.MiddleName, instructor.LastName }
                         .Where(x => !string.IsNullOrWhiteSpace(x)))
-                    : ""
+                    : "",
+                TotalPracticalHours = totalHours,
+                TotalPracticalKm = totalKm
             };
         }
 
