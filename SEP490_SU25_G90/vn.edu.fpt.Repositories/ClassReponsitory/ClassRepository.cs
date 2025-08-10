@@ -23,7 +23,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
         {
             var query = _context.Classes
                 .Include(c => c.Instructor)
-                .Include(c => c.LicenceType)
                 .Include(c => c.ClassMembers)
                 .AsQueryable();
 
@@ -34,30 +33,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
                     c.ClassName.ToLower().Contains(searchRequest.ClassName.ToLower()));
             }
 
-            // Tìm kiếm theo loại bằng
-            if (searchRequest.LicenceTypeId.HasValue)
-            {
-                query = query.Where(c => c.LicenceTypeId == searchRequest.LicenceTypeId.Value);
-            }
-
             // Tìm kiếm theo InstructorId
             if (searchRequest.InstructorId.HasValue)
             {
                 query = query.Where(c => c.InstructorId == searchRequest.InstructorId.Value);
-            }
-
-            // Tìm kiếm theo ngày bắt đầu
-            if (searchRequest.StartDate.HasValue)
-            {
-                var startDateOnly = DateOnly.FromDateTime(searchRequest.StartDate.Value);
-                query = query.Where(c => c.StartDate >= startDateOnly);
-            }
-
-            // Tìm kiếm theo ngày kết thúc
-            if (searchRequest.EndDate.HasValue)
-            {
-                var endDateOnly = DateOnly.FromDateTime(searchRequest.EndDate.Value);
-                query = query.Where(c => c.EndDate <= endDateOnly);
             }
 
             var classes = await query
@@ -70,10 +49,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
                     InstructorName = c.Instructor != null ? 
                         $"{c.Instructor.FirstName} {c.Instructor.MiddleName} {c.Instructor.LastName}".Trim() : 
                         "Chưa phân công",
-                    LicenceCode = c.LicenceType != null ? c.LicenceType.LicenceCode : "",
-                    StartDate = c.StartDate.HasValue ? c.StartDate.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
-                    EndDate = c.EndDate.HasValue ? c.EndDate.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
-                    Status = GetClassStatus(c.StartDate, c.EndDate),
                     TotalStudents = c.ClassMembers.Count
                 })
                 .ToListAsync();
@@ -101,37 +76,20 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
                     c.ClassName.ToLower().Contains(searchRequest.ClassName.ToLower()));
             }
 
-            if (searchRequest.LicenceTypeId.HasValue)
-            {
-                query = query.Where(c => c.LicenceTypeId == searchRequest.LicenceTypeId.Value);
-            }
-
             if (searchRequest.InstructorId.HasValue)
             {
                 query = query.Where(c => c.InstructorId == searchRequest.InstructorId.Value);
             }
 
-            if (searchRequest.StartDate.HasValue)
-            {
-                var startDateOnly = DateOnly.FromDateTime(searchRequest.StartDate.Value);
-                query = query.Where(c => c.StartDate >= startDateOnly);
-            }
-
-            if (searchRequest.EndDate.HasValue)
-            {
-                var endDateOnly = DateOnly.FromDateTime(searchRequest.EndDate.Value);
-                query = query.Where(c => c.EndDate <= endDateOnly);
-            }
-
             var totalClasses = await query.CountAsync();
 
-            // Nếu có lọc theo trạng thái, cần đếm sau khi áp dụng logic trạng thái
-            if (!string.IsNullOrEmpty(searchRequest.Status))
-            {
-                var allClasses = await query.Select(c => new { c.StartDate, c.EndDate }).ToListAsync();
-                var filteredCount = allClasses.Count(c => GetClassStatus(c.StartDate, c.EndDate) == searchRequest.Status);
-                return filteredCount;
-            }
+            //// Nếu có lọc theo trạng thái, cần đếm sau khi áp dụng logic trạng thái
+            //if (!string.IsNullOrEmpty(searchRequest.Status))
+            //{
+            //    var allClasses = await query.Select(c => new { c.StartDate, c.EndDate }).ToListAsync();
+            //    var filteredCount = allClasses.Count(c => GetClassStatus(c.StartDate, c.EndDate) == searchRequest.Status);
+            //    return filteredCount;
+            //}
 
             return totalClasses;
         }
@@ -151,7 +109,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
         {
             var classDetail = await _context.Classes
                 .Include(c => c.Instructor)
-                .Include(c => c.LicenceType)
                 .Include(c => c.ClassMembers)
                     .ThenInclude(cm => cm.Learner)
                         .ThenInclude(la => la != null ? la.Learner : null)
@@ -170,10 +127,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
                     "Chưa phân công",
                 InstructorPhone = classDetail.Instructor?.Phone,
                 InstructorEmail = classDetail.Instructor?.Email,
-                LicenceCode = classDetail.LicenceType?.LicenceCode ?? "",
-                StartDate = classDetail.StartDate?.ToDateTime(TimeOnly.MinValue),
-                EndDate = classDetail.EndDate?.ToDateTime(TimeOnly.MinValue),
-                Status = GetClassStatus(classDetail.StartDate, classDetail.EndDate),
+                //Status = GetClassStatus(classDetail.StartDate, classDetail.EndDate),
                 TotalStudents = classDetail.ClassMembers.Count,
                 Members = classDetail.ClassMembers
                     .Where(cm => cm.Learner?.Learner != null)
