@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SEP490_SU25_G90.Pages.Admins.LearningApplications
 {
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "academic affairs")]
     public class ListLearningApplicationsModel : PageModel
     {
         private readonly ILearningApplicationService _learningApplicationService;
