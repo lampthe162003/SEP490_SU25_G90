@@ -126,10 +126,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.User
                     .Include(cm => cm.Class)
                         .ThenInclude(c => c.Instructor)
                     .Include(cm => cm.Class)
-                        .ThenInclude(c => c.LicenceType)
                     .Where(cm => cm.LearnerId == id &&
-                                cm.Class != null &&
-                                cm.Class.LicenceTypeId == la.LicenceTypeId)
+                                cm.Class != null)
                     .FirstOrDefaultAsync();
 
                 var applicationInfo = new LearningApplicationInfo

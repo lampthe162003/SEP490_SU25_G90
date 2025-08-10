@@ -7,15 +7,15 @@ public partial class Course
 {
     public int CourseId { get; set; }
 
-    public string? Title { get; set; }
+    public string? CourseName { get; set; }
 
-    public string? Description { get; set; }
+    public DateOnly? StartDate { get; set; }
+
+    public DateOnly? EndDate { get; set; }
 
     public byte? LicenceTypeId { get; set; }
 
-    public bool? ActiveStatus { get; set; }
+    public virtual ICollection<Class> Classes { get; set; } = new List<Class>();
 
     public virtual LicenceType? LicenceType { get; set; }
-
-    public virtual ICollection<Video> Videos { get; set; } = new List<Video>();
 }

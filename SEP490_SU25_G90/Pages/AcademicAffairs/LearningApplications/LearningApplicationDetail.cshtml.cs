@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
 
-namespace SEP490_SU25_G90.Pages.Staff.LearningApplications
+namespace SEP490_SU25_G90.Pages.AcademicAffairs.LearningApplications
 {
-    [Authorize(Roles = "staff")]
+    [Authorize(Roles = "academicaffairs")]
     public class LearningApplicationDetailModel : PageModel
     {
         private readonly ILearningApplicationService _learningApplicationService;

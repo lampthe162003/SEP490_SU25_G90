@@ -2,7 +2,7 @@ USE SEP490_SU25_G90_DB;
 GO
 
 INSERT INTO Roles VALUES 
-(1, 'learner'), (2, 'admin'), (3, 'instructor'), (4, 'staff');
+(1, 'learner'), (2, 'human resources'), (3, 'instructor'), (4, 'academic affairs');
 
 INSERT INTO LicenceTypes VALUES 
 (1, 'B1'), (2, 'B2'), (3, 'C'), (4, 'D'), (5, 'E');
