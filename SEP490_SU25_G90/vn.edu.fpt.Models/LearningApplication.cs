@@ -23,6 +23,10 @@ public partial class LearningApplication
 
     public byte? LearningStatus { get; set; }
 
+    public double? PracticalDurationHours { get; set; }
+
+    public double? PracticalDistance { get; set; }
+
     public bool? TestEligibility { get; set; }
 
     public virtual ICollection<Attendance> Attendances { get; set; } = new List<Attendance>();
