@@ -359,15 +359,18 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
 
             var schedule = await _context.ClassSchedules
                 .Include(cs => cs.Class)
+                .Include(cs => cs.Slot) // Lấy thời gian từ ScheduleSlots
                 .Where(cs => cs.Class.InstructorId == instructorId &&
                              cs.ScheduleDate.HasValue &&
                              cs.ScheduleDate.Value >= startOfWeek &&
                              cs.ScheduleDate.Value <= endOfWeek)
                 .Select(cs => new InstructorScheduleResponse
                 {
-                    ScheduleDate = cs.ScheduleDate!.Value,
+                    ScheduleDate = cs.ScheduleDate.Value,
                     SlotId = cs.SlotId ?? 0,
-                    ClassName = cs.Class.ClassName
+                    ClassName = cs.Class.ClassName,
+                    StartTime = cs.Slot.StartTime.HasValue ? cs.Slot.StartTime.Value.ToString(@"hh\:mm") : string.Empty,
+                    EndTime = cs.Slot.EndTime.HasValue ? cs.Slot.EndTime.Value.ToString(@"hh\:mm") : string.Empty
                 })
                 .ToListAsync();
 
