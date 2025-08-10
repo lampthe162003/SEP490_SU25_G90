@@ -72,6 +72,10 @@ namespace SEP490_SU25_G90.Pages.Commons
                 {
                     return Redirect("Admin/Dashboard");
                 }
+                else if (role.Equals("staff", StringComparison.OrdinalIgnoreCase))
+                {
+                    return Redirect("/Staff/LearningApplications/List");
+                }
                 else if (role.Equals("instructor", StringComparison.OrdinalIgnoreCase))
                 {
                     return Redirect("Instructor/LearningMaterial/List");
