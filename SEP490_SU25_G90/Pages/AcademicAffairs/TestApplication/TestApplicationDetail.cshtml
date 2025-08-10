@@ -1,8 +1,8 @@
-﻿@page "/Staff/TestApplication/{id:int}"
-@model SEP490_SU25_G90.Pages.Staff.TestApplication.TestApplicationDetailModel
+﻿@page "/AcademicAffairs/TestApplication/{id:int}"
+@model SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication.TestApplicationDetailModel
 
 @{
-    Layout = "_StaffLayout";
+    Layout = "_AcademicAffairsLayout";
     ViewData["Title"] = "Chi tiết hồ sơ thi";
 }
 
@@ -53,7 +53,7 @@
                 }
 
             </h5>
-            <a class="btn btn-primary" href="/Staff/TestApplication/@Model.Id/Update">Cập nhật</a>
+            <a class="btn btn-primary" href="/AcademicAffairs/TestApplication/@Model.Id/Update">Cập nhật</a>
         </div>
 
         <table class="table table-striped">
@@ -147,7 +147,7 @@
         </table>
 
         <div class="text-center">
-            <a class="btn btn-secondary" href="/Staff/TestApplication">Quay lại</a>
+            <a class="btn btn-secondary" href="/AcademicAffairs/TestApplication">Quay lại</a>
         </div>
     </div>
 </div>

@@ -1,8 +1,8 @@
-﻿@page "/Staff/TestApplication/{id:int}/Update"
-@model SEP490_SU25_G90.Pages.Staff.TestApplication.UpdateTestApplication
+﻿@page "/AcademicAffairs/TestApplication/{id:int}/Update"
+@model SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication.UpdateTestApplication
 
 @{
-    Layout = "_StaffLayout";
+    Layout = "_AcademicAffairsLayout";
     ViewData["Title"] = "Cập nhật hồ sơ thi";
 }
 
@@ -105,7 +105,7 @@
             </div>
 
             <div class="text-center mt-4">
-                <a href="/Staff/TestApplication/@Model.Id" class="btn btn-secondary ml-2">Hủy</a>
+                <a href="/AcademicAffairs/TestApplication/@Model.Id" class="btn btn-secondary ml-2">Hủy</a>
                 <button type="submit" class="btn btn-primary">Cập Nhật</button>
             </div>
         </form>

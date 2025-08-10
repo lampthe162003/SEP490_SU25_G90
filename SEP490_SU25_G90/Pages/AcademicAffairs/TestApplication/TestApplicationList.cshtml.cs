@@ -10,9 +10,9 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SEP490_SU25_G90.Pages.Staff.TestApplication
+namespace SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication
 {
-    [Authorize(Roles = "staff, instructor")]
+    [Authorize(Roles = "academicaffairs, instructor")]
     public class TestApplicationListModel : PageModel
     {
         private readonly ITestApplicationService _testApplicationService;

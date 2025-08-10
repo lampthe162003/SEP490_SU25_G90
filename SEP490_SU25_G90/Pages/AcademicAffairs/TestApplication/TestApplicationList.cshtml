@@ -1,15 +1,15 @@
-﻿@page "/Staff/TestApplication"
-@model SEP490_SU25_G90.Pages.Staff.TestApplication.TestApplicationListModel
+﻿@page "/AcademicAffairs/TestApplication"
+@model SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication.TestApplicationListModel
 
 @{
-    Layout = "_StaffLayout";
+    Layout = "_AcademicAffairsLayout";
     ViewData["Title"] = "Danh sách hồ sơ thi";
 }
 
 <div class="d-flex justify-content-between mb-2 align-item-center">
     <h1 class="mb-4 text-primary fw-bold">Danh sách hồ sơ thi</h1>
     <div class="d-flex align-items-center">
-        <a href="/Staff/TestApplication/New" class="btn btn-primary p-2 fw-bold fs-6">Tạo đăng kí thi</a>
+        <a href="/AcademicAffairs/TestApplication/New" class="btn btn-primary p-2 fw-bold fs-6">Tạo đăng kí thi</a>
     </div>
 </div>
      <form id="searchForm">
@@ -86,7 +86,7 @@
                             <span class="badge @badgeClass">@statusText</span>
                         </td>
                         <td>
-                            <a href="/Staff/TestApplication/@item.TestId" type="button" class="btn btn-outline-primary">
+                            <a href="/AcademicAffairs/TestApplication/@item.TestId" type="button" class="btn btn-outline-primary">
                                 <i class="fa fa-pen me-1"></i>
                             </a>
                         </td>
@@ -103,16 +103,16 @@
         <nav aria-label="...">
             <ul class="pagination">
                     <li class="page-item @(Model.PageNumber > 1 && Model.PageNumber <= Model.TestApplications.TotalPage ? "" : "disabled")">
-                        <a class="page-link"  href="/Staff/TestApplication?PageNumber=@(Model.PageNumber-1)&Search=@Model.Search&LicenseTypeId=@Model.LicenseTypeId&Status=@Model.Status">Prev</a>
+                        <a class="page-link"  href="/AcademicAffairs/TestApplication?PageNumber=@(Model.PageNumber-1)&Search=@Model.Search&LicenseTypeId=@Model.LicenseTypeId&Status=@Model.Status">Prev</a>
                     </li>
                 @for(int i = 1; i<= Model.TestApplications.TotalPage; i++)
                 {
                     <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                        <a class="page-link"  href="/Staff/TestApplication?PageNumber=@i&Search=@Model.Search&LicenseTypeId=@Model.LicenseTypeId&Status=@Model.Status">@i<span class="sr-only">(current)</span></a>
+                        <a class="page-link"  href="/AcademicAffairs/TestApplication?PageNumber=@i&Search=@Model.Search&LicenseTypeId=@Model.LicenseTypeId&Status=@Model.Status">@i<span class="sr-only">(current)</span></a>
                     </li>
                 }
                     <li class="page-item @(Model.PageNumber >= 1 && Model.PageNumber < Model.TestApplications.TotalPage ? "" : "disabled")">
-                        <a class="page-link"  href="/Staff/TestApplication?PageNumber=@(Model.PageNumber+1)&Search=@Model.Search&LicenseTypeId=@Model.LicenseTypeId&Status=@Model.Status">Next</a>
+                        <a class="page-link"  href="/AcademicAffairs/TestApplication?PageNumber=@(Model.PageNumber+1)&Search=@Model.Search&LicenseTypeId=@Model.LicenseTypeId&Status=@Model.Status">Next</a>
                     </li>
 
         </ul>
