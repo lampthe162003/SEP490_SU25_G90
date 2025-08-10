@@ -10,7 +10,7 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.TestScoreStandardService;
 
 namespace SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication
 {
-    [Authorize(Roles = "academicaffairs, instructor")]
+    [Authorize(Roles = "academic affairs, instructor")]
     public class UpdateTestApplication : PageModel
     {
         [BindProperty(SupportsGet = true)]

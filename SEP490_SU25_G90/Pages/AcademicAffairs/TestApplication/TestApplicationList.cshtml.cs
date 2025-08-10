@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication
 {
-    [Authorize(Roles = "academicaffairs, instructor")]
+    [Authorize(Roles = "academic affairs, instructor")]
     public class TestApplicationListModel : PageModel
     {
         private readonly ITestApplicationService _testApplicationService;

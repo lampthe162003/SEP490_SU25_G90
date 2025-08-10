@@ -10,7 +10,7 @@ using System.Text.Json;
 
 namespace SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication
 {
-    [Authorize(Roles = "academicaffairs, instructor")]
+    [Authorize(Roles = "academic affairs, instructor")]
     public class CreateTestApplicationModel : PageModel
     {
         [BindProperty]

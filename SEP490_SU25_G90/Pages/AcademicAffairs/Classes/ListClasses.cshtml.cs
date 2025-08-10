@@ -12,7 +12,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
     /// <summary>
     /// Page model cho màn hình danh sách lớp học (AcademicAffairs)
     /// </summary>
-    [Authorize(Roles = "academicaffairs")
+    [Authorize(Roles = "academic affairs")]
     public class ListClassesModel : PageModel
     {
         private readonly IClassService _classService;

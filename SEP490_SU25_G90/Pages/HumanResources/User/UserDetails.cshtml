@@ -1,0 +1,50 @@
+﻿@page "/HR/Users/Details"
+@model SEP490_SU25_G90.Pages.Admins.User.UserDetailsModel
+
+@{
+    ViewData["Title"] = "Thông tin người dùng";
+    Layout = "_AdminLayout";
+}
+
+<h1>UserDetails</h1>
+
+<div>
+    <h4>Thông tin người dùng</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.UserDetails.FullName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.UserDetails.FullName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.UserDetails.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.UserDetails.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.UserDetails.Dob)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.UserDetails.Dob)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.UserDetails.Gender)
+        </dt>
+        <dd class="col-sm-10">
+            @(Model.UserDetails.Gender == true ? "Nam" : "Nữ")
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.UserDetails.Phone)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.UserDetails.Phone)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" class="btn btn-primary" asp-route-id="@Model.UserDetails.UserId">Sửa</a> 
+    <a asp-page="./UserList" class="btn btn-secondary">Về danh sách</a>
+</div>

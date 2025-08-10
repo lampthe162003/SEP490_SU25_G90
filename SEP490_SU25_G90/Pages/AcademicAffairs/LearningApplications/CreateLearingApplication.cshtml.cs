@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SEP490_SU25_G90.Pages.AcademicAffairs.LearningApplications
 {
-    [Authorize(Roles = "academicaffairs")]
+    [Authorize(Roles = "academic affairs")]
     public class CreateLearingApplicationModel : PageModel
     {
         private readonly Sep490Su25G90DbContext _context;
