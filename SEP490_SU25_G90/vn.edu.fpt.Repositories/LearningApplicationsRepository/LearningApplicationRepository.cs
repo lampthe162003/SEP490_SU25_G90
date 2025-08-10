@@ -59,7 +59,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 .Where(s => licenceTypeIds.Contains(s.LicenceTypeId))
                 .ToListAsync();
 
-            // 🔎 Lấy giảng viên cho từng learner
+            // Lấy giảng viên cho từng learner
             var instructorMap = await (
                 from la in _context.LearningApplications
                 join cm in _context.ClassMembers on la.LearnerId equals cm.LearnerId
@@ -68,7 +68,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 select new { la.LearningId, Instructor = u }
             ).ToDictionaryAsync(x => x.LearningId, x => x.Instructor);
 
-            // ✅ Tạo danh sách kết quả
+            // Tạo danh sách kết quả
             var results = learnerGroups.Select(group =>
             {
                 // Thay vì chỉ lấy bản ghi mới nhất theo thời gian
@@ -76,7 +76,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                     .Where(x => x.LearningStatus > 0) // Ưu tiên bản ghi có trạng thái hợp lệ
                     .OrderByDescending(la => la.SubmittedAt ?? DateTime.MinValue)
                     .FirstOrDefault()
-                    ?? group.OrderByDescending(la => la.SubmittedAt ?? DateTime.MinValue).First(); // fallback
+                    ?? group.OrderByDescending(la => la.SubmittedAt ?? DateTime.MinValue).First(); 
 
 
                 var std = standards.Where(s => s.LicenceTypeId == mostRecent.LicenceTypeId).ToList();
@@ -455,7 +455,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                     _context.ClassMembers.Remove(classMember);
                 }
             }
-            Console.WriteLine($"⚠️ [DEBUG] Cập nhật trạng thái: {learningId} -> {newStatus}");
+            Console.WriteLine($" [DEBUG] Cập nhật trạng thái: {learningId} -> {newStatus}");
 
             await _context.SaveChangesAsync();
             return true;

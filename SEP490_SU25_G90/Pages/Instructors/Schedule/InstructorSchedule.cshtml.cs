@@ -3,17 +3,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
+using SEP490_SU25_G90.vn.edu.fpt.Services.ScheduleSlotService;
 
 namespace SEP490_SU25_G90.Pages.Instructors
 {
     [Authorize(Roles = "instructor")]
     public class InstructorScheduleModel : PageModel
     {
-        private readonly IInstructorService _instructorService;
+        private readonly IScheduleSlotService _scheduleslotService;
 
-        public InstructorScheduleModel(IInstructorService instructorService)
+        public InstructorScheduleModel(IScheduleSlotService scheduleslotService)
         {
-            _instructorService = instructorService;
+            _scheduleslotService = scheduleslotService;
         }
 
         [BindProperty(SupportsGet = true)]
@@ -26,6 +27,7 @@ namespace SEP490_SU25_G90.Pages.Instructors
         public List<InstructorScheduleResponse> ScheduleData { get; set; } = new();
         public DateOnly StartOfWeek { get; set; }
         public DateOnly EndOfWeek { get; set; }
+        public List<(int SlotId, string StartTime, string EndTime)> AllSlots { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -60,8 +62,12 @@ namespace SEP490_SU25_G90.Pages.Instructors
                 .Select(i => StartOfWeek.AddDays(i))
                 .ToList();
 
-            // Lấy lịch dạy của giảng viên
-            ScheduleData = await _instructorService.GetWeeklyScheduleAsync(instructorId, StartOfWeek);
+            // Lấy lịch dạy của giảng viên (có cả StartTime và EndTime từ ScheduleSlots)
+            var scheduleResult = await _scheduleslotService.GetWeeklyScheduleAsync(instructorId, StartOfWeek);
+
+            // Extract the Schedule part of the tuple
+            ScheduleData = scheduleResult.Schedule;
+            AllSlots = scheduleResult.AllSlots;
 
             return Page();
         }
