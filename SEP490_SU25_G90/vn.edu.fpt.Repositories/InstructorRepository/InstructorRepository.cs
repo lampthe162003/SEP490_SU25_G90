@@ -320,7 +320,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
 
             if (app == null) return null;
 
-            // Tìm các lớp học viên đang học (thông qua bảng ClassMembers)
+            // Tìm các lớp học viên đang học
             var learnerClasses = await _context.ClassMembers
                 .Include(cm => cm.Class)
                 .Where(cm => cm.LearnerId == app.LearnerId)
@@ -330,6 +330,17 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 })
                 .ToListAsync();
 
+            // Tính tổng giờ và km thực hành (chỉ buổi có mặt)
+            var totals = await _context.Attendances
+                .Where(a => a.LearnerId == app.LearnerId && a.AttendanceStatus == true)
+                .GroupBy(a => a.LearnerId)
+                .Select(g => new
+                {
+                    TotalHours = g.Sum(x => x.PracticalDurationHours) ?? 0,
+                    TotalKm = g.Sum(x => x.PracticalDistance) ?? 0
+                })
+                .FirstOrDefaultAsync();
+
             return new LearningApplicationsResponse
             {
                 LearningId = app.LearningId,
@@ -338,10 +349,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 app.Learner?.FirstName,
                 app.Learner?.MiddleName,
                 app.Learner?.LastName
-                    }.Where(s => !string.IsNullOrWhiteSpace(s))),
-                LearnerDob = app.Learner?.Dob != null
-                ? app.Learner.Dob.Value.ToDateTime(TimeOnly.MinValue)
-                : null,
+                }.Where(s => !string.IsNullOrWhiteSpace(s))),
+                LearnerDob = app.Learner?.Dob?.ToDateTime(TimeOnly.MinValue),
                 LearnerCccdNumber = app.Learner?.Cccd?.CccdNumber,
                 LicenceTypeId = app.LicenceTypeId,
                 LicenceTypeName = app.LicenceType?.LicenceCode,
@@ -349,11 +358,14 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 SimulationScore = app.SimulationScore,
                 ObstacleScore = app.ObstacleScore,
                 PracticalScore = app.PracticalScore,
-                LearnerClasses = learnerClasses
+                LearnerClasses = learnerClasses,
+                TotalPracticalHours = totals?.TotalHours ?? 0,
+                TotalPracticalKm = totals?.TotalKm ?? 0
             };
         }
 
-        
+
+
 
 
     }
