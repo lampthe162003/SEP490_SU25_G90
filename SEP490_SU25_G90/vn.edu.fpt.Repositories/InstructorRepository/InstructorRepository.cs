@@ -364,8 +364,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 .Select(s => new
                 {
                     SlotId = s.SlotId,
-                    StartTime = s.StartTime.HasValue ? s.StartTime.Value.ToString(@"hh\:mm") : string.Empty,
-                    EndTime = s.EndTime.HasValue ? s.EndTime.Value.ToString(@"hh\:mm") : string.Empty
+                    StartTime = s.StartTime.HasValue ? s.StartTime.Value.ToString(@"HH\:mm") : string.Empty,
+                    EndTime = s.EndTime.HasValue ? s.EndTime.Value.ToString(@"HH\:mm") : string.Empty
                 })
                 .ToListAsync();
 
@@ -383,10 +383,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                     SlotId = cs.SlotId ?? 0,
                     ClassName = cs.Class.ClassName,
                     StartTime = cs.Slot != null && cs.Slot.StartTime.HasValue
-                                ? cs.Slot.StartTime.Value.ToString(@"hh\:mm")
+                                ? cs.Slot.StartTime.Value.ToString(@"HH\:mm")
                                 : string.Empty,
                     EndTime = cs.Slot != null && cs.Slot.EndTime.HasValue
-                                ? cs.Slot.EndTime.Value.ToString(@"hh\:mm")
+                                ? cs.Slot.EndTime.Value.ToString(@"HH\:mm")
                                 : string.Empty
                 })
                 .ToListAsync();
