@@ -17,6 +17,9 @@
         <div class="menu-item"><a href="/AcademicAffairs/TestApplication"><i class="fas fa-clipboard-list"></i> <span>Quản lý hồ sơ thi</span></a></div>
         <div class="menu-item"><a href="/AcademicAffairs/LearningApplications/List"><i class="fas fa-clipboard-list"></i><span>Quản lý hồ sơ học</span></a></div>
         <div class="menu-item"><a href="/AcademicAffairs/LearningProfile/ManagerInstructor"><i class="fas fa-clipboard-list"></i><span>Quản lý lớp học</span></a></div>
+        <div class="menu-item @(path.Contains("/AcademicAffairs/News/ListNews") ? "active" : "")">
+            <a href="/AcademicAffairs/News/ListNews"><i class="fa-solid fa-envelope"></i><span>Tin tức</span></a>
+        </div>
         @RenderSection("Styles", required: false)
     </div>
 
