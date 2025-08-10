@@ -1,4 +1,6 @@
-﻿namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
+﻿using SEP490_SU25_G90.vn.edu.fpt.Models;
+
+namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
 {
     public class InstructorScheduleResponse
     {
@@ -7,6 +9,5 @@
         public string? ClassName { get; set; } = string.Empty;
         public string StartTime { get; set; } = string.Empty;
         public string EndTime { get; set; } = string.Empty;
-
     }
 }

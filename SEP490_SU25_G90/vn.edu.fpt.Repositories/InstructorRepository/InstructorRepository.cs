@@ -353,13 +353,26 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
             };
         }
 
-        public async Task<List<InstructorScheduleResponse>> GetWeeklyScheduleAsync(int instructorId, DateOnly startOfWeek)
+        public async Task<(List<InstructorScheduleResponse> Schedule, List<(int SlotId, string StartTime, string EndTime)> AllSlots)>
+            GetWeeklyScheduleAsync(int instructorId, DateOnly startOfWeek)
         {
             var endOfWeek = startOfWeek.AddDays(6);
 
+            // Lấy danh sách slot từ bảng ScheduleSlots
+            var slots = await _context.ScheduleSlots
+                .OrderBy(s => s.SlotId)
+                .Select(s => new
+                {
+                    SlotId = s.SlotId,
+                    StartTime = s.StartTime.HasValue ? s.StartTime.Value.ToString(@"hh\:mm") : string.Empty,
+                    EndTime = s.EndTime.HasValue ? s.EndTime.Value.ToString(@"hh\:mm") : string.Empty
+                })
+                .ToListAsync();
+
+            // Lấy lịch học trong tuần
             var schedule = await _context.ClassSchedules
                 .Include(cs => cs.Class)
-                .Include(cs => cs.Slot) // Lấy thời gian từ ScheduleSlots
+                .Include(cs => cs.Slot) // join bảng ScheduleSlots
                 .Where(cs => cs.Class.InstructorId == instructorId &&
                              cs.ScheduleDate.HasValue &&
                              cs.ScheduleDate.Value >= startOfWeek &&
@@ -369,13 +382,24 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                     ScheduleDate = cs.ScheduleDate.Value,
                     SlotId = cs.SlotId ?? 0,
                     ClassName = cs.Class.ClassName,
-                    StartTime = cs.Slot.StartTime.HasValue ? cs.Slot.StartTime.Value.ToString(@"hh\:mm") : string.Empty,
-                    EndTime = cs.Slot.EndTime.HasValue ? cs.Slot.EndTime.Value.ToString(@"hh\:mm") : string.Empty
+                    StartTime = cs.Slot != null && cs.Slot.StartTime.HasValue
+                                ? cs.Slot.StartTime.Value.ToString(@"hh\:mm")
+                                : string.Empty,
+                    EndTime = cs.Slot != null && cs.Slot.EndTime.HasValue
+                                ? cs.Slot.EndTime.Value.ToString(@"hh\:mm")
+                                : string.Empty
                 })
                 .ToListAsync();
 
-            return schedule;
+
+            // Convert slots sang dạng tuple để truyền ra view
+            var slotList = slots
+                .Select(s => (s.SlotId, s.StartTime, s.EndTime))
+                .ToList();
+
+            return (schedule, slotList);
         }
+
 
     }
 } 
