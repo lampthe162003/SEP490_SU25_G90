@@ -67,51 +67,54 @@
 
 <!-- Lịch -->
 <div class="table-wrapper">
-<table class="table table-bordered text-center">
-    <thead class="table-primary">
-        <tr>
-            <th style="width: 100px">Slot</th>
-            @for (int i = 0; i < Model.DatesOfWeek.Count; i++)
-            {
-                <th>@weekdays[i]<br /><span class="text-muted">@Model.DatesOfWeek[i].ToString("dd/MM")</span></th>
-            }
-        </tr>
-    </thead>
-    <tbody>
-        @for (int slot = 1; slot < 5; slot++)
-        {
-            string timeRange = slot switch
-            {
-                1 => "07:30 - 09:00",
-                2 => "09:15 - 10:45",
-                3 => "14:00 - 15:30",
-                4 => "15:45 - 17:15",
-                _ => ""
-            };
+    <table class="table table-bordered text-center">
+        <thead class="table-primary">
             <tr>
-                <td>
-                    <b>Slot @slot</b><br />
-                    <span class="text-muted">@timeRange</span>
-                </td>
-                @for (int day = 0; day < 7; day++)
+                <th style="width: 140px">Slot</th>
+                @for (int i = 0; i < Model.DatesOfWeek.Count; i++)
                 {
-                    var date = Model.DatesOfWeek[day];
-                    var schedule = Model.ScheduleData.FirstOrDefault(x => x.ScheduleDate == date && x.SlotId == slot);
-                    <td>
-                        @if (schedule != null)
-                        {
-                            <div><b>@schedule.ClassName</b></div>
-                        }
-                        else
-                        {
-                            <span>-</span>
-                        }
-                    </td>
+                    <th>@weekdays[i]<br /><span class="text-muted">@Model.DatesOfWeek[i].ToString("dd/MM")</span></th>
                 }
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @for (int slot = 1; slot < 5; slot++)
+            {
+                <tr>
+                    <td>
+                        <b>Slot @slot</b><br />
+                        @{
+                            var slotInfo = Model.AllSlots.FirstOrDefault(s => s.SlotId == slot);
+                            if (!string.IsNullOrEmpty(slotInfo.StartTime))
+                            {
+                                <span class="text-muted">@slotInfo.StartTime - @slotInfo.EndTime</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">--:-- - --:--</span>
+                            }
+                        }
+                    </td>
+                    @for (int day = 0; day < 7; day++)
+                    {
+                        var date = Model.DatesOfWeek[day];
+                        var schedule = Model.ScheduleData.FirstOrDefault(x => x.ScheduleDate == date && x.SlotId == slot);
+                        <td>
+                            @if (schedule != null)
+                            {
+                                <div><b>@schedule.ClassName</b></div>
+                            }
+                            else
+                            {
+                                <span>-</span>
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+
+        </tbody>
+    </table>
 </div>
 
 @section Styles {
@@ -121,10 +124,9 @@
             text-align: center;
         }
 
-        /* Dropdown chỉnh sửa giao diện */
         select.form-select {
-            padding-right: 2rem; /* chừa chỗ cho mũi tên */
-            appearance: none; /* ẩn mũi tên mặc định (Chrome, Edge) */
+            padding-right: 2rem;
+            appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23333'/%3E%3C/svg%3E");
@@ -133,13 +135,11 @@
             background-size: 10px 6px;
         }
 
-        /* Đặt kích thước tối thiểu cho dropdown */
         select.form-select {
             min-width: 140px;
             max-width: 200px;
         }
 
-        /* Padding cho header + slot */
         th {
             padding: 12px;
             font-weight: 600;
@@ -149,14 +149,12 @@
             padding: 8px;
         }
 
-            /* Slot thời gian */
             td span.text-muted {
                 display: block;
                 font-size: 0.85rem;
                 color: #666;
             }
 
-        /* Table */
         .table th,
         .table td {
             border: 1px solid #dee2e6;
@@ -166,16 +164,12 @@
             background-color: #dbeeff;
         }
 
-        /* Hiệu ứng hover */
         .table tbody tr:hover {
             background-color: #f8f9fa;
         }
 
-        /* Responsive hạn chế (có thể dùng horizontal scroll nếu bảng quá rộng) */
-        .table-responsive {
+        .table-wrapper {
             overflow-x: auto;
         }
     </style>
 }
-
-

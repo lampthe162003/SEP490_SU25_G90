@@ -1,4 +1,5 @@
-﻿using SEP490_SU25_G90.vn.edu.fpt.Models;
+﻿using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
+using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.ScheduleSlotRepository;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Services.ScheduleSlotService
@@ -20,6 +21,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.ScheduleSlotService
         public async Task<ScheduleSlot> GetSlotById(int slotId)
         {
             return await _scheduleSlotRepository.GetSlotById(slotId);
+        }
+
+        public async Task<(List<InstructorScheduleResponse> Schedule, List<(int SlotId, string StartTime, string EndTime)> AllSlots)> 
+            GetWeeklyScheduleAsync(int instructorId, DateOnly startOfWeek)
+        {
+            return await _scheduleSlotRepository.GetWeeklyScheduleAsync(instructorId, startOfWeek);
         }
     }
 }
