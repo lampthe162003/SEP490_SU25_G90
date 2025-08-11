@@ -268,18 +268,18 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
         }
 
 
-
-
         public async Task<List<LearningApplicationsResponse>> GetLearningApplicationsByInstructorAsync(int instructorId)
         {
-            var learnerIds = await _context.ClassMembers
+            // Lấy danh sách LearningId từ các lớp mà giảng viên này dạy
+            var learningIds = await _context.ClassMembers
                 .Where(cm => cm.Class.InstructorId == instructorId)
-                .Select(cm => cm.LearnerId)
+                .Select(cm => cm.LearnerId) // Ở đây là LearningId
                 .Distinct()
                 .ToListAsync();
 
+            // Lấy các hồ sơ học tương ứng
             var applications = await _context.LearningApplications
-                .Where(app => learnerIds.Contains(app.LearnerId))
+                .Where(app => learningIds.Contains(app.LearningId)) // So sánh với LearningId
                 .Include(app => app.Learner).ThenInclude(l => l.Cccd)
                 .Include(app => app.Learner).ThenInclude(l => l.HealthCertificate)
                 .Include(app => app.LicenceType)
@@ -289,7 +289,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
             {
                 LearningId = app.LearningId,
                 LearnerId = app.LearnerId,
-                LearnerFullName = app.Learner != null ? string.Join(" ", new[] { app.Learner.FirstName, app.Learner.MiddleName, app.Learner.LastName }.Where(n => !string.IsNullOrWhiteSpace(n))) : "",
+                LearnerFullName = app.Learner != null
+                    ? string.Join(" ", new[] { app.Learner.FirstName, app.Learner.MiddleName, app.Learner.LastName }
+                        .Where(n => !string.IsNullOrWhiteSpace(n)))
+                    : "",
                 LearnerCccdNumber = app.Learner?.Cccd?.CccdNumber,
                 LearnerEmail = app.Learner?.Email,
                 LicenceTypeId = app.LicenceTypeId,
@@ -311,6 +314,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
             }).ToList();
         }
 
+
+
+
+
         public async Task<LearningApplicationsResponse?> GetLearningApplicationDetailAsync(int learningId)
         {
             var app = await _context.LearningApplications
@@ -320,17 +327,19 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
 
             if (app == null) return null;
 
-            // Tìm các lớp học viên đang học
+            // Lấy danh sách lớp học của học viên
             var learnerClasses = await _context.ClassMembers
                 .Include(cm => cm.Class)
-                .Where(cm => cm.LearnerId == app.LearnerId)
+                .Where(cm => cm.LearnerId == app.LearningId) // dùng LearningId thay vì UserId
                 .Select(cm => new LearnerClassInfo
                 {
                     ClassName = cm.Class.ClassName
                 })
                 .ToListAsync();
 
-            // Tính tổng giờ và km thực hành (chỉ buổi có mặt)
+            string className = learnerClasses.FirstOrDefault()?.ClassName ?? "";
+
+            // Tính tổng giờ và km thực hành
             var totals = await _context.Attendances
                 .Where(a => a.LearnerId == app.LearnerId && a.AttendanceStatus == true)
                 .GroupBy(a => a.LearnerId)
@@ -341,6 +350,15 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 })
                 .FirstOrDefaultAsync();
 
+            // Số giờ & km yêu cầu theo loại bằng
+            (int requiredHours, int requiredKm) = app.LicenceType?.LicenceCode switch
+            {
+                "B1" => (68, 1000),
+                "B2" => (84, 1100),
+                "C" => (94, 1100),
+                _ => (0, 0) // bằng khác không yêu cầu
+            };
+
             return new LearningApplicationsResponse
             {
                 LearningId = app.LearningId,
@@ -349,7 +367,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 app.Learner?.FirstName,
                 app.Learner?.MiddleName,
                 app.Learner?.LastName
-                }.Where(s => !string.IsNullOrWhiteSpace(s))),
+            }.Where(s => !string.IsNullOrWhiteSpace(s))),
                 LearnerDob = app.Learner?.Dob?.ToDateTime(TimeOnly.MinValue),
                 LearnerCccdNumber = app.Learner?.Cccd?.CccdNumber,
                 LicenceTypeId = app.LicenceTypeId,
@@ -359,10 +377,15 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 ObstacleScore = app.ObstacleScore,
                 PracticalScore = app.PracticalScore,
                 LearnerClasses = learnerClasses,
+                ClassName = className,
                 TotalPracticalHours = totals?.TotalHours ?? 0,
-                TotalPracticalKm = totals?.TotalKm ?? 0
+                TotalPracticalKm = totals?.TotalKm ?? 0,
+                RequiredPracticalHours = requiredHours,
+                RequiredPracticalKm = requiredKm
             };
         }
+
+
 
 
 

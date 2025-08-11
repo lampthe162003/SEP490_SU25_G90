@@ -33,8 +33,23 @@
                     <tr><td><b>Loại bằng đăng ký:</b> @app?.LicenceTypeName</td></tr>
                     <tr><td><b>Giảng viên phụ trách:</b> @app?.InstructorFullName</td></tr>
                     <tr><td><b>Ngày đăng ký học:</b> @app?.SubmittedAt?.ToString("dd/MM/yyyy")</td></tr>
-                    <tr><td><b>Tổng giờ thực hành:</b> @app?.TotalPracticalHours</td></tr>
-                    <tr><td><b>Tổng số km đã đi:</b> @app?.TotalPracticalKm</td></tr>
+                    <tr>
+                        <td>
+                            <b>Giờ thực hành:</b>
+                            <span class="@(app.TotalPracticalHours >= app.RequiredPracticalHours ? "text-success fw-bold" : "text-danger fw-bold")">
+                                @app.TotalPracticalHours / @app.RequiredPracticalHours giờ
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Km thực hành:</b>
+                            <span class="@(app.TotalPracticalKm >= app.RequiredPracticalKm ? "text-success fw-bold" : "text-danger fw-bold")">
+                                @app.TotalPracticalKm / @app.RequiredPracticalKm km
+                            </span>
+                        </td>
+                    </tr>
+
                     <tr>
                         <td>
                             <b>Trạng thái hồ sơ:</b>

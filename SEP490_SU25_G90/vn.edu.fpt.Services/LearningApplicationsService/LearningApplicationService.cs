@@ -39,9 +39,9 @@ public class LearningApplicationService : ILearningApplicationService
         return _learningApplicationRepository.GetAll();
     }
 
-    public async Task<List<LearningApplicationsResponse>> GetAllAsync(string? searchString = null)
+    public async Task<List<LearningApplicationsResponse>> GetAllAsync(string? searchString = null, int? statusFilter = null)
     {
-        return await _learningApplicationRepository.GetAllAsync(searchString);
+        return await _learningApplicationRepository.GetAllAsync(searchString, statusFilter);
     }
 
     public async Task<List<LearnerSummaryResponse>> GetLearnerSummariesAsync(string? searchString = null)

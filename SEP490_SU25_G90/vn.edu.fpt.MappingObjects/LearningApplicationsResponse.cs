@@ -39,7 +39,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         public int? PracticalMaxScore { get; set; }
         public double TotalPracticalHours { get; set; }
         public double TotalPracticalKm { get; set; }
-
+        public int RequiredPracticalHours { get; set; }
+        public int RequiredPracticalKm { get; set; }
+        public string? ClassName { get; set; }
 
     }
 }
