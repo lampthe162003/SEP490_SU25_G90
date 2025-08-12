@@ -19,7 +19,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
         Task<bool> UpdateLearnerScoresAsync(int learningId, int? theory, int? simulation, int? obstacle, int? practical);
         Task<List<LearningApplicationsResponse>> GetLearningApplicationsByInstructorAsync(int instructorId);
         Task<LearningApplicationsResponse?> GetLearningApplicationDetailAsync(int learningId);
-        Task<List<InstructorScheduleResponse>> GetWeeklyScheduleAsync(int instructorId, DateOnly startOfWeek);
+        
 
 
     }
