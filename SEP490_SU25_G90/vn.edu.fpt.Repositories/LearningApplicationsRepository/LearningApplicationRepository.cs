@@ -175,6 +175,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 LearnerDob = la.Learner?.Dob?.ToDateTime(TimeOnly.MinValue),
                 LearnerEmail = la.Learner?.Email ?? "", // Thêm dòng này để lấy email học viên**
                 LearnerPhone = la.Learner?.Phone ?? "", // Thêm dòng này để lấy số điện thoại học viên**
+                LearnerCccdImageUrl = la.Learner?.Cccd != null ?
+                    (la.Learner.Cccd.ImageMt ?? "") + "|" + (la.Learner.Cccd.ImageMs ?? "") : "",
+                LearnerHealthCertImageUrl = la.Learner?.HealthCertificate?.ImageUrl ?? "",
                 LicenceTypeId = la.LicenceTypeId,
                 LicenceTypeName = la.LicenceType?.LicenceCode ?? "",
                 SubmittedAt = la.SubmittedAt,
