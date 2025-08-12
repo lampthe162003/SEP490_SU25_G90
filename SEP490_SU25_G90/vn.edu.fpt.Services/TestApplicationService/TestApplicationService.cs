@@ -46,6 +46,39 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
             return await _testApplicationRepository.Create(testApplication);
         }
 
+        public async Task<int> BulkCreateAsync(BulkCreateTestApplicationsRequest request)
+        {
+            if (!request.SubmitProfileDate.HasValue || !request.ExamDate.HasValue)
+            {
+                throw new ArgumentException("Ngày nộp hồ sơ và ngày thi là bắt buộc");
+            }
+
+            if (request.SubmitProfileDate.Value > DateOnly.FromDateTime(DateTime.Now))
+            {
+                throw new ArgumentException("Ngày nộp hồ sơ không được vượt quá ngày hôm nay");
+            }
+
+            if (request.ExamDate.Value < request.SubmitProfileDate.Value)
+            {
+                throw new ArgumentException("Ngày thi phải lớn hơn ngày nộp hồ sơ");
+            }
+
+            var entities = request.LearningApplicationIds
+                .Distinct()
+                .Select(id => new Models.TestApplication
+                {
+                    LearningId = id,
+                    SubmitProfileDate = request.SubmitProfileDate,
+                    ExamDate = request.ExamDate,
+                    Notes = request.Note,
+                    Status = null
+                }).ToList();
+
+            if (entities.Count == 0) return 0;
+
+            return await _testApplicationRepository.BulkCreateAsync(entities);
+        }
+
         public async Task<List<TestApplicationListInformationResponse>> GetAllTestApplicationAsync()
         {
             var list = await _testApplicationRepository.GetAllTestApplicationAsync();
@@ -91,6 +124,18 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
                             t.Learning.Learner.LastName.Contains(normallizedName) ||
                             t.Learning.Learner.Cccd.CccdNumber.Contains(normallizedName)
                             );
+            }
+
+            if (request.FromDate.HasValue)
+            {
+                var from = DateOnly.FromDateTime(request.FromDate.Value.Date);
+                data = data.Where(x => x.ExamDate >= from);
+            }
+
+            if (request.ToDate.HasValue)
+            {
+                var to = DateOnly.FromDateTime(request.ToDate.Value.Date);
+                data = data.Where(x => x.ExamDate <= to);
             }
 
             var totalCount = await data.CountAsync();

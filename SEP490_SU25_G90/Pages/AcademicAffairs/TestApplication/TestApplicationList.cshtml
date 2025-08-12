@@ -39,6 +39,16 @@
             <option selected value="">Chọn trạng thái</option>
       </select>
     </div>
+    <div class="row g-3 align-items-end mb-3">
+        <div class="col-12 col-md-3">
+            <label class="form-label">Từ tháng</label>
+            <input type="month" class="form-control" name="FromDate" value="@(Model.FromDate?.ToString("yyyy-MM"))" />
+        </div>
+        <div class="col-12 col-md-3">
+            <label class="form-label">Đến tháng</label>
+            <input type="month" class="form-control" name="ToDate" value="@(Model.ToDate?.ToString("yyyy-MM"))" />
+        </div>
+    </div>
   </div>
   </form>
 <div class="table-responsive shadow-sm rounded bg-white">

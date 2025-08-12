@@ -131,7 +131,7 @@ namespace SEP490_SU25_G90.Pages.Instructors.Classes
         public string CreateUpdateUrl()
         {
             var classId = Id ?? ClassDetail.ClassId;
-            return $"/Instructors/Classes/UpdateClasses?id={classId}";
+            return $"/Instructors/Classes/UpdateClasses/{classId}";
         }
 
         /// <summary>

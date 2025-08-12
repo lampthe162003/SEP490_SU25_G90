@@ -131,7 +131,16 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
         public string CreateUpdateUrl()
         {
             var classId = Id ?? ClassDetail.ClassId;
-            return $"/AcademicAffairs/Classes/UpdateClasses?id={classId}";
+            return $"/AcademicAffairs/Classes/UpdateClasses/{classId}";
+        }
+
+        /// <summary>
+        /// Tạo URL để thêm học viên cho lớp
+        /// </summary>
+        public string CreateAddMembersUrl()
+        {
+            var classId = Id ?? ClassDetail.ClassId;
+            return $"/AcademicAffairs/Classes/AddMembers?classId={classId}";
         }
 
         /// <summary>

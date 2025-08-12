@@ -57,6 +57,10 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication
         public int? Status { get; set; }
         [BindProperty(SupportsGet = true)]
         public string? Search { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public DateTime? FromDate { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public DateTime? ToDate { get; set; }
 
         public List<SelectListItem> LicenseTypes { get; set; }
         public List<SelectListItem> Statuses { get; set; }
@@ -69,7 +73,10 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication
                 Page = PageNumber ?? 1,
                 Search = Search,
                 Status = Status,
-                LicenseTypeId = LicenseTypeId
+                LicenseTypeId = LicenseTypeId,
+                // Chuyển lựa chọn tháng thành ngày đầu/tháng và cuối/tháng để lọc theo khoảng tháng
+                FromDate = FromDate.HasValue ? new DateTime(FromDate.Value.Year, FromDate.Value.Month, 1) : null,
+                ToDate = ToDate.HasValue ? new DateTime(ToDate.Value.Year, ToDate.Value.Month, DateTime.DaysInMonth(ToDate.Value.Year, ToDate.Value.Month)) : null
             };
             TestApplications = await _testApplicationService.SearchAll(searchQuery);
             if (TestApplications.TotalPage < searchQuery.Page.Value)

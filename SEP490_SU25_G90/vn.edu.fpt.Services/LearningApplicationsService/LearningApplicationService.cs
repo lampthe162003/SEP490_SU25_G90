@@ -54,6 +54,22 @@ public class LearningApplicationService : ILearningApplicationService
         return await _learningApplicationRepository.GetDetailAsync(id);
     }
 
+    public async Task<List<LearningApplicationsResponse>> FindEligibleAsync(byte? licenceTypeId = null)
+    {
+        var query = (await _learningApplicationRepository.GetAllAsync())
+            .Include(x => x.Learner).ThenInclude(x => x.Cccd)
+            .Include(x => x.TestApplications)
+            .Include(x => x.LicenceType)
+            .Where(x => x.TestEligibility == true && !x.TestApplications.Any());
+
+        if (licenceTypeId.HasValue)
+        {
+            query = query.Where(x => x.LicenceTypeId == licenceTypeId.Value);
+        }
+
+        return query.Select(x => ToDto(x, null, null)).ToList();
+    }
+
     public static LearningApplicationsResponse ToDto(LearningApplication la, User? instr = null, List<LearnerClassInfo>? learnerClasses = null)
     {
         return new LearningApplicationsResponse

@@ -9,12 +9,11 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.TestScoreStandardService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.LicenseTypeService;
 using System.Text.Json;
 
-namespace SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication
+namespace SEP490_SU25_G90.Pages.Staff.TestApplication
 {
-    [Authorize(Roles = "academic affairs, instructor")]
+    [Authorize(Roles = "staff, instructor")]
     public class CreateTestApplicationModel : PageModel
     {
-        // New: bulk creation request
         [BindProperty]
         public BulkCreateTestApplicationsRequest BulkRequest { get; set; } = new();
 
@@ -38,7 +37,6 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication
             LicenseTypes = licenseTypeService.GetKeyValues();
         }
 
-        // New: return eligible learners for selection
         public async Task<IActionResult> OnPostEligibleAsync([FromBody] EligibleFilterRequest filter)
         {
             var eligible = await learningApplicationService.FindEligibleAsync(filter.LicenceTypeId);
@@ -52,7 +50,6 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication
             }));
         }
 
-        // New: bulk create endpoint
         public async Task<IActionResult> OnPostBulkCreateAsync([FromBody] BulkCreateTestApplicationsRequest request)
         {
             var created = await _testApplicationService.BulkCreateAsync(request);

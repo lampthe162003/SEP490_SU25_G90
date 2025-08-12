@@ -6,6 +6,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects.Class
     public class ClassDetailResponse
     {
         public int ClassId { get; set; }
+        public string? CourseName { get; set; }
         public string? ClassName { get; set; }
         public int? InstructorId { get; set; }
         public string? InstructorName { get; set; }
