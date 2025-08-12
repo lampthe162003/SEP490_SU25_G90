@@ -115,7 +115,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
             from cm in _context.ClassMembers
             join c in _context.Classes on cm.ClassId equals c.ClassId
             join u in _context.Users on c.InstructorId equals u.UserId
-            where cm.LearnerId == la.LearnerId
+            where cm.LearnerId == la.LearningId
             orderby cm.ClassId descending // hoặc orderby cm.Id descending nếu muốn lấy lớp mới nhất
             select u
             ).FirstOrDefaultAsync();
@@ -124,6 +124,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
             var standards = await _context.TestScoreStandards
                 .Where(s => s.LicenceTypeId == la.LicenceTypeId)
                 .ToListAsync();
+
+            var theoryStd = standards.FirstOrDefault(s => s.PartName == "Theory");
+            var simulationStd = standards.FirstOrDefault(s => s.PartName == "Simulation");
+            var obstacleStd = standards.FirstOrDefault(s => s.PartName == "Obstacle");
+            var practicalStd = standards.FirstOrDefault(s => s.PartName == "Practical");
 
             // Tổng giờ và km thực hành (chỉ tính buổi có mặt)
             var totals = await _context.Attendances
@@ -179,6 +184,14 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 SimulationScore = la.SimulationScore,
                 ObstacleScore = la.ObstacleScore,
                 PracticalScore = la.PracticalScore,
+                TheoryPassScore = theoryStd?.PassScore,
+                TheoryMaxScore = theoryStd?.MaxScore,
+                SimulationPassScore = simulationStd?.PassScore,
+                SimulationMaxScore = simulationStd?.MaxScore,
+                ObstaclePassScore = obstacleStd?.PassScore,
+                ObstacleMaxScore = obstacleStd?.MaxScore,
+                PracticalPassScore = practicalStd?.PassScore,
+                PracticalMaxScore = practicalStd?.MaxScore,
                 InstructorId = instructor?.UserId,
                 InstructorFullName = instructor != null
                     ? string.Join(" ", new[] { instructor.FirstName, instructor.MiddleName, instructor.LastName }

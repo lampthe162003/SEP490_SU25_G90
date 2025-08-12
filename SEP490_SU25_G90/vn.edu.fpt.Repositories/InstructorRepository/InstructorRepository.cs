@@ -327,6 +327,16 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
 
             if (app == null) return null;
 
+            // Lấy tiêu chuẩn điểm cho loại bằng
+            //var standards = await _context.TestScoreStandards
+            //    .Where(s => s.LicenceTypeId == app.LicenceTypeId)
+            //    .ToListAsync();
+
+            //var theoryStd = standards.FirstOrDefault(s => s.PartName == "Theory");
+            //var simulationStd = standards.FirstOrDefault(s => s.PartName == "Simulation");
+            //var obstacleStd = standards.FirstOrDefault(s => s.PartName == "Obstacle");
+            //var practicalStd = standards.FirstOrDefault(s => s.PartName == "Practical");
+
             // Lấy danh sách lớp học của học viên
             var learnerClasses = await _context.ClassMembers
                 .Include(cm => cm.Class)
@@ -376,6 +386,14 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 SimulationScore = app.SimulationScore,
                 ObstacleScore = app.ObstacleScore,
                 PracticalScore = app.PracticalScore,
+                //TheoryPassScore = theoryStd?.PassScore,
+                //TheoryMaxScore = theoryStd?.MaxScore,
+                //SimulationPassScore = simulationStd?.PassScore,
+                //SimulationMaxScore = simulationStd?.MaxScore,
+                //ObstaclePassScore = obstacleStd?.PassScore,
+                //ObstacleMaxScore = obstacleStd?.MaxScore,
+                //PracticalPassScore = practicalStd?.PassScore,
+                //PracticalMaxScore = practicalStd?.MaxScore,
                 LearnerClasses = learnerClasses,
                 ClassName = className,
                 TotalPracticalHours = totals?.TotalHours ?? 0,
