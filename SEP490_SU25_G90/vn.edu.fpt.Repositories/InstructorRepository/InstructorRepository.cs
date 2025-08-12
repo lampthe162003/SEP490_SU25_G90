@@ -216,13 +216,52 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
 
         public async Task<bool> UpdateLearnerScoresAsync(int learningId, int? theory, int? simulation, int? obstacle, int? practical)
         {
-            var learningApp = await _context.LearningApplications.FirstOrDefaultAsync(x => x.LearningId == learningId);
-            if (learningApp == null) return false;
+            var app = await _context.LearningApplications.FirstOrDefaultAsync(x => x.LearningId == learningId);
+            if (app == null) return false;
 
-            learningApp.TheoryScore = theory;
-            learningApp.SimulationScore = simulation;
-            learningApp.ObstacleScore = obstacle;
-            learningApp.PracticalScore = practical;
+            var standards = await _context.TestScoreStandards
+                .Where(s => s.LicenceTypeId == app.LicenceTypeId)
+                .ToListAsync();
+
+            // Gán các chuẩn điểm ra biến
+            var theoryStd = standards.FirstOrDefault(s => s.PartName == "Theory");
+            var simStd = standards.FirstOrDefault(s => s.PartName == "Simulation");
+            var obsStd = standards.FirstOrDefault(s => s.PartName == "Obstacle");
+            var pracStd = standards.FirstOrDefault(s => s.PartName == "Practical");
+
+            bool isValid = true;
+
+            if (theory.HasValue && theoryStd != null)
+                isValid &= theory.Value <= theoryStd.MaxScore;
+
+            if (simulation.HasValue && simStd != null)
+                isValid &= simulation.Value <= simStd.MaxScore;
+
+            if (obstacle.HasValue && obsStd != null)
+                isValid &= obstacle.Value <= obsStd.MaxScore;
+
+            if (practical.HasValue && pracStd != null)
+                isValid &= practical.Value <= pracStd.MaxScore;
+
+            if (!isValid) return false;
+
+            // Cập nhật điểm
+            app.TheoryScore = theory;
+            app.SimulationScore = simulation;
+            app.ObstacleScore = obstacle;
+            app.PracticalScore = practical;
+
+            // Nếu đạt chuẩn thì cập nhật trạng thái hoàn thành
+            bool passed =
+                theory.HasValue && theoryStd != null && theory.Value >= theoryStd.PassScore &&
+                simulation.HasValue && simStd != null && simulation.Value >= simStd.PassScore &&
+                obstacle.HasValue && obsStd != null && obstacle.Value >= obsStd.PassScore &&
+                practical.HasValue && pracStd != null && practical.Value >= pracStd.PassScore;
+
+            if (passed)
+            {
+                app.LearningStatus = 4; // Hoàn thành
+            }
 
             await _context.SaveChangesAsync();
             return true;
@@ -231,14 +270,16 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
 
         public async Task<List<LearningApplicationsResponse>> GetLearningApplicationsByInstructorAsync(int instructorId)
         {
-            var learnerIds = await _context.ClassMembers
+            // Lấy danh sách LearningId từ các lớp mà giảng viên này dạy
+            var learningIds = await _context.ClassMembers
                 .Where(cm => cm.Class.InstructorId == instructorId)
-                .Select(cm => cm.LearnerId)
+                .Select(cm => cm.LearnerId) // Ở đây là LearningId
                 .Distinct()
                 .ToListAsync();
 
+            // Lấy các hồ sơ học tương ứng
             var applications = await _context.LearningApplications
-                .Where(app => learnerIds.Contains(app.LearnerId))
+                .Where(app => learningIds.Contains(app.LearningId)) // So sánh với LearningId
                 .Include(app => app.Learner).ThenInclude(l => l.Cccd)
                 .Include(app => app.Learner).ThenInclude(l => l.HealthCertificate)
                 .Include(app => app.LicenceType)
@@ -248,7 +289,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
             {
                 LearningId = app.LearningId,
                 LearnerId = app.LearnerId,
-                LearnerFullName = app.Learner != null ? string.Join(" ", new[] { app.Learner.FirstName, app.Learner.MiddleName, app.Learner.LastName }.Where(n => !string.IsNullOrWhiteSpace(n))) : "",
+                LearnerFullName = app.Learner != null
+                    ? string.Join(" ", new[] { app.Learner.FirstName, app.Learner.MiddleName, app.Learner.LastName }
+                        .Where(n => !string.IsNullOrWhiteSpace(n)))
+                    : "",
                 LearnerCccdNumber = app.Learner?.Cccd?.CccdNumber,
                 LearnerEmail = app.Learner?.Email,
                 LicenceTypeId = app.LicenceTypeId,
@@ -258,8 +302,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 LearningStatusName = app.LearningStatus switch
                 {
                     1 => "Đang học",
-                    2 => "Hoàn thành",
-                    3 => "Đã huỷ",
+                    2 => "Bảo lưu",
+                    3 => "Học lại",
+                    4 => "Hoàn thành",
                     _ => "Chưa xác định"
                 },
                 TheoryScore = app.TheoryScore,
@@ -268,6 +313,101 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 PracticalScore = app.PracticalScore
             }).ToList();
         }
+
+
+
+
+
+        public async Task<LearningApplicationsResponse?> GetLearningApplicationDetailAsync(int learningId)
+        {
+            var app = await _context.LearningApplications
+                .Include(x => x.Learner).ThenInclude(l => l.Cccd)
+                .Include(x => x.LicenceType)
+                .FirstOrDefaultAsync(x => x.LearningId == learningId);
+
+            if (app == null) return null;
+
+            // Lấy tiêu chuẩn điểm cho loại bằng
+            //var standards = await _context.TestScoreStandards
+            //    .Where(s => s.LicenceTypeId == app.LicenceTypeId)
+            //    .ToListAsync();
+
+            //var theoryStd = standards.FirstOrDefault(s => s.PartName == "Theory");
+            //var simulationStd = standards.FirstOrDefault(s => s.PartName == "Simulation");
+            //var obstacleStd = standards.FirstOrDefault(s => s.PartName == "Obstacle");
+            //var practicalStd = standards.FirstOrDefault(s => s.PartName == "Practical");
+
+            // Lấy danh sách lớp học của học viên
+            var learnerClasses = await _context.ClassMembers
+                .Include(cm => cm.Class)
+                .Where(cm => cm.LearnerId == app.LearningId) // dùng LearningId thay vì UserId
+                .Select(cm => new LearnerClassInfo
+                {
+                    ClassName = cm.Class.ClassName
+                })
+                .ToListAsync();
+
+            string className = learnerClasses.FirstOrDefault()?.ClassName ?? "";
+
+            // Tính tổng giờ và km thực hành
+            var totals = await _context.Attendances
+                .Where(a => a.LearnerId == app.LearnerId && a.AttendanceStatus == true)
+                .GroupBy(a => a.LearnerId)
+                .Select(g => new
+                {
+                    TotalHours = g.Sum(x => x.PracticalDurationHours) ?? 0,
+                    TotalKm = g.Sum(x => x.PracticalDistance) ?? 0
+                })
+                .FirstOrDefaultAsync();
+
+            // Số giờ & km yêu cầu theo loại bằng
+            (int requiredHours, int requiredKm) = app.LicenceType?.LicenceCode switch
+            {
+                "B1" => (68, 1000),
+                "B2" => (84, 1100),
+                "C" => (94, 1100),
+                _ => (0, 0) // bằng khác không yêu cầu
+            };
+
+            return new LearningApplicationsResponse
+            {
+                LearningId = app.LearningId,
+                LearnerId = app.LearnerId,
+                LearnerFullName = string.Join(" ", new[] {
+                app.Learner?.FirstName,
+                app.Learner?.MiddleName,
+                app.Learner?.LastName
+            }.Where(s => !string.IsNullOrWhiteSpace(s))),
+                LearnerDob = app.Learner?.Dob?.ToDateTime(TimeOnly.MinValue),
+                LearnerCccdNumber = app.Learner?.Cccd?.CccdNumber,
+                LicenceTypeId = app.LicenceTypeId,
+                LicenceTypeName = app.LicenceType?.LicenceCode,
+                TheoryScore = app.TheoryScore,
+                SimulationScore = app.SimulationScore,
+                ObstacleScore = app.ObstacleScore,
+                PracticalScore = app.PracticalScore,
+                //TheoryPassScore = theoryStd?.PassScore,
+                //TheoryMaxScore = theoryStd?.MaxScore,
+                //SimulationPassScore = simulationStd?.PassScore,
+                //SimulationMaxScore = simulationStd?.MaxScore,
+                //ObstaclePassScore = obstacleStd?.PassScore,
+                //ObstacleMaxScore = obstacleStd?.MaxScore,
+                //PracticalPassScore = practicalStd?.PassScore,
+                //PracticalMaxScore = practicalStd?.MaxScore,
+                LearnerClasses = learnerClasses,
+                ClassName = className,
+                TotalPracticalHours = totals?.TotalHours ?? 0,
+                TotalPracticalKm = totals?.TotalKm ?? 0,
+                RequiredPracticalHours = requiredHours,
+                RequiredPracticalKm = requiredKm
+            };
+        }
+
+
+
+
+
+
 
     }
 } 

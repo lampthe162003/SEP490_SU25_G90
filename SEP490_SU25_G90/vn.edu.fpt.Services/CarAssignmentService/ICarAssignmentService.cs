@@ -32,6 +32,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.CarAssignmentService
         public Task AddCarAssignment(CarAssignment carAssignment);
         public Task UpdateCarAssignment(CarAssignment carAssignment);
         public Task DeleteCarAssignment(CarAssignment carAssignment);
+        public Task<IList<CarAssignmentInformationResponse>> GetCarAssignmentByDate(DateOnly date);
     }
 }
 

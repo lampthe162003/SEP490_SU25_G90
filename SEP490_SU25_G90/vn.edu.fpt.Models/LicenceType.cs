@@ -9,7 +9,7 @@ public partial class LicenceType
 
     public string LicenceCode { get; set; } = null!;
 
-    public virtual ICollection<Class> Classes { get; set; } = new List<Class>();
+    public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
 
     public virtual ICollection<InstructorSpecialization> InstructorSpecializations { get; set; } = new List<InstructorSpecialization>();
 

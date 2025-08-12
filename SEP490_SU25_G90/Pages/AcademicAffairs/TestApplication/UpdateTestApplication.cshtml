@@ -1,0 +1,122 @@
+﻿@page "/AcademicAffairs/TestApplication/{id:int}/Update"
+@model SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication.UpdateTestApplication
+
+@{
+    Layout = "_AcademicAffairsLayout";
+    ViewData["Title"] = "Cập nhật hồ sơ thi";
+}
+
+<div class="mt-4">
+    <h3 class="text-center font-weight-bold mb-4">Tạo hồ sơ thi</h3>
+    @Html.AntiForgeryToken()
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label>Loại bằng:</label>
+            <select id="licenceType" class="form-control" onchange="loadEligible()">
+                <option value="">Loại bằng</option>
+                @foreach (var kv in Model.LicenseTypes) {
+                    <option value="@kv.id">@kv.type</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label>Ngày nộp hồ sơ:</label>
+            <input id="submitDate" type="date" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label>Ngày thi:</label>
+            <input id="examDate" type="date" class="form-control" />
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between mb-2">
+        <div></div>
+        <div>
+            <button class="btn btn-primary" type="button" onclick="submitBulk()">Xác nhận</button>
+            <a href="/Staff/TestApplication" class="btn btn-secondary ml-2">Hủy</a>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th style="width:60px; text-align:center;"><input type="checkbox" id="selectAll" onclick="toggleAll(this)"></th>
+                    <th style="width:60px; text-align:center;">Stt</th>
+                    <th>Tên học viên</th>
+                    <th>Cccd</th>
+                    <th>Loại bằng</th>
+                </tr>
+            </thead>
+            <tbody id="eligibleBody"></tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        let eligible = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadEligible();
+        });
+
+        function loadEligible() {
+            const licenceType = document.getElementById('licenceType').value;
+            fetch('/Staff/TestApplication/New?handler=Eligible', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify({ licenceTypeId: licenceType ? parseInt(licenceType) : null })
+            })
+            .then(r => r.json())
+            .then(data => {
+                eligible = data || [];
+                const body = document.getElementById('eligibleBody');
+                body.innerHTML = '';
+                eligible.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style=\"text-align:center;\"><input type=\"checkbox\" class=\"sel\" data-id=\"${row.id}\"></td>
+                        <td style=\"text-align:center;\">${row.index}</td>
+                        <td>${row.fullName ?? ''}</td>
+                        <td>${row.cccd ?? ''}</td>
+                        <td>${row.licenceType ?? ''}</td>
+                    `;
+                    body.appendChild(tr);
+                });
+            })
+            .catch(err => { console.error(err); alert('Lỗi tải danh sách'); });
+        }
+
+        function submitBulk() {
+            const ids = Array.from(document.querySelectorAll('.sel:checked')).map(x => parseInt(x.getAttribute('data-id')));
+            const submitDate = document.getElementById('submitDate').value;
+            const examDate = document.getElementById('examDate').value;
+            if (!ids.length) { alert('Vui lòng chọn ít nhất một học viên'); return; }
+            if (!submitDate || !examDate) { alert('Vui lòng chọn ngày nộp hồ sơ và ngày thi'); return; }
+            fetch('/Staff/TestApplication/New?handler=BulkCreate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify({ learningApplicationIds: ids, submitProfileDate: submitDate, examDate: examDate })
+            })
+            .then(r => r.json())
+            .then(res => {
+                alert(`Tạo thành công ${res.created} hồ sơ thi`);
+                window.location.href = '/Staff/TestApplication';
+            })
+            .catch(err => { console.error(err); alert('Tạo hồ sơ thi thất bại'); });
+        }
+
+        function toggleAll(cb) {
+            document.querySelectorAll('.sel').forEach(x => x.checked = cb.checked);
+        }
+    </script>
+}

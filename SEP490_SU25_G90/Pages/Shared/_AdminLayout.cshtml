@@ -14,21 +14,9 @@
 <body>
     <div class="sidebar" id="sidebar">
         <button class="toggle-btn" id="toggleSidebar"><i class="fas fa-bars"></i></button>
-        <div class="menu-item @(path.Contains("/Admin/Dashboard") ? "active" : "")">
-            <a href="/Admin/Dashboard"><i class="fa-solid fa-chart-simple"></i><span>Thống kê</span></a>
-        </div>
-        <div class="menu-item @(path.Contains("/Admin/Users/List") ? "active" : "")">
-            <a href="/Admin/Users/List"><i class="fa-solid fa-users"></i><span>Quản lý tài khoản</span></a>
-        </div>
-        <div class="menu-item @(path.Contains("/Admins/News/ListNews") ? "active" : "")">
-            <a href="/Admins/News/ListNews"><i class="fa-solid fa-envelope"></i><span>Tin tức</span></a>
-        </div>
-        <div class="menu-item"><a href="/Admins/TestApplication"><i class="fas fa-clipboard-list"></i> <span>Quản lý hồ sơ thi</span></a></div>
-        <div class="menu-item"><a href="/Admins/LearningApplications/List"><i class="fas fa-clipboard-list"></i><span>Quản lý hồ sơ học</span></a></div>
-        <div class="menu-item"><a href="/Admins/LearningProfile/ManagerInstructor"><i class="fas fa-clipboard-list"></i><span>Quản lý Giảng viên</span></a></div>
-        <div class="menu-item"><a href="/Admins/LearningProfile/ListLearningProfile"><i class="fas fa-clipboard-list"></i><span>Quản lý Học viên</span></a></div>
-        <div class="menu-item"><a href="/Admins/Car/CarList"><i class="fas fa-clipboard-list"></i><span>Quản lý xe sa hình</span></a></div>
-        <div class="menu-item"><a href="/Admins/CarAssignment/CarAssignmentList"><i class="fas fa-clipboard-list"></i><span>Quản lý thuê xe sa hình</span></a></div>
+        <div class="menu-item"><a href="/HumanResources/LearningProfile/ManagerInstructor"><i class="fas fa-clipboard-list"></i><span>Quản lý Giảng viên</span></a></div>
+        <div class="menu-item"><a href="/HumanResources/LearningProfile/ListLearningProfile"><i class="fas fa-clipboard-list"></i><span>Quản lý Học viên</span></a></div>
+        <div class="menu-item"><a href="/HumanResources/User/CreateAccount"><i class="fa-solid fa-user"></i><span>Tạo tài khoản mới</span></a></div>
         @RenderSection("Styles", required: false)
     </div>
 
@@ -38,7 +26,7 @@
             <div class="user-menu">
                 <div class="username">
                     <div><strong>@User.Identity?.Name</strong></div>
-                    <div class="role">Admin</div>
+                    <div class="role">Phòng Nhân Sự</div>
                 </div>
                 <i class="fas fa-user-circle fa-2x" id="userIcon"></i>
                 <div class="user-dropdown" id="userDropdown">

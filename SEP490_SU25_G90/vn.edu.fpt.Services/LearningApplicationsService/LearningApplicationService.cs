@@ -39,9 +39,9 @@ public class LearningApplicationService : ILearningApplicationService
         return _learningApplicationRepository.GetAll();
     }
 
-    public async Task<List<LearningApplicationsResponse>> GetAllAsync(string? searchString = null)
+    public async Task<List<LearningApplicationsResponse>> GetAllAsync(string? searchString = null, int? statusFilter = null)
     {
-        return await _learningApplicationRepository.GetAllAsync(searchString);
+        return await _learningApplicationRepository.GetAllAsync(searchString, statusFilter);
     }
 
     public async Task<List<LearnerSummaryResponse>> GetLearnerSummariesAsync(string? searchString = null)
@@ -52,6 +52,22 @@ public class LearningApplicationService : ILearningApplicationService
     public async Task<LearningApplicationsResponse?> GetDetailAsync(int id)
     {
         return await _learningApplicationRepository.GetDetailAsync(id);
+    }
+
+    public async Task<List<LearningApplicationsResponse>> FindEligibleAsync(byte? licenceTypeId = null)
+    {
+        var query = (await _learningApplicationRepository.GetAllAsync())
+            .Include(x => x.Learner).ThenInclude(x => x.Cccd)
+            .Include(x => x.TestApplications)
+            .Include(x => x.LicenceType)
+            .Where(x => x.TestEligibility == true && !x.TestApplications.Any());
+
+        if (licenceTypeId.HasValue)
+        {
+            query = query.Where(x => x.LicenceTypeId == licenceTypeId.Value);
+        }
+
+        return query.Select(x => ToDto(x, null, null)).ToList();
     }
 
     public static LearningApplicationsResponse ToDto(LearningApplication la, User? instr = null, List<LearnerClassInfo>? learnerClasses = null)
@@ -75,8 +91,9 @@ public class LearningApplicationService : ILearningApplicationService
             SubmittedAt = la.SubmittedAt,
             LearningStatus = la.LearningStatus,
             LearningStatusName = la.LearningStatus == 1 ? "Đang học" :
-                                 la.LearningStatus == 2 ? "Hoàn thành" :
-                                 la.LearningStatus == 3 ? "Đã huỷ" :
+                                 la.LearningStatus == 2 ? "Bảo lưu" :
+                                 la.LearningStatus == 3 ? "Học lại" :
+                                 la.LearningStatus == 4 ? "Hoàn Thành" :
                                  "Chưa xác định"
         };
     }
@@ -90,4 +107,10 @@ public class LearningApplicationService : ILearningApplicationService
     {
         return await _learningApplicationRepository.FindLearnerByCccdAsync(cccd);
     }
+
+    public Task<bool> UpdateStatusAsync(int learningId, byte newStatus)
+    {
+        return _learningApplicationRepository.UpdateStatusAsync(learningId, newStatus);
+    }
+
 }

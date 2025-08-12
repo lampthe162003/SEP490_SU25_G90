@@ -21,110 +21,74 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 .ToList();
         }
 
-        public async Task<List<LearningApplicationsResponse>> GetAllAsync(string? searchString = null)
+        public async Task<List<LearningApplicationsResponse>> GetAllAsync(string? searchString = null, int? statusFilter = null)
         {
-            var learningApplications = await _context.LearningApplications
-                .Include(x => x.Learner).ThenInclude(l => l.Cccd)
-                .Include(x => x.Learner).ThenInclude(l => l.HealthCertificate)
-                .Include(x => x.LicenceType)
-                .ToListAsync();
+            var query = _context.LearningApplications
+                .Include(la => la.Learner)
+                    .ThenInclude(l => l.Cccd)
+                .Include(la => la.LicenceType)
+                .Include(la => la.ClassMembers)
+                    .ThenInclude(cm => cm.Class)
+                        .ThenInclude(c => c.Instructor)
+                .AsQueryable();
 
+            // Bộ lọc tìm kiếm
             if (!string.IsNullOrWhiteSpace(searchString))
             {
                 string lowered = searchString.Trim().ToLower();
 
-                learningApplications = learningApplications
-                    .Where(x =>
-                        (x.Learner != null &&
-                            string.Join(" ", new[] { x.Learner.FirstName, x.Learner.MiddleName, x.Learner.LastName }
-                                .Where(n => !string.IsNullOrWhiteSpace(n)))
-                            .ToLower().Contains(lowered)
-                        ) ||
-                        (x.Learner?.Cccd?.CccdNumber?.ToLower().Contains(lowered) ?? false) ||
-                        (x.LicenceType?.LicenceCode?.ToLower().Contains(lowered) ?? false)
+                query = query.Where(x =>
+                    (x.Learner != null &&
+                     ((x.Learner.FirstName ?? "") + " " +
+                      (x.Learner.MiddleName ?? "") + " " +
+                      (x.Learner.LastName ?? "")
+                     ).ToLower().Contains(lowered)
+                    ) ||
+                    (x.Learner.Cccd != null &&
+                     (x.Learner.Cccd.CccdNumber ?? "").ToLower().Contains(lowered)
+                    ) ||
+                    (x.LicenceType != null &&
+                     (x.LicenceType.LicenceCode ?? "").ToLower().Contains(lowered)
                     )
-                    .ToList();
+                );
             }
 
-            var learnerGroups = learningApplications
-                .GroupBy(la => la.LearnerId)
-                .ToList();
+            // Bộ lọc trạng thái
+            if (statusFilter.HasValue)
+            {
+                query = query.Where(x => x.LearningStatus == statusFilter.Value);
+            }
 
-            var licenceTypeIds = learnerGroups
-                .SelectMany(g => g.Select(la => la.LicenceTypeId))
-                .Distinct()
-                .ToList();
-
-            var standards = await _context.TestScoreStandards
-                .Where(s => licenceTypeIds.Contains(s.LicenceTypeId))
+            // Lấy dữ liệu và map sang DTO
+            var list = await query
+                .Select(la => new LearningApplicationsResponse
+                {
+                    LearningId = la.LearningId,
+                    LearnerFullName = (la.Learner.FirstName ?? "") + " " +
+                                      (la.Learner.MiddleName ?? "") + " " +
+                                      (la.Learner.LastName ?? ""),
+                    LearnerCccdNumber = la.Learner.Cccd != null ? la.Learner.Cccd.CccdNumber : "",
+                    LicenceTypeName = la.LicenceType != null ? la.LicenceType.LicenceCode : "",
+                    InstructorFullName = la.ClassMembers
+                        .Select(cm => (cm.Class.Instructor.FirstName ?? "") + " " +
+                                      (cm.Class.Instructor.MiddleName ?? "") + " " +
+                                      (cm.Class.Instructor.LastName ?? ""))
+                        .FirstOrDefault() ?? "Chưa có",
+                    SubmittedAt = la.SubmittedAt,
+                    LearningStatus = la.LearningStatus,
+                    LearningStatusName = la.LearningStatus == 1 ? "Đang học" :
+                                         la.LearningStatus == 2 ? "Bảo lưu" :
+                                         la.LearningStatus == 3 ? "Học lại" :
+                                         la.LearningStatus == 4 ? "Hoàn thành" :
+                                         "Chưa bắt đầu"
+                })
                 .ToListAsync();
 
-            // 🔎 Lấy giảng viên cho từng learner
-            var instructorMap = await (
-            from la in _context.LearningApplications
-            join cm in _context.ClassMembers on la.LearnerId equals cm.LearnerId
-            join c in _context.Classes on cm.ClassId equals c.ClassId
-            join u in _context.Users on c.InstructorId equals u.UserId
-            select new { la.LearningId, Instructor = u }
-                    ).ToDictionaryAsync(x => x.LearningId, x => x.Instructor);
-
-            // ✅ Tạo danh sách kết quả
-            var results = learnerGroups.Select(group =>
-            {
-                var mostRecent = group
-                    .OrderByDescending(la => la.SubmittedAt ?? DateTime.MinValue)
-                    .First();
-
-                var std = standards.Where(s => s.LicenceTypeId == mostRecent.LicenceTypeId).ToList();
-
-                bool isPassed = mostRecent.TheoryScore >= std.FirstOrDefault(s => s.PartName == "Theory")?.PassScore
-                             && mostRecent.SimulationScore >= std.FirstOrDefault(s => s.PartName == "Simulation")?.PassScore
-                             && mostRecent.ObstacleScore >= std.FirstOrDefault(s => s.PartName == "Obstacle")?.PassScore
-                             && mostRecent.PracticalScore >= std.FirstOrDefault(s => s.PartName == "Practical")?.PassScore;
-
-                string statusName = mostRecent.LearningStatus switch
-                {
-                    3 => "Đã huỷ",
-                    1 => "Đang học",
-                    _ => isPassed ? "Hoàn thành" : "Chưa bắt đầu"
-                };
-
-                //  Instructor info
-                //  Không cần kiểm tra HasValue nếu chắc chắn LearnerId luôn có
-                User? instructor = null;
-                instructorMap.TryGetValue(mostRecent.LearnerId, out instructor);
-                return new LearningApplicationsResponse
-                {
-                    LearningId = mostRecent.LearningId,
-                    LearnerId = mostRecent.LearnerId,
-                    LearnerFullName = mostRecent.Learner != null
-                        ? string.Join(" ", new[] { mostRecent.Learner.FirstName, mostRecent.Learner.MiddleName, mostRecent.Learner.LastName }
-                            .Where(n => !string.IsNullOrWhiteSpace(n)))
-                        : "",
-                    LearnerCccdNumber = mostRecent.Learner?.Cccd?.CccdNumber ?? "",
-                    LearnerDob = mostRecent.Learner?.Dob?.ToDateTime(TimeOnly.MinValue),
-                    LearnerPhone = mostRecent.Learner?.Phone ?? "",
-                    LearnerEmail = mostRecent.Learner?.Email ?? "",
-                    LearnerCccdImageUrl = mostRecent.Learner?.Cccd != null
-                        ? (mostRecent.Learner.Cccd.ImageMt ?? "") + "|" + (mostRecent.Learner.Cccd.ImageMs ?? "")
-                        : "",
-                    LearnerHealthCertImageUrl = mostRecent.Learner?.HealthCertificate?.ImageUrl ?? "",
-                    LicenceTypeId = mostRecent.LicenceTypeId,
-                    LicenceTypeName = mostRecent.LicenceType?.LicenceCode ?? "",
-                    LearnerClasses = new List<LearnerClassInfo>(),
-                    SubmittedAt = mostRecent.SubmittedAt,
-                    LearningStatus = mostRecent.LearningStatus,
-                    LearningStatusName = statusName,
-                    InstructorId = instructor?.UserId,
-                    InstructorFullName = instructor != null
-                        ? string.Join(" ", new[] { instructor.FirstName, instructor.MiddleName, instructor.LastName }
-                            .Where(x => !string.IsNullOrWhiteSpace(x)))
-                        : ""
-                };
-            }).ToList();
-
-            return results;
+            return list;
         }
+
+
+
 
 
 
@@ -135,64 +99,82 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
 
         public async Task<LearningApplicationsResponse?> GetDetailAsync(int id)
         {
+            // Lấy thông tin hồ sơ học
             var la = await _context.LearningApplications
-                .Include(x => x.Learner).ThenInclude(l => l.Cccd)
-                .Include(x => x.Learner).ThenInclude(l => l.HealthCertificate)
+                .Include(x => x.Learner)
+                .ThenInclude(l => l.Cccd)
+                .Include(x => x.Learner)
+                .ThenInclude(l => l.HealthCertificate)
                 .Include(x => x.LicenceType)
                 .FirstOrDefaultAsync(x => x.LearningId == id);
 
             if (la == null) return null;
 
+            // Lấy thông tin giảng viên từ lớp học mà học viên đang tham gia
             var instructor = await (
             from cm in _context.ClassMembers
-            join cl in _context.Classes on cm.ClassId equals cl.ClassId
-            join u in _context.Users on cl.InstructorId equals u.UserId
-            where cm.LearnerId == la.LearnerId
+            join c in _context.Classes on cm.ClassId equals c.ClassId
+            join u in _context.Users on c.InstructorId equals u.UserId
+            where cm.LearnerId == la.LearningId
+            orderby cm.ClassId descending // hoặc orderby cm.Id descending nếu muốn lấy lớp mới nhất
             select u
             ).FirstOrDefaultAsync();
 
+            // Lấy tiêu chuẩn điểm
             var standards = await _context.TestScoreStandards
                 .Where(s => s.LicenceTypeId == la.LicenceTypeId)
                 .ToListAsync();
-            int? theoryMaxScore = standards.FirstOrDefault(s => s.PartName == "Theory")?.MaxScore;
-            int? simulationMaxScore = standards.FirstOrDefault(s => s.PartName == "Simulation")?.MaxScore;
-            int? obstacleMaxScore = standards.FirstOrDefault(s => s.PartName == "Obstacle")?.MaxScore;
-            int? practicalMaxScore = standards.FirstOrDefault(s => s.PartName == "Practical")?.MaxScore;
 
-            bool isPassed = la.TheoryScore >= standards.FirstOrDefault(s => s.PartName == "Theory")?.PassScore
-                && la.SimulationScore >= standards.FirstOrDefault(s => s.PartName == "Simulation")?.PassScore
-                && la.ObstacleScore >= standards.FirstOrDefault(s => s.PartName == "Obstacle")?.PassScore
-                && la.PracticalScore >= standards.FirstOrDefault(s => s.PartName == "Practical")?.PassScore;
+            var theoryStd = standards.FirstOrDefault(s => s.PartName == "Theory");
+            var simulationStd = standards.FirstOrDefault(s => s.PartName == "Simulation");
+            var obstacleStd = standards.FirstOrDefault(s => s.PartName == "Obstacle");
+            var practicalStd = standards.FirstOrDefault(s => s.PartName == "Practical");
 
-            string statusName;
-            if (la.LearningStatus == 3)
+            // Tổng giờ và km thực hành (chỉ tính buổi có mặt)
+            var totals = await _context.Attendances
+                .Where(a => a.LearnerId == la.LearnerId && a.AttendanceStatus == true)
+                .GroupBy(a => a.LearnerId)
+                .Select(g => new
+                {
+                    TotalHours = g.Sum(x => x.PracticalDurationHours) ?? 0,
+                    TotalKm = g.Sum(x => x.PracticalDistance) ?? 0
+                })
+                .FirstOrDefaultAsync();
+
+            double totalHours = totals?.TotalHours ?? 0;
+            double totalKm = totals?.TotalKm ?? 0;
+
+            // Giờ & km cần thiết theo loại bằng
+            (int requiredHours, int requiredKm) = la.LicenceType?.LicenceCode switch
             {
-                statusName = "Đã huỷ";
-            }
-            else if (isPassed)
+                "B1" => (68, 1000),
+                "B2" => (84, 1100),
+                "C" => (94, 1100),
+                _ => (0, 0)
+            };
+
+            // Trạng thái học
+            string statusName = la.LearningStatus switch
             {
-                statusName = "Hoàn thành";
-            }
-            else if (la.LearningStatus == 1)
-            {
-                statusName = "Đang học";
-            }
-            else
-            {
-                statusName = "Chưa bắt đầu";
-            }
+                1 => "Đang học",
+                2 => "Bảo lưu",
+                3 => "Học lại",
+                4 => "Hoàn thành",
+                _ => "Không xác định"
+            };
 
             return new LearningApplicationsResponse
             {
                 LearningId = la.LearningId,
                 LearnerId = la.LearnerId,
-                LearnerFullName = la.Learner != null ? string.Join(" ", new[] { la.Learner.FirstName, la.Learner.MiddleName, la.Learner.LastName }.Where(x => !string.IsNullOrWhiteSpace(x))) : "",
+                LearnerFullName = la.Learner != null
+                    ? string.Join(" ", new[] { la.Learner.FirstName, la.Learner.MiddleName, la.Learner.LastName }
+                        .Where(x => !string.IsNullOrWhiteSpace(x)))
+                    : "",
                 LearnerCccdNumber = la.Learner?.Cccd?.CccdNumber ?? "",
                 LearnerDob = la.Learner?.Dob?.ToDateTime(TimeOnly.MinValue),
-                LearnerPhone = la.Learner?.Phone ?? "",
-                LearnerEmail = la.Learner?.Email ?? "",
-                LearnerCccdImageUrl = la.Learner?.Cccd != null ? (la.Learner.Cccd.ImageMt ?? "") + "|" + (la.Learner.Cccd.ImageMs ?? "") : "",
-                LearnerHealthCertImageUrl = la.Learner?.HealthCertificate?.ImageUrl ?? "",
+                LearnerEmail = la.Learner?.Email ?? "", // Thêm dòng này để lấy email học viên**
+                LearnerPhone = la.Learner?.Phone ?? "", // Thêm dòng này để lấy số điện thoại học viên**
                 LicenceTypeId = la.LicenceTypeId,
                 LicenceTypeName = la.LicenceType?.LicenceCode ?? "",
                 SubmittedAt = la.SubmittedAt,
@@ -202,21 +184,27 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 SimulationScore = la.SimulationScore,
                 ObstacleScore = la.ObstacleScore,
                 PracticalScore = la.PracticalScore,
-                TheoryPassScore = standards.FirstOrDefault(s => s.PartName == "Theory")?.PassScore,
-                SimulationPassScore = standards.FirstOrDefault(s => s.PartName == "Simulation")?.PassScore,
-                ObstaclePassScore = standards.FirstOrDefault(s => s.PartName == "Obstacle")?.PassScore,
-                PracticalPassScore = standards.FirstOrDefault(s => s.PartName == "Practical")?.PassScore,
-                TheoryMaxScore = theoryMaxScore,
-                SimulationMaxScore = simulationMaxScore,
-                ObstacleMaxScore = obstacleMaxScore,
-                PracticalMaxScore = practicalMaxScore,
+                TheoryPassScore = theoryStd?.PassScore,
+                TheoryMaxScore = theoryStd?.MaxScore,
+                SimulationPassScore = simulationStd?.PassScore,
+                SimulationMaxScore = simulationStd?.MaxScore,
+                ObstaclePassScore = obstacleStd?.PassScore,
+                ObstacleMaxScore = obstacleStd?.MaxScore,
+                PracticalPassScore = practicalStd?.PassScore,
+                PracticalMaxScore = practicalStd?.MaxScore,
                 InstructorId = instructor?.UserId,
                 InstructorFullName = instructor != null
                     ? string.Join(" ", new[] { instructor.FirstName, instructor.MiddleName, instructor.LastName }
                         .Where(x => !string.IsNullOrWhiteSpace(x)))
-                    : ""
+                    : "",
+                TotalPracticalHours = totalHours,
+                TotalPracticalKm = totalKm,
+                RequiredPracticalHours = requiredHours,
+                RequiredPracticalKm = requiredKm
             };
         }
+
+
         public async Task<List<LearnerSummaryResponse>> GetLearnerSummariesAsync(string? searchString = null)
         {
             // 1. Query LearningApplications với search
@@ -240,7 +228,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                     (x.Learner != null && x.Learner.Cccd != null && x.Learner.Cccd.CccdNumber.ToLower().Contains(loweredSearch)) ||
                     (x.LicenceType != null && x.LicenceType.LicenceCode.ToLower().Contains(loweredSearch))
                 );
-
             }
 
             var learningApplications = await query.ToListAsync();
@@ -274,25 +261,30 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
 
                     string statusName;
                     string badgeClass;
-                    if (la.LearningStatus == 3)
+
+                    // 🟡 Cập nhật trạng thái mới
+                    switch (la.LearningStatus)
                     {
-                        statusName = "Đã huỷ";
-                        badgeClass = "badge bg-danger";
-                    }
-                    else if (isPassed)
-                    {
-                        statusName = "Hoàn thành";
-                        badgeClass = "badge bg-success";
-                    }
-                    else if (la.LearningStatus == 1)
-                    {
-                        statusName = "Đang học";
-                        badgeClass = "badge bg-primary";
-                    }
-                    else
-                    {
-                        statusName = "Chưa bắt đầu";
-                        badgeClass = "badge bg-warning text-dark";
+                        case 1:
+                            statusName = "Đang học";
+                            badgeClass = "badge bg-primary";
+                            break;
+                        case 2:
+                            statusName = "Bảo lưu";
+                            badgeClass = "badge bg-warning text-dark";
+                            break;
+                        case 3:
+                            statusName = "Học lại";
+                            badgeClass = "badge bg-danger";
+                            break;
+                        case 4:
+                            statusName = "Hoàn thành";
+                            badgeClass = "badge bg-success";
+                            break;
+                        default:
+                            statusName = isPassed ? "Hoàn thành" : "Chưa bắt đầu";
+                            badgeClass = isPassed ? "badge bg-success" : "badge bg-secondary";
+                            break;
                     }
 
                     return new LicenceProgress
@@ -317,11 +309,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 var totalCount = licenceProgresses.Count;
 
                 string overallStatus;
-                if (licenceProgresses.Any(lp => lp.LearningStatusName == "Đang học"))
+                if (licenceProgresses.Any(lp => lp.LearningStatus == 1))
                 {
                     overallStatus = "Đang học";
                 }
-                else if (completedCount == totalCount && totalCount > 0)
+                else if (licenceProgresses.All(lp => lp.LearningStatus == 4))
                 {
                     overallStatus = "Hoàn thành tất cả";
                 }
@@ -329,9 +321,13 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 {
                     overallStatus = $"Hoàn thành {completedCount}/{totalCount}";
                 }
-                else if (licenceProgresses.Any(lp => lp.LearningStatusName == "Đã huỷ"))
+                else if (licenceProgresses.Any(lp => lp.LearningStatus == 2))
                 {
-                    overallStatus = "Có bằng bị huỷ";
+                    overallStatus = "Có bằng bảo lưu";
+                }
+                else if (licenceProgresses.Any(lp => lp.LearningStatus == 3))
+                {
+                    overallStatus = "Có bằng học lại";
                 }
                 else
                 {
@@ -358,6 +354,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
 
             return results;
         }
+
 
         public async Task AddAsync(LearningApplication entity)
         {
@@ -394,18 +391,21 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
             string? statusName = null;
             if (latestApp != null)
             {
-                if (latestApp.LearningStatus == 3)
-                    statusName = "Đã huỷ";
-                else if (latestApp.LearningStatus == 2)
-                    statusName = "Hoàn thành";
-                else if (latestApp.LearningStatus == 1)
-                    statusName = "Đang học";
+                statusName = latestApp.LearningStatus switch
+                {
+                    1 => "Đang học",
+                    2 => "Bảo lưu",
+                    3 => "Học lại",
+                    4 => "Hoàn thành",
+                    _ => "Không xác định"
+                };
             }
 
             return new LearningApplicationsResponse
             {
                 LearnerId = user.UserId,
-                LearnerFullName = string.Join(" ", new[] { user.FirstName, user.MiddleName, user.LastName }.Where(x => !string.IsNullOrWhiteSpace(x))),
+                LearnerFullName = string.Join(" ", new[] { user.FirstName, user.MiddleName, user.LastName }
+                    .Where(x => !string.IsNullOrWhiteSpace(x))),
                 LearnerCccdNumber = user.Cccd?.CccdNumber,
                 LearnerDob = user.Dob?.ToDateTime(TimeOnly.MinValue),
                 LearnerPhone = user.Phone,
@@ -415,5 +415,35 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 LearningStatusName = statusName
             };
         }
+
+        public async Task<bool> UpdateStatusAsync(int learningId, byte newStatus)
+        {
+            var app = await _context.LearningApplications
+                .FirstOrDefaultAsync(x => x.LearningId == learningId);
+
+            if (app == null)
+                return false;
+
+            // Cập nhật trạng thái mới
+            app.LearningStatus = newStatus;
+
+            // Nếu là Bảo lưu (2) thì xóa học viên khỏi lớp (nếu có)
+            if (newStatus == 2) // Bảo lưu
+            {
+                var classMember = await _context.ClassMembers
+                    .FirstOrDefaultAsync(cm => cm.LearnerId == app.LearnerId);
+
+                if (classMember != null)
+                {
+                    _context.ClassMembers.Remove(classMember);
+                }
+            }
+            Console.WriteLine($" [DEBUG] Cập nhật trạng thái: {learningId} -> {newStatus}");
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+
     }
 }

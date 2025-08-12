@@ -6,12 +6,13 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
     public interface ILearningApplicationRepository
     {
         List<LearningApplication> GetAll();
-        Task<List<LearningApplicationsResponse>> GetAllAsync(string? searchString = null);
+        Task<List<LearningApplicationsResponse>> GetAllAsync(string? searchString = null, int? statusFilter = null);
         Task<List<LearnerSummaryResponse>> GetLearnerSummariesAsync(string? searchString = null);
         Task<LearningApplicationsResponse?> GetDetailAsync(int id);
         Task<IQueryable<LearningApplication>> GetAllAsync();
         Task AddAsync(LearningApplication entity);
         Task<LearningApplicationsResponse?> FindLearnerByCccdAsync(string cccd);
-    
-}
+        Task<bool> UpdateStatusAsync(int learningId, byte newStatus);
+
+    }
 }

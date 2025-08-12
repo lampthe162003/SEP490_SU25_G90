@@ -106,14 +106,31 @@ else
 }
 app.MapGet("/", async context =>
 {
-    if (context.User.IsInRole("admin"))
+    if (context.User.IsInRole("academic affairs"))
     {
-        context.Response.Redirect("/Admin/Dashboard");
+        context.Response.Redirect("/AcademicAffairs/LearningApplications/List");
         return;
     }
-    
-    context.Response.Redirect("/Home/Index");
-    return;
+    else if (context.User.IsInRole("human resources"))
+    {
+        context.Response.Redirect("/HR/Dashboard");
+        return;
+    }
+    else if (context.User.IsInRole("instructor"))
+    {
+        context.Response.Redirect("/Instructors/ListClasses");
+        return;
+    }
+    else if (context.User.IsInRole("learner"))
+    {
+        context.Response.Redirect("/Home/Index");
+        return;
+    }
+    else
+    {
+        context.Response.Redirect("/Error403");
+        return;
+    }
 });
 app.UseHttpsRedirection();
 app.UseStaticFiles();

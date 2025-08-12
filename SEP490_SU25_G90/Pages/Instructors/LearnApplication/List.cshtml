@@ -1,4 +1,4 @@
-﻿@page "/Instructors/LearnApplication/List"
+﻿@page "/Instructor/LearnApplication/List"
 @model SEP490_SU25_G90.Pages.Instructors.LearnApplication.ListLearningApplicationsModel
 
 @{
@@ -52,7 +52,7 @@
                     <td class="text-center">@item.SubmittedAt?.ToString("dd/MM/yyyy")</td>
                     <td class="text-center">@item.LearningStatusName</td>
                     <td class="text-center">
-                        <a asp-page="UpdateLearningApplicationScore" asp-route-id="@item.LearningId" class="btn btn-outline-primary btn-sm">
+                        <a asp-page="Details" asp-route-id="@item.LearningId" class="btn btn-outline-primary btn-sm">
                             <i class="fa fa-eye"></i> Xem
                         </a>
                     </td>

@@ -68,9 +68,13 @@ namespace SEP490_SU25_G90.Pages.Commons
             {
                 var token = _jwt.GenerateToken(user.UserId, Email, role, SavePasswordCheck);
                 Response.Cookies.Append("jwt", token, new CookieOptions { HttpOnly = true });
-                if (role.Equals("admin", StringComparison.OrdinalIgnoreCase))
+                if (role.Equals("academic affairs", StringComparison.OrdinalIgnoreCase))
                 {
-                    return Redirect("Admin/Dashboard");
+                    return Redirect("/AcademicAffairs/LearningApplications/List");
+                }
+                else if (role.Equals("human resources", StringComparison.OrdinalIgnoreCase))
+                {
+                    return Redirect("/HR/Dashboard");
                 }
                 else if (role.Equals("instructor", StringComparison.OrdinalIgnoreCase))
                 {

@@ -1,14 +1,96 @@
 USE SEP490_SU25_G90_DB;
 GO
 
+
 INSERT INTO Roles VALUES 
-(1, 'learner'), (2, 'admin'), (3, 'instructor');
+(1, 'learner'), (2, 'human resources'), (3, 'instructor'), (4, 'academic affairs');
+
+-- Insert sample users with proper Vietnamese Unicode characters
+INSERT INTO Users (email, [password], first_name, middle_name, last_name, dob, gender, phone)
+VALUES 
+-- Learners (Học viên)
+(N'nguyen.thi.mai@example.com', 'hashed_password_1', N'Nguyễn', N'Thị', N'Mai', '2000-05-15', 0, '0912345678'),
+(N'tran.van.tuan@example.com', 'hashed_password_2', N'Trần', N'Văn', N'Tuấn', '1999-08-22', 1, '0923456789'),
+(N'le.thi.lan@example.com', 'hashed_password_3', N'Lê', N'Thị', N'Lan', '2001-03-10', 0, '0934567890'),
+
+-- human resources (Nhân sự)
+(N'pham.duc.hai@example.com', 'hashed_admin_1', N'Phạm', N'Đức', N'Hải', '1985-11-30', 1, '0945678901'),
+(N'vu.quang.minh@example.com', 'hashed_admin_2', N'Vũ', N'Quang', N'Minh', '1988-07-25', 1, '0956789012'),
+(N'do.thanh.thuy@example.com', 'hashed_admin_3', N'Đỗ', N'Thanh', N'Thủy', '1990-04-18', 0, '0967890123'),
+
+-- Instructors (Giáo viên)
+(N'hoang.manh.hung@example.com', 'hashed_instructor_1', N'Hoàng', N'Mạnh', N'Hùng', '1980-09-12', 1, '0978901234'),
+(N'truong.thi.linh@example.com', 'hashed_instructor_2', N'Trương', N'Thị', N'Linh', '1983-06-05', 0, '0989012345'),
+(N'nguyen.ba.son@example.com', 'hashed_instructor_3', N'Nguyễn', N'Bá', N'Sơn', '1978-12-20', 1, '0990123456'),
+
+-- Academic affairs (Công tác học vụ)
+(N'vana.nguyen@example.com', 'hashed_affairs_1', N'Nguyễn', N'Văn', N'An', '1995-04-15', 1, '0912345678'),
+(N'thib.tran@example.com', 'hashed_affairs_2', N'Trần', N'Thị', N'Bích', '1998-09-20', 0, '0987654321'),
+(N'quoicc.le@example.com', 'hashed_affairs_3', N'Lê', N'Quốc', N'Cường', '2000-12-05', 1, '0901122334');
+
+-- Assign roles to users
+INSERT INTO UserRoles (user_id, role_id)
+VALUES 
+-- Assign learner role (1) to first 3 users
+(1, 1),
+(2, 1),
+(3, 1),
+
+-- Assign human resources role (2) to next 3 users
+(4, 2),
+(5, 2),
+(6, 2),
+
+-- Assign instructor role (3) to next 3 users
+(7, 3),
+(8, 3),
+(9, 3),
+
+-- Assign academic affairs role (4) to last 3 users
+(10, 4),
+(11, 4),
+(12, 4);
 
 INSERT INTO LicenceTypes VALUES 
 (1, 'B1'), (2, 'B2'), (3, 'C'), (4, 'D'), (5, 'E');
 
 INSERT [dbo].[ScheduleSlots]
 VALUES (1, '08:00:00', '09:30:00'), (2, '10:00:00', '11:30:00'), (3, '13:30:00', '15:00:00'), (4, '15:30:00', '17:00:00')
+-- Insert TestCoreStandards
+--  B1	
+INSERT INTO TestScoreStandards (licence_type_id, part_name, max_score, pass_score) VALUES
+(1, N'Theory', 30, 26),
+(1, N'Simulation', 50, 35),
+(1, N'Obstacle', 100, 80),
+(1, N'Practical', 100, 80);
+
+--  B2
+INSERT INTO TestScoreStandards (licence_type_id, part_name, max_score, pass_score) VALUES
+(2, N'Theory', 35, 32),
+(2, N'Simulation', 50, 35),
+(2, N'Obstacle', 100, 80),
+(2, N'Practical', 100, 80);
+
+--  C
+INSERT INTO TestScoreStandards (licence_type_id, part_name, max_score, pass_score) VALUES
+(3, N'Theory', 40, 36),
+(3, N'Simulation', 50, 35),
+(3, N'Obstacle', 100, 80),
+(3, N'Practical', 100, 80);
+
+--  D
+INSERT INTO TestScoreStandards (licence_type_id, part_name, max_score, pass_score) VALUES
+(4, N'Theory', 45, 40),
+(4, N'Simulation', 50, 35),
+(4, N'Obstacle', 100, 80),
+(4, N'Practical', 100, 80);
+
+--  E
+INSERT INTO TestScoreStandards (licence_type_id, part_name, max_score, pass_score) VALUES
+(5, N'Theory', 45, 40),
+(5, N'Simulation', 50, 35),
+(5, N'Obstacle', 100, 80),
+(5, N'Practical', 100, 80);
 
 INSERT INTO Cities(city_id, city_name) VALUES
 (01, N'Hà Nội'),
@@ -1774,42 +1856,6 @@ INSERT INTO Wards(ward_id, ward_name, province_id) VALUES
 (03164, N'Quảng Lâm', 096),
 (03177, N'Huổi Lếnh', 096),
 (03172, N'Mường Chà', 097);  -- Truncated to avoid SQL size overflow
-
--- Insert sample users with proper Vietnamese Unicode characters
-INSERT INTO Users (email, [password], first_name, middle_name, last_name, dob, gender, phone)
-VALUES 
--- Learners (Học viên)
-(N'nguyen.thi.mai@example.com', 'hashed_password_1', N'Nguyễn', N'Thị', N'Mai', '2000-05-15', 0, '0912345678'),
-(N'tran.van.tuan@example.com', 'hashed_password_2', N'Trần', N'Văn', N'Tuấn', '1999-08-22', 1, '0923456789'),
-(N'le.thi.lan@example.com', 'hashed_password_3', N'Lê', N'Thị', N'Lan', '2001-03-10', 0, '0934567890'),
-
--- Admins (Quản trị viên)
-(N'pham.duc.hai@example.com', 'hashed_admin_1', N'Phạm', N'Đức', N'Hải', '1985-11-30', 1, '0945678901'),
-(N'vu.quang.minh@example.com', 'hashed_admin_2', N'Vũ', N'Quang', N'Minh', '1988-07-25', 1, '0956789012'),
-(N'do.thanh.thuy@example.com', 'hashed_admin_3', N'Đỗ', N'Thanh', N'Thủy', '1990-04-18', 0, '0967890123'),
-
--- Instructors (Giáo viên)
-(N'hoang.manh.hung@example.com', 'hashed_instructor_1', N'Hoàng', N'Mạnh', N'Hùng', '1980-09-12', 1, '0978901234'),
-(N'truong.thi.linh@example.com', 'hashed_instructor_2', N'Trương', N'Thị', N'Linh', '1983-06-05', 0, '0989012345'),
-(N'nguyen.ba.son@example.com', 'hashed_instructor_3', N'Nguyễn', N'Bá', N'Sơn', '1978-12-20', 1, '0990123456');
-
--- Assign roles to users
-INSERT INTO UserRoles (user_id, role_id)
-VALUES 
--- Assign learner role (1) to first 3 users
-(1, 1),
-(2, 1),
-(3, 1),
-
--- Assign admin role (2) to next 3 users
-(4, 2),
-(5, 2),
-(6, 2),
-
--- Assign instructor role (3) to last 3 users
-(7, 3),
-(8, 3),
-(9, 3);
 
 SET IDENTITY_INSERT [dbo].[News] ON 
 

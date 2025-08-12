@@ -37,8 +37,6 @@ public partial class User
 
     public virtual Cccd? Cccd { get; set; }
 
-    public virtual ICollection<ClassMember> ClassMembers { get; set; } = new List<ClassMember>();
-
     public virtual ICollection<Class> Classes { get; set; } = new List<Class>();
 
     public virtual HealthCertificate? HealthCertificate { get; set; }

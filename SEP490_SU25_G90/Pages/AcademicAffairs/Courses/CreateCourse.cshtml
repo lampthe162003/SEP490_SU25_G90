@@ -1,0 +1,80 @@
+@page
+@model SEP490_SU25_G90.Pages.AcademicAffairs.Courses.CreateCourseModel
+@{
+    ViewData["Title"] = "Tạo khóa học";
+    Layout = "~/Pages/Shared/_AcademicAffairsLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="fas fa-plus me-2"></i> Tạo khóa học</h2>
+        <a class="btn btn-secondary" href="/AcademicAffairs/Courses/ListCourses"><i class="fas fa-arrow-left me-2"></i>Quay lại</a>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div>@error.ErrorMessage</div>
+            }
+        </div>
+    }
+
+    @if (TempData["SuccessMessage"] is string msg)
+    {
+        <div class="alert alert-success">@msg</div>
+    }
+
+    <div class="card">
+        <div class="card-body">
+            <form method="post">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Tên khóa học</label>
+                        <input id="generatedName" class="form-control" value="@(Model.GeneratedCourseName ?? "(Tự sinh theo loại bằng)")" disabled />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Loại bằng</label>
+                        <select asp-for="Input.LicenceTypeId" class="form-select" asp-items="Model.LicenceTypes">
+                            <option value="">-- Chọn loại bằng --</option>
+                        </select>
+                        <span class="text-danger" asp-validation-for="Input.LicenceTypeId"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Thời gian bắt đầu</label>
+                        <input asp-for="Input.StartDate" type="date" class="form-control" />
+                        <span class="text-danger" asp-validation-for="Input.StartDate"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Thời gian kết thúc</label>
+                        <input asp-for="Input.EndDate" type="date" class="form-control" />
+                        <span class="text-danger" asp-validation-for="Input.EndDate"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4 gap-2">
+                    <a class="btn btn-outline-secondary" href="/AcademicAffairs/Courses/ListCourses">Hủy</a>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Tạo khóa học</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(function () {
+            const ddl = $('select[name="Input.LicenceTypeId"]');
+            ddl.on('change', function () {
+                const val = $(this).val();
+                if (!val) { $('#generatedName').val('(Tự sinh theo loại bằng)'); return; }
+                $.get('@Url.Page("/AcademicAffairs/Courses/CreateCourse", "GenerateName")', { licenceTypeId: val })
+                  .done(function (res) { if (res && res.name) $('#generatedName').val(res.name); })
+                  .fail(function () { $('#generatedName').val('(Không tạo được tên)'); });
+            });
+        });
+    </script>
+}
+

@@ -13,5 +13,5 @@ public partial class ClassMember
 
     public virtual Class? Class { get; set; }
 
-    public virtual User? Learner { get; set; }
+    public virtual LearningApplication? Learner { get; set; }
 }

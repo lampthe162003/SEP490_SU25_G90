@@ -175,6 +175,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
         {
             return await _instructorRepository.GetLearningApplicationsByInstructorAsync(instructorId);
         }
+        public async Task<LearningApplicationsResponse?> GetLearningApplicationDetailAsync(int learningId)
+        {
+            return await _instructorRepository.GetLearningApplicationDetailAsync(learningId);
+        }
 
+       
     }
 }

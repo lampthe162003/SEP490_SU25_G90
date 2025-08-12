@@ -1,0 +1,175 @@
+﻿@page "/Instructor/Schedule"
+@model SEP490_SU25_G90.Pages.Instructors.InstructorScheduleModel
+@using SEP490_SU25_G90.vn.edu.fpt.MappingObjects
+
+@{
+    ViewData["Title"] = "Thời khóa biểu giảng viên";
+    Layout = "~/Pages/Shared/_InstructorLayout.cshtml";
+    var weekRange = $"Tuần ({Model.StartOfWeek:dd/MM} - {Model.EndOfWeek:dd/MM})";
+    var weekdays = new[] { "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật" };
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+<!-- Chọn năm và tuần -->
+<form method="get" class="mb-3 d-flex align-items-center gap-3">
+    <label for="yearSelector" class="form-label mb-0"><b>Chọn năm:</b></label>
+    <select id="yearSelector" name="Year" class="form-select w-auto me-3" onchange="this.form.submit()">
+        @{
+            int currentYear = DateTime.Now.Year;
+            for (int y = currentYear - 2; y <= currentYear + 1; y++)
+            {
+                <option value="@y" selected="@(Model.Year == y)">@y</option>
+            }
+        }
+    </select>
+
+    <label for="weekSelector" class="form-label mb-0"><b>Chọn tuần:</b></label>
+    <select id="weekSelector" name="StartOfWeekInput" class="form-select w-auto" onchange="this.form.submit()">
+        @{
+            int year = Model.Year ?? DateTime.Now.Year;
+            DateTime start = new DateTime(year, 1, 1);
+
+            // Tìm thứ 2 đầu tiên trong năm
+            while (start.DayOfWeek != DayOfWeek.Monday)
+            {
+                start = start.AddDays(1);
+            }
+
+            DateTime current = start;
+            DateTime endOfYear = new DateTime(year, 12, 31);
+
+            while (current <= endOfYear)
+            {
+                var monday = current;
+                var sunday = current.AddDays(6);
+                string value = monday.ToString("yyyy-MM-dd");
+                string text = $"{monday:dd/MM} - {sunday:dd/MM}";
+
+                bool selected;
+                if (Model.StartOfWeekInput.HasValue)
+                {
+                    selected = DateOnly.FromDateTime(monday) == Model.StartOfWeekInput.Value;
+                }
+                else
+                {
+                    selected = DateOnly.FromDateTime(monday) == Model.StartOfWeek;
+                }
+
+                <option value="@value" selected="@selected">@text</option>
+                current = current.AddDays(7);
+            }
+        }
+    </select>
+</form>
+
+<h5 class="mb-4 text-muted">@weekRange</h5>
+
+<!-- Lịch -->
+<div class="table-wrapper">
+    <table class="table table-bordered text-center">
+        <thead class="table-primary">
+            <tr>
+                <th style="width: 140px">Slot</th>
+                @for (int i = 0; i < Model.DatesOfWeek.Count; i++)
+                {
+                    <th>@weekdays[i]<br /><span class="text-muted">@Model.DatesOfWeek[i].ToString("dd/MM")</span></th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for (int slot = 1; slot < 5; slot++)
+            {
+                <tr>
+                    <td>
+                        <b>Slot @slot</b><br />
+                        @{
+                            var slotInfo = Model.AllSlots.FirstOrDefault(s => s.SlotId == slot);
+                            if (!string.IsNullOrEmpty(slotInfo.StartTime))
+                            {
+                                <span class="text-muted">@slotInfo.StartTime - @slotInfo.EndTime</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">--:-- - --:--</span>
+                            }
+                        }
+                    </td>
+                    @for (int day = 0; day < 7; day++)
+                    {
+                        var date = Model.DatesOfWeek[day];
+                        var schedule = Model.ScheduleData.FirstOrDefault(x => x.ScheduleDate == date && x.SlotId == slot);
+                        <td>
+                            @if (schedule != null)
+                            {
+                                <div><b>@schedule.ClassName</b></div>
+                            }
+                            else
+                            {
+                                <span>-</span>
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>
+
+@section Styles {
+    <style>
+        table th, table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        select.form-select {
+            padding-right: 2rem;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23333'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 10px 6px;
+        }
+
+        select.form-select {
+            min-width: 140px;
+            max-width: 200px;
+        }
+
+        th {
+            padding: 12px;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 8px;
+        }
+
+            td span.text-muted {
+                display: block;
+                font-size: 0.85rem;
+                color: #666;
+            }
+
+        .table th,
+        .table td {
+            border: 1px solid #dee2e6;
+        }
+
+        .table-primary {
+            background-color: #dbeeff;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+    </style>
+}

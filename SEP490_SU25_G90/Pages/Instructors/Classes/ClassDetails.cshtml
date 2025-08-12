@@ -1,0 +1,339 @@
+@page "{id:int?}"
+@model SEP490_SU25_G90.Pages.Instructors.Classes.ClassDetailsModel
+@{
+    ViewData["Title"] = "Chi tiết lớp học";
+    Layout = "~/Pages/Shared/_InstructorLayout.cshtml";
+}
+
+<div class="container-fluid">
+    @if (Model.ClassNotFound)
+    {
+        <!-- Class not found message -->
+        <div class="text-center py-5">
+            <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+            <h3 class="text-muted">Không tìm thấy lớp học</h3>
+            <p class="text-muted">Lớp học bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.</p>
+            <a href="@Model.CreateBackUrl()" class="btn btn-primary">
+                <i class="fas fa-arrow-left me-2"></i>
+                Quay lại danh sách
+            </a>
+        </div>
+    }
+    else
+    {
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">
+                <i class="fas fa-chalkboard-teacher me-2"></i>
+                Chi tiết lớp học
+            </h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">
+                        <a href="@Model.CreateBackUrl()">Danh sách lớp học</a>
+                    </li>
+                    <li class="breadcrumb-item active">Chi tiết</li>
+                </ol>
+            </nav>
+        </div>
+
+        <!-- Error messages -->
+        @* @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <div>@error.ErrorMessage</div>
+                }
+            </div>
+        } *@
+
+        <!-- Class Information Card -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Thông tin lớp học
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-4">Tên lớp:</dt>
+                            <dd class="col-sm-8">
+                                <strong class="text-primary">@Model.ClassDetail.ClassName</strong>
+                            </dd>
+
+                            <dt class="col-sm-4">Giáo viên:</dt>
+                            <dd class="col-sm-8">
+                                @Model.ClassDetail.InstructorName
+                            </dd>
+
+                            <dt class="col-sm-4">Loại bằng:</dt>
+                            <dd class="col-sm-8">
+                                <span class="badge bg-info fs-6">@Model.ClassDetail.LicenceCode</span>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-4">Bắt đầu:</dt>
+                            <dd class="col-sm-8">
+                                <input type="date" class="form-control-plaintext border p-2 bg-light" 
+                                       value="@Model.ClassDetail.StartDate?.ToString("yyyy-MM-dd")" 
+                                       readonly disabled />
+                            </dd>
+
+                            <dt class="col-sm-4">Kết thúc:</dt>
+                            <dd class="col-sm-8">
+                                <input type="date" class="form-control-plaintext border p-2 bg-light" 
+                                       value="@Model.ClassDetail.EndDate?.ToString("yyyy-MM-dd")" 
+                                       readonly disabled />
+                            </dd>
+
+                            <dt class="col-sm-4">Trạng thái:</dt>
+                            <dd class="col-sm-8">
+                                <span class="badge @Model.GetStatusBadgeClass() fs-6">
+                                    @Model.ClassDetail.Status
+                                </span>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Students List Card -->
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-users me-2"></i>
+                        Danh sách học viên
+                    </h5>
+                    <span class="badge bg-light text-dark">
+                        Tổng: @Model.ClassDetail.TotalStudents học viên
+                    </span>
+                </div>
+            </div>
+            <div class="card-body">
+                @if (Model.PagedMembers.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col" style="width: 5%;">STT</th>
+                                    <th scope="col" style="width: 10%;">Hình ảnh</th>
+                                    <th scope="col" style="width: 15%;">Code</th>
+                                    <th scope="col" style="width: 25%;">Họ và tên</th>
+                                    <th scope="col" style="width: 20%;">Liên hệ</th>
+                                    <th scope="col" style="width: 15%;">Trạng thái học</th>
+                                    <th scope="col" style="width: 10%;">Chi tiết</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int startIndex = (Model.CurrentPage - 1) * Model.PageSize;
+                                }
+                                @foreach (var item in Model.PagedMembers.Select((value, index) => new { value, index }))
+                                {
+                                    <tr>
+                                        <td class="align-middle">@(startIndex + item.index + 1)</td>
+                                        <td class="align-middle text-center">
+                                            <img src="@item.value.ProfileImageUrl" 
+                                                 alt="Avatar" 
+                                                 class="rounded-circle" 
+                                                 style="width: 50px; height: 50px; object-fit: cover;"
+                                                   />
+                                        </td>
+                                        <td class="align-middle">
+                                            <code class="bg-light p-1 rounded">@item.value.StudentCode</code>
+                                        </td>
+                                        <td class="align-middle">
+                                            <strong>@item.value.FullName</strong>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="small">
+                                                @if (!string.IsNullOrEmpty(item.value.Email))
+                                                {
+                                                    <div>
+                                                        <i class="fas fa-envelope me-1"></i>
+                                                        @item.value.Email
+                                                    </div>
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.value.Phone))
+                                                {
+                                                    <div>
+                                                        <i class="fas fa-phone me-1"></i>
+                                                        @item.value.Phone
+                                                    </div>
+                                                }
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <span class="badge bg-primary">@item.value.LearningStatus</span>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <a href="@Model.CreateLearnerUrl(item.value.UserId)" 
+                                               class="btn btn-sm btn-outline-primary" 
+                                               title="Xem chi tiết học viên"
+                                               data-bs-toggle="tooltip">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    @if (Model.ShouldShowPagination)
+                    {
+                        <nav aria-label="Phân trang học viên" class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                <!-- Previous button -->
+                                <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                                    <a class="page-link" href="@Model.CreatePagingUrl(Model.CurrentPage - 1)">
+                                        <i class="fas fa-chevron-left"></i>
+                                        Trước
+                                    </a>
+                                </li>
+
+                                @{
+                                    int startPage = Math.Max(1, Model.CurrentPage - 2);
+                                    int endPage = Math.Min(Model.TotalPages, Model.CurrentPage + 2);
+                                }
+
+                                <!-- First page -->
+                                @if (startPage > 1)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" href="@Model.CreatePagingUrl(1)">1</a>
+                                    </li>
+                                    @if (startPage > 2)
+                                    {
+                                        <li class="page-item disabled">
+                                            <span class="page-link">...</span>
+                                        </li>
+                                    }
+                                }
+
+                                <!-- Page numbers -->
+                                @for (int i = startPage; i <= endPage; i++)
+                                {
+                                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                        <a class="page-link" href="@Model.CreatePagingUrl(i)">@i</a>
+                                    </li>
+                                }
+
+                                <!-- Last page -->
+                                @if (endPage < Model.TotalPages)
+                                {
+                                    @if (endPage < Model.TotalPages - 1)
+                                    {
+                                        <li class="page-item disabled">
+                                            <span class="page-link">...</span>
+                                        </li>
+                                    }
+                                    <li class="page-item">
+                                        <a class="page-link" href="@Model.CreatePagingUrl(Model.TotalPages)">@Model.TotalPages</a>
+                                    </li>
+                                }
+
+                                <!-- Next button -->
+                                <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                                    <a class="page-link" href="@Model.CreatePagingUrl(Model.CurrentPage + 1)">
+                                        Sau
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <!-- Results info -->
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <small class="text-muted">
+                                Hiển thị @((Model.CurrentPage - 1) * Model.PageSize + 1) 
+                                đến @(Math.Min(Model.CurrentPage * Model.PageSize, Model.ClassDetail.TotalStudents)) 
+                                trong tổng số @Model.ClassDetail.TotalStudents học viên
+                            </small>
+                            <small class="text-muted">
+                                Trang @Model.CurrentPage / @Model.TotalPages
+                            </small>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <i class="fas fa-users-slash fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Lớp học chưa có học viên</h5>
+                        <p class="text-muted">Lớp học này hiện tại chưa có học viên nào đăng ký.</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="d-flex justify-content-start mt-4 mb-5">
+            <a href="@Model.CreateBackUrl()" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>
+                Quay lại
+            </a>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            // Handle image load errors
+            $('img').on('error', function() {
+                $(this).attr('src', 'https://cdn.vectorstock.com/i/1000v/51/87/student-avatar-user-profile-icon-vector-47025187.jpg');
+            });
+
+            // Add hover effects to table rows
+            $('.table tbody tr').hover(
+                function() {
+                    $(this).addClass('bg-light');
+                },
+                function() {
+                    $(this).removeClass('bg-light');
+                }
+            );
+        });
+    </script>
+}
+
+<style>
+    .table tbody tr:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.2s ease;
+    }
+    
+    .card-header {
+        border-bottom: 3px solid rgba(255,255,255,0.2);
+    }
+    
+    .badge {
+        font-size: 0.85em;
+    }
+    
+    .form-control-plaintext.border {
+        border-radius: 0.375rem;
+    }
+    
+    .breadcrumb-item + .breadcrumb-item::before {
+        color: #6c757d;
+    }
+</style> 
