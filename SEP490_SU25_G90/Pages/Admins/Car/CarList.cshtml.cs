@@ -69,13 +69,13 @@ namespace SEP490_SU25_G90.Pages.Admins.Car
             }
 
             // Check if license plate exists
-            if (await _carService.IsLicensePlateExistsAsync(CarRequest.LicensePlate))
-            {
-                ModelState.AddModelError("CarRequest.LicensePlate", "Biển số xe này đã tồn tại.");
-                await LoadDropdownData();
-                await LoadCars();
-                return Page();
-            }
+            //if (await _carService.IsLicensePlateExistsAsync(CarRequest.LicensePlate))
+            //{
+            //    ModelState.AddModelError("CarRequest.LicensePlate", "Biển số xe này đã tồn tại.");
+            //    await LoadDropdownData();
+            //    await LoadCars();
+            //    return Page();
+            //}
 
             var success = await _carService.CreateCarAsync(CarRequest);
             
