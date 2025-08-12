@@ -22,6 +22,8 @@
         }
         public int? LicenseTypeId { get; set; }
         public int? Status { get; set; }
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
         public const int Take = 10;
         public int Skip => Take * ((Page ?? 1) - 1);
 

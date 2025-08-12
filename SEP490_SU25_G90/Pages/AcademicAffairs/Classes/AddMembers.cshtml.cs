@@ -1,0 +1,102 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using SEP490_SU25_G90.vn.edu.fpt.Models;
+using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
+
+namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
+{
+    [Authorize(Roles = "academic affairs")]
+    public class AddMembersModel : PageModel
+    {
+        private readonly Sep490Su25G90DbContext _context;
+        private readonly ILearningApplicationService _learningService;
+
+        public AddMembersModel(Sep490Su25G90DbContext context, ILearningApplicationService learningService)
+        {
+            _context = context;
+            _learningService = learningService;
+        }
+
+        [BindProperty(SupportsGet = true)]
+        public int ClassId { get; set; }
+
+        [BindProperty]
+        public List<int> SelectedLearnerIds { get; set; } = new();
+
+        public List<CandidateVm> Candidates { get; set; } = new();
+
+        public class CandidateVm
+        {
+            public int LearningId { get; set; }
+            public string FullName { get; set; } = string.Empty;
+            public string Cccd { get; set; } = string.Empty;
+            public string Status { get; set; } = string.Empty;
+            public string ProfileImageUrl { get; set; } = "https://cdn-icons-png.flaticon.com/512/1144/1144760.png";
+        }
+
+        public async Task<IActionResult> OnGetAsync()
+        {
+            var classExists = await _context.Classes.AnyAsync(c => c.ClassId == ClassId);
+            if (!classExists) return NotFound();
+
+            await LoadCandidatesAsync();
+            return Page();
+        }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            var classEntity = await _context.Classes.FirstOrDefaultAsync(c => c.ClassId == ClassId);
+            if (classEntity == null) return NotFound();
+
+            if (!SelectedLearnerIds.Any())
+            {
+                ModelState.AddModelError(string.Empty, "Vui lòng chọn ít nhất một học viên");
+                await LoadCandidatesAsync();
+                return Page();
+            }
+
+            foreach (var learningId in SelectedLearnerIds.Distinct())
+            {
+                var exists = await _context.ClassMembers.AnyAsync(cm => cm.ClassId == ClassId && cm.LearnerId == learningId);
+                if (!exists)
+                {
+                    _context.ClassMembers.Add(new ClassMember
+                    {
+                        ClassId = ClassId,
+                        LearnerId = learningId
+                    });
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Đã thêm học viên vào lớp";
+            return RedirectToPage("/AcademicAffairs/Classes/ClassDetails", new { id = ClassId });
+        }
+
+        private async Task LoadCandidatesAsync()
+        {
+            var list = await _learningService.GetAllAsync();
+            var alreadyMemberIds = await _context.ClassMembers
+                .Where(cm => cm.ClassId == ClassId)
+                .Select(cm => cm.LearnerId!.Value)
+                .ToListAsync();
+
+            Candidates = list
+                .Where(x => x.LearningStatus != 4 && !alreadyMemberIds.Contains(x.LearningId))
+                .Select(x => new CandidateVm
+                {
+                    LearningId = x.LearningId,
+                    FullName = x.LearnerFullName ?? string.Empty,
+                    Cccd = x.LearnerCccdNumber ?? string.Empty,
+                    Status = x.LearningStatusName ?? string.Empty,
+                    ProfileImageUrl = string.IsNullOrWhiteSpace(x.LearnerCccdImageUrl) ?
+                        "https://cdn-icons-png.flaticon.com/512/1144/1144760.png" :
+                        x.LearnerCccdImageUrl.Split('|').FirstOrDefault() ?? "https://cdn-icons-png.flaticon.com/512/1144/1144760.png"
+                })
+                .ToList();
+        }
+    }
+}
+

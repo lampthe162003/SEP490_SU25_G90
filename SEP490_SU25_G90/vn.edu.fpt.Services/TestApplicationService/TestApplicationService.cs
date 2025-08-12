@@ -126,6 +126,18 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
                             );
             }
 
+            if (request.FromDate.HasValue)
+            {
+                var from = DateOnly.FromDateTime(request.FromDate.Value.Date);
+                data = data.Where(x => x.ExamDate >= from);
+            }
+
+            if (request.ToDate.HasValue)
+            {
+                var to = DateOnly.FromDateTime(request.ToDate.Value.Date);
+                data = data.Where(x => x.ExamDate <= to);
+            }
+
             var totalCount = await data.CountAsync();
             var paginatedData = await data
                 .Skip(request.Skip)

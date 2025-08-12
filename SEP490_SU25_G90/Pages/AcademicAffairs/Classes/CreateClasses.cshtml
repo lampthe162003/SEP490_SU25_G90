@@ -1,4 +1,129 @@
 ﻿@page
 @model SEP490_SU25_G90.Pages.AcademicAffairs.Classes.CreateClassesModel
 @{
+    ViewData["Title"] = "Tạo lớp học";
+    Layout = "~/Pages/Shared/_AcademicAffairsLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="fas fa-plus me-2"></i> Tạo lớp học</h2>
+        <a class="btn btn-secondary" href="/AcademicAffairs/Classes/ListClasses"><i class="fas fa-arrow-left me-2"></i>Quay lại</a>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div>@error.ErrorMessage</div>
+            }
+        </div>
+    }
+
+    @if (TempData["SuccessMessage"] is string msg)
+    {
+        <div class="alert alert-success">@msg</div>
+    }
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="post">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label asp-for="SelectedCourseId" class="form-label">Tên khóa học</label>
+                        <select asp-for="SelectedCourseId" class="form-select" asp-items="Model.Courses" onchange="onCourseChanged(this)">
+                            <option value="">-- Chọn khóa học --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="ClassName" class="form-label">Tên lớp học</label>
+                        <input asp-for="ClassName" class="form-control" placeholder="sẽ tự động sinh" readonly />
+                        <span asp-validation-for="ClassName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="InstructorId" class="form-label">Giáo viên</label>
+                        <select asp-for="InstructorId" class="form-select" asp-items="Model.Instructors">
+                            <option value="">-- Chọn giáo viên --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label asp-for="MaxStudents" class="form-label">Số học viên tối đa</label>
+                        <input asp-for="MaxStudents" class="form-control" type="number" min="1" />
+                    </div>
+                </div>
+
+                <hr class="my-4" />
+
+                <h4 class="mb-3">Danh sách học viên chờ xếp lớp</h4>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle">
+                        <thead class="table-info">
+                            <tr>
+                                <th style="width:70px">Stt</th>
+                                <th style="width:80px">Chọn</th>
+                                <th style="width:120px">Hình ảnh</th>
+                                <th>CCCD</th>
+                                <th>Tên học viên</th>
+                                <th>Tình trạng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @if (Model.WaitingLearners.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">Không có học viên đang chờ</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            var index = 1;
+                            foreach (var item in Model.WaitingLearners)
+                            {
+                                <tr>
+                                    <td>@index</td>
+                                    <td class="text-center">
+                                        <input class="form-check-input" type="checkbox" name="SelectedLearnerIds" value="@item.LearningId" @(item.Selected ? "checked" : null) />
+                                    </td>
+                                    <td>
+                                        <img src="@item.ProfileImageUrl" alt="avatar" class="rounded" style="width:48px;height:48px;object-fit:cover"/>
+                                    </td>
+                                    <td>@item.Cccd</td>
+                                    <td>@item.FullName</td>
+                                    <td>@item.Status</td>
+                                </tr>
+                                index++;
+                            }
+                        }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-flex justify-content-end gap-3 mt-3">
+                    <a class="btn btn-outline-secondary" href="/AcademicAffairs/Classes/ListClasses">Quay lại</a>
+                    <button type="submit" class="btn btn-primary">Tạo lớp học</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        async function onCourseChanged(sel){
+            if(!sel || !sel.value) return;
+            const res = await fetch(`?handler=GenerateName&courseId=${sel.value}`);
+            if(!res.ok) return;
+            const data = await res.json();
+            const input = document.querySelector('[name="ClassName"]');
+            if(input) input.value = data.name;
+        }
+        // auto-generate on initial load if course preselected
+        window.addEventListener('DOMContentLoaded', ()=>{
+            const sel = document.querySelector('[name="SelectedCourseId"]');
+            if(sel && sel.value){ onCourseChanged(sel); }
+        });
+    </script>
 }

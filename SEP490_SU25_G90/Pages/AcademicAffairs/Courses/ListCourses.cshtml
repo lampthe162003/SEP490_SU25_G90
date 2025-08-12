@@ -51,15 +51,15 @@
                 <div class="row g-3 mt-2">
                     <div class="col-md-3">
                         <label class="form-label">Bắt đầu</label>
-                        <input type="date" class="form-control"
+                        <input type="month" class="form-control"
                                name="SearchRequest.StartDate"
-                               value="@(Model.SearchRequest.StartDate?.ToString("yyyy-MM-dd"))" />
+                               value="@(Model.SearchRequest.StartDate?.ToString("yyyy-MM"))" />
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Kết thúc</label>
-                        <input type="date" class="form-control"
+                        <input type="month" class="form-control"
                                name="SearchRequest.EndDate"
-                               value="@(Model.SearchRequest.EndDate?.ToString("yyyy-MM-dd"))" />
+                               value="@(Model.SearchRequest.EndDate?.ToString("yyyy-MM"))" />
                     </div>
                     <div class="col-md-6 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary me-2" onclick="document.querySelector('input[name=\"SearchRequest.PageNumber\"]').value = 1;">
@@ -185,7 +185,7 @@
                 $('input[name="SearchRequest.PageNumber"]').val(1);
                 $(this).closest('form').submit();
             });
-            $('input[type="text"], input[type="date"]').keypress(function (e) {
+            $('input[type="text"], input[type="date"], input[type="month"]').keypress(function (e) {
                 if (e.which === 13) {
                     $('input[name="SearchRequest.PageNumber"]').val(1);
                     $(this).closest('form').submit();

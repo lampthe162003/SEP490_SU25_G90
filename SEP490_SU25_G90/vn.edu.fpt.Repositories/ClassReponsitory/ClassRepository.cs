@@ -22,6 +22,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
         public async Task<IEnumerable<ClassListResponse>> GetClassesAsync(ClassSearchRequest searchRequest)
         {
             var query = _context.Classes
+                .Include(c => c.Course)
+                    .ThenInclude(cs => cs!.LicenceType)
                 .Include(c => c.Instructor)
                 .Include(c => c.ClassMembers)
                 .AsQueryable();
@@ -39,6 +41,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
                 query = query.Where(c => c.InstructorId == searchRequest.InstructorId.Value);
             }
 
+            // Lọc theo loại bằng nếu có
+            if (searchRequest.LicenceTypeId.HasValue)
+            {
+                query = query.Where(c => c.Course != null && c.Course.LicenceTypeId == searchRequest.LicenceTypeId.Value);
+            }
+
             var classes = await query
                 .Skip((searchRequest.PageNumber - 1) * searchRequest.PageSize)
                 .Take(searchRequest.PageSize)
@@ -49,6 +57,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
                     InstructorName = c.Instructor != null ? 
                         $"{c.Instructor.FirstName} {c.Instructor.MiddleName} {c.Instructor.LastName}".Trim() : 
                         "Chưa phân công",
+                    LicenceCode = c.Course != null && c.Course.LicenceType != null ? c.Course.LicenceType.LicenceCode : null,
+                    StartDate = c.Course!.StartDate != null ? c.Course.StartDate.Value.ToDateTime(TimeOnly.MinValue) : null,
+                    EndDate = c.Course!.EndDate != null ? c.Course.EndDate.Value.ToDateTime(TimeOnly.MinValue) : null,
+                    Status = GetClassStatus(c.Course!.StartDate, c.Course!.EndDate),
                     TotalStudents = c.ClassMembers.Count
                 })
                 .ToListAsync();
@@ -108,6 +120,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
         public async Task<ClassDetailResponse?> GetClassDetailAsync(int classId)
         {
             var classDetail = await _context.Classes
+                .Include(c => c.Course)
+                    .ThenInclude(cs => cs!.LicenceType)
                 .Include(c => c.Instructor)
                 .Include(c => c.ClassMembers)
                     .ThenInclude(cm => cm.Learner)
@@ -120,6 +134,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
             var response = new ClassDetailResponse
             {
                 ClassId = classDetail.ClassId,
+                CourseName = classDetail.Course?.CourseName,
                 ClassName = classDetail.ClassName,
                 InstructorId = classDetail.InstructorId,
                 InstructorName = classDetail.Instructor != null ?
@@ -127,7 +142,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
                     "Chưa phân công",
                 InstructorPhone = classDetail.Instructor?.Phone,
                 InstructorEmail = classDetail.Instructor?.Email,
-                //Status = GetClassStatus(classDetail.StartDate, classDetail.EndDate),
+                LicenceCode = classDetail.Course?.LicenceType?.LicenceCode,
+                StartDate = classDetail.Course?.StartDate?.ToDateTime(TimeOnly.MinValue),
+                EndDate = classDetail.Course?.EndDate?.ToDateTime(TimeOnly.MinValue),
+                Status = GetClassStatus(classDetail.Course?.StartDate, classDetail.Course?.EndDate),
                 TotalStudents = classDetail.ClassMembers.Count,
                 Members = classDetail.ClassMembers
                     .Where(cm => cm.Learner?.Learner != null)
