@@ -8,14 +8,13 @@
 }
 
 <h2 class="mb-4">Thông tin chi tiết hồ sơ học</h2>
-@if (!string.IsNullOrWhiteSpace(Model.StatusMessage))  // Đúng vì StatusMessage là property của PageModel
+@if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
 {
     <div class="alert alert-info alert-dismissible fade show mt-2" role="alert">
         @Model.StatusMessage
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
-
 
 <div class="row">
     <!-- Thông tin học viên -->
@@ -36,15 +35,28 @@
                     <tr><td><b>Ngày đăng ký học:</b> @app?.SubmittedAt?.ToString("dd/MM/yyyy")</td></tr>
                     <tr>
                         <td>
+                            <b>Giờ thực hành:</b>
+                            <span class="@(app.TotalPracticalHours >= app.RequiredPracticalHours ? "text-success fw-bold" : "text-danger fw-bold")">
+                                @app.TotalPracticalHours / @app.RequiredPracticalHours giờ
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Km thực hành:</b>
+                            <span class="@(app.TotalPracticalKm >= app.RequiredPracticalKm ? "text-success fw-bold" : "text-danger fw-bold")">
+                                @app.TotalPracticalKm / @app.RequiredPracticalKm km
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
                             <b>Trạng thái hồ sơ:</b>
                             <span class="badge bg-secondary">@app?.LearningStatusName</span>
-
-                            <!-- Nút Sửa -->
                             <button type="button" class="btn btn-sm btn-outline-primary ms-2" onclick="toggleStatusForm()">
                                 <i class="fa fa-edit"></i> Sửa
                             </button>
-
-                            <!-- Form cập nhật trạng thái (ẩn mặc định) -->
                             <form id="statusForm" method="post" asp-page-handler="UpdateStatus" class="mt-2 d-none">
                                 <input type="hidden" asp-for="Id" value="@app?.LearningId" />
                                 <div class="row">
@@ -65,10 +77,6 @@
                             </form>
                         </td>
                     </tr>
-
-
-
-                    <tr><td><b>Ghi chú nội bộ:</b> (Ghi chú thêm của quản trị viên)</td></tr>
                 </table>
             </div>
         </div>
@@ -156,8 +164,6 @@
     </div>
 </div>
 
-
-
 <div class="mt-4">
     <a asp-page="./ListLearningApplication" class="btn btn-outline-secondary">
         <i class="fa fa-arrow-left"></i> Quay lại
@@ -168,8 +174,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function toggleStatusForm() {
-            const form = document.getElementById('statusForm');
-            form.classList.toggle('d-none');
+            document.getElementById('statusForm').classList.toggle('d-none');
         }
     </script>
 }

@@ -33,20 +33,17 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.LearningApplications
 
         public async Task OnGetAsync()
         {
-            LearningApplications = await _learningApplicationService.GetAllAsync(SearchString);
-            // Lấy dữ liệu cho trang hiện tại
-            LearningApplications = LearningApplications
+            var allApplications = await _learningApplicationService.GetAllAsync(SearchString, StatusFilter);
+
+            int totalItems = allApplications.Count;
+            TotalPages = (int)Math.Ceiling(totalItems / (double)PageSize);
+
+            LearningApplications = allApplications
                 .Skip((PageNumber - 1) * PageSize)
                 .Take(PageSize)
                 .ToList();
-            if (StatusFilter.HasValue)
-            {
-                LearningApplications = LearningApplications.Where(x => x.LearningStatus == StatusFilter.Value).ToList();
-            }
-            
-            // Tính tổng số trang
-            int totalItems = LearningApplications.Count();
-            TotalPages = (int)Math.Ceiling(totalItems / (double)PageSize);
         }
+
+
     }
 }
