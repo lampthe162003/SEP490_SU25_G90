@@ -1,0 +1,93 @@
+@page "{id}"
+@model SEP490_SU25_G90.Pages.AcademicAffairs.Courses.CourseDetailsModel
+@{
+    ViewData["Title"] = "Chi tiết khóa học";
+    Layout = "~/Pages/Shared/_AcademicAffairsLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0"><i class="fas fa-book-open me-2"></i> Chi tiết Khóa học</h2>
+        <a class="btn btn-secondary" href="/AcademicAffairs/Courses/ListCourses"><i class="fas fa-arrow-left me-2"></i>Quay lại</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string msg)
+    {
+        <div class="alert alert-success">@msg</div>
+    }
+
+    @if (Model.Course is not null)
+    {
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-6">
+                        <div class="fs-5"><strong>Tên khóa học:</strong> @Model.Course.CourseName</div>
+                        <div class="fs-5"><strong>Loại bằng :</strong> @Model.Course.LicenceCode</div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Thời gian bắt đầu:</label>
+                        <input asp-for="StartDate" type="date" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Thời gian kết thúc:</label>
+                        <input asp-for="EndDate" type="date" class="form-control" />
+                    </div>
+                    <div class="col-12">
+                        <div class="fs-5"><strong>Trạng thái :</strong> @Model.Course.Status</div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h4 class="mb-0">Danh sách lớp học</h4>
+            <a class="btn btn-success"><i class="fas fa-plus me-2"></i>Thêm lớp học</a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                @if (Model.Course.Classes.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-info">
+                                <tr>
+                                    <th style="width:6%">Stt</th>
+                                    <th style="width:20%">Tên lớp</th>
+                                    <th style="width:20%">Giáo viên</th>
+                                    <th style="width:12%">Tổng số học viên</th>
+                                    <th style="width:18%">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Course.Classes.Select((v, i) => new { v, i }))
+                                {
+                                    <tr>
+                                        <td>@(item.i + 1)</td>
+                                        <td>@item.v.ClassName</td>
+                                        <td>@item.v.InstructorName</td>
+                                        <td class="text-center"><span class="badge bg-primary">@item.v.TotalStudents</span></td>
+                                        <td>
+                                            <div class="d-flex gap-2">
+                                                <a class="btn btn-sm btn-outline-primary" title="Chi tiết lớp"><i class="fas fa-image"></i></a>
+                                                <a class="btn btn-sm btn-outline-secondary" title="Cập nhật"><i class="fas fa-sync"></i></a>
+                                                <button class="btn btn-sm btn-outline-danger" title="Xóa"><i class="fas fa-trash"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center text-muted py-4">Chưa có lớp nào</div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
