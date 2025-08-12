@@ -40,6 +40,13 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.TestApplicationRepository
             await _context.SaveChangesAsync();
             return testApplication;
         }
+
+        public async Task<int> BulkCreateAsync(List<TestApplication> testApplications)
+        {
+            if (testApplications == null || testApplications.Count == 0) return 0;
+            await _context.TestApplications.AddRangeAsync(testApplications);
+            return await _context.SaveChangesAsync();
+        }
     }
 
 

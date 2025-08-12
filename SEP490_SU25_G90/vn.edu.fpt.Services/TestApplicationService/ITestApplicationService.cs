@@ -11,5 +11,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
         Task<CreatUpdateTestApplicationRequest> FindById(int id);
         Task<Models.TestApplication> CreateTestApplication(CreatUpdateTestApplicationRequest request);
         Task<Models.TestApplication> UpdateTestApplication(int id, CreatUpdateTestApplicationRequest request, bool? status);
+        Task<int> BulkCreateAsync(BulkCreateTestApplicationsRequest request);
     }
 }
