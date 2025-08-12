@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.Class;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
@@ -17,10 +18,12 @@ namespace SEP490_SU25_G90.Pages.Instructors.Classes
     public class ListClassesModel : PageModel
     {
         private readonly IClassService _classService;
+        private readonly Sep490Su25G90DbContext _context;
 
-        public ListClassesModel(IClassService classService)
+        public ListClassesModel(IClassService classService, Sep490Su25G90DbContext context)
         {
             _classService = classService;
+            _context = context;
         }
 
         // Properties để bind dữ liệu với form
@@ -59,25 +62,24 @@ namespace SEP490_SU25_G90.Pages.Instructors.Classes
         {
             try
             {
-                // Get instructor ID from JWT claims
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                //var userIdClaim = "7"; // --> Fix cứng tạm khi chưa login đc
-                if (string.IsNullOrEmpty(userIdClaim))
+                // Lấy instructor theo user đăng nhập (hệ thống dùng Email trong User.Identity.Name)
+                var username = User.Identity?.Name;
+                if (string.IsNullOrEmpty(username))
                 {
-                    ModelState.AddModelError("", "Không tìm thấy thông tin giảng viên.");
+                    ModelState.AddModelError("", "Bạn chưa đăng nhập.");
                     Classes = new Pagination<ClassListResponse>();
                     await LoadDropdownDataAsync();
                     return;
                 }
-
-                // Parse instructor ID
-                if (!int.TryParse(userIdClaim, out int instructorId))
+                var instructorEntity = await _context.Users.FirstOrDefaultAsync(u => u.Email == username);
+                if (instructorEntity == null)
                 {
-                    ModelState.AddModelError("", "Thông tin giảng viên không hợp lệ.");
+                    ModelState.AddModelError("", "Không tìm thấy tài khoản giảng viên.");
                     Classes = new Pagination<ClassListResponse>();
                     await LoadDropdownDataAsync();
                     return;
                 }
+                var instructorId = instructorEntity.UserId;
 
                 // Validate search parameters
                 ValidateSearchRequest();
