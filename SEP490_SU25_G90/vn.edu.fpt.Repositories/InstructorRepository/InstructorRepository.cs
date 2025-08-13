@@ -283,6 +283,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 .Include(app => app.Learner).ThenInclude(l => l.Cccd)
                 .Include(app => app.Learner).ThenInclude(l => l.HealthCertificate)
                 .Include(app => app.LicenceType)
+                .Include(app => app.ClassMembers).ThenInclude(cm => cm.Class).ThenInclude(c => c.Instructor)
                 .ToListAsync();
 
             return applications.Select(app => new LearningApplicationsResponse
@@ -299,14 +300,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 LicenceTypeName = app.LicenceType?.LicenceCode,
                 SubmittedAt = app.SubmittedAt,
                 LearningStatus = app.LearningStatus,
-                LearningStatusName = app.LearningStatus switch
-                {
-                    1 => "Đang học",
-                    2 => "Bảo lưu",
-                    3 => "Học lại",
-                    4 => "Hoàn thành",
-                    _ => "Chưa xác định"
-                },
+                LearningStatusName = GetLearningStatusName(app.LearningStatus, app.ClassMembers.Any(cm => cm.Class.InstructorId.HasValue)),
                 TheoryScore = app.TheoryScore,
                 SimulationScore = app.SimulationScore,
                 ObstacleScore = app.ObstacleScore,
@@ -314,15 +308,34 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
             }).ToList();
         }
 
+        /// <summary>
+        /// Xác định tên trạng thái học dựa trên trạng thái lưu trữ và việc có được gán vào lớp với giảng viên hay không
+        /// </summary>
+        private static string GetLearningStatusName(byte? learningStatus, bool hasInstructor)
+        {
+            // Nếu đã có trạng thái cụ thể, ưu tiên trạng thái đó
+            if (learningStatus.HasValue)
+            {
+                return learningStatus.Value switch
+                {
+                    1 => "Đang học",
+                    2 => "Bảo lưu",
+                    3 => "Học lại",
+                    4 => "Hoàn thành",
+                    _ => hasInstructor ? "Đang học" : "Chưa bắt đầu"
+                };
+            }
 
-
-
+            // Nếu không có trạng thái cụ thể, kiểm tra xem có giảng viên không
+            return hasInstructor ? "Đang học" : "Chưa bắt đầu";
+        }
 
         public async Task<LearningApplicationsResponse?> GetLearningApplicationDetailAsync(int learningId)
         {
             var app = await _context.LearningApplications
                 .Include(x => x.Learner).ThenInclude(l => l.Cccd)
                 .Include(x => x.LicenceType)
+                .Include(x => x.ClassMembers).ThenInclude(cm => cm.Class).ThenInclude(c => c.Instructor)
                 .FirstOrDefaultAsync(x => x.LearningId == learningId);
 
             if (app == null) return null;
@@ -369,6 +382,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 _ => (0, 0) // bằng khác không yêu cầu
             };
 
+            // Kiểm tra xem học viên có được gán vào lớp với giảng viên không
+            bool hasInstructor = app.ClassMembers.Any(cm => cm.Class.InstructorId.HasValue);
+
             return new LearningApplicationsResponse
             {
                 LearningId = app.LearningId,
@@ -382,6 +398,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 LearnerCccdNumber = app.Learner?.Cccd?.CccdNumber,
                 LicenceTypeId = app.LicenceTypeId,
                 LicenceTypeName = app.LicenceType?.LicenceCode,
+                LearningStatus = app.LearningStatus,
+                LearningStatusName = GetLearningStatusName(app.LearningStatus, hasInstructor),
                 TheoryScore = app.TheoryScore,
                 SimulationScore = app.SimulationScore,
                 ObstacleScore = app.ObstacleScore,
