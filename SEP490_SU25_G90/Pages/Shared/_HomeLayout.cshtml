@@ -47,7 +47,7 @@
                             <i class="fas fa-user-circle fa-2x" id="userIcon"></i>
                         </div>
                         <div class="user-dropdown" id="userDropdown">
-                            <a href="/Learner/LearningMaterial/LearnerDetail?userId=@int.Parse(User.FindFirst("user_id").ToString())>Hồ sơ người dùng</a>
+                            <a href="/Learner/LearningMaterial/LearnerDetail?userId=@int.Parse(User.FindFirst("user_id").Value)>Hồ sơ người dùng</a>
                             <a href="/ChangePassword">Đổi mật khẩu</a>
                             <a href="/Logout">Đăng xuất</a>
                         </div>
