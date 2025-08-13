@@ -6,7 +6,7 @@ using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Services.UserService;
 
-namespace SEP490_SU25_G90.Pages.HumanResources.LearningProfile
+namespace SEP490_SU25_G90.Pages.HumanResources.User
 {
     [Authorize(Roles = "human resources")]
     public class ListLearningProfileModel : PageModel
