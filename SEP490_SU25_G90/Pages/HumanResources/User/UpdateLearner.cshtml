@@ -1,8 +1,8 @@
 @page
-@model SEP490_SU25_G90.Pages.HumanResources.LearningProfile.UpdateLearnerModel
+@model SEP490_SU25_G90.Pages.HumanResources.User.UpdateLearnerModel
 @{
     ViewData["Title"] = "Cập nhật thông tin học viên";
-    Layout = "~/Pages/Shared/_AdminLayout.cshtml";
+    Layout = "~/Pages/Shared/_HumanResourcesLayout.cshtml";
 }
 
 <div class="container-fluid">
@@ -14,7 +14,7 @@
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item">
-                                <a href="/Admins/LearningProfile/ListLearningProfile" class="text-decoration-none">
+                                <a href="/HumanResources/User/ListLearningProfile" class="text-decoration-none">
                                     <i class="fas fa-graduation-cap me-1"></i>
                                     Quản lý Học viên
                                 </a>
@@ -253,7 +253,7 @@
                         <!-- Action Buttons -->
                         <div class="card-footer bg-light">
                             <div class="d-flex justify-content-between">
-                                <a href="/Admins/LearningProfile/ListLearningProfile" class="btn btn-secondary">
+                                <a href="/HumanResources/User/ListLearningProfile" class="btn btn-secondary">
                                     <i class="fas fa-arrow-left me-2"></i>
                                     Quay lại
                                 </a>
