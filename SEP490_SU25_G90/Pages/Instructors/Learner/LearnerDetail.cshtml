@@ -1,0 +1,566 @@
+@page
+@model SEP490_SU25_G90.Pages.Instructors.LearningProfile.LearnerDetailModel
+@{
+    ViewData["Title"] = "Chi tiết Học viên";
+    Layout = "~/Pages/Shared/_InstructorLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="/HumanResources/LearningProfile/ListLearningProfile" class="text-decoration-none">
+                                    <i class="fas fa-graduation-cap me-1"></i>
+                                    Quản lý Học viên
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">Chi tiết</li>
+                        </ol>
+                    </nav>
+                    <h2 class="h3 mb-0">
+                        <i class="fas fa-user-graduate text-primary me-2"></i>
+                        Chi tiết Học viên
+                    </h2>
+                </div>
+                <div>
+                    <a href="/HumanResources/LearningProfile/ListLearningProfile" class="btn btn-secondary me-2">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Quay lại
+                    </a>
+                    <a href="/HumanResources/LearningProfile/UpdateLearner?id=@Model.Learner.UserId" class="btn btn-warning">
+                        <i class="fas fa-edit me-2"></i>
+                        Chỉnh sửa
+                    </a>
+                </div>
+            </div>
+
+            @if (Model.Learner != null)
+            {
+                <!-- Main Information Card -->
+                <div class="row">
+                    <div class="col-md-4">
+                        <!-- Profile Card -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-user me-2"></i>
+                                    Thông tin cá nhân
+                                </h5>
+                            </div>
+                            <div class="card-body text-center">
+                                <!-- Profile Image -->
+                                <div class="mb-3">
+                                    @if (!string.IsNullOrEmpty(Model.Learner.ProfileImageUrl))
+                                    {
+                                        <img src="@Model.Learner.ProfileImageUrl" alt="Avatar" 
+                                             class="rounded-circle border border-3 border-light shadow" 
+                                             width="120" height="120" style="object-fit: cover;">
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-secondary rounded-circle d-inline-flex align-items-center justify-content-center border border-3 border-light shadow" 
+                                             style="width: 120px; height: 120px;">
+                                            <i class="fas fa-user text-white fa-3x"></i>
+                                        </div>
+                                    }
+                                </div>
+                                
+                                <!-- Name -->
+                                <h4 class="card-title text-primary mb-2">@Model.Learner.FullName</h4>
+                                
+                                <!-- Basic Info -->
+                                <div class="row text-start">
+                                    <div class="col-12 mb-2">
+                                        <strong>ID:</strong> 
+                                        <span class="badge bg-info ms-2">@Model.Learner.UserId</span>
+                                    </div>
+                                    <div class="col-12 mb-2">
+                                        <strong>Giới tính:</strong> 
+                                        <span class="ms-2">
+                                            @if (Model.Learner.Gender == true)
+                                            {
+                                                <i class="fas fa-mars text-primary me-1"></i><span>Nam</span>
+                                            }
+                                            else if (Model.Learner.Gender == false)
+                                            {
+                                                <i class="fas fa-venus text-danger me-1"></i><span>Nữ</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Chưa xác định</span>
+                                            }
+                                        </span>
+                                    </div>
+                                    <div class="col-12 mb-2">
+                                        <strong>Ngày sinh:</strong> 
+                                        <span class="ms-2">
+                                            @if (Model.Learner.Dob.HasValue)
+                                            {
+                                                <i class="fas fa-birthday-cake text-warning me-1"></i>
+                                                @Model.Learner.Dob.Value.ToString("dd/MM/yyyy")
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Chưa có</span>
+                                            }
+                                        </span>
+                                    </div>
+                                    <div class="col-12 mb-2">
+                                        <strong>Số đơn học:</strong> 
+                                        <span class="badge bg-@(Model.Learner.LearningApplications.Count > 0 ? "success" : "secondary") ms-2">
+                                            @Model.Learner.LearningApplications.Count đơn
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <!-- Contact Information -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-address-book me-2"></i>
+                                    Thông tin liên hệ
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">
+                                            <i class="fas fa-envelope text-primary me-2"></i>
+                                            Email
+                                        </label>
+                                        <div class="form-control-plaintext border rounded p-2 bg-light">
+                                            @if (!string.IsNullOrEmpty(Model.Learner.Email))
+                                            {
+                                                <a href="mailto:@Model.Learner.Email" class="text-decoration-none">
+                                                    @Model.Learner.Email
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Chưa có</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">
+                                            <i class="fas fa-phone text-success me-2"></i>
+                                            Số điện thoại
+                                        </label>
+                                        <div class="form-control-plaintext border rounded p-2 bg-light">
+                                            @if (!string.IsNullOrEmpty(Model.Learner.Phone))
+                                            {
+                                                <a href="tel:@Model.Learner.Phone" class="text-decoration-none">
+                                                    @Model.Learner.Phone
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Chưa có</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">
+                                            <i class="fas fa-id-card text-warning me-2"></i>
+                                            Số CCCD
+                                        </label>
+                                        <div class="form-control-plaintext border rounded p-2 bg-light">
+                                            @if (!string.IsNullOrEmpty(Model.Learner.CccdNumber))
+                                            {
+                                                <span class="badge bg-info fs-6">@Model.Learner.CccdNumber</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Chưa có</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">
+                                            <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                                            Địa chỉ
+                                        </label>
+                                        <div class="form-control-plaintext border rounded p-2 bg-light">
+                                            @if (!string.IsNullOrEmpty(Model.Learner.AddressDisplay))
+                                            {
+                                                @Model.Learner.AddressDisplay
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Chưa có</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Learning Progress -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-graduation-cap me-2"></i>
+                                    Tiến độ học tập
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                @if (Model.Learner.LearningApplications.Any())
+                                {
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Loại bằng</th>
+                                                    <th>Trạng thái</th>
+                                                    <th>Điểm số</th>
+                                                    <th>Giảng viên</th>
+                                                    <th>Lớp học</th>
+                                                    <th>Ngày đăng ký</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var app in Model.Learner.LearningApplications)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <span class="badge bg-primary">
+                                                                <i class="fas fa-car me-1"></i>
+                                                                Bằng @app.LicenceCode
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge @app.StatusBadgeClass">
+                                                                @app.Status
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            @if (app.TheoryScore.HasValue || app.SimulationScore.HasValue || app.ObstacleScore.HasValue || app.PracticalScore.HasValue)
+                                                            {
+                                                                <small class="text-muted">
+                                                                    @if (app.TheoryScore.HasValue)
+                                                                    {
+                                                                        <div>LT: @app.TheoryScore điểm</div>
+                                                                    }
+                                                                    @if (app.SimulationScore.HasValue)
+                                                                    {
+                                                                        <div>MH: @app.SimulationScore điểm</div>
+                                                                    }
+                                                                    @if (app.ObstacleScore.HasValue)
+                                                                    {
+                                                                        <div>SC: @app.ObstacleScore điểm</div>
+                                                                    }
+                                                                    @if (app.PracticalScore.HasValue)
+                                                                    {
+                                                                        <div>TH: @app.PracticalScore điểm</div>
+                                                                    }
+                                                                </small>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">Chưa có</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (!string.IsNullOrEmpty(app.InstructorName))
+                                                            {
+                                                                <span class="text-primary">@app.InstructorName</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">Chưa phân công</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (!string.IsNullOrEmpty(app.ClassName))
+                                                            {
+                                                                <span class="badge bg-info">@app.ClassName</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">Chưa có</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (app.AppliedDate.HasValue)
+                                                            {
+                                                                @app.AppliedDate.Value.ToString("dd/MM/yyyy")
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">Chưa có</span>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-center py-3">
+                                        <i class="fas fa-graduation-cap text-warning fa-2x mb-2"></i>
+                                        <p class="text-muted mb-0">Chưa có đơn học tập nào</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documents Section -->
+                <div class="row">
+                    <!-- CCCD Images -->
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header bg-warning text-dark">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-id-card me-2"></i>
+                                    Hình ảnh CCCD
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                @if (!string.IsNullOrEmpty(Model.Learner.CccdImageFront) || !string.IsNullOrEmpty(Model.Learner.CccdImageBack))
+                                {
+                                    <div class="row">
+                                        @if (!string.IsNullOrEmpty(Model.Learner.CccdImageFront))
+                                        {
+                                            <div class="col-12 mb-3">
+                                                <div class="text-center">
+                                                    <h6 class="fw-bold mb-3">
+                                                        <i class="fas fa-id-card me-2"></i>
+                                                        Mặt trước CCCD
+                                                    </h6>
+                                                    <div class="border rounded p-2 bg-light position-relative">
+                                                        <img src="@Model.Learner.CccdImageFront" alt="Mặt trước CCCD" 
+                                                             class="img-fluid rounded shadow" 
+                                                             style="max-height: 200px; cursor: pointer;"
+                                                             onclick="showImageModal('@Model.Learner.CccdImageFront', 'Mặt trước CCCD')">
+                                                        <div class="overlay-btn">
+                                                            <button class="btn btn-sm btn-primary" onclick="showImageModal('@Model.Learner.CccdImageFront', 'Mặt trước CCCD')">
+                                                                <i class="fas fa-eye"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                        @if (!string.IsNullOrEmpty(Model.Learner.CccdImageBack))
+                                        {
+                                            <div class="col-12 mb-3">
+                                                <div class="text-center">
+                                                    <h6 class="fw-bold mb-3">
+                                                        <i class="fas fa-id-card me-2"></i>
+                                                        Mặt sau CCCD
+                                                    </h6>
+                                                    <div class="border rounded p-2 bg-light position-relative">
+                                                        <img src="@Model.Learner.CccdImageBack" alt="Mặt sau CCCD" 
+                                                             class="img-fluid rounded shadow" 
+                                                             style="max-height: 200px; cursor: pointer;"
+                                                             onclick="showImageModal('@Model.Learner.CccdImageBack', 'Mặt sau CCCD')">
+                                                        <div class="overlay-btn">
+                                                            <button class="btn btn-sm btn-primary" onclick="showImageModal('@Model.Learner.CccdImageBack', 'Mặt sau CCCD')">
+                                                                <i class="fas fa-eye"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-center py-5">
+                                        <i class="fas fa-image fa-3x text-muted mb-3"></i>
+                                        <h5 class="text-muted">Chưa có hình ảnh CCCD</h5>
+                                        <p class="text-muted">Hình ảnh CCCD chưa được tải lên hệ thống.</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Health Certificate -->
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-file-medical me-2"></i>
+                                    Giấy khám sức khỏe
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                @if (!string.IsNullOrEmpty(Model.Learner.HealthCertificateImageUrl))
+                                {
+                                    <div class="text-center">
+                                        <h6 class="fw-bold mb-3">
+                                            <i class="fas fa-file-medical me-2"></i>
+                                            Giấy khám sức khỏe
+                                        </h6>
+                                        <div class="border rounded p-2 bg-light position-relative">
+                                            <img src="@Model.Learner.HealthCertificateImageUrl" alt="Giấy khám sức khỏe" 
+                                                 class="img-fluid rounded shadow" 
+                                                 style="max-height: 200px; cursor: pointer;"
+                                                 onclick="showImageModal('@Model.Learner.HealthCertificateImageUrl', 'Giấy khám sức khỏe')">
+                                            <div class="overlay-btn">
+                                                <button class="btn btn-sm btn-primary" onclick="showImageModal('@Model.Learner.HealthCertificateImageUrl', 'Giấy khám sức khỏe')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-center py-5">
+                                        <i class="fas fa-file-medical fa-3x text-muted mb-3"></i>
+                                        <h5 class="text-muted">Chưa có giấy khám sức khỏe</h5>
+                                        <p class="text-muted">Giấy khám sức khỏe chưa được tải lên hệ thống.</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-danger text-center">
+                    <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                    <h4>Không tìm thấy thông tin học viên</h4>
+                    <p>Vui lòng kiểm tra lại hoặc quay về danh sách học viên.</p>
+                    <a href="/HumanResources/LearningProfile/ListLearningProfile" class="btn btn-primary">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Quay lại danh sách
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Image Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">Xem ảnh</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div id="imageLoading" class="text-center mb-3">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Đang tải...</span>
+                    </div>
+                    <p class="text-muted mt-2">Đang tải hình ảnh...</p>
+                </div>
+                <img id="modalImage" src="" alt="" class="img-fluid" style="display: none;">
+                <div id="imageError" class="alert alert-danger" style="display: none;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Không thể tải hình ảnh. Vui lòng thử lại.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="openImageInNewTab()">
+                    <i class="fas fa-external-link-alt me-2"></i>
+                    Mở trong tab mới
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .position-relative .overlay-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .position-relative:hover .overlay-btn {
+            opacity: 1;
+        }
+        
+        .card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .badge {
+            font-size: 0.8em;
+        }
+        
+        .form-control-plaintext {
+            min-height: calc(1.5em + 0.75rem + 2px);
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        let currentImageUrl = '';
+        
+        function showImageModal(imageUrl, title) {
+            currentImageUrl = imageUrl;
+            document.getElementById('imageModalLabel').textContent = title;
+            
+            // Reset states
+            document.getElementById('imageLoading').style.display = 'block';
+            document.getElementById('modalImage').style.display = 'none';
+            document.getElementById('imageError').style.display = 'none';
+            
+            // Create new image to test loading
+            const img = new Image();
+            img.onload = function() {
+                document.getElementById('modalImage').src = imageUrl;
+                document.getElementById('modalImage').alt = title;
+                document.getElementById('imageLoading').style.display = 'none';
+                document.getElementById('modalImage').style.display = 'block';
+            };
+            img.onerror = function() {
+                document.getElementById('imageLoading').style.display = 'none';
+                document.getElementById('imageError').style.display = 'block';
+            };
+            img.src = imageUrl;
+            
+            new bootstrap.Modal(document.getElementById('imageModal')).show();
+        }
+        
+        function openImageInNewTab() {
+            if (currentImageUrl) {
+                window.open(currentImageUrl, '_blank');
+            }
+        }
+        
+        // Close modal on ESC key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('imageModal'));
+                if (modal) {
+                    modal.hide();
+                }
+            }
+        });
+    </script>
+} 
