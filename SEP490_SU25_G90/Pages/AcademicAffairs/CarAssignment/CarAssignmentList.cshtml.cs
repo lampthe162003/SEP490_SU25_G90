@@ -122,22 +122,22 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.CarAssignment
                 return RedirectToPage();
             }
 
-            if (assignment.InstructorId != instructorId.Value)
-            {
-                StatusMessage = "Bạn không có quyền trả xe này.";
-                return RedirectToPage();
-            }
+            //if (assignment.InstructorId != instructorId.Value)
+            //{
+            //    StatusMessage = "Bạn không có quyền trả xe này.";
+            //    return RedirectToPage();
+            //}
 
-            var success = await _carAssignmentService.ReturnCarAsync(assignmentId);
+            //var success = await _carAssignmentService.ReturnCarAsync(assignmentId);
             
-            if (success)
-            {
-                StatusMessage = "Trả xe thành công!";
-            }
-            else
-            {
-                StatusMessage = "Không thể trả xe. Vui lòng thử lại.";
-            }
+            //if (success)
+            //{
+            //    StatusMessage = "Trả xe thành công!";
+            //}
+            //else
+            //{
+            //    StatusMessage = "Không thể trả xe. Vui lòng thử lại.";
+            //}
 
             return RedirectToPage();
         }
