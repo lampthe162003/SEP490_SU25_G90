@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Services.RoleService;
-using SEP490_SU25_G90.vn.edu.fpt.Services.User;
+using SEP490_SU25_G90.vn.edu.fpt.Services.UserService;  
 
 namespace SEP490_SU25_G90.Pages.HumanResources.User
 {

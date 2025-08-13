@@ -6,7 +6,7 @@ using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.RoleRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.UserRepository;
 
-namespace SEP490_SU25_G90.vn.edu.fpt.Services.User
+namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
 {
     public class UserService : IUserService
     {
