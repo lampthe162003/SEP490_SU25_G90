@@ -52,6 +52,15 @@
 
                     <tr>
                         <td>
+                            <b>Đủ điều kiện thi tốt nghiệp:</b>
+                            <span class="@(app.TotalPracticalHours >= app.RequiredPracticalHours && app.TotalPracticalKm >= app.RequiredPracticalKm ? "text-success fw-bold" : "text-danger fw-bold")">
+                                @(app.TotalPracticalHours >= app.RequiredPracticalHours && app.TotalPracticalKm >= app.RequiredPracticalKm ? "Đạt" : "Chưa đạt")
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
                             <b>Trạng thái hồ sơ:</b>
                             <span class="badge bg-secondary">@app?.LearningStatusName</span>
                             <button type="button" class="btn btn-sm btn-outline-primary ms-2" onclick="toggleStatusForm()">
