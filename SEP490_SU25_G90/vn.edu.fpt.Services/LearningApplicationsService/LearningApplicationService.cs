@@ -72,6 +72,9 @@ public class LearningApplicationService : ILearningApplicationService
 
     public static LearningApplicationsResponse ToDto(LearningApplication la, User? instr = null, List<LearnerClassInfo>? learnerClasses = null)
     {
+        // Kiểm tra xem học viên có được gán vào lớp với giảng viên không
+        bool hasInstructor = instr != null || (learnerClasses != null && learnerClasses.Any());
+        
         return new LearningApplicationsResponse
         {
             LearningId = la.LearningId,
@@ -90,12 +93,30 @@ public class LearningApplicationService : ILearningApplicationService
             LearnerClasses = learnerClasses ?? new List<LearnerClassInfo>(),
             SubmittedAt = la.SubmittedAt,
             LearningStatus = la.LearningStatus,
-            LearningStatusName = la.LearningStatus == 1 ? "Đang học" :
-                                 la.LearningStatus == 2 ? "Bảo lưu" :
-                                 la.LearningStatus == 3 ? "Học lại" :
-                                 la.LearningStatus == 4 ? "Hoàn Thành" :
-                                 "Chưa xác định"
+            LearningStatusName = GetLearningStatusName(la.LearningStatus, hasInstructor)
         };
+    }
+
+    /// <summary>
+    /// Xác định tên trạng thái học dựa trên trạng thái lưu trữ và việc có được gán vào lớp với giảng viên hay không
+    /// </summary>
+    private static string GetLearningStatusName(byte? learningStatus, bool hasInstructor)
+    {
+        // Nếu đã có trạng thái cụ thể, ưu tiên trạng thái đó
+        if (learningStatus.HasValue)
+        {
+            return learningStatus.Value switch
+            {
+                1 => "Đang học",
+                2 => "Bảo lưu",
+                3 => "Học lại",
+                4 => "Hoàn thành",
+                _ => hasInstructor ? "Đang học" : "Chưa bắt đầu"
+            };
+        }
+
+        // Nếu không có trạng thái cụ thể, kiểm tra xem có giảng viên không
+        return hasInstructor ? "Đang học" : "Chưa bắt đầu";
     }
 
     public async Task AddAsync(LearningApplication entity)

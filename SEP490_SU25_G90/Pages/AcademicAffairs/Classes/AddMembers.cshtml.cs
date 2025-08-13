@@ -47,7 +47,9 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var classEntity = await _context.Classes.FirstOrDefaultAsync(c => c.ClassId == ClassId);
+            var classEntity = await _context.Classes
+                .Include(c => c.Instructor)
+                .FirstOrDefaultAsync(c => c.ClassId == ClassId);
             if (classEntity == null) return NotFound();
 
             if (!SelectedLearnerIds.Any())
@@ -57,22 +59,47 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
                 return Page();
             }
 
-            foreach (var learningId in SelectedLearnerIds.Distinct())
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                var exists = await _context.ClassMembers.AnyAsync(cm => cm.ClassId == ClassId && cm.LearnerId == learningId);
-                if (!exists)
+                foreach (var learningId in SelectedLearnerIds.Distinct())
                 {
-                    _context.ClassMembers.Add(new ClassMember
+                    var exists = await _context.ClassMembers.AnyAsync(cm => cm.ClassId == ClassId && cm.LearnerId == learningId);
+                    if (!exists)
                     {
-                        ClassId = ClassId,
-                        LearnerId = learningId
-                    });
-                }
-            }
+                        _context.ClassMembers.Add(new ClassMember
+                        {
+                            ClassId = ClassId,
+                            LearnerId = learningId
+                        });
 
-            await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "Đã thêm học viên vào lớp";
-            return RedirectToPage("/AcademicAffairs/Classes/ClassDetails", new { id = ClassId });
+                        // Tự động cập nhật trạng thái học thành "Đang học" nếu có giảng viên
+                        if (classEntity.InstructorId.HasValue)
+                        {
+                            var learningApp = await _context.LearningApplications
+                                .FirstOrDefaultAsync(la => la.LearningId == learningId);
+                            
+                            if (learningApp != null && learningApp.LearningStatus != 1)
+                            {
+                                learningApp.LearningStatus = 1; // Đang học
+                            }
+                        }
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                
+                TempData["SuccessMessage"] = "Đã thêm học viên vào lớp";
+                return RedirectToPage("/AcademicAffairs/Classes/ClassDetails", new { id = ClassId });
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                ModelState.AddModelError(string.Empty, "Có lỗi xảy ra khi thêm học viên: " + ex.Message);
+                await LoadCandidatesAsync();
+                return Page();
+            }
         }
 
         private async Task LoadCandidatesAsync()

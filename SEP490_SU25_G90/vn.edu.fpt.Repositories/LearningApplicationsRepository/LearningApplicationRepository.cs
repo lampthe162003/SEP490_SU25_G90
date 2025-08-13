@@ -76,21 +76,56 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                         .FirstOrDefault() ?? "Chưa có",
                     SubmittedAt = la.SubmittedAt,
                     LearningStatus = la.LearningStatus,
-                    LearningStatusName = la.LearningStatus == 1 ? "Đang học" :
-                                         la.LearningStatus == 2 ? "Bảo lưu" :
-                                         la.LearningStatus == 3 ? "Học lại" :
-                                         la.LearningStatus == 4 ? "Hoàn thành" :
-                                         "Chưa bắt đầu"
+                    LearningStatusName = GetLearningStatusName(la.LearningStatus, la.ClassMembers.Any(cm => cm.Class.InstructorId.HasValue))
                 })
                 .ToListAsync();
 
             return list;
         }
 
+        /// <summary>
+        /// Xác định tên trạng thái học dựa trên trạng thái lưu trữ và việc có được gán vào lớp với giảng viên hay không
+        /// </summary>
+        private static string GetLearningStatusName(byte? learningStatus, bool hasInstructor)
+        {
+            // Nếu đã có trạng thái cụ thể, ưu tiên trạng thái đó
+            if (learningStatus.HasValue)
+            {
+                return learningStatus.Value switch
+                {
+                    1 => "Đang học",
+                    2 => "Bảo lưu",
+                    3 => "Học lại",
+                    4 => "Hoàn thành",
+                    _ => hasInstructor ? "Đang học" : "Chưa bắt đầu"
+                };
+            }
 
+            // Nếu không có trạng thái cụ thể, kiểm tra xem có giảng viên không
+            return hasInstructor ? "Đang học" : "Chưa bắt đầu";
+        }
 
+        /// <summary>
+        /// Xác định tên trạng thái học và badge class dựa trên trạng thái lưu trữ và việc có được gán vào lớp với giảng viên hay không
+        /// </summary>
+        private static (string StatusName, string BadgeClass) GetLearningStatusNameWithBadge(byte? learningStatus, bool hasInstructor, bool isPassed = false)
+        {
+            // Nếu đã có trạng thái cụ thể, ưu tiên trạng thái đó
+            if (learningStatus.HasValue)
+            {
+                return learningStatus.Value switch
+                {
+                    1 => ("Đang học", "badge bg-primary"),
+                    2 => ("Bảo lưu", "badge bg-warning text-dark"),
+                    3 => ("Học lại", "badge bg-danger"),
+                    4 => ("Hoàn thành", "badge bg-success"),
+                    _ => hasInstructor ? ("Đang học", "badge bg-primary") : (isPassed ? "Hoàn thành" : "Chưa bắt đầu", isPassed ? "badge bg-success" : "badge bg-secondary")
+                };
+            }
 
-
+            // Nếu không có trạng thái cụ thể, kiểm tra xem có giảng viên không
+            return hasInstructor ? ("Đang học", "badge bg-primary") : (isPassed ? "Hoàn thành" : "Chưa bắt đầu", isPassed ? "badge bg-success" : "badge bg-secondary");
+        }
 
         public Task<IQueryable<LearningApplication>> GetAllAsync()
         {
@@ -154,14 +189,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
             };
 
             // Trạng thái học
-            string statusName = la.LearningStatus switch
-            {
-                1 => "Đang học",
-                2 => "Bảo lưu",
-                3 => "Học lại",
-                4 => "Hoàn thành",
-                _ => "Không xác định"
-            };
+            string statusName = GetLearningStatusName(la.LearningStatus, instructor != null);
 
             return new LearningApplicationsResponse
             {
@@ -215,6 +243,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 .Include(x => x.Learner).ThenInclude(l => l.Cccd)
                 .Include(x => x.Learner).ThenInclude(l => l.HealthCertificate)
                 .Include(x => x.LicenceType)
+                .Include(x => x.ClassMembers).ThenInclude(cm => cm.Class).ThenInclude(c => c.Instructor)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchString))
@@ -262,33 +291,16 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                                  && la.ObstacleScore >= std.FirstOrDefault(s => s.PartName == "Obstacle")?.PassScore
                                  && la.PracticalScore >= std.FirstOrDefault(s => s.PartName == "Practical")?.PassScore;
 
+                    // Kiểm tra xem học viên có được gán vào lớp với giảng viên không
+                    bool hasInstructor = la.ClassMembers.Any(cm => cm.Class.InstructorId.HasValue);
+
                     string statusName;
                     string badgeClass;
 
-                    // 🟡 Cập nhật trạng thái mới
-                    switch (la.LearningStatus)
-                    {
-                        case 1:
-                            statusName = "Đang học";
-                            badgeClass = "badge bg-primary";
-                            break;
-                        case 2:
-                            statusName = "Bảo lưu";
-                            badgeClass = "badge bg-warning text-dark";
-                            break;
-                        case 3:
-                            statusName = "Học lại";
-                            badgeClass = "badge bg-danger";
-                            break;
-                        case 4:
-                            statusName = "Hoàn thành";
-                            badgeClass = "badge bg-success";
-                            break;
-                        default:
-                            statusName = isPassed ? "Hoàn thành" : "Chưa bắt đầu";
-                            badgeClass = isPassed ? "badge bg-success" : "badge bg-secondary";
-                            break;
-                    }
+                    // Sử dụng logic xác định trạng thái mới
+                    var statusResult = GetLearningStatusNameWithBadge(la.LearningStatus, hasInstructor, isPassed);
+                    statusName = statusResult.StatusName;
+                    badgeClass = statusResult.BadgeClass;
 
                     return new LicenceProgress
                     {
@@ -312,7 +324,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 var totalCount = licenceProgresses.Count;
 
                 string overallStatus;
-                if (licenceProgresses.Any(lp => lp.LearningStatus == 1))
+                // Kiểm tra xem có bất kỳ licence nào đang học không (bao gồm cả trường hợp có giảng viên)
+                if (licenceProgresses.Any(lp => lp.LearningStatus == 1 || (lp.LearningStatus != 1 && lp.LearningStatus != 2 && lp.LearningStatus != 3 && lp.LearningStatus != 4 && group.Any(la => la.ClassMembers.Any(cm => cm.Class.InstructorId.HasValue)))))
                 {
                     overallStatus = "Đang học";
                 }
@@ -387,6 +400,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
 
             // Kiểm tra trạng thái hồ sơ học gần nhất (nếu có)
             var latestApp = await _context.LearningApplications
+                .Include(la => la.ClassMembers).ThenInclude(cm => cm.Class).ThenInclude(c => c.Instructor)
                 .Where(la => la.LearnerId == user.UserId)
                 .OrderByDescending(la => la.SubmittedAt)
                 .FirstOrDefaultAsync();
@@ -394,14 +408,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
             string? statusName = null;
             if (latestApp != null)
             {
-                statusName = latestApp.LearningStatus switch
-                {
-                    1 => "Đang học",
-                    2 => "Bảo lưu",
-                    3 => "Học lại",
-                    4 => "Hoàn thành",
-                    _ => "Không xác định"
-                };
+                bool hasInstructor = latestApp.ClassMembers.Any(cm => cm.Class.InstructorId.HasValue);
+                statusName = GetLearningStatusName(latestApp.LearningStatus, hasInstructor);
             }
 
             return new LearningApplicationsResponse

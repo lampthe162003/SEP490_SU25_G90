@@ -130,6 +130,18 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
                         ClassId = newClass.ClassId,
                         LearnerId = learningId
                     });
+
+                    // Tự động cập nhật trạng thái học thành "Đang học" nếu có giảng viên
+                    if (InstructorId.HasValue)
+                    {
+                        var learningApp = await _context.LearningApplications
+                            .FirstOrDefaultAsync(la => la.LearningId == learningId);
+                        
+                        if (learningApp != null && learningApp.LearningStatus != 1)
+                        {
+                            learningApp.LearningStatus = 1; // Đang học
+                        }
+                    }
                 }
                 await _context.SaveChangesAsync();
 

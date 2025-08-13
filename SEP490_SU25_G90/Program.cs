@@ -118,7 +118,7 @@ app.MapGet("/", async context =>
     }
     else if (context.User.IsInRole("instructor"))
     {
-        context.Response.Redirect("/Instructors/ListClasses");
+        context.Response.Redirect("/Instructors/Classes/ListClasses");
         return;
     }
     else if (context.User.IsInRole("learner"))
