@@ -27,9 +27,8 @@ namespace SEP490_SU25_G90.Pages.Learner.LearningProfile
 
         public async Task<IActionResult> OnGetAsync(int? userId)
         {
-            var userIdClaim = User.FindFirst("user_id")?.Value;
 
-            Learner = await _userService.GetLearnerById(int.Parse(userIdClaim));
+            Learner = await _userService.GetLearnerById((int)userId);
 
             if (Learner == null)
             {
