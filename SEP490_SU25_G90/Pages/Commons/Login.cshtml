@@ -5,48 +5,117 @@
     ViewData["Title"] = "Đăng nhập";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 bg-light p-4 rounded shadow">
-            <h3 class="text-center text-primary mb-4">Đăng nhập tài khoản</h3>
-            <form method="post" id="loginForm">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<style>
+    /* Custom styles for a more polished look */
+    .login-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh; /* Full viewport height */
+        background-color: #f0f2f5; /* Light gray background */
+    }
 
-                <div class="form-group mb-3">
-                    <label asp-for="Email">Email</label>
-                    <input asp-for="Email" class="form-control" id="email" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
+    .login-card {
+        background: #ffffff;
+        border-radius: 1rem; /* Rounded corners */
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Soft shadow */
+        padding: 2.5rem; /* Increased padding */
+        width: 100%;
+        max-width: 450px; /* Constrain card width */
+    }
 
-                <div class="form-group mb-3">
-                    <label asp-for="Password">Mật khẩu</label>
-                    <input asp-for="Password" class="form-control" type="password" />
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
+    .login-card-title {
+        color: #007bff; /* Primary blue color */
+        font-weight: 600; /* Semi-bold */
+        margin-bottom: 2rem;
+    }
 
-                <div class="form-check mb-3">
-                    <input asp-for="SavePasswordCheck" class="form-check-input" type="checkbox"/>
-                    <label class="form-check-label" >Lưu tài khoản</label>
-                </div>
-                @if (!ViewData.ModelState.IsValid)
-                {
-                    <div class="alert alert-danger">
-                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-                        {
-                            <p>@error.ErrorMessage</p>
-                        }
-                    </div>
-                }
+    .form-control:focus {
+        border-color: #007bff; /* Blue border on focus */
+        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25); /* Light blue shadow on focus */
+    }
 
-                <div class="d-flex justify-content-between mb-3">
-                    <a href="#" onclick="redirectToForgetPassword()">Quên mật khẩu?</a>
-                </div>
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        font-weight: 500;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
 
-                <div class="form-group d-grid">
-                    <input type="submit" value="Đăng nhập" class="btn btn-primary" />
+        .btn-primary:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+            border-color: #0056b3;
+            transform: translateY(-2px); /* Slight lift on hover */
+        }
+
+    .alert-danger {
+        border-left: 5px solid #dc3545; /* Red border on the left */
+        background-color: #f8d7da; /* Light red background */
+        color: #721c24; /* Dark red text */
+        border-radius: 0.5rem;
+    }
+
+    .text-link {
+        color: #6c757d; /* Muted gray for links */
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+        .text-link:hover {
+            color: #007bff; /* Primary blue on hover */
+        }
+</style>
+
+<div class="login-container">
+    <div class="login-card">
+        <h3 class="text-center login-card-title">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Đăng nhập
+        </h3>
+        <form method="post" id="loginForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-4">
+                <label asp-for="Email" class="form-label">Email</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                    <input asp-for="Email" class="form-control form-control-lg" placeholder="Nhập email của bạn" id="email" />
                 </div>
-            </form>
-        </div>
+                <span asp-validation-for="Email" class="text-danger mt-2 d-block"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Password" class="form-label">Mật khẩu</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-key"></i></span>
+                    <input asp-for="Password" class="form-control form-control-lg" type="password" placeholder="Nhập mật khẩu" />
+                </div>
+                <span asp-validation-for="Password" class="text-danger mt-2 d-block"></span>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="form-check">
+                    <input asp-for="SavePasswordCheck" class="form-check-input" type="checkbox" id="savePasswordCheck" />
+                    <label class="form-check-label" for="savePasswordCheck">Lưu tài khoản</label>
+                </div>
+                <a href="#" onclick="redirectToForgetPassword()" class="text-link">Quên mật khẩu?</a>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger mb-4">
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <p class="mb-0">@error.ErrorMessage</p>
+                    }
+                </div>
+            }
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Đăng nhập
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
