@@ -20,26 +20,34 @@
         </a>
     </div>
 
-   
-    <div class="card border-0 shadow-sm p-4">
-        
+    <div class="card border-0 shadow-lg p-4 position-relative">
+        <a asp-page="/AcademicAffairs/News/EditNews" asp-route-id="@Model.News.NewsId"
+           class="btn btn-outline-primary rounded-circle position-absolute"
+           style="top: 15px; right: 15px; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;"
+           title="Chỉnh sửa tin tức">
+            <i class="bi bi-pencil-square"></i>
+        </a>
+
+        <!-- Tiêu đề -->
         <h2 class="fw-bold text-dark mb-3">@Html.Raw(Model.News.Title)</h2>
 
-        
-        <div class="mb-4 text-muted d-flex align-items-center">
+        <!-- Thông tin tác giả + ngày -->
+        <div class="mb-4 text-muted d-flex align-items-center flex-wrap">
             <i class="bi bi-person-circle me-2"></i> @Model.News.AuthorName
             <span class="mx-2">•</span>
             <i class="bi bi-calendar me-2"></i> @Model.News.PostTime?.ToString("dd/MM/yyyy")
         </div>
 
-        
+        <!-- Hình ảnh -->
         <div class="text-center mb-4">
-            <img src="@Model.News.Image" alt="Ảnh tin tức" class="img-fluid rounded" style="max-height: 400px;" />
+            <img src="@Model.News.Image" alt="Ảnh tin tức"
+                 class="img-fluid rounded shadow-sm"
+                 style="max-height: 400px; object-fit: cover;" />
         </div>
 
-        
+        <!-- Nội dung -->
         <div class="news-content fs-5 text-dark lh-lg">
             @Html.Raw(Model.News.NewsContent)
         </div>
     </div>
-</>
+</div>
