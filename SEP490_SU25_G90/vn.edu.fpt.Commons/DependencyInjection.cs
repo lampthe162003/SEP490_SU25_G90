@@ -31,6 +31,8 @@ using SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory;
 using SEP490_SU25_G90.vn.edu.fpt.Services.ClassService;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.CourseRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Services.CourseService;
+using SEP490_SU25_G90.vn.edu.fpt.Repositories.CarStatusRepository;
+using SEP490_SU25_G90.vn.edu.fpt.Services.CarStatusService;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Commons
 {
@@ -91,6 +93,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Commons
             // Course services - Dịch vụ quản lý khóa học
             services.AddScoped<ICourseRepository, CourseRepository>();
             services.AddScoped<ICourseService, CourseService>();
+
+            //CarStatus Service
+            services.AddScoped<ICarStatusRepository, CarStatusRepository>();
+            services.AddScoped<ICarStatusService, CarStatusService>();
 
             return services;
         }
