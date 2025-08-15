@@ -31,7 +31,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects.CarAssignment
         public DateOnly? ScheduleDate { get; set; }
         
         // Trạng thái thuê xe
-        public bool? CarStatus { get; set; }
+        public byte? CarStatus { get; set; }
         public string? CarStatusDisplay { get; set; }
         
         // Thông tin tìm kiếm và hiển thị

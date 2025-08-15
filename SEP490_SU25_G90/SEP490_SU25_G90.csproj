@@ -8,6 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Pages\AcademicAffairs\AcademicYears\**" />
+    <Compile Remove="Pages\Instructors\Cars\**" />
+    <Content Remove="Pages\AcademicAffairs\AcademicYears\**" />
+    <Content Remove="Pages\Instructors\Cars\**" />
+    <EmbeddedResource Remove="Pages\AcademicAffairs\AcademicYears\**" />
+    <EmbeddedResource Remove="Pages\Instructors\Cars\**" />
+    <None Remove="Pages\AcademicAffairs\AcademicYears\**" />
+    <None Remove="Pages\Instructors\Cars\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.17" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.15" />
@@ -19,8 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\AcademicAffairs\AcademicYears\" />
-    <Folder Include="Pages\Instructors\Cars\" />
     <Folder Include="vn.edu.fpt.Models\" />
     <Folder Include="vn.edu.fpt.Tests\UserServiceTests\" />
     <Folder Include="wwwroot\uploads\test-application\" />

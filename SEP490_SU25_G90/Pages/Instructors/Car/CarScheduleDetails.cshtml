@@ -7,6 +7,7 @@
 
 <div class="container mt-5">
     <h2 class="mb-4">Lịch đăng ký mượn xe</h2>
+    <br />
     <div class="table-responsive">
         <table class="table table-bordered table-striped text-center align-middle">
             <thead class="table-dark">
@@ -27,18 +28,30 @@
                         {
                             var key = (date, slot.SlotId);
                             var assignment = Model.CarAssignments.ContainsKey(key) ? Model.CarAssignments[key] : null;
-                            var buttonColor = assignment?.CarStatus == true ? "btn-success" : "btn-secondary";
-                            var buttonLabel = assignment?.CarStatus == true ? "Rented" : "Free";
+                            var buttonColor = assignment?.CarStatus > 0 ? "btn-success" : "btn-secondary";
 
                             <td>
-                                <button type="button" class="btn btn-sm @buttonColor rounded-pill" data-bs-toggle="modal" data-bs-target="#assignmentModal"
-                                        data-carid="@assignment?.CarId"
-                                        data-instructorid="@assignment?.Instructor.FullName"
-                                        data-date="@date"
-                                        data-slotid="@slot.SlotId"
-                                        data-status="@(assignment?.CarStatus == true ? "Rented" : "Free")">
-                                    @buttonLabel
-                                </button>
+                                @if (assignment == null)
+                                {
+                                    <button type="button"
+                                            class="btn btn-sm @buttonColor rounded-pill"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#rentConfirmModal"
+                                            onclick="prepareRentModal('@date', '@slot.SlotId')">
+                                        Trống
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-sm @buttonColor rounded-pill" data-bs-toggle="modal" data-bs-target="#assignmentModal"
+                                            data-carid="@assignment?.CarId"
+                                            data-instructorid="@assignment?.Instructor.FullName"
+                                            data-date="@date"
+                                            data-slotid="@slot.SlotId"
+                                            data-status="@(assignment?.CarStatusNavigation?.StatusName)">
+                                        @(assignment?.CarStatusNavigation?.StatusName)
+                                    </button>
+                                }
                             </td>
                         }
                     </tr>
@@ -49,18 +62,43 @@
 </div>
 
 <!-- Modal -->
+<div class="modal fade" id="rentConfirmModal" tabindex="-1" aria-labelledby="rentConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-page-handler="BorrowCar">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="rentConfirmModalLabel">Xác nhận mượn xe</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="rentModalMessage">Bạn có muốn đăng ký mượn xe vào lịch này?</p>
+                    <input type="hidden" asp-for="NewCarAssignment.CarId" value="@Model.CarId" />
+                    <input type="hidden" asp-for="NewCarAssignment.ScheduleDate" id="rentDate" />
+                    <input type="hidden" asp-for="NewCarAssignment.SlotId" id="rentSlot" />
+                    <input type="hidden" asp-for="NewCarAssignment.InstructorId" value="@User.FindFirst("user_id")?.Value" />
+                    <input type="hidden" asp-for="NewCarAssignment.CarStatus" value="1" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Huỷ</button>
+                    <button type="submit" class="btn btn-primary">Đồng ý</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="assignmentModal" tabindex="-1" aria-labelledby="assignmentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="assignmentModalLabel">Assignment Details</h5>
+                <h5 class="modal-title" id="assignmentModalLabel">Thông tin mượn xe</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <p><strong>Ngày:</strong> <span id="modalDate"></span></p>
                 <p><strong>Giáo viên mượn:</strong> <span id="modalInstructorId"></span></p>
                 <p><strong>Tiết:</strong> <span id="modalSlotId"></span></p>
-                <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+                <p><strong>Trạng thái:</strong> <span id="modalStatus"></span></p>
             </div>
         </div>
     </div>
@@ -69,6 +107,14 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
+        function prepareRentModal(date, slotId) {
+            document.getElementById("rentModalMessage").innerText =
+                `Bạn có muốn đăng ký mượn xe vào ngày ${date}, slot ${slotId}?`;
+
+            document.getElementById("rentDate").value = date;
+            document.getElementById("rentSlot").value = slotId;
+        }
+
         var assignmentModal = document.getElementById('assignmentModal');
         assignmentModal.addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget;
