@@ -61,6 +61,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
 
             // Lấy dữ liệu và map sang DTO
             var list = await query
+                .Include(la => la.ClassMembers)
+                .ThenInclude(cm => cm.Class)
+                .ThenInclude(c => c.Instructor)
                 .Select(la => new LearningApplicationsResponse
                 {
                     LearningId = la.LearningId,
@@ -91,7 +94,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
             // Nếu đã có trạng thái cụ thể, ưu tiên trạng thái đó
             if (learningStatus.HasValue)
             {
-                return learningStatus.Value switch
+                var statusName = learningStatus.Value switch
                 {
                     1 => "Đang học",
                     2 => "Bảo lưu",
@@ -99,10 +102,14 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                     4 => "Hoàn thành",
                     _ => hasInstructor ? "Đang học" : "Chưa bắt đầu"
                 };
+                Console.WriteLine($" [DEBUG] GetLearningStatusName: learningStatus={learningStatus}, hasInstructor={hasInstructor} => {statusName}");
+                return statusName;
             }
 
             // Nếu không có trạng thái cụ thể, kiểm tra xem có giảng viên không
-            return hasInstructor ? "Đang học" : "Chưa bắt đầu";
+            var defaultStatus = hasInstructor ? "Đang học" : "Chưa bắt đầu";
+            Console.WriteLine($" [DEBUG] GetLearningStatusName: learningStatus=null, hasInstructor={hasInstructor} => {defaultStatus}");
+            return defaultStatus;
         }
 
         /// <summary>
@@ -438,18 +445,32 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
             // Cập nhật trạng thái mới
             app.LearningStatus = newStatus;
 
-            // Nếu là Bảo lưu (2) thì xóa học viên khỏi lớp (nếu có)
+            // Nếu là Bảo lưu (2) thì xóa học viên khỏi lớp và khóa học đang tham gia
             if (newStatus == 2) // Bảo lưu
             {
-                var classMember = await _context.ClassMembers
-                    .FirstOrDefaultAsync(cm => cm.LearnerId == app.LearnerId);
+                // Xóa tất cả thành viên lớp của hồ sơ học này (chỉ hồ sơ học bị chuyển trạng thái)
+                var classMembers = await _context.ClassMembers
+                    .Where(cm => cm.LearnerId == learningId) // LearnerId trong ClassMember thực chất là LearningId
+                    .ToListAsync();
 
-                if (classMember != null)
+                if (classMembers.Any())
                 {
-                    _context.ClassMembers.Remove(classMember);
+                    _context.ClassMembers.RemoveRange(classMembers);
+                    Console.WriteLine($" [DEBUG] Đã xóa {classMembers.Count} thành viên lớp cho hồ sơ học {learningId}");
+                }
+
+                // Xóa tất cả điểm danh của hồ sơ học này (chỉ hồ sơ học bị chuyển trạng thái)
+                var attendances = await _context.Attendances
+                    .Where(a => a.LearnerId == learningId) // LearnerId trong Attendance thực chất là LearningId
+                    .ToListAsync();
+
+                if (attendances.Any())
+                {
+                    _context.Attendances.RemoveRange(attendances);
+                    Console.WriteLine($" [DEBUG] Đã xóa {attendances.Count} bản ghi điểm danh cho hồ sơ học {learningId}");
                 }
             }
-            Console.WriteLine($" [DEBUG] Cập nhật trạng thái: {learningId} -> {newStatus}");
+            Console.WriteLine($" [DEBUG] Cập nhật trạng thái: LearningId {learningId} -> {newStatus} cho học viên {app.LearnerId}");
 
             await _context.SaveChangesAsync();
             return true;

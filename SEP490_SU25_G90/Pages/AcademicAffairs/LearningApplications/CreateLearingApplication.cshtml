@@ -21,8 +21,14 @@
 <!-- Form tìm kiếm CCCD -->
 <form method="post" asp-page-handler="Search" class="mb-4 w-50">
     <div class="input-group">
-        <input type="text" name="SearchCccd" class="form-control" placeholder="Nhập số CCCD..." value="@Model.SearchCccd" />
-        <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+        <input type="text" name="SearchCccd" id="searchCccd" class="form-control" placeholder="Nhập số CCCD..." value="@Model.SearchCccd" maxlength="12" />
+        <button type="submit" class="btn btn-primary" id="searchButton" disabled>Tìm kiếm</button>
+    </div>
+    <div class="form-text mt-1">
+        <small class="text-muted">
+            <i class="fas fa-info-circle me-1"></i>
+            CCCD phải có đúng 12 chữ số
+        </small>
     </div>
 </form>
 
@@ -76,6 +82,12 @@
                     <option value="">-- Chọn loại bằng --</option>
                 </select>
                 <span asp-validation-for="LearnerInfo.LicenceTypeId" class="text-danger"></span>
+                <div class="form-text mt-1">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        <strong>Yêu cầu tuổi:</strong> B1, B2: 18+ tuổi | C: 21+ tuổi
+                    </small>
+                </div>
             </div>
 
             <!-- Ngày đăng ký -->
@@ -127,6 +139,142 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // CCCD Search validation
+            const searchCccdInput = document.getElementById('searchCccd');
+            const searchButton = document.getElementById('searchButton');
+            
+            if (searchCccdInput && searchButton) {
+                // Only allow numbers
+                searchCccdInput.addEventListener('input', function(e) {
+                    // Remove any non-digit characters
+                    e.target.value = e.target.value.replace(/[^\d]/g, '');
+                    
+                    // Limit to 12 digits
+                    if (e.target.value.length > 12) {
+                        e.target.value = e.target.value.substring(0, 12);
+                    }
+                    
+                    // Enable/disable search button based on length
+                    searchButton.disabled = e.target.value.length !== 12;
+                });
+
+                // Prevent non-numeric input
+                searchCccdInput.addEventListener('keypress', function(e) {
+                    // Only allow numbers
+                    if (!/^\d$/.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                        e.preventDefault();
+                    }
+                });
+
+                // Initial validation
+                searchButton.disabled = searchCccdInput.value.length !== 12;
+            }
+
+            const licenceTypeSelect = document.querySelector('select[name="LearnerInfo.LicenceTypeId"]');
+            const submittedAtInput = document.querySelector('input[name="LearnerInfo.SubmittedAt"]');
+            const learnerDobInput = document.querySelector('input[name="LearnerInfo.LearnerDob"]');
+            
+            // Get learner's birth date from the readonly input
+            const learnerDobDisplay = document.querySelector('input[value*="/"]'); // The readonly DOB display
+            let learnerBirthDate = null;
+            
+            if (learnerDobDisplay && learnerDobDisplay.value) {
+                // Parse the date from dd/MM/yyyy format
+                const parts = learnerDobDisplay.value.split('/');
+                if (parts.length === 3) {
+                    learnerBirthDate = new Date(parts[2], parts[1] - 1, parts[0]);
+                }
+            }
+
+            function calculateAge(birthDate, registrationDate) {
+                let age = registrationDate.getFullYear() - birthDate.getFullYear();
+                const monthDiff = registrationDate.getMonth() - birthDate.getMonth();
+                
+                if (monthDiff < 0 || (monthDiff === 0 && registrationDate.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                return age;
+            }
+
+            function validateAgeRequirement() {
+                if (!learnerBirthDate || !licenceTypeSelect.value || !submittedAtInput.value) {
+                    return;
+                }
+
+                const registrationDate = new Date(submittedAtInput.value);
+                const licenceCode = licenceTypeSelect.options[licenceTypeSelect.selectedIndex].text;
+                
+                if (!licenceCode || licenceCode === '-- Chọn loại bằng --') {
+                    return;
+                }
+
+                const age = calculateAge(learnerBirthDate, registrationDate);
+                let requiredAge = 0;
+                let isValid = true;
+
+                switch (licenceCode) {
+                    case 'B1':
+                    case 'B2':
+                        requiredAge = 18;
+                        isValid = age >= 18;
+                        break;
+                    case 'C':
+                        requiredAge = 21;
+                        isValid = age >= 21;
+                        break;
+                    default:
+                        return; // Other license types don't have age restrictions
+                }
+
+                // Remove existing validation message
+                const existingError = licenceTypeSelect.parentNode.querySelector('.age-validation-error');
+                if (existingError) {
+                    existingError.remove();
+                }
+
+                if (!isValid) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'age-validation-error text-danger mt-1';
+                    errorDiv.style.fontSize = '0.875rem';
+                    errorDiv.innerHTML = `<i class="fas fa-exclamation-triangle me-1"></i>
+                        Học viên phải đủ ${requiredAge} tuổi để đăng ký bằng ${licenceCode}. 
+                        Hiện tại học viên ${age} tuổi (tính đến ngày đăng ký).`;
+                    
+                    licenceTypeSelect.parentNode.appendChild(errorDiv);
+                    
+                    // Disable the create button
+                    const createButton = document.querySelector('button[asp-page-handler="Create"]');
+                    if (createButton) {
+                        createButton.disabled = true;
+                        createButton.title = 'Học viên không đủ tuổi để đăng ký loại bằng này';
+                    }
+                } else {
+                    // Re-enable the create button if it was disabled by age validation
+                    const createButton = document.querySelector('button[asp-page-handler="Create"]');
+                    if (createButton && createButton.title === 'Học viên không đủ tuổi để đăng ký loại bằng này') {
+                        createButton.disabled = false;
+                        createButton.title = '';
+                    }
+                }
+            }
+
+            // Add event listeners
+            if (licenceTypeSelect) {
+                licenceTypeSelect.addEventListener('change', validateAgeRequirement);
+            }
+            
+            if (submittedAtInput) {
+                submittedAtInput.addEventListener('change', validateAgeRequirement);
+            }
+
+            // Initial validation if form is already populated
+            if (licenceTypeSelect && licenceTypeSelect.value && submittedAtInput && submittedAtInput.value) {
+                validateAgeRequirement();
+            }
+        });
+    </script>
 }
 
 @section Styles {
@@ -192,6 +340,31 @@
         .btn:disabled {
             opacity: 0.65;
             cursor: not-allowed;
+        }
+
+        .age-validation-error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            padding: 8px 12px;
+            margin-top: 8px;
+        }
+
+        .form-text {
+            font-size: 0.875rem;
+        }
+
+        #searchButton:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #searchCccd:invalid {
+            border-color: #dc3545;
+        }
+
+        #searchCccd:valid {
+            border-color: #28a745;
         }
     </style>
 }

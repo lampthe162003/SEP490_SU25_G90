@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
 
-namespace SEP490_SU25_G90.Pages.HumanResources.LearningProfile
+namespace SEP490_SU25_G90.Pages.HumanResources.User
 {
     [Authorize(Roles = "human resources")]
     public class InstructorDetailModel : PageModel
