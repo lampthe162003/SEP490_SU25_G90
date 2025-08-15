@@ -324,6 +324,20 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.CarAssignmentService
             var car = cars.Where(c => c.ScheduleDate == date).ToList();
             return _mapper.Map<IList<CarAssignmentInformationResponse>>(car);
         }
+
+        public async Task<IList<CarAssignmentInformationResponse>> GetCarAssignmentByInstructorId(int instructorId)
+        {
+            var cars = await _carAssignmentRepository.GetAllCarAssignmentsAsync();
+            cars = cars.Where(ca => ca.InstructorId == instructorId).ToList();
+            return _mapper.Map<IList<CarAssignmentInformationResponse>>(cars);
+        }
+
+        public async Task UpdateCarAssignmentStatusAsync(int carAssignmentId, byte status)
+        {
+            var carAssignment = await _carAssignmentRepository.GetAssignmentByIdAsync(carAssignmentId);
+            carAssignment.CarStatus = status;
+            await _carAssignmentRepository.UpdateCarAssignmentAsync(carAssignment);
+        }
     }
 }
 
