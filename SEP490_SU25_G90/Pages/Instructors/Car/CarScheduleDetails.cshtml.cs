@@ -81,7 +81,7 @@ namespace SEP490_SU25_G90.Pages.Instructors.Car
         public async Task<IActionResult> OnPostBorrowCarAsync()
         {
             await _carAssignmentService.AddCarAssignment(NewCarAssignment);
-            return Page();
+            return Redirect("/Instructor/Car/Schedule");
         }
     }
 }
