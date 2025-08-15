@@ -17,7 +17,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects.CarAssignment
 
         public byte? CarStatus { get; set; }
 
-        //public virtual Car Car { get; set; } = null!;
+        public virtual vn.edu.fpt.Models.Car Car { get; set; } = null!;
 
         public virtual CarBorrowerInformationResponse Instructor { get; set; } = null!;
 
