@@ -3,16 +3,16 @@
 @model SEP490_SU25_G90.Pages.AcademicAffairs.News.ListNewsModel
 
 @{
-    ViewData["Title"] = "ListNews";
+    ViewData["Title"] = "Danh sách thông báo";
     Layout = "_AcademicAffairsLayout";
 }
 
 <div class="content">
     <div class="container-fluid p-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="text-danger fw-bold">Tin Tức</h1>
+            <h1 class="text-danger fw-bold">Thông Báo</h1>
             <a asp-page="/AcademicAffairs/News/AddNews" class="btn btn-success">
-                <i class="fas fa-plus"></i> Tạo tin tức
+                <i class="fas fa-plus"></i> Tạo thông báo
             </a>
         </div>
         @if (TempData["SuccessMessage"] != null)
@@ -27,7 +27,7 @@
         @if (Model.News == null || Model.News.Count == 0)
         {
             <div class="alert alert-info text-center">
-                Không có tin tức hoặc thông báo nào.
+                Không có thông báo nào.
             </div>
         }
         else
@@ -60,7 +60,7 @@
                                                       asp-route-id="@item.NewsId"
                                                       asp-route-imagePath="@item.Image"
                                                       class="d-inline"
-                                                      onsubmit="return confirm('Bạn có chắc chắn muốn xóa tin này không?');">
+                                                      onsubmit="return confirm('Bạn có chắc chắn muốn xóa thông báo này không?');">
                                                     <button type="submit" class="btn btn-danger btn-sm">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
