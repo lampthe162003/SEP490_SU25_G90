@@ -2,7 +2,7 @@
 @model SEP490_SU25_G90.Pages.AcademicAffairs.News.DetailsNewsModel
 
 @{
-    ViewData["Title"] = "Chi tiết tin tức";
+    ViewData["Title"] = "Chi tiết thông báo";
     Layout = "_AcademicAffairsLayout";
 }
 
@@ -24,7 +24,7 @@
         <a asp-page="/AcademicAffairs/News/EditNews" asp-route-id="@Model.News.NewsId"
            class="btn btn-outline-primary rounded-circle position-absolute"
            style="top: 15px; right: 15px; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;"
-           title="Chỉnh sửa tin tức">
+           title="Chỉnh sửa thông báo">
             <i class="bi bi-pencil-square"></i>
         </a>
 

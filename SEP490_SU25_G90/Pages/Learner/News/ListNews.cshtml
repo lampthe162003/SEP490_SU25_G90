@@ -3,7 +3,7 @@
 @model SEP490_SU25_G90.Pages.Learner.News.ListNewsModel
 
 @{
-    ViewData["Title"] = "ListNews";
+    ViewData["Title"] = "Danh sách thông báo";
     Layout = "_HomeLayout";
 }
 
@@ -12,7 +12,7 @@
         @if (Model.News == null || Model.News.Count == 0)
         {
             <div class="alert alert-info text-center">
-                Không có tin tức hoặc thông báo nào.
+                Không có thông báo nào.
             </div>
         }
         else
