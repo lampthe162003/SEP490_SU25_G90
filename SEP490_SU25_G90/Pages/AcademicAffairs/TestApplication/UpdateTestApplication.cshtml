@@ -8,7 +8,7 @@
 
 <div class="mt-4">
     <div>
-        <h3 class="text-center font-weight-bold mb-4">Tạo hồ sơ thi</h3>
+        <h3 class="text-center font-weight-bold mb-4">Cập hồ sơ thi</h3>
 
     </div>
     <div>
@@ -25,12 +25,12 @@
                             </div>
                         </div>
                         <div id="searchResults" class="col-md-6">
-                            <label>Hồ sơ:</label>
-                            <select asp-for="RequestModel.LearningApplicationId"
+                            @* <label>Hồ sơ:</label> *@
+                            <select hidden asp-for="RequestModel.LearningApplicationId"
                                     class="form-control" id="resultDropdown"
                                     asp-items="Model.LearningApplicationList">
                             </select>
-                            <span asp-validation-for="RequestModel.LearningApplicationId" class="text-danger" id="cccdError"></span>
+                            <span hidden asp-validation-for="RequestModel.LearningApplicationId" class="text-danger" id="cccdError"></span>
                         </div>
                     </div>
 
@@ -57,7 +57,7 @@
             <div class="row mt-2">
                 <div class="form-group col-md-6">
                     <label asp-for="RequestModel.SubmitProfileDate">Ngày nộp hồ sơ</label>
-                    <input asp-for="RequestModel.SubmitProfileDate" class="form-control" type="date" />
+                    <input readonly asp-for="RequestModel.SubmitProfileDate" class="form-control" type="date" />
                     <span asp-validation-for="RequestModel.SubmitProfileDate" class="text-danger"></span>
                 </div>
                 <div class="form-group col-md-6">
@@ -70,12 +70,12 @@
             <div class="row mt-2">
                 <div class="form-group col-md-6">
                     <label asp-for="RequestModel.TheoryScore"></label>
-                    <input asp-for="RequestModel.TheoryScore" class="form-control" />
+                    <input min="0" asp-for="RequestModel.TheoryScore" class="form-control" />
                     <span asp-validation-for="RequestModel.TheoryScore" class="text-danger"></span>
                 </div>
                 <div class="form-group col-md-6">
                     <label asp-for="RequestModel.ObstacleScore"></label>
-                    <input asp-for="RequestModel.ObstacleScore" class="form-control" />
+                    <input min="0" asp-for="RequestModel.ObstacleScore" class="form-control" />
                     <span asp-validation-for="RequestModel.ObstacleScore" class="text-danger"></span>
                 </div>
             </div>
@@ -83,12 +83,12 @@
             <div class="row mt-2">
                 <div class="form-group col-md-6">
                     <label asp-for="RequestModel.SimulationScore"></label>
-                    <input asp-for="RequestModel.SimulationScore" class="form-control" />
+                    <input min="0" asp-for="RequestModel.SimulationScore" class="form-control" />
                     <span asp-validation-for="RequestModel.SimulationScore" class="text-danger"></span>
                 </div>
                 <div class="form-group col-md-6">
                     <label asp-for="RequestModel.PracticalScore"></label>
-                    <input asp-for="RequestModel.PracticalScore" class="form-control" />
+                    <input min="0" asp-for="RequestModel.PracticalScore" class="form-control" />
                     <span asp-validation-for="RequestModel.PracticalScore" class="text-danger"></span>
                 </div>
             </div>

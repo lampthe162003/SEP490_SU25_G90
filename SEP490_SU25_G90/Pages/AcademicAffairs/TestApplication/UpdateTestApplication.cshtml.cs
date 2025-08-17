@@ -197,7 +197,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication
                     }
                     status = pass1 && pass2 && pass3 && pass4;
                 }
-                if (rawTest.ResultImageUrl == null)
+                if (rawTest.ResultImageUrl == null && RequestModel.Attachment == null)
                 {
                     ModelState.AddModelError($"" +
                        $"{nameof(RequestModel)}.{nameof(RequestModel.Attachment)}",
