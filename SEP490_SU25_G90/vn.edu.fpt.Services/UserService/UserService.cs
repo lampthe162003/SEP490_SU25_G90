@@ -68,12 +68,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
 
         public async Task<IList<UserListInformationResponse>> GetAllUsers(string? name, string? email)
         {
-            var query = _userRepository.GetAllUsers();
+            var users = _mapper.Map<List<UserListInformationResponse>>(await _userRepository.GetAllUsers());
 
-            if (!string.IsNullOrWhiteSpace(name)) query = _userRepository.GetUsersByName(query, name);
-            if (!string.IsNullOrWhiteSpace(email)) query = _userRepository.GetUsersByEmail(query, email);
-            var users = await query.ToListAsync();
-            return _mapper.Map<List<UserListInformationResponse>>(users);
+            if (name != null) users = users.Where(u => u.FullName.Contains(name.Trim())).ToList();
+            if (email != null) users = users.Where(u => u.Email.Contains(email.Trim())).ToList();
+
+            return users;
         }
 
         public async Task<LoginInformationResponse> GetLoginDetails(string email, string password)
@@ -569,8 +569,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
 
         public async Task<List<UserListInformationResponse>> GetUsersByRole(byte roleId)
         {
-            var allUsers = _userRepository.GetAllUsers();
-            var users = await allUsers.Where(u => u.UserRoles.Any(ur => ur.Role.RoleId == roleId)).ToListAsync();
+            var allUsers = await _userRepository.GetAllUsers();
+            var users = allUsers.Where(u => u.UserRoles.Any(ur => ur.Role.RoleId == roleId)).ToList();
             return _mapper.Map<List<UserListInformationResponse>>(users);
         }
 
