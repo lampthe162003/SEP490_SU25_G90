@@ -319,31 +319,34 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
             // Xoá file cũ nếu có
             if (!string.IsNullOrEmpty(oldFilePath))
             {
-                var fullOldPath = Path.Combine(_env.WebRootPath, oldFilePath.TrimStart('/').Replace("/", Path.DirectorySeparatorChar.ToString()));
+                var fullOldPath = Path.Combine(_env.WebRootPath, oldFilePath.TrimStart('/')
+                    .Replace("/", Path.DirectorySeparatorChar.ToString()));
                 if (System.IO.File.Exists(fullOldPath))
                 {
                     System.IO.File.Delete(fullOldPath);
                 }
             }
 
-            // Lấy tên gốc của file
-            var originalFileName = Path.GetFileName(file.FileName);
             var folder = Path.Combine(_env.WebRootPath, "uploads", "instructor");
             Directory.CreateDirectory(folder);
 
-            // Đường dẫn file mặc định
-            var path = Path.Combine(folder, originalFileName);
-            string uniqueFileName = originalFileName;
+            // Lấy phần mở rộng gốc
+            var extension = Path.GetExtension(file.FileName);
 
-            // Nếu file đã tồn tại -> thêm hậu tố
-            int count = 1;
-            string fileNameOnly = Path.GetFileNameWithoutExtension(originalFileName);
-            string extension = Path.GetExtension(originalFileName);
-            while (System.IO.File.Exists(path))
+            // Sinh tên ngẫu nhiên 20 ký tự dựa trên time + Guid
+            string uniqueFileName;
+            string path;
+            do
             {
-                uniqueFileName = $"{fileNameOnly} ({count++}){extension}";
+                var randomPart = Convert.ToBase64String(Guid.NewGuid().ToByteArray())
+                    .Replace("=", "").Replace("+", "").Replace("/", "");
+                // Lấy 20 ký tự đầu tiên + thêm ticks cho chắc
+                uniqueFileName = (DateTime.UtcNow.Ticks.ToString() + randomPart)
+                                    .Substring(0, 20) + extension;
+
                 path = Path.Combine(folder, uniqueFileName);
             }
+            while (System.IO.File.Exists(path)); // vòng lặp cực hiếm khi xảy ra
 
             // Lưu file mới
             using var stream = new FileStream(path, FileMode.Create);
@@ -352,6 +355,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
             // Trả về đường dẫn -> lưu DB
             return "/uploads/instructor/" + uniqueFileName;
         }
+
 
 
     }
