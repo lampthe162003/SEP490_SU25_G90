@@ -15,6 +15,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
         void Delete(int id);
         void AddSpecialization(InstructorSpecialization specialization);
         void RemoveSpecialization(int instructorId, byte licenceTypeId);
+        void AddUserRole(int userId, int roleId);
         List<LicenceType> GetAllLicenceTypes();
         
         // Learner methods
