@@ -1,4 +1,5 @@
 ﻿using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.UserDto;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
 {
@@ -11,9 +12,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
         public Task<LearnerDetailResponse?> GetLearnerById(int id);
         public Task UpdateLearnerInfo(int userId, UpdateLearnerRequest request);
         public Task UpdatePasswordAsync(int userId, string newPassword);
-        public Task<UserListInformationResponse> GetUserDetailsAsync(int userId);
+        public Task<UserDetailsInformationResponse> GetUserDetailsAsync(int userId);
         public Task<LoginInformationResponse> GetLoginDetailsByEmail(string email);
         public Task ResetPasswordAsync(string email, string newPassword);
         public Task<bool> DoesUserWithEmailExist(string email);
+        public Task<List<UserListInformationResponse>> GetUsersByRole(byte roleId);
+        public Task UpdateStaffAsync(UpdateStaffRequest request);
     }
 }

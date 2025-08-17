@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.UserDto;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.RoleRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.UserRepository;
@@ -314,9 +315,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
             await _userRepository.Update(user);
         }
 
-        public async Task<UserListInformationResponse> GetUserDetailsAsync(int userId)
+        public async Task<UserDetailsInformationResponse> GetUserDetailsAsync(int userId)
         {
-            var user = _mapper.Map<UserListInformationResponse>(await _userRepository.GetUserById(userId));
+            var user = _mapper.Map<UserDetailsInformationResponse>(await _userRepository.GetUserById(userId));
             return user;
         }
 
@@ -337,6 +338,18 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
         {
             var user = await _userRepository.GetUserByEmail(email);
             return user != null;
+        }
+
+        public async Task<List<UserListInformationResponse>> GetUsersByRole(byte roleId)
+        {
+            var allUsers = _userRepository.GetAllUsers();
+            var users = await allUsers.Where(u => u.UserRoles.Any(ur => ur.Role.RoleId == roleId)).ToListAsync();
+            return _mapper.Map<List<UserListInformationResponse>>(users);
+        }
+
+        public async Task UpdateStaffAsync(UpdateStaffRequest request)
+        {
+            await _userRepository.Update(_mapper.Map<User>(request));
         }
     }
 }
