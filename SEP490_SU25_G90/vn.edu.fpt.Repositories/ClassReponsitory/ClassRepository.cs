@@ -32,7 +32,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
             if (!string.IsNullOrEmpty(searchRequest.ClassName))
             {
                 query = query.Where(c => c.ClassName != null && 
-                    c.ClassName.ToLower().Contains(searchRequest.ClassName.ToLower()));
+                    (c.ClassName.ToLower().Contains(searchRequest.ClassName.ToLower()) || 
+                    (c.Instructor != null &&
+                    (c.Instructor.FirstName != null && c.Instructor.FirstName.ToLower().Contains(searchRequest.ClassName.ToLower()))
+                   || (c.Instructor.MiddleName != null && c.Instructor.MiddleName.ToLower().Contains(searchRequest.ClassName.ToLower()))
+                   || (c.Instructor.LastName != null && c.Instructor.LastName.ToLower().Contains(searchRequest.ClassName.ToLower()))
+                    )));
             }
 
             // Tìm kiếm theo InstructorId
