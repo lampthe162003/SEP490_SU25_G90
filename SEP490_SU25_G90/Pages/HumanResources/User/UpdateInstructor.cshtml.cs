@@ -55,6 +55,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     Dob = instructor.Dob,
                     Gender = instructor.Gender,
                     Phone = instructor.Phone,
+                    ProfileImageUrl = instructor.ProfileImageUrl,
                     CccdNumber = instructor.CccdNumber,
                     CccdImageFront = instructor.CccdImageUrl, // ImageMt - mặt trước
                     CccdImageBack = instructor.CccdImageUrlMs, // ImageMs - mặt sau
@@ -72,7 +73,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
             }
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPost()
         {
             if (!ModelState.IsValid)
             {
@@ -94,7 +95,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                 UpdateSpecializations(UpdateRequest.UserId, instructor.Specializations.Select(s => s.LicenceTypeId).ToList(), UpdateRequest.SelectedSpecializations);
 
                 // Update instructor basic information using UpdateInstructorInfo method
-                _instructorService.UpdateInstructorInfo(UpdateRequest.UserId, UpdateRequest);
+                await _instructorService.UpdateInstructorInfoAsync(UpdateRequest.UserId, UpdateRequest);
 
                 Message = "Cập nhật thông tin giảng viên thành công!";
                 MessageType = "success";

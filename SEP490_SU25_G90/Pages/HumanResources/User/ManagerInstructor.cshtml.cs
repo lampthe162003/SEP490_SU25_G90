@@ -25,7 +25,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
         
         [BindProperty(SupportsGet = true)]
         public byte? SearchLicenceType { get; set; }
-        
+
         public List<SelectListItem> LicenceTypes { get; set; } = new List<SelectListItem>();
         
         [TempData]
@@ -95,6 +95,8 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
             
             return RedirectToPage();
         }
+
+
 
         private void LoadData()
         {
