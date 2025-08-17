@@ -203,6 +203,15 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         public string? CccdImageBack { get; set; }
         
         public string? HealthCertificateImageUrl { get; set; }
+
+        // Thêm trường ProfileImageUrl cho ảnh đại diện
+        public string? ProfileImageUrl { get; set; }
+        
+        // File upload properties
+        public IFormFile? ProfileImageFile { get; set; }
+        public IFormFile? CccdImageFrontFile { get; set; }
+        public IFormFile? CccdImageBackFile { get; set; }
+        public IFormFile? HealthCertificateImageFile { get; set; }
     }
 
     public class CreateInstructorRequest
