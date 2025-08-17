@@ -9,11 +9,13 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
     {
         private readonly IInstructorRepository _instructorRepository;
         private readonly IMapper _mapper;
+        private readonly IWebHostEnvironment _env;
 
-        public InstructorService(IInstructorRepository instructorRepository, IMapper mapper)
+        public InstructorService(IInstructorRepository instructorRepository, IMapper mapper, IWebHostEnvironment env)
         {
             _instructorRepository = instructorRepository;
             _mapper = mapper;
+            _env = env;
         }
 
         public IList<InstructorListInformationResponse> GetAllInstructors(string? name = null, byte? licenceTypeId = null)
@@ -97,8 +99,24 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
             _instructorRepository.Update(instructor);
         }
 
-        public void UpdateInstructorInfo(int instructorId, UpdateInstructorRequest request)
+        public async Task UpdateInstructorInfoAsync(int instructorId, UpdateInstructorRequest request)
         {
+            // Xử lý upload file ảnh
+            if (request.ProfileImageFile != null)
+            {
+                request.ProfileImageUrl = await SaveImageAsync(request.ProfileImageFile, request.ProfileImageUrl);
+            }
+            
+            if (request.CccdImageFrontFile != null)
+            {
+                request.CccdImageFront = await SaveImageAsync(request.CccdImageFrontFile, request.CccdImageFront);
+            }
+            
+            if (request.CccdImageBackFile != null)
+            {
+                request.CccdImageBack = await SaveImageAsync(request.CccdImageBackFile, request.CccdImageBack);
+            }
+
             _instructorRepository.UpdateInstructorInfo(instructorId, request);
         }
 
@@ -178,6 +196,48 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
         public async Task<LearningApplicationsResponse?> GetLearningApplicationDetailAsync(int learningId)
         {
             return await _instructorRepository.GetLearningApplicationDetailAsync(learningId);
+        }
+
+        // Lưu file ảnh lên /wwwroot/uploads/instructor, xử lý trùng tên bằng cách thêm hậu tố (1), (2), ...
+        private async Task<string?> SaveImageAsync(IFormFile? file, string? oldFilePath = null)
+        {
+            if (file == null) return oldFilePath;
+
+            // Xoá file cũ nếu có
+            if (!string.IsNullOrEmpty(oldFilePath))
+            {
+                var fullOldPath = Path.Combine(_env.WebRootPath, oldFilePath.TrimStart('/').Replace("/", Path.DirectorySeparatorChar.ToString()));
+                if (System.IO.File.Exists(fullOldPath))
+                {
+                    System.IO.File.Delete(fullOldPath);
+                }
+            }
+
+            // Lấy tên gốc của file
+            var originalFileName = Path.GetFileName(file.FileName);
+            var folder = Path.Combine(_env.WebRootPath, "uploads", "instructor");
+            Directory.CreateDirectory(folder);
+
+            // Đường dẫn file mặc định
+            var path = Path.Combine(folder, originalFileName);
+            string uniqueFileName = originalFileName;
+
+            // Nếu file đã tồn tại -> thêm hậu tố
+            int count = 1;
+            string fileNameOnly = Path.GetFileNameWithoutExtension(originalFileName);
+            string extension = Path.GetExtension(originalFileName);
+            while (System.IO.File.Exists(path))
+            {
+                uniqueFileName = $"{fileNameOnly} ({count++}){extension}";
+                path = Path.Combine(folder, uniqueFileName);
+            }
+
+            // Lưu file mới
+            using var stream = new FileStream(path, FileMode.Create);
+            await file.CopyToAsync(stream);
+
+            // Trả về đường dẫn -> lưu DB
+            return "/uploads/instructor/" + uniqueFileName;
         }
 
        
