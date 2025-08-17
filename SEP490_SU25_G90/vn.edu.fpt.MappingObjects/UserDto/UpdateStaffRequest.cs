@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using SEP490_SU25_G90.vn.edu.fpt.Models;
+﻿using SEP490_SU25_G90.vn.edu.fpt.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects.UserDto
