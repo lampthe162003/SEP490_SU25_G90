@@ -19,7 +19,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.UserRepository
             return user;
         }
 
-        public IQueryable<User> GetAllUsers() => _context.Users
+        public async Task<List<User>> GetAllUsers() => await _context.Users
             .Include(u => u.Address)
             .Include(u => u.Cccd)
             .Include(u => u.HealthCertificate)
@@ -29,15 +29,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.UserRepository
             //.Include(u => u.MockTestResults)
             .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
-            .AsQueryable();
-
-        public IQueryable<User> GetUsersByEmail(IQueryable<User> query, string email)
-            => query.Where(u => u.Email.Contains(email));
-
-        public IQueryable<User> GetUsersByName(IQueryable<User> query, string name)
-            => query.Where(u => u.FirstName.Contains(name) ||
-                u.MiddleName.Contains(name) ||
-                u.LastName.Contains(name));
+            .ToListAsync();
 
         public async Task Update(User user)
         {
@@ -75,6 +67,100 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.UserRepository
         public async Task<User> GetUserByEmail(string email)
         {
             return await _context.Users.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
+        }
+
+        public async Task SeedUserData()
+        {
+            _context.AddRange(
+                new User
+                {
+                    UserId = 101,
+                    Email = "test.learner@example.com",
+                    Password = "test_data_1",
+                    FirstName = "Trần",
+                    MiddleName = "Văn",
+                    LastName = "A",
+                    Dob = DateOnly.FromDateTime(DateTime.Parse("1996-01-09")),
+                    Gender = true,
+                    Phone = "0123456789",
+                    UserRoles = new List<UserRole>
+                    {
+                        new UserRole
+                        {
+                            UserRoleId = 101,
+                            UserId = 101,
+                            RoleId = 1
+                        }
+                    }
+                },
+
+                new User
+                {
+                    UserId = 102,
+                    Email = "test.hr@example.com",
+                    Password = "test_data_2",
+                    FirstName = "Nguyễn",
+                    MiddleName = "Thị",
+                    LastName = "B",
+                    Dob = DateOnly.FromDateTime(DateTime.Parse("1997-02-10")),
+                    Gender = false,
+                    Phone = "0111222333",
+                    UserRoles = new List<UserRole>
+                    {
+                        new UserRole
+                        {
+                            UserRoleId = 102,
+                            UserId = 102,
+                            RoleId = 2
+                        }
+                    }
+                },
+
+                new User
+                {
+                    UserId = 103,
+                    Email = "test.instructor@example.com",
+                    Password = "test_data_3",
+                    FirstName = "Phạm",
+                    MiddleName = "Nhật",
+                    LastName = "C",
+                    Dob = DateOnly.FromDateTime(DateTime.Parse("1995-03-11")),
+                    Gender = true,
+                    Phone = "0444555666",
+                    UserRoles = new List<UserRole>
+                    {
+                        new UserRole
+                        {
+                            UserRoleId = 103,
+                            UserId = 103,
+                            RoleId = 3
+                        }
+                    }
+                },
+
+                new User
+                {
+                    UserId = 104,
+                    Email = "test.academicaffairs@example.com",
+                    Password = "test_data_4",
+                    FirstName = "Nguyễn",
+                    MiddleName = "Thị",
+                    LastName = "D",
+                    Dob = DateOnly.FromDateTime(DateTime.Parse("1995-04-12")),
+                    Gender = true,
+                    Phone = "0777888999",
+                    UserRoles = new List<UserRole>
+                    {
+                        new UserRole
+                        {
+                            UserRoleId = 104,
+                            UserId = 104,
+                            RoleId = 4
+                        }
+                    }
+                }
+            );
+            _context.SaveChangesAsync();
         }
     }
 }
