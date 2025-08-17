@@ -1,0 +1,411 @@
+﻿@page
+@model SEP490_SU25_G90.Pages.HumanResources.User.UpdateHumanResourcesModel
+@{
+    ViewData["Title"] = "Chỉnh sửa nhân viên";
+    Layout = "_HumanResourcesLayout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h3 mb-0">
+                    <i class="fas fa-user-edit text-primary me-2"></i>
+                    Cập nhật thông tin Nhân viên
+                </h2>
+                <div>
+                    <a asp-page="./ListHumanResources" class="btn btn-secondary me-2">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Quay trở lại
+                    </a>
+                </div>
+            </div>
+
+            <!-- Update Form -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-edit me-2"></i>
+                        Thông tin Nhân viên
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <input type="hidden" asp-for="UpdateRequest.UserId" />
+
+                        <div class="row">
+                            <!-- Basic Information -->
+                            <div class="col-md-6">
+                                <h6 class="text-primary mb-3">
+                                    <i class="fas fa-user me-2"></i>
+                                    Thông tin cơ bản
+                                </h6>
+
+                                <div class="mb-3">
+                                    <label asp-for="UpdateRequest.Email" class="form-label">Email</label>
+                                    <input asp-for="UpdateRequest.Email" class="form-control" readonly style="background-color: #f8f9fa;" />
+                                    <span asp-validation-for="UpdateRequest.Email" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="UpdateRequest.Fullname" class="form-label">Họ *</label>
+                                    <input asp-for="UpdateRequest.Fullname" class="form-control" />
+                                    <span asp-validation-for="UpdateRequest.Fullname" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="UpdateRequest.Phone" class="form-label">Số điện thoại</label>
+                                    <input asp-for="UpdateRequest.Phone" class="form-control" />
+                                    <span asp-validation-for="UpdateRequest.Phone" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="UpdateRequest.Dob" class="form-label">Ngày sinh</label>
+                                    <input asp-for="UpdateRequest.Dob" type="date" class="form-control" />
+                                    <span asp-validation-for="UpdateRequest.Dob" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="UpdateRequest.Gender" class="form-label">Giới tính</label>
+                                    <select asp-for="UpdateRequest.Gender" class="form-select">
+                                        <option value="">-- Chọn giới tính --</option>
+                                        <option value="true">Nam</option>
+                                        <option value="false">Nữ</option>
+                                    </select>
+                                    <span asp-validation-for="UpdateRequest.Gender" class="text-danger"></span>
+                                </div>
+
+                                <h6 class="text-info mb-3 mt-4">
+                                    <i class="fas fa-id-card me-2"></i>
+                                    Thông tin CCCD
+                                </h6>
+
+                                <div class="mb-3">
+                                    <label asp-for="UpdateRequest.Cccd.CccdNumber" class="form-label">
+                                        Số CCCD
+                                        <small class="text-muted">(12 chữ số)</small>
+                                    </label>
+                                    <input asp-for="UpdateRequest.Cccd.CccdNumber" class="form-control" placeholder="Nhập 12 chữ số CCCD" maxlength="12" />
+                                    <span asp-validation-for="UpdateRequest.Cccd.CccdNumber" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="UpdateRequest.Cccd.ImageMt" class="form-label">
+                                        <i class="fas fa-image me-1"></i>
+                                        Ảnh CCCD mặt trước
+                                    </label>
+                                    <input asp-for="UpdateRequest.Cccd.ImageMt" class="form-control" placeholder="Nhập URL ảnh CCCD mặt trước" />
+                                    <span asp-validation-for="UpdateRequest.Cccd.ImageMt" class="text-danger"></span>
+                                    @if (!string.IsNullOrEmpty(Model.UpdateRequest.Cccd.ImageMt))
+                                    {
+                                        <div class="mt-2">
+                                            <small class="text-success">
+                                                <i class="fas fa-check me-1"></i>
+                                                Đã có ảnh -
+                                                <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none"
+                                                        onclick="showImageModal('@Model.UpdateRequest.Cccd.ImageMt', 'Ảnh CCCD mặt trước')">
+                                                    <i class="fas fa-eye me-1"></i>Xem ảnh hiện tại
+                                                </button>
+                                            </small>
+                                        </div>
+                                    }
+                                    <div class="image-preview-front mt-2" style="display: none;">
+                                        <div class="position-relative d-inline-block preview-container">
+                                            <img class="img-thumbnail preview-image" style="max-width: 200px; max-height: 120px; cursor: pointer;"
+                                                 onclick="showImageModalFromPreview(this, 'Ảnh CCCD mặt trước')" />
+                                            <div class="position-absolute top-0 start-0 w-100 h-100 preview-overlay d-flex align-items-center justify-content-center"
+                                                 style="background: rgba(0,0,0,0.7); opacity: 0; transition: opacity 0.3s;">
+                                                <i class="fas fa-expand text-white fa-2x"></i>
+                                            </div>
+                                        </div>
+                                        <div class="mt-1">
+                                            <small class="text-muted">
+                                                Preview ảnh mặt trước
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="UpdateRequest.Cccd.ImageMs" class="form-label">
+                                        <i class="fas fa-image me-1"></i>
+                                        Ảnh CCCD mặt sau
+                                    </label>
+                                    <input asp-for="UpdateRequest.Cccd.ImageMs" class="form-control" placeholder="Nhập URL ảnh CCCD mặt sau" />
+                                    <span asp-validation-for="UpdateRequest.Cccd.ImageMs" class="text-danger"></span>
+                                    @if (!string.IsNullOrEmpty(Model.UpdateRequest.Cccd.ImageMs))
+                                    {
+                                        <div class="mt-2">
+                                            <small class="text-success">
+                                                <i class="fas fa-check me-1"></i>
+                                                Đã có ảnh -
+                                                <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none"
+                                                        onclick="showImageModal('@Model.UpdateRequest.Cccd.ImageMs', 'Ảnh CCCD mặt sau')">
+                                                    <i class="fas fa-eye me-1"></i>Xem ảnh hiện tại
+                                                </button>
+                                            </small>
+                                        </div>
+                                    }
+                                    <div class="image-preview-back mt-2" style="display: none;">
+                                        <div class="position-relative d-inline-block preview-container">
+                                            <img class="img-thumbnail preview-image" style="max-width: 200px; max-height: 120px; cursor: pointer;"
+                                                 onclick="showImageModalFromPreview(this, 'Ảnh CCCD mặt sau')" />
+                                            <div class="position-absolute top-0 start-0 w-100 h-100 preview-overlay d-flex align-items-center justify-content-center"
+                                                 style="background: rgba(0,0,0,0.7); opacity: 0; transition: opacity 0.3s;">
+                                                <i class="fas fa-expand text-white fa-2x"></i>
+                                            </div>
+                                        </div>
+                                        <div class="mt-1">
+                                            <small class="text-muted">
+                                                Preview ảnh mặt sau
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Lưu ý:</strong>
+                                    <ul class="mb-0 mt-2">
+                                        <li>Để trống các trường không muốn thay đổi</li>
+                                        <li>URL ảnh nên là link trực tiếp đến file ảnh (jpg, png, jpeg)</li>
+                                        <li>Click vào preview ảnh hoặc "Xem ảnh hiện tại" để xem ảnh lớn</li>
+                                        <li>Có thể mở ảnh trong tab mới từ modal nếu cần</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-end">
+                                    <a asp-page="./ManagerInstructor" class="btn btn-secondary me-3">
+                                        <i class="fas fa-times me-2"></i>
+                                        Quay trở lại
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>
+                                        Xác nhận
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Image Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">
+                    <i class="fas fa-image me-2"></i>
+                    <span id="imageModalTitle">Xem ảnh</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div id="imageLoading" class="d-none">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Đang tải...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Đang tải ảnh...</p>
+                </div>
+                <div id="imageError" class="d-none alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Không thể tải ảnh. Vui lòng kiểm tra URL.
+                </div>
+                <img id="modalImage" class="img-fluid rounded shadow" style="max-height: 70vh;" alt="CCCD Image" />
+            </div>
+            <div class="modal-footer">
+                <a id="openInNewTab" href="#" target="_blank" class="btn btn-outline-primary">
+                    <i class="fas fa-external-link-alt me-2"></i>
+                    Mở trong tab mới
+                </a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // CCCD input validation - only allow numbers
+        document.addEventListener('DOMContentLoaded', function() {
+            const cccdInput = document.querySelector('input[name="UpdateRequest.CccdNumber"]');
+            if (cccdInput) {
+                cccdInput.addEventListener('input', function(e) {
+                    // Remove any non-digit characters
+                    e.target.value = e.target.value.replace(/[^\d]/g, '');
+
+                    // Limit to 12 digits
+                    if (e.target.value.length > 12) {
+                        e.target.value = e.target.value.substring(0, 12);
+                    }
+                });
+
+                cccdInput.addEventListener('keypress', function(e) {
+                    // Only allow numbers
+                    if (!/^\d$/.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                        e.preventDefault();
+                    }
+                });
+            }
+
+            // URL validation for CCCD images
+            const frontImageInput = document.querySelector('input[name="UpdateRequest.CccdImageFront"]');
+            const backImageInput = document.querySelector('input[name="UpdateRequest.CccdImageBack"]');
+
+            if (frontImageInput) {
+                frontImageInput.addEventListener('blur', function(e) {
+                    validateAndPreviewImage(e.target, 'front');
+                });
+            }
+
+            if (backImageInput) {
+                backImageInput.addEventListener('blur', function(e) {
+                    validateAndPreviewImage(e.target, 'back');
+                });
+            }
+
+            function validateAndPreviewImage(input, type) {
+                const previewDiv = document.querySelector(`.image-preview-${type}`);
+                const previewImg = previewDiv ? previewDiv.querySelector('img') : null;
+
+                if (input.value.trim() !== '') {
+                    // Basic URL validation
+                    const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+                    if (!urlPattern.test(input.value)) {
+                        input.classList.add('is-invalid');
+                        showUrlError(input, 'URL không hợp lệ');
+                        hideImagePreview(previewDiv);
+                    } else {
+                        input.classList.remove('is-invalid');
+                        input.classList.add('is-valid');
+                        hideUrlError(input);
+                        showImagePreview(input.value, previewDiv, previewImg);
+                    }
+                } else {
+                    input.classList.remove('is-invalid', 'is-valid');
+                    hideUrlError(input);
+                    hideImagePreview(previewDiv);
+                }
+            }
+
+            function showImagePreview(url, previewDiv, previewImg) {
+                if (previewDiv && previewImg) {
+                    previewImg.src = url;
+                    previewImg.onerror = function() {
+                        hideImagePreview(previewDiv);
+                    };
+                    previewImg.onload = function() {
+                        previewDiv.style.display = 'block';
+                    };
+                }
+            }
+
+            function hideImagePreview(previewDiv) {
+                if (previewDiv) {
+                    previewDiv.style.display = 'none';
+                }
+            }
+
+            function showUrlError(input, message) {
+                let errorDiv = input.parentNode.querySelector('.url-error');
+                if (!errorDiv) {
+                    errorDiv = document.createElement('div');
+                    errorDiv.className = 'url-error text-danger small mt-1';
+                    input.parentNode.appendChild(errorDiv);
+                }
+                errorDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>' + message;
+            }
+
+                         function hideUrlError(input) {
+                 const errorDiv = input.parentNode.querySelector('.url-error');
+                 if (errorDiv) {
+                     errorDiv.remove();
+                 }
+             }
+         });
+
+        // Image Modal Functions
+        function showImageModal(imageUrl, title) {
+            const modal = new bootstrap.Modal(document.getElementById('imageModal'));
+            const modalImage = document.getElementById('modalImage');
+            const modalTitle = document.getElementById('imageModalTitle');
+            const imageLoading = document.getElementById('imageLoading');
+            const imageError = document.getElementById('imageError');
+            const openInNewTab = document.getElementById('openInNewTab');
+
+            // Set title
+            modalTitle.textContent = title;
+
+            // Set up "Open in new tab" link
+            openInNewTab.href = imageUrl;
+
+            // Reset states
+            modalImage.style.display = 'none';
+            imageError.classList.add('d-none');
+            imageLoading.classList.remove('d-none');
+
+                         // Show modal
+             modal.show();
+
+             // Focus modal for keyboard accessibility
+             setTimeout(() => {
+                 document.getElementById('imageModal').focus();
+             }, 300);
+
+                         // Load image
+             const img = new Image();
+             img.onload = function() {
+                 imageLoading.classList.add('d-none');
+                 modalImage.src = imageUrl;
+                 modalImage.style.display = 'block';
+             };
+             img.onerror = function() {
+                 imageLoading.classList.add('d-none');
+                 imageError.classList.remove('d-none');
+             };
+             img.src = imageUrl;
+
+             // Add keyboard support (ESC to close)
+             const modalElement = document.getElementById('imageModal');
+             modalElement.addEventListener('keydown', function(e) {
+                 if (e.key === 'Escape') {
+                     modal.hide();
+                 }
+             });
+         }
+
+         // Show modal from preview image
+         function showImageModalFromPreview(imgElement, title) {
+             showImageModal(imgElement.src, title);
+         }
+
+    </script>
+    <style>
+        .preview-container:hover .preview-overlay {
+            opacity: 1 !important;
+        }
+
+        .preview-image {
+            transition: transform 0.3s ease;
+        }
+
+        .preview-container:hover .preview-image {
+            transform: scale(1.02);
+        }
+    </style>
+}
