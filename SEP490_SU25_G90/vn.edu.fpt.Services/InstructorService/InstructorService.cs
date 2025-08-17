@@ -2,6 +2,8 @@ using AutoMapper;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository;
+using SEP490_SU25_G90.vn.edu.fpt.Services.EmailService;
+using System.Text;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
 {
@@ -10,12 +12,14 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
         private readonly IInstructorRepository _instructorRepository;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _env;
+        private readonly IEmailService _emailService;
 
-        public InstructorService(IInstructorRepository instructorRepository, IMapper mapper, IWebHostEnvironment env)
+        public InstructorService(IInstructorRepository instructorRepository, IMapper mapper, IWebHostEnvironment env, IEmailService emailService)
         {
             _instructorRepository = instructorRepository;
             _mapper = mapper;
             _env = env;
+            _emailService = emailService;
         }
 
         public IList<InstructorListInformationResponse> GetAllInstructors(string? name = null, byte? licenceTypeId = null)
@@ -94,6 +98,115 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
             _instructorRepository.Create(instructor);
         }
 
+        public async Task<string> CreateInstructorAsync(CreateInstructorRequest request)
+        {
+            // Generate random password
+            string password = GenerateRandomPassword(12);
+
+            // Handle file uploads
+            if (request.ProfileImageFile != null)
+            {
+                request.ProfileImageUrl = await SaveImageAsync(request.ProfileImageFile);
+            }
+
+            if (request.CccdImageFrontFile != null)
+            {
+                request.CccdImageFront = await SaveImageAsync(request.CccdImageFrontFile);
+            }
+
+            if (request.CccdImageBackFile != null)
+            {
+                request.CccdImageBack = await SaveImageAsync(request.CccdImageBackFile);
+            }
+
+            // Create new instructor user
+            var instructor = new SEP490_SU25_G90.vn.edu.fpt.Models.User
+            {
+                Email = request.Email,
+                Password = password,
+                FirstName = request.FirstName,
+                MiddleName = request.MiddleName,
+                LastName = request.LastName,
+                Dob = request.Dob,
+                Gender = request.Gender,
+                Phone = request.Phone,
+                ProfileImageUrl = request.ProfileImageUrl
+            };
+
+            // Handle CCCD if provided
+            if (!string.IsNullOrWhiteSpace(request.CccdNumber) ||
+                !string.IsNullOrWhiteSpace(request.CccdImageFront) ||
+                !string.IsNullOrWhiteSpace(request.CccdImageBack))
+            {
+                var cccd = new Cccd
+                {
+                    CccdNumber = request.CccdNumber ?? "",
+                    ImageMt = request.CccdImageFront,
+                    ImageMs = request.CccdImageBack
+                };
+                instructor.Cccd = cccd;
+            }
+
+            // Create instructor
+            _instructorRepository.Create(instructor);
+
+            // Add instructor role (role ID 3)
+            _instructorRepository.AddUserRole(instructor.UserId, 3);
+
+            // Add specializations
+            foreach (var licenceTypeId in request.SelectedSpecializations)
+            {
+                AddSpecialization(instructor.UserId, licenceTypeId);
+            }
+
+            // Send email with password
+            string fullName = $"{request.FirstName} {request.MiddleName} {request.LastName}".Trim();
+
+            try
+            {
+                await _emailService.SendNewAccountPasswordAsync(request.Email!, fullName, password);
+            }
+            catch (Exception)
+            {
+
+            }
+
+
+            return password; // Return for confirmation (optional)
+        }
+        private string GenerateRandomPassword(int length)
+        {
+            const string upper = "ABCDEFGHJKMNPQRSTUVWXYZ"; // 24 ký tự
+            const string lower = "abcdefghijkmnpqrstuvwxyz"; // 24 ký tự
+            const string digits = "23456789"; // 8 ký tự
+            const string special = "!@#$%"; // 5 ký tự
+
+            const string all = upper + lower + digits + special;
+            var random = new Random();
+            var result = new StringBuilder(length);
+
+            // Ensure at least one of each type
+            result.Append(upper[random.Next(upper.Length)]);
+            result.Append(lower[random.Next(lower.Length)]);
+            result.Append(digits[random.Next(digits.Length)]);
+            result.Append(special[random.Next(special.Length)]);
+
+            // Fill the rest randomly
+            for (int i = 4; i < length; i++)
+            {
+                result.Append(all[random.Next(all.Length)]);
+            }
+
+            // Shuffle the result
+            for (int i = 0; i < result.Length; i++)
+            {
+                int j = random.Next(i, result.Length);
+                (result[i], result[j]) = (result[j], result[i]);
+            }
+
+            return result.ToString();
+        }
+
         public void UpdateInstructor(SEP490_SU25_G90.vn.edu.fpt.Models.User instructor)
         {
             _instructorRepository.Update(instructor);
@@ -106,12 +219,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
             {
                 request.ProfileImageUrl = await SaveImageAsync(request.ProfileImageFile, request.ProfileImageUrl);
             }
-            
+
             if (request.CccdImageFrontFile != null)
             {
                 request.CccdImageFront = await SaveImageAsync(request.CccdImageFrontFile, request.CccdImageFront);
             }
-            
+
             if (request.CccdImageBackFile != null)
             {
                 request.CccdImageBack = await SaveImageAsync(request.CccdImageBackFile, request.CccdImageBack);
@@ -240,6 +353,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
             return "/uploads/instructor/" + uniqueFileName;
         }
 
-       
+
     }
 }
