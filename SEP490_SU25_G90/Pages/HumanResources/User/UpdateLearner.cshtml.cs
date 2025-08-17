@@ -53,6 +53,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     Dob = learner.Dob,
                     Gender = learner.Gender,
                     Phone = learner.Phone,
+                    ProfileImageUrl = learner.ProfileImageUrl,
                     CccdNumber = learner.CccdNumber,
                     CccdImageFront = learner.CccdImageFront,
                     CccdImageBack = learner.CccdImageBack,
@@ -87,7 +88,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                 }
 
                 // Update learner information
-                await _userService.UpdateLearnerInfo(UpdateRequest.UserId, UpdateRequest);
+                await _userService.UpdateLearnerInfoAsync(UpdateRequest.UserId, UpdateRequest);
 
                 Message = "Cập nhật thông tin học viên thành công!";
                 MessageType = "success";
