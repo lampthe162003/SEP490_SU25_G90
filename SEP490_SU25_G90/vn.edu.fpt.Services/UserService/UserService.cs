@@ -5,6 +5,7 @@ using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.RoleRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.UserRepository;
+using SEP490_SU25_G90.vn.edu.fpt.Services.EmailService;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
 {
@@ -17,13 +18,15 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
         private readonly IPasswordHasher<Models.User> _hasher;
         private readonly IRoleRepository _roleRepository;
         private readonly IWebHostEnvironment _env;
+        private readonly IEmailService _emailService;
 
         public UserService(Sep490Su25G90DbContext context,
             IMapper mapper,
             IUserRepository userRepository,
             IPasswordHasher<Models.User> hasher,
             IRoleRepository roleRepository,
-            IWebHostEnvironment env)
+            IWebHostEnvironment env,
+            IEmailService emailService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -32,6 +35,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
             _hasher = hasher;
             _roleRepository = roleRepository;
             _env = env;
+            _emailService = emailService;
         }
 
         public async Task CreateAccount(AccountCreationRequest request, byte roleId)
@@ -180,6 +184,153 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
             return result;
         }
 
+        public async Task<string> CreateLearnerAsync(CreateLearnerRequest request)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                // Generate random password
+                string password = GenerateRandomPassword(12);
+                string hashedPassword = _hasher.HashPassword(new Models.User(), password);
+
+                // Handle file uploads
+                if (request.ProfileImageFile != null)
+                {
+                    request.ProfileImageUrl = await SaveImageAsync(request.ProfileImageFile);
+                }
+
+                if (request.CccdImageFrontFile != null)
+                {
+                    request.CccdImageFront = await SaveImageAsync(request.CccdImageFrontFile);
+                }
+
+                if (request.CccdImageBackFile != null)
+                {
+                    request.CccdImageBack = await SaveImageAsync(request.CccdImageBackFile);
+                }
+
+                if (request.HealthCertificateImageFile != null)
+                {
+                    request.HealthCertificateImageUrl = await SaveImageAsync(request.HealthCertificateImageFile);
+                }
+
+                // Create User
+                var newUser = new Models.User
+                {
+                    Email = request.Email,
+                    Password = hashedPassword,
+                    FirstName = request.FirstName,
+                    MiddleName = request.MiddleName,
+                    LastName = request.LastName,
+                    Dob = request.Dob,
+                    Gender = request.Gender,
+                    Phone = request.Phone,
+                    ProfileImageUrl = request.ProfileImageUrl
+                };
+
+                _context.Users.Add(newUser);
+                await _context.SaveChangesAsync();
+
+                // Find learner role
+                var learnerRole = await _context.Roles.FirstOrDefaultAsync(r => r.RoleName.ToLower() == "learner");
+                if (learnerRole == null)
+                {
+                    throw new InvalidOperationException("Không tìm thấy role learner trong hệ thống");
+                }
+
+                // Add learner role
+                var userRole = new UserRole
+                {
+                    UserId = newUser.UserId,
+                    RoleId = learnerRole.RoleId
+                };
+                _context.UserRoles.Add(userRole);
+
+                // Create CCCD if provided
+                if (!string.IsNullOrEmpty(request.CccdNumber) ||
+                    !string.IsNullOrEmpty(request.CccdImageFront) ||
+                    !string.IsNullOrEmpty(request.CccdImageBack))
+                {
+                    var newCccd = new Cccd
+                    {
+                        CccdNumber = request.CccdNumber,
+                        ImageMt = request.CccdImageFront,
+                        ImageMs = request.CccdImageBack
+                    };
+
+                    _context.Cccds.Add(newCccd);
+                    await _context.SaveChangesAsync();
+
+                    newUser.CccdId = newCccd.CccdId;
+                }
+
+                // Create Health Certificate if provided
+                if (!string.IsNullOrEmpty(request.HealthCertificateImageUrl))
+                {
+                    var newHealthCert = new HealthCertificate
+                    {
+                        ImageUrl = request.HealthCertificateImageUrl
+                    };
+
+                    _context.HealthCertificates.Add(newHealthCert);
+                    await _context.SaveChangesAsync();
+
+                    newUser.HealthCertificateId = newHealthCert.HealthCertificateId;
+                }
+
+                await _context.SaveChangesAsync();
+
+                // Send email with password
+                var fullName = $"{request.FirstName} {request.MiddleName} {request.LastName}".Trim();
+
+                try
+                {
+                    await _emailService.SendNewAccountPasswordAsync(request.Email!, fullName, password);
+                }
+                catch (Exception)
+                {
+
+                }
+
+                await transaction.CommitAsync();
+                return password;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
+
+        // Generate random password
+        private string GenerateRandomPassword(int length)
+        {
+            const string lowercase = "abcdefghijklmnopqrstuvwxyz";
+            const string uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const string digits = "0123456789";
+            const string specialChars = "!@#$%^&*";
+
+            var random = new Random();
+            var password = new List<char>();
+
+            // Đảm bảo có ít nhất 1 ký tự từ mỗi loại
+            password.Add(lowercase[random.Next(lowercase.Length)]);
+            password.Add(uppercase[random.Next(uppercase.Length)]);
+            password.Add(digits[random.Next(digits.Length)]);
+            password.Add(specialChars[random.Next(specialChars.Length)]);
+
+            // Thêm các ký tự còn lại ngẫu nhiên
+            string allChars = lowercase + uppercase + digits + specialChars;
+            for (int i = 4; i < length; i++)
+            {
+                password.Add(allChars[random.Next(allChars.Length)]);
+            }
+
+            // Trộn ngẫu nhiên các ký tự
+            return new string(password.OrderBy(x => random.Next()).ToArray());
+        }
+
         private string GetLearningStatusName(byte? status)
         {
             return status switch
@@ -233,17 +384,17 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
                 {
                     request.ProfileImageUrl = await SaveImageAsync(request.ProfileImageFile, request.ProfileImageUrl);
                 }
-                
+
                 if (request.CccdImageFrontFile != null)
                 {
                     request.CccdImageFront = await SaveImageAsync(request.CccdImageFrontFile, request.CccdImageFront);
                 }
-                
+
                 if (request.CccdImageBackFile != null)
                 {
                     request.CccdImageBack = await SaveImageAsync(request.CccdImageBackFile, request.CccdImageBack);
                 }
-                
+
                 if (request.HealthCertificateImageFile != null)
                 {
                     request.HealthCertificateImageUrl = await SaveImageAsync(request.HealthCertificateImageFile, request.HealthCertificateImageUrl);
@@ -257,7 +408,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
 
                 if (learner == null)
                 {
-                    
+
                 }
 
                 // Update basic information
@@ -276,8 +427,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
                 }
 
                 // Update or create CCCD
-                if (!string.IsNullOrEmpty(request.CccdNumber) || 
-                    !string.IsNullOrEmpty(request.CccdImageFront) || 
+                if (!string.IsNullOrEmpty(request.CccdNumber) ||
+                    !string.IsNullOrEmpty(request.CccdImageFront) ||
                     !string.IsNullOrEmpty(request.CccdImageBack))
                 {
                     if (learner.Cccd != null)
@@ -296,10 +447,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
                             ImageMt = request.CccdImageFront,
                             ImageMs = request.CccdImageBack
                         };
-                        
+
                         _context.Cccds.Add(newCccd);
                         await _context.SaveChangesAsync(); // Save to get CCCD ID
-                        
+
                         learner.CccdId = newCccd.CccdId;
                     }
                 }
@@ -319,10 +470,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
                         {
                             ImageUrl = request.HealthCertificateImageUrl
                         };
-                        
+
                         _context.HealthCertificates.Add(newHealthCert);
                         await _context.SaveChangesAsync(); // Save to get Health Certificate ID
-                        
+
                         learner.HealthCertificateId = newHealthCert.HealthCertificateId;
                     }
                 }
@@ -345,45 +496,43 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
             // Xoá file cũ nếu có
             if (!string.IsNullOrEmpty(oldFilePath))
             {
-                var fullOldPath = Path.Combine(_env.WebRootPath, oldFilePath.TrimStart('/').Replace("/", Path.DirectorySeparatorChar.ToString()));
+                var fullOldPath = Path.Combine(_env.WebRootPath, oldFilePath.TrimStart('/')
+                    .Replace("/", Path.DirectorySeparatorChar.ToString()));
                 if (System.IO.File.Exists(fullOldPath))
                 {
                     System.IO.File.Delete(fullOldPath);
                 }
             }
 
-            // Tạo thư mục nếu chưa có
-            var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "learner");
-            if (!Directory.Exists(uploadsFolder))
+            var folder = Path.Combine(_env.WebRootPath, "uploads", "learner");
+            Directory.CreateDirectory(folder);
+
+            // Lấy phần mở rộng gốc
+            var extension = Path.GetExtension(file.FileName);
+
+            // Sinh tên ngẫu nhiên 20 ký tự dựa trên time + Guid
+            string uniqueFileName;
+            string path;
+            do
             {
-                Directory.CreateDirectory(uploadsFolder);
+                var randomPart = Convert.ToBase64String(Guid.NewGuid().ToByteArray())
+                    .Replace("=", "").Replace("+", "").Replace("/", "");
+                // Lấy 20 ký tự đầu tiên + thêm ticks cho chắc
+                uniqueFileName = (DateTime.UtcNow.Ticks.ToString() + randomPart)
+                                    .Substring(0, 20) + extension;
+
+                path = Path.Combine(folder, uniqueFileName);
             }
+            while (System.IO.File.Exists(path)); // vòng lặp cực hiếm khi xảy ra
 
-            // Tạo tên file unique
-            var fileName = Path.GetFileNameWithoutExtension(file.FileName);
-            var fileExtension = Path.GetExtension(file.FileName);
-            var originalFileName = $"{fileName}{fileExtension}";
-            var filePath = Path.Combine(uploadsFolder, originalFileName);
+            // Lưu file mới
+            using var stream = new FileStream(path, FileMode.Create);
+            await file.CopyToAsync(stream);
 
-            // Xử lý trùng tên file
-            var counter = 1;
-            while (System.IO.File.Exists(filePath))
-            {
-                var newFileName = $"{fileName}({counter}){fileExtension}";
-                filePath = Path.Combine(uploadsFolder, newFileName);
-                originalFileName = newFileName;
-                counter++;
-            }
-
-            // Lưu file
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
-            }
-
-            // Trả về relative path từ wwwroot
-            return $"/uploads/learner/{originalFileName}";
+            // Trả về đường dẫn -> lưu DB
+            return "/uploads/learner/" + uniqueFileName;
         }
+
 
         public async Task UpdatePasswordAsync(int userId, string newPassword)
         {
