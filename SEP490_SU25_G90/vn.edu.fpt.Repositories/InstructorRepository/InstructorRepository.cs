@@ -170,6 +170,17 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
             }
         }
 
+        public void AddUserRole(int userId, int roleId)
+        {
+            var userRole = new UserRole
+            {
+                UserId = userId,
+                RoleId = (byte)roleId
+            };
+            _context.UserRoles.Add(userRole);
+            _context.SaveChanges();
+        }
+
         public List<LicenceType> GetAllLicenceTypes()
         {
             return _context.LicenceTypes.ToList();
