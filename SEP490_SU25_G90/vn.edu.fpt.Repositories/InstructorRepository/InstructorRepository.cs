@@ -87,6 +87,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 instructor.Gender = request.Gender;
                 instructor.Phone = request.Phone;
 
+                // Update ProfileImageUrl if provided
+                if (!string.IsNullOrWhiteSpace(request.ProfileImageUrl))
+                {
+                    instructor.ProfileImageUrl = request.ProfileImageUrl;
+                }
+
                 // Update CCCD if any CCCD field is provided
                 if (!string.IsNullOrWhiteSpace(request.CccdNumber) || 
                     !string.IsNullOrWhiteSpace(request.CccdImageFront) || 
