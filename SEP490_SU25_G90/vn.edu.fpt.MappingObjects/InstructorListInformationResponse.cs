@@ -67,6 +67,14 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         public string? CccdImageFront { get; set; }
         
         public string? CccdImageBack { get; set; }
+
+        // Thêm trường ProfileImageUrl cho ảnh đại diện
+        public string? ProfileImageUrl { get; set; }
+        
+        // File upload properties
+        public IFormFile? ProfileImageFile { get; set; }
+        public IFormFile? CccdImageFrontFile { get; set; }
+        public IFormFile? CccdImageBackFile { get; set; }
         
         public List<byte> SelectedSpecializations { get; set; } = new List<byte>();
     }
