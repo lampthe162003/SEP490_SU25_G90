@@ -59,7 +59,17 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.UserRepository
 
         public async Task<User> GetUserById(int id)
         {
-            return await _context.Users.FindAsync(id);
+            return await _context.Users
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                .Include(u => u.Cccd)
+                .Include(u => u.HealthCertificate)
+                .Include(u => u.Address)
+                    .ThenInclude(a => a.Ward)
+                        .ThenInclude(w => w.Province)
+                            .ThenInclude(p => p.City)
+                .Where(u => u.UserId == id)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<User> GetUserByEmail(string email)

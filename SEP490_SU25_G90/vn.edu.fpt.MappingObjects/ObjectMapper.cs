@@ -66,6 +66,25 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
 
             CreateMap<Models.CarAssignment, CarAssignmentInformationResponse>();
             CreateMap<CarAssignmentInformationResponse, Models.CarAssignment>();
+
+            CreateMap<User, UserDetailsInformationResponse>()
+                .ForMember(dest => dest.Fullname, opt => opt.MapFrom(src => string.Join(" ", new[] { src.FirstName, src.MiddleName, src.LastName }
+                .Where(name => !string.IsNullOrWhiteSpace(name)))));
+            CreateMap<UserDetailsInformationResponse, User>()
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => StringUtils.GetFirstName(src.Fullname)))
+                .ForMember(dest => dest.MiddleName, opt => opt.MapFrom(src => StringUtils.GetMiddleName(src.Fullname)))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => StringUtils.GetLastName(src.Fullname)));
+
+            CreateMap<User, UpdateStaffRequest>()
+                .ForMember(dest => dest.Fullname, opt => opt.MapFrom(src => string.Join(" ", new[] { src.FirstName, src.MiddleName, src.LastName }
+                .Where(name => !string.IsNullOrWhiteSpace(name)))));
+            CreateMap<UpdateStaffRequest, User>()
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => StringUtils.GetFirstName(src.Fullname)))
+                .ForMember(dest => dest.MiddleName, opt => opt.MapFrom(src => StringUtils.GetMiddleName(src.Fullname)))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => StringUtils.GetLastName(src.Fullname)));
+
+            CreateMap<UpdateStaffRequest, UserDetailsInformationResponse>();
+            CreateMap<UserDetailsInformationResponse, UpdateStaffRequest>();
         }
     }
 }
