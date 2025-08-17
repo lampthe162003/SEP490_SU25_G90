@@ -16,12 +16,14 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
         private readonly Sep490Su25G90DbContext _context;
         private readonly IPasswordHasher<Models.User> _hasher;
         private readonly IRoleRepository _roleRepository;
+        private readonly IWebHostEnvironment _env;
 
         public UserService(Sep490Su25G90DbContext context,
             IMapper mapper,
             IUserRepository userRepository,
             IPasswordHasher<Models.User> hasher,
-            IRoleRepository roleRepository)
+            IRoleRepository roleRepository,
+            IWebHostEnvironment env)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -29,6 +31,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
             _context = context;
             _hasher = hasher;
             _roleRepository = roleRepository;
+            _env = env;
         }
 
         public async Task CreateAccount(AccountCreationRequest request, byte roleId)
@@ -219,12 +222,33 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
             };
         }
 
-        public async Task UpdateLearnerInfo(int userId, UpdateLearnerRequest request)
+        public async Task UpdateLearnerInfoAsync(int userId, UpdateLearnerRequest request)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
+                // Xử lý upload file ảnh
+                if (request.ProfileImageFile != null)
+                {
+                    request.ProfileImageUrl = await SaveImageAsync(request.ProfileImageFile, request.ProfileImageUrl);
+                }
+                
+                if (request.CccdImageFrontFile != null)
+                {
+                    request.CccdImageFront = await SaveImageAsync(request.CccdImageFrontFile, request.CccdImageFront);
+                }
+                
+                if (request.CccdImageBackFile != null)
+                {
+                    request.CccdImageBack = await SaveImageAsync(request.CccdImageBackFile, request.CccdImageBack);
+                }
+                
+                if (request.HealthCertificateImageFile != null)
+                {
+                    request.HealthCertificateImageUrl = await SaveImageAsync(request.HealthCertificateImageFile, request.HealthCertificateImageUrl);
+                }
+
                 // Get learner
                 var learner = await _context.Users
                     .Include(u => u.Cccd)
@@ -233,7 +257,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
 
                 if (learner == null)
                 {
-                    throw new InvalidOperationException("Không tìm thấy thông tin học viên");
+                    
                 }
 
                 // Update basic information
@@ -244,6 +268,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
                 learner.Dob = request.Dob;
                 learner.Gender = request.Gender;
                 learner.Phone = request.Phone;
+
+                // Update ProfileImageUrl if provided
+                if (!string.IsNullOrWhiteSpace(request.ProfileImageUrl))
+                {
+                    learner.ProfileImageUrl = request.ProfileImageUrl;
+                }
 
                 // Update or create CCCD
                 if (!string.IsNullOrEmpty(request.CccdNumber) || 
@@ -305,6 +335,54 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
                 await transaction.RollbackAsync();
                 throw;
             }
+        }
+
+        // Lưu file ảnh lên /wwwroot/uploads/learner, xử lý trùng tên bằng cách thêm hậu tố (1), (2), ...
+        private async Task<string?> SaveImageAsync(IFormFile? file, string? oldFilePath = null)
+        {
+            if (file == null) return oldFilePath;
+
+            // Xoá file cũ nếu có
+            if (!string.IsNullOrEmpty(oldFilePath))
+            {
+                var fullOldPath = Path.Combine(_env.WebRootPath, oldFilePath.TrimStart('/').Replace("/", Path.DirectorySeparatorChar.ToString()));
+                if (System.IO.File.Exists(fullOldPath))
+                {
+                    System.IO.File.Delete(fullOldPath);
+                }
+            }
+
+            // Tạo thư mục nếu chưa có
+            var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "learner");
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+
+            // Tạo tên file unique
+            var fileName = Path.GetFileNameWithoutExtension(file.FileName);
+            var fileExtension = Path.GetExtension(file.FileName);
+            var originalFileName = $"{fileName}{fileExtension}";
+            var filePath = Path.Combine(uploadsFolder, originalFileName);
+
+            // Xử lý trùng tên file
+            var counter = 1;
+            while (System.IO.File.Exists(filePath))
+            {
+                var newFileName = $"{fileName}({counter}){fileExtension}";
+                filePath = Path.Combine(uploadsFolder, newFileName);
+                originalFileName = newFileName;
+                counter++;
+            }
+
+            // Lưu file
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            // Trả về relative path từ wwwroot
+            return $"/uploads/learner/{originalFileName}";
         }
 
         public async Task UpdatePasswordAsync(int userId, string newPassword)
