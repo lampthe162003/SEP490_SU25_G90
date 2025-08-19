@@ -200,17 +200,18 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
             var raw = await _testApplicationRepository
                 .GetAll()
                 .FirstOrDefaultAsync(x => x.TestId == id);
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "test-application");
+            var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var path = Path.Combine("uploads", "test-application");
             if (request.Attachment != null)
             {
                 if (!string.IsNullOrEmpty(raw.ResultImageUrl))
                 {
-                    File.Delete(raw.ResultImageUrl);
+                    File.Delete(Path.Combine(rootPath, raw.ResultImageUrl));
                 }
 
-                Directory.CreateDirectory(path);
+                Directory.CreateDirectory(Path.Combine(rootPath, path));
                 path = Path.Combine(path, request.Attachment.FileName);
-                using (FileStream fs = new FileStream(path, FileMode.CreateNew, FileAccess.Write))
+                using (FileStream fs = new FileStream(Path.Combine(rootPath, path), FileMode.CreateNew, FileAccess.Write))
                 {
                     await request.Attachment.CopyToAsync(fs);
                 }

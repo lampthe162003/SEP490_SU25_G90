@@ -3,5 +3,6 @@
     public interface IEmailService
     {
         public Task SendResetCodeAsync(string receiver, string resetCode);
+        public Task SendNewAccountPasswordAsync(string receiver, string fullName, string password);
     }
 }

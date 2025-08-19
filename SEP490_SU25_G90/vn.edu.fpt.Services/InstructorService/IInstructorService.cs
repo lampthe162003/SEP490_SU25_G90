@@ -7,8 +7,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
         IList<InstructorListInformationResponse> GetAllInstructors(string? name = null, byte? licenceTypeId = null);
         InstructorListInformationResponse? GetInstructorById(int id);
         void CreateInstructor(SEP490_SU25_G90.vn.edu.fpt.Models.User instructor);
+        Task<string> CreateInstructorAsync(CreateInstructorRequest request);
         void UpdateInstructor(SEP490_SU25_G90.vn.edu.fpt.Models.User instructor);
-        void UpdateInstructorInfo(int instructorId, UpdateInstructorRequest request);
+        Task UpdateInstructorInfoAsync(int instructorId, UpdateInstructorRequest request);
         void DeleteInstructor(int id);
         void AddSpecialization(int instructorId, byte licenceTypeId);
         void RemoveSpecialization(int instructorId, byte licenceTypeId);

@@ -87,6 +87,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 instructor.Gender = request.Gender;
                 instructor.Phone = request.Phone;
 
+                // Update ProfileImageUrl if provided
+                if (!string.IsNullOrWhiteSpace(request.ProfileImageUrl))
+                {
+                    instructor.ProfileImageUrl = request.ProfileImageUrl;
+                }
+
                 // Update CCCD if any CCCD field is provided
                 if (!string.IsNullOrWhiteSpace(request.CccdNumber) || 
                     !string.IsNullOrWhiteSpace(request.CccdImageFront) || 
@@ -162,6 +168,17 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 _context.InstructorSpecializations.Remove(specialization);
                 _context.SaveChanges();
             }
+        }
+
+        public void AddUserRole(int userId, int roleId)
+        {
+            var userRole = new UserRole
+            {
+                UserId = userId,
+                RoleId = (byte)roleId
+            };
+            _context.UserRoles.Add(userRole);
+            _context.SaveChanges();
         }
 
         public List<LicenceType> GetAllLicenceTypes()

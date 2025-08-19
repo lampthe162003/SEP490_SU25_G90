@@ -67,7 +67,7 @@
 
         function loadEligible() {
             const licenceType = document.getElementById('licenceType').value;
-            fetch('/Admins/TestApplication/New?handler=Eligible', {
+            fetch('/AcademicAffairs/TestApplication/New?handler=Eligible', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -101,7 +101,7 @@
             const examDate = document.getElementById('examDate').value;
             if (!ids.length) { alert('Vui lòng chọn ít nhất một học viên'); return; }
             if (!submitDate || !examDate) { alert('Vui lòng chọn ngày nộp hồ sơ và ngày thi'); return; }
-            fetch('/Admins/TestApplication/New?handler=BulkCreate', {
+            fetch('/AcademicAffairs/TestApplication/New?handler=BulkCreate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -112,7 +112,7 @@
             .then(r => r.json())
             .then(res => {
                 alert(`Tạo thành công ${res.created} hồ sơ thi`);
-                window.location.href = '/Admins/TestApplication';
+                window.location.href = '/AcademicAffairs/TestApplication';
             })
             .catch(err => { console.error(err); alert('Tạo hồ sơ thi thất bại'); });
         }

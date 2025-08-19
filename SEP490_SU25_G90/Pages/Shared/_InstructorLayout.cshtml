@@ -18,9 +18,11 @@
         <div class="menu-item @(path.Contains("/Instructor/LearningMaterial/List") ? "active" : "")">
             <a href="/Instructor/LearningMaterial/List"><i class="fas fa-book"></i><span>Quản lý tài liệu học tập</span></a>
         </div>
+        <div class="menu-item"><a href="/Instructor/Schedule"><i class="fa fa-calendar"></i><span>Thời khoá biểu</span></a></div>
         <div class="menu-item"><a href="/Instructors/Classes/ListClasses"><i class="fas fa-school"></i><span>Quản lý lớp học</span></a></div>
         <div class="menu-item"><a href="/Instructor/LearnApplication/List"><i class="fas fa-clipboard-list"></i><span>Quản lý hồ sơ học</span></a></div>
         <div class="menu-item"><a href="/Instructor/Car/List"><i class="fas fa-car"></i><span>Danh sách xe</span></a></div>
+        
 
         @RenderSection("Styles", required: false)
     </div>

@@ -48,8 +48,8 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <label asp-for="MaxStudents" class="form-label">Số học viên tối đa</label>
-                        <input asp-for="MaxStudents" class="form-control" type="number" min="1" />
+                        <label class="form-label">Số học viên tối đa</label>
+                        <input class="form-control" type="number" min="1" disabled value="@Model.MaxStudents" />
                     </div>
                 </div>
 

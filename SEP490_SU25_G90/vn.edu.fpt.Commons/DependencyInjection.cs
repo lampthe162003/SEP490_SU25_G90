@@ -25,8 +25,6 @@ using SEP490_SU25_G90.vn.edu.fpt.Repositories.CarRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Services.CarService;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.CarAssignmentRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Services.CarAssignmentService;
-using SEP490_SU25_G90.vn.edu.fpt.Repositories.CarRepository;
-using SEP490_SU25_G90.vn.edu.fpt.Services.CarService;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory;
 using SEP490_SU25_G90.vn.edu.fpt.Services.ClassService;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.CourseRepository;
@@ -80,11 +78,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Commons
             services.AddScoped<IScheduleSlotRepository, ScheduleSlotRepository>();
             services.AddScoped<IScheduleSlotService, ScheduleSlotService>();
 
-            services.AddScoped<ICarRepository, CarRepository>();
-            services.AddScoped<ICarService, CarService>();
-
-            services.AddScoped<ICarAssignmentRepository, CarAssignmentRepository>();
-            services.AddScoped<ICarAssignmentService, CarAssignmentService>();
 
             // Class services - Dịch vụ quản lý lớp học
             services.AddScoped<IClassRepository, ClassRepository>();
