@@ -51,6 +51,13 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     return Page();
                 }
 
+                //Check if age is lower than 18
+                if (CreateRequest.Dob < DateOnly.FromDateTime(DateTime.Today.AddYears(-18)))
+                {
+                    ModelState.AddModelError("CreateRequest.Dob", "Tuổi của học viên chưa đủ 18.");
+                    return Page();
+                }
+
                 await _instructorService.CreateInstructorAsync(CreateRequest);
                 Message = $"Tạo tài khoản giảng viên thành công! Mật khẩu đã được gửi về email {CreateRequest.Email}";
                 MessageType = "success";
