@@ -21,11 +21,38 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.NewsService
         // Lấy danh sách tin tức theo phân trang
         public async Task<(List<NewsListInformationResponse>, int)> GetPagedNewsAsync(int page, int pageSize)
         {
+            if (page <= 0 || pageSize <= 0)
+            {
+                return (new List<NewsListInformationResponse>(), 0);
+            }
+
             var (news, totalNews) = await _newsRepository.GetPagedNewsAsync(page, pageSize);
 
-            var result = _mapper.Map<List<NewsListInformationResponse>>(news);
+            if (news == null || !news.Any())
+            {
+                return (new List<NewsListInformationResponse>(), totalNews);
+            }
+
+            var result = news.Select(x => new NewsListInformationResponse
+            {
+                NewsId = x.NewsId,
+                Title = x.Title ?? string.Empty,
+                NewsContent = x.NewsContent ?? string.Empty,
+                AuthorName = x.Author == null
+                    ? string.Empty
+                    : $"{x.Author.FirstName} {x.Author.LastName}".Trim(),
+                PostTime = x.PostTime,
+                ShortContent = string.IsNullOrEmpty(x.NewsContent)
+                    ? string.Empty
+                    : (x.NewsContent.Length > 100
+                        ? x.NewsContent.Substring(0, 100) + "..."
+                        : x.NewsContent),
+                Image = x.Image ?? string.Empty
+            }).ToList();
+
             return (result, totalNews);
         }
+
 
         // Lấy thông tin chi tiết tin tức theo ID
         public async Task<NewsListInformationResponse?> GetNewsByIdAsync(int id)
