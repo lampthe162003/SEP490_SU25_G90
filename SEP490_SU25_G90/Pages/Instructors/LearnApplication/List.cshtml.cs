@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
@@ -7,6 +8,7 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
 
 namespace SEP490_SU25_G90.Pages.Instructors.LearnApplication
 {
+    [Authorize(Roles="instructor")]
     public class ListLearningApplicationsModel : PageModel
     {
         private readonly IInstructorService _instructorService;
