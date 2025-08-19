@@ -81,7 +81,7 @@ namespace SEP490_SU25_G90.Pages.Commons
                     return Redirect("Instructor/LearningMaterial/List");
                 }
 
-                else return Redirect("./Learner/News/ListNews");
+                else return Redirect("/Home/Index");
             }
             catch (InvalidOperationException)
             {
