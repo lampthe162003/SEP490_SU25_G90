@@ -21,8 +21,31 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.LearningMaterialService
         // Lấy danh sách tài liệu có phân trang
         public async Task<(List<LearningMaterialListInformationResponse>, int)> GetPagedMaterialsAsync(int page, int pageSize)
         {
+            // Validate tham số
+            if (page <= 0 || pageSize <= 0)
+            {
+                return (new List<LearningMaterialListInformationResponse>(), 0);
+            }
+
             var (learningMaterial, totalLearningMaterial) = await _iLearningMaterialRepository.GetPagedMaterialsAsync(page, pageSize);
-            var result = _mapper.Map<List<LearningMaterialListInformationResponse>>(learningMaterial);
+
+            // Repository trả về null hoặc rỗng
+            if (learningMaterial == null || !learningMaterial.Any())
+            {
+                return (new List<LearningMaterialListInformationResponse>(), totalLearningMaterial);
+            }
+
+            // Map an toàn (LicenceType có thể null)
+            var result = learningMaterial.Select(x => new LearningMaterialListInformationResponse
+            {
+                MaterialId = x.MaterialId,
+                Title = x.Title ?? string.Empty,
+                Description = x.Description ?? string.Empty,
+                LicenceTypeName = x.LicenceType?.LicenceCode, // tránh null reference
+                FileLink = x.FileLink,
+                CreatedAt = x.CreatedAt
+            }).ToList();
+
             return (result, totalLearningMaterial);
         }
 
