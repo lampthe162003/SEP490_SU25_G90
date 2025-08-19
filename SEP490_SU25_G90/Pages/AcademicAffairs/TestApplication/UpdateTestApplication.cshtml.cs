@@ -229,7 +229,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication
 
             await _testApplicationService.UpdateTestApplication(Id, RequestModel, status);
             RequestModel = new();
-            return RedirectToPage("TestApplicationList");
+            return RedirectToPage("TestApplicationDetail",new {id = Id});
         }
     }
 }

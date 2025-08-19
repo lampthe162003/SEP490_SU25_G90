@@ -76,13 +76,13 @@
                 @foreach (var item in Model.TestApplications.Data)
                 {
                     var statusText = item.Status == true ? "Đạt"
-                    : item.Status == false ? "Trượt"
+                    : item.Status == false ? "Không Đạt"
                     : "Chưa thi";
 
                     var badgeClass = statusText switch
                     {
                         "Đạt" => "bg-success",
-                        "Trượt" => "bg-danger",
+                        "Không Đạt" => "bg-danger",
                         _ => "bg-secondary"
                     };
 
