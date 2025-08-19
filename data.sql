@@ -1,9 +1,14 @@
 USE SEP490_SU25_G90_DB;
 GO
 
+INSERT INTO Cars VALUES
+(N'36A-123.45', N'Toyota', N'Camry'), (N'36A-678.90', N'Honda', N'Civic')
 
 INSERT INTO Roles VALUES 
 (1, 'learner'), (2, 'human resources'), (3, 'instructor'), (4, 'academic affairs');
+
+INSERT INTO CarAssignmentStatus VALUES 
+(0, N'chưa mượn'), (1, N'Đã mượn'), (2, N'Đang sử dụng'), (3, N'Đã trả xe');
 
 -- Insert sample users with proper Vietnamese Unicode characters
 INSERT INTO Users (email, [password], first_name, middle_name, last_name, dob, gender, phone)

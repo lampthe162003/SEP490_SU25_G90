@@ -260,6 +260,12 @@ CREATE TABLE Cars
     car_model NVARCHAR(50)
 )
 
+CREATE TABLE CarAssignmentStatus
+(
+    status_id TINYINT PRIMARY KEY,
+    status_name NVARCHAR(50)
+);
+
 CREATE TABLE CarAssignments
 (
     assignment_id INT IDENTITY PRIMARY KEY,
@@ -267,8 +273,10 @@ CREATE TABLE CarAssignments
     instructor_id INT NOT NULL,
     slot_id INT NOT NULL,
     schedule_date DATE,
-    car_status BIT,
+    car_status TINYINT,
     FOREIGN KEY (car_id) REFERENCES Cars(car_id),
     FOREIGN KEY (instructor_id) REFERENCES Users(user_id),
-    FOREIGN KEY (slot_id) REFERENCES ScheduleSlots(slot_id)
+    FOREIGN KEY (slot_id) REFERENCES ScheduleSlots(slot_id),
+    FOREIGN KEY (car_status) REFERENCES CarAssignmentStatus(status_id)
 );
+

@@ -36,7 +36,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication
                 },
                 new SelectListItem()
                 {
-                    Text = "Trượt",
+                    Text = "Không Đạt",
                     Value = "2"
                 },
                 new SelectListItem()

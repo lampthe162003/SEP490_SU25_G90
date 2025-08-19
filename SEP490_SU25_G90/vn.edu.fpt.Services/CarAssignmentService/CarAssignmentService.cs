@@ -58,7 +58,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.CarAssignmentService
             {
                 result = result.Where(ca => 
                     ca.InstructorId == currentInstructorId.Value || 
-                    ca.CarStatus == false // Hoặc xe trống (có thể mượn)
+                    ca.CarStatus == 0 // Hoặc xe trống (có thể mượn)
                 ).ToList();
             }
             
@@ -104,7 +104,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.CarAssignmentService
             if (carAssignment == null)
                 return false;
 
-            carAssignment.CarStatus = false; // Trả xe thì status = 0
+            carAssignment.CarStatus = 3; // Trả xe thì status = 0
             return await _carAssignmentRepository.UpdateCarAssignmentAsync(carAssignment);
         }
 
@@ -194,14 +194,14 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.CarAssignmentService
         {
             // Kiểm tra giáo viên đã có xe mượn trong cùng slot và ngày chưa
             var instructorAssignments = await _carAssignmentRepository.GetCarAssignmentsByInstructorAsync(instructorId);
-            return !instructorAssignments.Any(ca => ca.ScheduleDate == date && ca.SlotId == slotId && ca.CarStatus == true);
+            return !instructorAssignments.Any(ca => ca.ScheduleDate == date && ca.SlotId == slotId && ca.CarStatus > 0);
         }
 
         public async Task<List<CarAssignmentResponse>> GetCarAssignmentsByInstructorAsync(int instructorId, DateOnly date, int slotId)
         {
             var instructorAssignments = await _carAssignmentRepository.GetCarAssignmentsByInstructorAsync(instructorId);
             var filteredAssignments = instructorAssignments
-                .Where(ca => ca.ScheduleDate == date && ca.SlotId == slotId && ca.CarStatus == true)
+                .Where(ca => ca.ScheduleDate == date && ca.SlotId == slotId && ca.CarStatus > 0)
                 .ToList();
             
             return MapToResponseList(filteredAssignments);
@@ -237,8 +237,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.CarAssignmentService
                 SlotDisplayName = slotDisplayName,
                 ScheduleDate = carAssignment.ScheduleDate,
                 CarStatus = carAssignment.CarStatus,
-                CarStatusDisplay = carAssignment.CarStatus == true ? "Đã được mượn" : "Xe trống",
-                CanRent = carAssignment.CarStatus != true // Xe có thể mượn khi status != true
+                CarStatusDisplay = carAssignment.CarStatus > 0 ? "Đã được mượn" : "Xe trống",
+                CanRent = carAssignment.CarStatus == 0 // Xe có thể mượn khi status != true
             };
 
             // Map instructor licence types cho xe đã có giáo viên
@@ -323,6 +323,20 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.CarAssignmentService
             var cars = await _carAssignmentRepository.GetAllCarAssignmentsAsync();
             var car = cars.Where(c => c.ScheduleDate == date).ToList();
             return _mapper.Map<IList<CarAssignmentInformationResponse>>(car);
+        }
+
+        public async Task<IList<CarAssignmentInformationResponse>> GetCarAssignmentByInstructorId(int instructorId)
+        {
+            var cars = await _carAssignmentRepository.GetAllCarAssignmentsAsync();
+            cars = cars.Where(ca => ca.InstructorId == instructorId).ToList();
+            return _mapper.Map<IList<CarAssignmentInformationResponse>>(cars);
+        }
+
+        public async Task UpdateCarAssignmentStatusAsync(int carAssignmentId, byte status)
+        {
+            var carAssignment = await _carAssignmentRepository.GetAssignmentByIdAsync(carAssignmentId);
+            carAssignment.CarStatus = status;
+            await _carAssignmentRepository.UpdateCarAssignmentAsync(carAssignment);
         }
     }
 }

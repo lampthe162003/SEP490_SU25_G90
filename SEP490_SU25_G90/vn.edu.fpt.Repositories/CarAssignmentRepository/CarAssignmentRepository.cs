@@ -20,6 +20,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.CarAssignmentRepository
                     .ThenInclude(i => i.InstructorSpecializations)
                         .ThenInclude(ins => ins.LicenceType)
                 .Include(ca => ca.Slot)
+                .Include(ca => ca.CarStatusNavigation)
                 .OrderByDescending(ca => ca.ScheduleDate)
                 .ThenBy(ca => ca.SlotId)
                 .ToListAsync();
@@ -66,7 +67,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.CarAssignmentRepository
                         SlotId = 0,
                         Slot = null,
                         ScheduleDate = null,
-                        CarStatus = false, // Xe trống
+                        CarStatus = 0, // Xe trống
                         InstructorId = 0,
                         Instructor = null
                     });
@@ -82,6 +83,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.CarAssignmentRepository
                 .Include(ca => ca.Car)
                 .Include(ca => ca.Instructor)
                 .Include(ca => ca.Slot)
+                .Include(ca => ca.CarStatusNavigation)
                 .FirstOrDefaultAsync(ca => ca.AssignmentId == assignmentId);
         }
 
@@ -177,7 +179,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.CarAssignmentRepository
                         SlotId = 0,
                         Slot = null,
                         ScheduleDate = null,
-                        CarStatus = false,
+                        CarStatus = 0,
                         InstructorId = 0,
                         Instructor = null
                     });
@@ -263,6 +265,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.CarAssignmentRepository
         {
             return await _context.CarAssignments
                 .Include(ca => ca.Instructor)
+                .Include(ca => ca.Slot)
+                .Include(ca => ca.CarStatusNavigation)
                 .Where(ca => ca.CarId == carId)
                 .ToListAsync();
         }

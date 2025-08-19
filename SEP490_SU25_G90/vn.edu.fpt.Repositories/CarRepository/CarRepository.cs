@@ -121,7 +121,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.CarRepository
             return await _context.CarAssignments
                 .Include(ca => ca.Instructor)
                 .Include(ca => ca.Slot)
-                .Where(ca => ca.CarId == carId && ca.CarStatus == true)
+                .Where(ca => ca.CarId == carId && ca.CarStatus > 0)
                 .ToListAsync();
         }
     }

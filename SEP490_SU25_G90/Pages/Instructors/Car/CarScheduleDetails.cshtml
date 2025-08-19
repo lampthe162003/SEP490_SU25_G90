@@ -5,62 +5,137 @@
     Layout = "_InstructorLayout";
 }
 
-<div class="container mt-5">
-    <h2 class="mb-4">Lịch đăng ký mượn xe</h2>
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped text-center align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th>Time Slot</th>
-                    @foreach (var day in Model.DaysOfWeek)
-                    {
-                        <th>@day.ToString("dd/MM/yyyy")</th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var slot in Model.ScheduleSlots)
-                {
-                    <tr>
-                        <th>@slot.StartTime?.ToString("HH\\:mm") - @slot.EndTime?.ToString("HH\\:mm")</th>
-                        @foreach (var date in Model.DaysOfWeek)
-                        {
-                            var key = (date, slot.SlotId);
-                            var assignment = Model.CarAssignments.ContainsKey(key) ? Model.CarAssignments[key] : null;
-                            var buttonColor = assignment?.CarStatus == true ? "btn-success" : "btn-secondary";
-                            var buttonLabel = assignment?.CarStatus == true ? "Rented" : "Free";
+<style>
+    .schedule-table {
+        font-size: 0.9rem;
+    }
 
-                            <td>
-                                <button type="button" class="btn btn-sm @buttonColor rounded-pill" data-bs-toggle="modal" data-bs-target="#assignmentModal"
-                                        data-carid="@assignment?.CarId"
-                                        data-instructorid="@assignment?.Instructor.FullName"
-                                        data-date="@date"
-                                        data-slotid="@slot.SlotId"
-                                        data-status="@(assignment?.CarStatus == true ? "Rented" : "Free")">
-                                    @buttonLabel
-                                </button>
-                            </td>
+        .schedule-table th, .schedule-table td {
+            padding: 0.5rem;
+            vertical-align: middle;
+        }
+
+    .slot-btn {
+        min-width: 80px;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.85rem;
+    }
+</style>
+
+<div class="container-fluid mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Lịch đăng ký mượn xe</h4>
+        </div>
+        <div class="card-body p-2">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover schedule-table">
+                    <thead class="table-dark">
+                        <tr>
+                            <th style="width: 15%">Khung giờ</th>
+                            @foreach (var day in Model.DaysOfWeek)
+                            {
+                                <th>@day.ToString("dd/MM/yyyy")</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var slot in Model.ScheduleSlots)
+                        {
+                            <tr>
+                                <th>@slot.StartTime?.ToString("HH\\:mm") - @slot.EndTime?.ToString("HH\\:mm")</th>
+                                @foreach (var date in Model.DaysOfWeek)
+                                {
+                                    var key = (date, slot.SlotId);
+                                    var assignment = Model.CarAssignments.ContainsKey(key) ? Model.CarAssignments[key] : null;
+                                    var buttonClass = assignment == null ? "btn-outline-secondary" : "btn-success";
+                                    var buttonText = assignment == null ? "Trống" : assignment.CarStatusNavigation?.StatusName ?? "Đã mượn";
+
+                                    <td>
+                                        <button type="button"
+                                                class="btn btn-sm @buttonClass rounded-pill slot-btn"
+                                                data-bs-toggle="modal"
+                                                @if (assignment == null)
+                                                {
+                                                    @:data-bs-target="#rentConfirmModal"
+                                                    @:onclick="prepareRentModal('@date.ToString("yyyy-MM-dd")', '@slot.SlotId')"
+                                                }
+                                                else
+                                                {
+                                                    @:data-bs-target="#assignmentModal"
+                                                    @:data-date="@date.ToString("dd/MM/yyyy")"
+                                                    @:data-slotid="@slot.SlotId"
+                                                    @:data-instructorid="@assignment.Instructor?.FullName"
+                                                    @:data-status="@assignment.CarStatusNavigation?.StatusName"
+                                                }
+        >
+                                            @buttonText
+                                        </button>
+                                    </td>
+                                }
+                            </tr>
                         }
-                    </tr>
-                }
-            </tbody>
-        </table>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="assignmentModal" tabindex="-1" aria-labelledby="assignmentModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<!-- Modal xác nhận mượn xe -->
+<div class="modal fade" id="rentConfirmModal" tabindex="-1" aria-labelledby="rentConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="assignmentModalLabel">Assignment Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <form asp-page-handler="BorrowCar">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="rentConfirmModalLabel">Xác nhận mượn xe</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="rentModalMessage"></p>
+                    <input type="hidden" asp-for="NewCarAssignment.CarId" value="@Model.CarId" />
+                    <input type="hidden" asp-for="NewCarAssignment.ScheduleDate" id="rentDate" />
+                    <input type="hidden" asp-for="NewCarAssignment.SlotId" id="rentSlot" />
+                    <input type="hidden" asp-for="NewCarAssignment.InstructorId" value="@User.FindFirst("user_id")?.Value" />
+                    <input type="hidden" asp-for="NewCarAssignment.CarStatus" value="1" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Huỷ</button>
+                    <button type="submit" class="btn btn-primary">Xác nhận</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal thông tin mượn xe -->
+<div class="modal fade" id="assignmentModal" tabindex="-1" aria-labelledby="assignmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="assignmentModalLabel">Thông tin mượn xe</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p><strong>Ngày:</strong> <span id="modalDate"></span></p>
-                <p><strong>Giáo viên mượn:</strong> <span id="modalInstructorId"></span></p>
-                <p><strong>Tiết:</strong> <span id="modalSlotId"></span></p>
-                <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+                <div class="mb-3">
+                    <label class="fw-bold">Ngày:</label>
+                    <div id="modalDate"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="fw-bold">Khung giờ:</label>
+                    <div id="modalSlotTime"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="fw-bold">Giáo viên:</label>
+                    <div id="modalInstructorId"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="fw-bold">Trạng thái:</label>
+                    <div id="modalStatus"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>
@@ -69,13 +144,31 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        var assignmentModal = document.getElementById('assignmentModal');
-        assignmentModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget;
-            document.getElementById('modalInstructorId').textContent = button.getAttribute('data-instructorid') ?? 'N/A';
-            document.getElementById('modalSlotId').textContent = button.getAttribute('data-slotid');
-            document.getElementById('modalDate').textContent = button.getAttribute('data-date');
-            document.getElementById('modalStatus').textContent = button.getAttribute('data-status');
+        // Chuẩn bị modal mượn xe
+        function prepareRentModal(date, slotId) {
+            const formattedDate = new Date(date).toLocaleDateString('vi-VN');
+            document.getElementById("rentModalMessage").innerText =
+                `Bạn có chắc muốn đăng ký mượn xe vào ngày ${formattedDate}, khung giờ ${slotId}?`;
+            document.getElementById("rentDate").value = date;
+            document.getElementById("rentSlot").value = slotId;
+        }
+
+        // Xử lý modal thông tin
+        document.addEventListener('DOMContentLoaded', function() {
+            const assignmentModal = document.getElementById('assignmentModal');
+            if (assignmentModal) {
+                assignmentModal.addEventListener('show.bs.modal', function(event) {
+                    const button = event.relatedTarget;
+                    document.getElementById('modalInstructorId').textContent =
+                        button.getAttribute('data-instructorid') || 'Không có thông tin';
+                    document.getElementById('modalSlotTime').textContent =
+                        button.closest('tr').querySelector('th').textContent;
+                    document.getElementById('modalDate').textContent =
+                        button.getAttribute('data-date');
+                    document.getElementById('modalStatus').textContent =
+                        button.getAttribute('data-status') || 'Đã mượn';
+                });
+            }
         });
     </script>
 }

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.TestApplication;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
-using SEP490_SU25_G90.vn.edu.fpt.Services.LicenseTypeService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication;
 using SEP490_SU25_G90.vn.edu.fpt.Services.TestScoreStandardService;
 
@@ -17,21 +16,18 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication
         [BindProperty(SupportsGet = true)]
         public int Id { get; set; }
         public List<SelectListItem> LearningApplicationList { get; set; }
-        public List<(int id, string type)> LicenseTypes { get; set; } = new();
+
         [BindProperty]
         public CreatUpdateTestApplicationRequest RequestModel { get; set; } = new();
-        private readonly ILicenseTypeService licenseTypeService;
 
         private readonly ITestApplicationService _testApplicationService;
         private readonly ITestScoreStandardService testScoreStandardService;
         public UpdateTestApplication(ITestApplicationService testApplicationService,
-            ITestScoreStandardService testScoreStandardService,
-            ILicenseTypeService licenseTypeService
+            ITestScoreStandardService testScoreStandardService
             )
         {
             _testApplicationService = testApplicationService;
             this.testScoreStandardService = testScoreStandardService;
-
         }
         public async Task<IActionResult> OnGet()
         {
@@ -45,7 +41,6 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication
                     Value = Id.ToString()
                 }
             };
-            LicenseTypes = licenseTypeService.GetKeyValues();
             return Page();
         }
 
@@ -202,7 +197,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication
                     }
                     status = pass1 && pass2 && pass3 && pass4;
                 }
-                if (rawTest.ResultImageUrl == null)
+                if (rawTest.ResultImageUrl == null && RequestModel.Attachment == null)
                 {
                     ModelState.AddModelError($"" +
                        $"{nameof(RequestModel)}.{nameof(RequestModel.Attachment)}",
@@ -234,7 +229,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication
 
             await _testApplicationService.UpdateTestApplication(Id, RequestModel, status);
             RequestModel = new();
-            return RedirectToPage("TestApplicationList");
+            return RedirectToPage("TestApplicationDetail",new {id = Id});
         }
     }
 }

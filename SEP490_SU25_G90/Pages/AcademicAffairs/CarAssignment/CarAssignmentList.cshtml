@@ -109,7 +109,7 @@
                                                 <strong>@(item.LicensePlate ?? "--")</strong>
                                             </td>
                                             <td>
-                                                @if (item.CarStatus == true && item.SlotId > 0)
+                                                @if (item.CarStatus > 0 && item.SlotId > 0)
                                                 {
                                                     @item.SlotDisplayName
                                                 }
@@ -119,7 +119,7 @@
                                                 }
                                             </td>
                                             <td>
-                                                @if (item.CarStatus == true && item.ScheduleDate.HasValue)
+                                                @if (item.CarStatus > 0 && item.ScheduleDate.HasValue)
                                                 {
                                                     @item.ScheduleDate?.ToString("dd/MM/yyyy")
                                                 }
@@ -129,7 +129,7 @@
                                                 }
                                             </td>
                                             <td>
-                                                @if (item.CarStatus == true && item.InstructorId > 0)
+                                                @if (item.CarStatus > 0 && item.InstructorId > 0)
                                                 {
                                                     @if (!string.IsNullOrEmpty(item.InstructorFullName))
                                                     {
@@ -151,7 +151,7 @@
                                                 }
                                             </td>
                                             <td>
-                                                @if (item.CarStatus == true)
+                                                @if (item.CarStatus > 0)
                                                 {
                                                     <span class="badge bg-danger">Đã được mượn</span>
                                                 }

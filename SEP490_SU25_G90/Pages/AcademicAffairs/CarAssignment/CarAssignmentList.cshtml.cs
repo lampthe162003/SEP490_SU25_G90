@@ -88,7 +88,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.CarAssignment
                 InstructorId = instructorId.Value,
                 SlotId = slotId,
                 ScheduleDate = parsedDate,
-                CarStatus = true // Thuê thì status = 1
+                CarStatus = 1 // Thuê thì status = 1
             };
 
             var success = await _carAssignmentService.RentCarAsync(rentalRequest);

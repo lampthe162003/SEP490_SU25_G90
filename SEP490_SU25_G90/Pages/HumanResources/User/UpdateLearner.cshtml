@@ -48,7 +48,7 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <form method="post" asp-page-handler="Post">
+                    <form method="post" asp-page-handler="Post" enctype="multipart/form-data">
                         <input type="hidden" asp-for="UpdateRequest.UserId" />
                         
                         <div class="row">
@@ -62,6 +62,52 @@
                                         </h6>
                                     </div>
                                     <div class="card-body">
+                                        <!-- Profile Image Section -->
+                                        <div class="row mb-4">
+                                            <div class="col-12">
+                                                <h6 class="text-primary mb-3">
+                                                    <i class="fas fa-user-circle me-2"></i>
+                                                    Ảnh đại diện
+                                                </h6>
+                                                <div class="mb-3">
+                                                    <label asp-for="UpdateRequest.ProfileImageFile" class="form-label">
+                                                        <i class="fas fa-image me-1"></i>
+                                                        Chọn ảnh đại diện mới
+                                                    </label>
+                                                    <input asp-for="UpdateRequest.ProfileImageFile" class="form-control" type="file" accept="image/*" />
+                                                    <span asp-validation-for="UpdateRequest.ProfileImageFile" class="text-danger"></span>
+                                                    
+                                                    <!-- Current Profile Image Preview -->
+                                                    <div class="profile-image-preview mt-2" style="@(string.IsNullOrEmpty(Model.UpdateRequest.ProfileImageUrl) ? "display: none;" : "")">
+                                                        <div class="position-relative d-inline-block preview-container">
+                                                            @if (!string.IsNullOrEmpty(Model.UpdateRequest.ProfileImageUrl))
+                                                            {
+                                                                <img src="@Model.UpdateRequest.ProfileImageUrl" 
+                                                                     alt="Ảnh đại diện hiện tại" 
+                                                                     class="img-thumbnail preview-image" 
+                                                                     style="max-width: 150px; max-height: 150px; cursor: pointer;"
+                                                                     onclick="showImagePreview('@Model.UpdateRequest.ProfileImageUrl', 'Ảnh đại diện hiện tại')" />
+                                                            }
+                                                        </div>
+                                                        <div class="mt-1">
+                                                            <small class="text-muted">Ảnh đại diện hiện tại</small>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <!-- New Image Preview -->
+                                                    <div class="new-profile-image-preview mt-2" style="display: none;">
+                                                        <div class="position-relative d-inline-block preview-container">
+                                                            <img class="img-thumbnail preview-image" style="max-width: 150px; max-height: 150px; cursor: pointer;" 
+                                                                 onclick="showImageModalFromPreview(this, 'Ảnh đại diện mới')" />
+                                                        </div>
+                                                        <div class="mt-1">
+                                                            <small class="text-success">Preview ảnh đại diện mới</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <div class="row">
                                             <div class="col-md-4 mb-3">
                                                 <label asp-for="UpdateRequest.FirstName" class="form-label">
@@ -161,48 +207,76 @@
                                         </div>
 
                                         <div class="mb-3">
-                                            <label asp-for="UpdateRequest.CccdImageFront" class="form-label">
+                                            <label asp-for="UpdateRequest.CccdImageFrontFile" class="form-label">
                                                 <i class="fas fa-image me-1"></i>
-                                                Ảnh mặt trước CCCD
+                                                Chọn ảnh mặt trước CCCD mới
                                             </label>
-                                            <input asp-for="UpdateRequest.CccdImageFront" class="form-control image-url-input" 
-                                                   type="url" placeholder="Dán URL ảnh mặt trước"
-                                                   data-preview-target="cccdFrontPreview" />
-                                            <span asp-validation-for="UpdateRequest.CccdImageFront" class="text-danger"></span>
+                                            <input asp-for="UpdateRequest.CccdImageFrontFile" class="form-control" type="file" accept="image/*" />
+                                            <span asp-validation-for="UpdateRequest.CccdImageFrontFile" class="text-danger"></span>
                                             
-                                            <!-- Preview Container Front -->
-                                            <div class="mt-2 preview-container" id="cccdFrontPreview">
-                                                @if (!string.IsNullOrEmpty(Model.UpdateRequest.CccdImageFront))
-                                                {
-                                                    <img src="@Model.UpdateRequest.CccdImageFront" 
-                                                         alt="Mặt trước CCCD" 
-                                                         class="img-thumbnail preview-image" 
-                                                         style="max-width: 200px; max-height: 130px; cursor: pointer;"
-                                                         onclick="showImagePreview('@Model.UpdateRequest.CccdImageFront', 'Mặt trước CCCD')" />
-                                                }
+                                            <!-- Current CCCD Front Preview -->
+                                            <div class="cccd-front-current-preview mt-2" style="@(string.IsNullOrEmpty(Model.UpdateRequest.CccdImageFront) ? "display: none;" : "")">
+                                                <div class="position-relative d-inline-block preview-container">
+                                                    @if (!string.IsNullOrEmpty(Model.UpdateRequest.CccdImageFront))
+                                                    {
+                                                        <img src="@Model.UpdateRequest.CccdImageFront" 
+                                                             alt="Mặt trước CCCD hiện tại" 
+                                                             class="img-thumbnail preview-image" 
+                                                             style="max-width: 200px; max-height: 130px; cursor: pointer;"
+                                                             onclick="showImagePreview('@Model.UpdateRequest.CccdImageFront', 'Mặt trước CCCD hiện tại')" />
+                                                    }
+                                                </div>
+                                                <div class="mt-1">
+                                                    <small class="text-muted">Ảnh mặt trước CCCD hiện tại</small>
+                                                </div>
+                                            </div>
+
+                                            <!-- New CCCD Front Preview -->
+                                            <div class="new-cccd-front-preview mt-2" style="display: none;">
+                                                <div class="position-relative d-inline-block preview-container">
+                                                    <img class="img-thumbnail preview-image" style="max-width: 200px; max-height: 130px; cursor: pointer;" 
+                                                         onclick="showImageModalFromPreview(this, 'Ảnh mặt trước CCCD mới')" />
+                                                </div>
+                                                <div class="mt-1">
+                                                    <small class="text-success">Preview ảnh mặt trước CCCD mới</small>
+                                                </div>
                                             </div>
                                         </div>
 
                                         <div class="mb-3">
-                                            <label asp-for="UpdateRequest.CccdImageBack" class="form-label">
+                                            <label asp-for="UpdateRequest.CccdImageBackFile" class="form-label">
                                                 <i class="fas fa-image me-1"></i>
-                                                Ảnh mặt sau CCCD
+                                                Chọn ảnh mặt sau CCCD mới
                                             </label>
-                                            <input asp-for="UpdateRequest.CccdImageBack" class="form-control image-url-input" 
-                                                   type="url" placeholder="Dán URL ảnh mặt sau"
-                                                   data-preview-target="cccdBackPreview" />
-                                            <span asp-validation-for="UpdateRequest.CccdImageBack" class="text-danger"></span>
+                                            <input asp-for="UpdateRequest.CccdImageBackFile" class="form-control" type="file" accept="image/*" />
+                                            <span asp-validation-for="UpdateRequest.CccdImageBackFile" class="text-danger"></span>
                                             
-                                            <!-- Preview Container Back -->
-                                            <div class="mt-2 preview-container" id="cccdBackPreview">
-                                                @if (!string.IsNullOrEmpty(Model.UpdateRequest.CccdImageBack))
-                                                {
-                                                    <img src="@Model.UpdateRequest.CccdImageBack" 
-                                                         alt="Mặt sau CCCD" 
-                                                         class="img-thumbnail preview-image" 
-                                                         style="max-width: 200px; max-height: 130px; cursor: pointer;"
-                                                         onclick="showImagePreview('@Model.UpdateRequest.CccdImageBack', 'Mặt sau CCCD')" />
-                                                }
+                                            <!-- Current CCCD Back Preview -->
+                                            <div class="cccd-back-current-preview mt-2" style="@(string.IsNullOrEmpty(Model.UpdateRequest.CccdImageBack) ? "display: none;" : "")">
+                                                <div class="position-relative d-inline-block preview-container">
+                                                    @if (!string.IsNullOrEmpty(Model.UpdateRequest.CccdImageBack))
+                                                    {
+                                                        <img src="@Model.UpdateRequest.CccdImageBack" 
+                                                             alt="Mặt sau CCCD hiện tại" 
+                                                             class="img-thumbnail preview-image" 
+                                                             style="max-width: 200px; max-height: 130px; cursor: pointer;"
+                                                             onclick="showImagePreview('@Model.UpdateRequest.CccdImageBack', 'Mặt sau CCCD hiện tại')" />
+                                                    }
+                                                </div>
+                                                <div class="mt-1">
+                                                    <small class="text-muted">Ảnh mặt sau CCCD hiện tại</small>
+                                                </div>
+                                            </div>
+
+                                            <!-- New CCCD Back Preview -->
+                                            <div class="new-cccd-back-preview mt-2" style="display: none;">
+                                                <div class="position-relative d-inline-block preview-container">
+                                                    <img class="img-thumbnail preview-image" style="max-width: 200px; max-height: 130px; cursor: pointer;" 
+                                                         onclick="showImageModalFromPreview(this, 'Ảnh mặt sau CCCD mới')" />
+                                                </div>
+                                                <div class="mt-1">
+                                                    <small class="text-success">Preview ảnh mặt sau CCCD mới</small>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -220,29 +294,43 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="mb-3">
-                                            <label asp-for="UpdateRequest.HealthCertificateImageUrl" class="form-label">
+                                            <label asp-for="UpdateRequest.HealthCertificateImageFile" class="form-label">
                                                 <i class="fas fa-image me-1"></i>
-                                                Ảnh giấy khám sức khỏe
+                                                Chọn ảnh giấy khám sức khỏe mới
                                             </label>
-                                            <input asp-for="UpdateRequest.HealthCertificateImageUrl" class="form-control image-url-input" 
-                                                   type="url" placeholder="Dán URL ảnh giấy khám sức khỏe"
-                                                   data-preview-target="healthCertPreview" />
-                                            <span asp-validation-for="UpdateRequest.HealthCertificateImageUrl" class="text-danger"></span>
+                                            <input asp-for="UpdateRequest.HealthCertificateImageFile" class="form-control" type="file" accept="image/*" />
+                                            <span asp-validation-for="UpdateRequest.HealthCertificateImageFile" class="text-danger"></span>
                                             <div class="form-text">
                                                 <i class="fas fa-info-circle me-1"></i>
                                                 Giấy khám sức khỏe có hiệu lực cho việc học lái xe
                                             </div>
                                             
-                                            <!-- Preview Container Health Certificate -->
-                                            <div class="mt-2 preview-container" id="healthCertPreview">
-                                                @if (!string.IsNullOrEmpty(Model.UpdateRequest.HealthCertificateImageUrl))
-                                                {
-                                                    <img src="@Model.UpdateRequest.HealthCertificateImageUrl" 
-                                                         alt="Giấy khám sức khỏe" 
-                                                         class="img-thumbnail preview-image" 
-                                                         style="max-width: 200px; max-height: 130px; cursor: pointer;"
-                                                         onclick="showImagePreview('@Model.UpdateRequest.HealthCertificateImageUrl', 'Giấy khám sức khỏe')" />
-                                                }
+                                            <!-- Current Health Certificate Preview -->
+                                            <div class="health-cert-current-preview mt-2" style="@(string.IsNullOrEmpty(Model.UpdateRequest.HealthCertificateImageUrl) ? "display: none;" : "")">
+                                                <div class="position-relative d-inline-block preview-container">
+                                                    @if (!string.IsNullOrEmpty(Model.UpdateRequest.HealthCertificateImageUrl))
+                                                    {
+                                                        <img src="@Model.UpdateRequest.HealthCertificateImageUrl" 
+                                                             alt="Giấy khám sức khỏe hiện tại" 
+                                                             class="img-thumbnail preview-image" 
+                                                             style="max-width: 200px; max-height: 130px; cursor: pointer;"
+                                                             onclick="showImagePreview('@Model.UpdateRequest.HealthCertificateImageUrl', 'Giấy khám sức khỏe hiện tại')" />
+                                                    }
+                                                </div>
+                                                <div class="mt-1">
+                                                    <small class="text-muted">Ảnh giấy khám sức khỏe hiện tại</small>
+                                                </div>
+                                            </div>
+
+                                            <!-- New Health Certificate Preview -->
+                                            <div class="new-health-cert-preview mt-2" style="display: none;">
+                                                <div class="position-relative d-inline-block preview-container">
+                                                    <img class="img-thumbnail preview-image" style="max-width: 200px; max-height: 130px; cursor: pointer;" 
+                                                         onclick="showImageModalFromPreview(this, 'Ảnh giấy khám sức khỏe mới')" />
+                                                </div>
+                                                <div class="mt-1">
+                                                    <small class="text-success">Preview ảnh giấy khám sức khỏe mới</small>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -443,27 +531,11 @@
                     }
                 });
             }
+
+            // Setup file preview for all file inputs
+            setupFilePreview();
             
-            // Real-time image preview for all image URL inputs
-            const imageUrlInputs = document.querySelectorAll('.image-url-input');
-            imageUrlInputs.forEach(function(input) {
-                // Add debounce for better performance
-                let debounceTimer;
-                
-                input.addEventListener('input', function(e) {
-                    clearTimeout(debounceTimer);
-                    debounceTimer = setTimeout(function() {
-                        updateImagePreview(input);
-                    }, 500); // Wait 500ms after user stops typing
-                });
-                
-                input.addEventListener('paste', function(e) {
-                    // Handle paste event with slight delay
-                    setTimeout(function() {
-                        updateImagePreview(input);
-                    }, 100);
-                });
-            });
+
             
             // Auto dismiss alerts after 5 seconds
             const alerts = document.querySelectorAll('.alert:not(.alert-permanent)');
@@ -474,94 +546,7 @@
                 }, 5000);
             });
         });
-        
-        // Function to update image preview
-        function updateImagePreview(input) {
-            const url = input.value.trim();
-            const previewTargetId = input.getAttribute('data-preview-target');
-            const previewContainer = document.getElementById(previewTargetId);
-            
-            if (!previewContainer) return;
-            
-            // Clear existing preview
-            previewContainer.innerHTML = '';
-            
-            if (!url) return;
-            
-            // Validate URL format
-            try {
-                new URL(url);
-            } catch (e) {
-                // Invalid URL, don't show preview
-                return;
-            }
-            
-            // Show loading state
-            const loadingDiv = document.createElement('div');
-            loadingDiv.className = 'text-center p-2';
-            loadingDiv.innerHTML = `
-                <div class="spinner-border spinner-border-sm text-primary" role="status">
-                    <span class="visually-hidden">Đang tải...</span>
-                </div>
-                <small class="text-muted d-block mt-1">Đang tải ảnh...</small>
-            `;
-            previewContainer.appendChild(loadingDiv);
-            
-            // Create image element to test loading
-            const img = new Image();
-            
-            img.onload = function() {
-                // Remove loading state
-                previewContainer.innerHTML = '';
-                
-                // Create preview image
-                const previewImg = document.createElement('img');
-                previewImg.src = url;
-                previewImg.alt = getImageAltText(previewTargetId);
-                previewImg.className = 'img-thumbnail preview-image';
-                previewImg.style.cssText = 'max-width: 200px; max-height: 130px; cursor: pointer; transition: transform 0.2s ease;';
-                previewImg.onclick = function() {
-                    showImagePreview(url, getImageAltText(previewTargetId));
-                };
-                
-                // Add hover effect
-                previewImg.addEventListener('mouseenter', function() {
-                    this.style.transform = 'scale(1.05)';
-                });
-                previewImg.addEventListener('mouseleave', function() {
-                    this.style.transform = 'scale(1)';
-                });
-                
-                previewContainer.appendChild(previewImg);
-            };
-            
-            img.onerror = function() {
-                // Remove loading state and show error
-                previewContainer.innerHTML = `
-                    <div class="alert alert-warning alert-sm p-2 mb-0">
-                        <i class="fas fa-exclamation-triangle me-1"></i>
-                        <small>Không thể tải ảnh. Vui lòng kiểm tra URL.</small>
-                    </div>
-                `;
-            };
-            
-            // Start loading
-            img.src = url;
-        }
-        
-        // Helper function to get appropriate alt text
-        function getImageAltText(previewTargetId) {
-            switch (previewTargetId) {
-                case 'cccdFrontPreview':
-                    return 'Mặt trước CCCD';
-                case 'cccdBackPreview':
-                    return 'Mặt sau CCCD';
-                case 'healthCertPreview':
-                    return 'Giấy khám sức khỏe';
-                default:
-                    return 'Hình ảnh';
-            }
-        }
+
         
         // Image preview functionality
         function showImagePreview(imageUrl, title) {
@@ -624,5 +609,154 @@
                 }
             }
         });
+
+        // Setup file preview functionality
+        function setupFilePreview() {
+            // Profile image file input
+            const profileImageInput = document.querySelector('input[name="UpdateRequest.ProfileImageFile"]');
+            if (profileImageInput) {
+                profileImageInput.addEventListener('change', function(e) {
+                    handleFilePreview(e.target, 'profile');
+                });
+            }
+
+            // CCCD front image file input
+            const cccdFrontInput = document.querySelector('input[name="UpdateRequest.CccdImageFrontFile"]');
+            if (cccdFrontInput) {
+                cccdFrontInput.addEventListener('change', function(e) {
+                    handleFilePreview(e.target, 'cccd-front');
+                });
+            }
+
+            // CCCD back image file input
+            const cccdBackInput = document.querySelector('input[name="UpdateRequest.CccdImageBackFile"]');
+            if (cccdBackInput) {
+                cccdBackInput.addEventListener('change', function(e) {
+                    handleFilePreview(e.target, 'cccd-back');
+                });
+            }
+
+            // Health certificate image file input
+            const healthCertInput = document.querySelector('input[name="UpdateRequest.HealthCertificateImageFile"]');
+            if (healthCertInput) {
+                healthCertInput.addEventListener('change', function(e) {
+                    handleFilePreview(e.target, 'health-cert');
+                });
+            }
+        }
+
+        // Handle file preview
+        function handleFilePreview(input, type) {
+            let previewDiv;
+            switch(type) {
+                case 'profile':
+                    previewDiv = document.querySelector('.new-profile-image-preview');
+                    break;
+                case 'cccd-front':
+                    previewDiv = document.querySelector('.new-cccd-front-preview');
+                    break;
+                case 'cccd-back':
+                    previewDiv = document.querySelector('.new-cccd-back-preview');
+                    break;
+                case 'health-cert':
+                    previewDiv = document.querySelector('.new-health-cert-preview');
+                    break;
+            }
+
+            const previewImg = previewDiv ? previewDiv.querySelector('img') : null;
+            
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    input.classList.add('is-invalid');
+                    showFileError(input, 'Vui lòng chọn file ảnh hợp lệ');
+                    hideImagePreview(previewDiv);
+                    return;
+                }
+                
+                // Validate file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    input.classList.add('is-invalid');
+                    showFileError(input, 'Kích thước file không được quá 5MB');
+                    hideImagePreview(previewDiv);
+                    return;
+                }
+                
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                hideFileError(input);
+                
+                // Create preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (previewImg) {
+                        previewImg.src = e.target.result;
+                        previewDiv.style.display = 'block';
+                    }
+                };
+                reader.readAsDataURL(file);
+            } else {
+                input.classList.remove('is-invalid', 'is-valid');
+                hideFileError(input);
+                hideImagePreview(previewDiv);
+            }
+        }
+
+        // Show file error
+        function showFileError(input, message) {
+            let errorDiv = input.parentNode.querySelector('.file-error');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.className = 'file-error text-danger small mt-1';
+                input.parentNode.appendChild(errorDiv);
+            }
+            errorDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>' + message;
+        }
+
+        // Hide file error
+        function hideFileError(input) {
+            const errorDiv = input.parentNode.querySelector('.file-error');
+            if (errorDiv) {
+                errorDiv.remove();
+            }
+        }
+
+        // Hide image preview
+        function hideImagePreview(previewDiv) {
+            if (previewDiv) {
+                previewDiv.style.display = 'none';
+            }
+        }
+
+        // Show modal from preview image
+        function showImageModalFromPreview(imgElement, title) {
+            const modal = new bootstrap.Modal(document.getElementById('imagePreviewModal'));
+            const modalImage = document.getElementById('previewImage');
+            const modalTitle = document.getElementById('imagePreviewModalLabel');
+            const imageLoading = document.getElementById('imageLoading');
+            const imageError = document.getElementById('imageError');
+
+            // Set title
+            modalTitle.textContent = title;
+            
+            // Set current image URL for opening in new tab
+            currentImageUrl = imgElement.src;
+
+            // Reset states
+            modalImage.style.display = 'none';
+            imageError.style.display = 'none';
+            imageLoading.style.display = 'block';
+
+            // Show modal
+            modal.show();
+
+            // Load image
+            modalImage.src = imgElement.src;
+            modalImage.alt = title;
+            imageLoading.style.display = 'none';
+            modalImage.style.display = 'block';
+        }
     </script>
 } 

@@ -1,0 +1,621 @@
+@page
+@model SEP490_SU25_G90.Pages.HumanResources.User.CreateLearnerModel
+@{
+    ViewData["Title"] = "Tạo tài khoản học viên";
+    Layout = "~/Pages/Shared/_HumanResourcesLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="/HumanResources/User/ListLearningProfile" class="text-decoration-none">
+                                    <i class="fas fa-graduation-cap me-1"></i>
+                                    Quản lý Học viên
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">Tạo tài khoản mới</li>
+                        </ol>
+                    </nav>
+                    <h2 class="h3 mb-0">
+                        <i class="fas fa-user-plus text-primary me-2"></i>
+                        Tạo tài khoản học viên mới
+                    </h2>
+                </div>
+            </div>
+
+            <!-- Alert Messages -->
+            @if (!string.IsNullOrEmpty(Model.Message))
+            {
+                <div class="alert alert-@(Model.MessageType == "success" ? "success" : "danger") alert-dismissible fade show" role="alert">
+                    <i class="fas fa-@(Model.MessageType == "success" ? "check-circle" : "exclamation-triangle") me-2"></i>
+                    @Model.Message
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <!-- Create Form -->
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-plus me-2"></i>
+                        Thông tin học viên mới
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="row">
+                            <!-- Left Column - Basic Information -->
+                            <div class="col-md-12 mb-4">
+                                <div class="card">
+                                    <div class="card-header bg-info text-white">
+                                        <h6 class="card-title mb-0">
+                                            <i class="fas fa-user me-2"></i>
+                                            Thông tin cá nhân
+                                        </h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Profile Image Section -->
+                                        <div class="row mb-4">
+                                            <div class="col-12">
+                                                <h6 class="text-primary mb-3">
+                                                    <i class="fas fa-user-circle me-2"></i>
+                                                    Ảnh đại diện
+                                                </h6>
+                                                <div class="mb-3">
+                                                    <label asp-for="CreateRequest.ProfileImageFile" class="form-label">
+                                                        <i class="fas fa-image me-1"></i>
+                                                        Chọn ảnh đại diện
+                                                    </label>
+                                                    <input asp-for="CreateRequest.ProfileImageFile" class="form-control" type="file" accept="image/*" />
+                                                    <span asp-validation-for="CreateRequest.ProfileImageFile" class="text-danger"></span>
+                                                    
+                                                    <!-- New Image Preview -->
+                                                    <div class="new-profile-image-preview mt-2" style="display: none;">
+                                                        <div class="position-relative d-inline-block preview-container">
+                                                            <img class="img-thumbnail preview-image" style="max-width: 150px; max-height: 150px; cursor: pointer;" 
+                                                                 onclick="showImageModalFromPreview(this, 'Ảnh đại diện')" />
+                                                        </div>
+                                                        <div class="mt-1">
+                                                            <small class="text-success">Preview ảnh đại diện</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4 mb-3">
+                                                <label asp-for="CreateRequest.FirstName" class="form-label">
+                                                    <i class="fas fa-user me-1"></i>
+                                                    Họ <span class="text-danger">*</span>
+                                                </label>
+                                                <input asp-for="CreateRequest.FirstName" class="form-control" />
+                                                <span asp-validation-for="CreateRequest.FirstName" class="text-danger"></span>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label asp-for="CreateRequest.MiddleName" class="form-label">
+                                                    <i class="fas fa-user me-1"></i>
+                                                    Tên đệm
+                                                </label>
+                                                <input asp-for="CreateRequest.MiddleName" class="form-control" />
+                                                <span asp-validation-for="CreateRequest.MiddleName" class="text-danger"></span>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label asp-for="CreateRequest.LastName" class="form-label">
+                                                    <i class="fas fa-user me-1"></i>
+                                                    Tên <span class="text-danger">*</span>
+                                                </label>
+                                                <input asp-for="CreateRequest.LastName" class="form-control" />
+                                                <span asp-validation-for="CreateRequest.LastName" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label asp-for="CreateRequest.Email" class="form-label">
+                                                    <i class="fas fa-envelope me-1"></i>
+                                                    Email <span class="text-danger">*</span>
+                                                </label>
+                                                <input asp-for="CreateRequest.Email" class="form-control" type="email" />
+                                                <span asp-validation-for="CreateRequest.Email" class="text-danger"></span>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label asp-for="CreateRequest.Phone" class="form-label">
+                                                    <i class="fas fa-phone me-1"></i>
+                                                    Số điện thoại
+                                                </label>
+                                                <input asp-for="CreateRequest.Phone" class="form-control" type="tel" />
+                                                <span asp-validation-for="CreateRequest.Phone" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label asp-for="CreateRequest.Dob" class="form-label">
+                                                    <i class="fas fa-calendar me-1"></i>
+                                                    Ngày sinh
+                                                </label>
+                                                <input asp-for="CreateRequest.Dob" class="form-control" type="date" />
+                                                <span asp-validation-for="CreateRequest.Dob" class="text-danger"></span>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label asp-for="CreateRequest.Gender" class="form-label">
+                                                    <i class="fas fa-venus-mars me-1"></i>
+                                                    Giới tính
+                                                </label>
+                                                <select asp-for="CreateRequest.Gender" class="form-select">
+                                                    <option value="">-- Chọn giới tính --</option>
+                                                    <option value="true">Nam</option>
+                                                    <option value="false">Nữ</option>
+                                                </select>
+                                                <span asp-validation-for="CreateRequest.Gender" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                        <!-- Documents Section -->
+                        <div class="row">
+                            <!-- CCCD Information -->
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header bg-warning text-dark">
+                                        <h6 class="card-title mb-0">
+                                            <i class="fas fa-id-card me-2"></i>
+                                            Thông tin CCCD
+                                        </h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label asp-for="CreateRequest.CccdNumber" class="form-label">
+                                                <i class="fas fa-id-card me-1"></i>
+                                                Số CCCD
+                                            </label>
+                                            <input asp-for="CreateRequest.CccdNumber" class="form-control" 
+                                                   id="cccdNumber" maxlength="12" placeholder="Nhập 12 chữ số CCCD" />
+                                            <span asp-validation-for="CreateRequest.CccdNumber" class="text-danger"></span>
+                                            <div class="form-text">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Chỉ nhập số, tối đa 12 chữ số
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label asp-for="CreateRequest.CccdImageFrontFile" class="form-label">
+                                                <i class="fas fa-image me-1"></i>
+                                                Ảnh CCCD mặt trước
+                                            </label>
+                                            <input asp-for="CreateRequest.CccdImageFrontFile" class="form-control" type="file" accept="image/*" />
+                                            <span asp-validation-for="CreateRequest.CccdImageFrontFile" class="text-danger"></span>
+                                            
+                                            <!-- New CCCD Front Preview -->
+                                            <div class="new-cccd-front-preview mt-2" style="display: none;">
+                                                <div class="position-relative d-inline-block preview-container">
+                                                    <img class="img-thumbnail preview-image" style="max-width: 200px; max-height: 130px; cursor: pointer;" 
+                                                         onclick="showImageModalFromPreview(this, 'Ảnh CCCD mặt trước')" />
+                                                </div>
+                                                <div class="mt-1">
+                                                    <small class="text-success">Preview ảnh mặt trước CCCD</small>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label asp-for="CreateRequest.CccdImageBackFile" class="form-label">
+                                                <i class="fas fa-image me-1"></i>
+                                                Ảnh CCCD mặt sau
+                                            </label>
+                                            <input asp-for="CreateRequest.CccdImageBackFile" class="form-control" type="file" accept="image/*" />
+                                            <span asp-validation-for="CreateRequest.CccdImageBackFile" class="text-danger"></span>
+                                            
+                                            <!-- New CCCD Back Preview -->
+                                            <div class="new-cccd-back-preview mt-2" style="display: none;">
+                                                <div class="position-relative d-inline-block preview-container">
+                                                    <img class="img-thumbnail preview-image" style="max-width: 200px; max-height: 130px; cursor: pointer;" 
+                                                         onclick="showImageModalFromPreview(this, 'Ảnh CCCD mặt sau')" />
+                                                </div>
+                                                <div class="mt-1">
+                                                    <small class="text-success">Preview ảnh mặt sau CCCD</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Health Certificate Information -->
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header bg-success text-white">
+                                        <h6 class="card-title mb-0">
+                                            <i class="fas fa-file-medical me-2"></i>
+                                            Giấy khám sức khỏe
+                                        </h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label asp-for="CreateRequest.HealthCertificateImageFile" class="form-label">
+                                                <i class="fas fa-image me-1"></i>
+                                                Ảnh giấy khám sức khỏe
+                                            </label>
+                                            <input asp-for="CreateRequest.HealthCertificateImageFile" class="form-control" type="file" accept="image/*" />
+                                            <span asp-validation-for="CreateRequest.HealthCertificateImageFile" class="text-danger"></span>
+                                            <div class="form-text">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Giấy khám sức khỏe có hiệu lực cho việc học lái xe
+                                            </div>
+                                            
+                                            <!-- New Health Certificate Preview -->
+                                            <div class="new-health-cert-preview mt-2" style="display: none;">
+                                                <div class="position-relative d-inline-block preview-container">
+                                                    <img class="img-thumbnail preview-image" style="max-width: 200px; max-height: 130px; cursor: pointer;" 
+                                                         onclick="showImageModalFromPreview(this, 'Ảnh giấy khám sức khỏe')" />
+                                                </div>
+                                                <div class="mt-1">
+                                                    <small class="text-success">Preview ảnh giấy khám sức khỏe</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Info Alert -->
+                        <div class="alert alert-info mt-4">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Lưu ý:</strong> 
+                            <ul class="mb-0 mt-2">
+                                <li>Mật khẩu sẽ được tạo tự động (12 ký tự) và gửi về email học viên</li>
+                                <li>Chọn file ảnh để upload (jpg, png, jpeg, gif)</li>
+                                <li>Kích thước file ảnh không được vượt quá 5MB</li>
+                                <li>Trường có dấu (*) là bắt buộc</li>
+                            </ul>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="card-footer bg-light">
+                            <div class="d-flex justify-content-between">
+                                <a href="/HumanResources/User/ListLearningProfile" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>
+                                    Quay lại
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>
+                                    Tạo tài khoản
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Image Preview Modal -->
+<div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-labelledby="imagePreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imagePreviewModalLabel">Xem ảnh</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div id="imageLoading" class="text-center mb-3">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Đang tải...</span>
+                    </div>
+                    <p class="text-muted mt-2">Đang tải hình ảnh...</p>
+                </div>
+                <img id="previewImage" src="" alt="" class="img-fluid" style="display: none;">
+                <div id="imageError" class="alert alert-danger" style="display: none;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Không thể tải hình ảnh. Vui lòng kiểm tra lại URL.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="openImageInNewTab()">
+                    <i class="fas fa-external-link-alt me-2"></i>
+                    Mở trong tab mới
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .preview-image {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 2px solid #e9ecef;
+        }
+        
+        .preview-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-color: #0d6efd;
+        }
+        
+        .preview-container {
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #e9ecef;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        
+        .preview-container:not(:empty) {
+            background-color: transparent;
+            border-style: solid;
+            border-color: #dee2e6;
+        }
+        
+        .card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+            border: 0;
+        }
+        
+        .card:hover {
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            border-bottom: 0;
+            font-weight: 600;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+        
+        .text-danger {
+            font-size: 0.875em;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-text {
+            font-size: 0.8rem;
+            transition: color 0.3s ease;
+        }
+        
+        .btn {
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header i {
+            opacity: 0.9;
+        }
+        
+        .row .col-md-4,
+        .row .col-md-6 {
+            margin-bottom: 0;
+        }
+    </style>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        let currentImageUrl = '';
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // CCCD number validation
+            const cccdInput = document.getElementById('cccdNumber');
+            if (cccdInput) {
+                cccdInput.addEventListener('input', function(e) {
+                    // Remove any non-digit characters
+                    e.target.value = e.target.value.replace(/[^\d]/g, '');
+                    
+                    // Limit to 12 digits
+                    if (e.target.value.length > 12) {
+                        e.target.value = e.target.value.substring(0, 12);
+                    }
+                });
+
+                cccdInput.addEventListener('keypress', function(e) {
+                    // Only allow numbers and control keys
+                    if (!/^\d$/.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                        e.preventDefault();
+                    }
+                });
+            }
+
+            // Setup file preview for all file inputs
+            setupFilePreview();
+            
+            // Auto dismiss alerts after 5 seconds
+            const alerts = document.querySelectorAll('.alert:not(.alert-permanent)');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 5000);
+            });
+        });
+
+        // Setup file preview functionality
+        function setupFilePreview() {
+            // Profile image file input
+            const profileImageInput = document.querySelector('input[name="CreateRequest.ProfileImageFile"]');
+            if (profileImageInput) {
+                profileImageInput.addEventListener('change', function(e) {
+                    handleFilePreview(e.target, 'profile');
+                });
+            }
+
+            // CCCD front image file input
+            const cccdFrontInput = document.querySelector('input[name="CreateRequest.CccdImageFrontFile"]');
+            if (cccdFrontInput) {
+                cccdFrontInput.addEventListener('change', function(e) {
+                    handleFilePreview(e.target, 'cccd-front');
+                });
+            }
+
+            // CCCD back image file input
+            const cccdBackInput = document.querySelector('input[name="CreateRequest.CccdImageBackFile"]');
+            if (cccdBackInput) {
+                cccdBackInput.addEventListener('change', function(e) {
+                    handleFilePreview(e.target, 'cccd-back');
+                });
+            }
+
+            // Health certificate image file input
+            const healthCertInput = document.querySelector('input[name="CreateRequest.HealthCertificateImageFile"]');
+            if (healthCertInput) {
+                healthCertInput.addEventListener('change', function(e) {
+                    handleFilePreview(e.target, 'health-cert');
+                });
+            }
+        }
+
+        // Handle file preview
+        function handleFilePreview(input, type) {
+            let previewDiv;
+            switch(type) {
+                case 'profile':
+                    previewDiv = document.querySelector('.new-profile-image-preview');
+                    break;
+                case 'cccd-front':
+                    previewDiv = document.querySelector('.new-cccd-front-preview');
+                    break;
+                case 'cccd-back':
+                    previewDiv = document.querySelector('.new-cccd-back-preview');
+                    break;
+                case 'health-cert':
+                    previewDiv = document.querySelector('.new-health-cert-preview');
+                    break;
+            }
+
+            const previewImg = previewDiv ? previewDiv.querySelector('img') : null;
+            
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    input.classList.add('is-invalid');
+                    showFileError(input, 'Vui lòng chọn file ảnh hợp lệ');
+                    hideImagePreview(previewDiv);
+                    return;
+                }
+                
+                // Validate file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    input.classList.add('is-invalid');
+                    showFileError(input, 'Kích thước file không được quá 5MB');
+                    hideImagePreview(previewDiv);
+                    return;
+                }
+                
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                hideFileError(input);
+                
+                // Create preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (previewImg) {
+                        previewImg.src = e.target.result;
+                        previewDiv.style.display = 'block';
+                    }
+                };
+                reader.readAsDataURL(file);
+            } else {
+                input.classList.remove('is-invalid', 'is-valid');
+                hideFileError(input);
+                hideImagePreview(previewDiv);
+            }
+        }
+
+        // Show file error
+        function showFileError(input, message) {
+            let errorDiv = input.parentNode.querySelector('.file-error');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.className = 'file-error text-danger small mt-1';
+                input.parentNode.appendChild(errorDiv);
+            }
+            errorDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>' + message;
+        }
+
+        // Hide file error
+        function hideFileError(input) {
+            const errorDiv = input.parentNode.querySelector('.file-error');
+            if (errorDiv) {
+                errorDiv.remove();
+            }
+        }
+
+        // Hide image preview
+        function hideImagePreview(previewDiv) {
+            if (previewDiv) {
+                previewDiv.style.display = 'none';
+            }
+        }
+
+        // Show modal from preview image
+        function showImageModalFromPreview(imgElement, title) {
+            const modal = new bootstrap.Modal(document.getElementById('imagePreviewModal'));
+            const modalImage = document.getElementById('previewImage');
+            const modalTitle = document.getElementById('imagePreviewModalLabel');
+            const imageLoading = document.getElementById('imageLoading');
+            const imageError = document.getElementById('imageError');
+
+            // Set title
+            modalTitle.textContent = title;
+            
+            // Set current image URL for opening in new tab
+            currentImageUrl = imgElement.src;
+
+            // Reset states
+            modalImage.style.display = 'none';
+            imageError.style.display = 'none';
+            imageLoading.style.display = 'block';
+
+            // Show modal
+            modal.show();
+
+            // Load image
+            modalImage.src = imgElement.src;
+            modalImage.alt = title;
+            imageLoading.style.display = 'none';
+            modalImage.style.display = 'block';
+        }
+
+        function openImageInNewTab() {
+            if (currentImageUrl) {
+                window.open(currentImageUrl, '_blank');
+            }
+        }
+    </script>
+} 

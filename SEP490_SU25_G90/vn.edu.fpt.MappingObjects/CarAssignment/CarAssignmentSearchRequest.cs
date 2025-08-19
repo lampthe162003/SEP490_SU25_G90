@@ -15,7 +15,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects.CarAssignment
         public int? SlotId { get; set; }
         
         [Display(Name = "Trạng thái")]
-        public bool? CarStatus { get; set; }
+        public byte? CarStatus { get; set; }
         
         [Display(Name = "Chỉ hiển thị xe của tôi")]
         public bool ShowMyReservationsOnly { get; set; } = false;
