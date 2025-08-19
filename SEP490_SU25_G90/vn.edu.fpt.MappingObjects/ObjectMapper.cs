@@ -34,9 +34,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
                 .ForMember(dest => dest.Learning, opt => opt.MapFrom(src => src.Learning));
 
 
-            CreateMap<Models.News, NewsListInformationResponse>()
-                .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author != null ? string.Join(" ", src.Author.FirstName, src.Author.MiddleName, src.Author.LastName) : ""))
-                .ForMember(dest => dest.ShortContent, opt => opt.MapFrom(src => src.NewsContent.Length > 100 ? src.NewsContent.Substring(0,100)+ "..." : src.NewsContent));
+            CreateMap<Models.News, NewsListInformationResponse>();
             CreateMap<NewsFormRequest, Models.News>()
                 .ForMember(dest => dest.Image, opt => opt.Ignore())
                 .ForMember(dest => dest.PostTime, opt => opt.Ignore())
@@ -45,8 +43,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
             CreateMap<AccountCreationRequest, User>();
             CreateMap<User, AccountCreationRequest>();
 
-            CreateMap<Models.LearningMaterial, LearningMaterialListInformationResponse>()
-                .ForMember(dest => dest.LicenceTypeName, opt => opt.MapFrom(src => src.LicenceType != null ? src.LicenceType.LicenceCode : null));
+            CreateMap<Models.LearningMaterial, LearningMaterialListInformationResponse>();
             CreateMap<LearningMaterialFormRequest, Models.LearningMaterial>()
                 .ForMember(dest => dest.FileLink, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
