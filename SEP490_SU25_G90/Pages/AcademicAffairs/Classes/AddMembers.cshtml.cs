@@ -112,7 +112,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
                 .ToListAsync();
 
             Candidates = list
-                .Where(x => x.LearningStatus != 4 && !alreadyMemberIds.Contains(x.LearningId))
+                .Where(x => x.LearningStatus != 4 && x.LearningStatus != 1 && !alreadyMemberIds.Contains(x.LearningId))
                 .Select(x => new CandidateVm
                 {
                     LearningId = x.LearningId,
