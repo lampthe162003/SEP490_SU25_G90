@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Services.UserService;
 
-namespace SEP490_SU25_G90.Pages.Learner.LearningProfile
+namespace SEP490_SU25_G90.Pages.Learner
 {
     [Authorize(Policy = "GuestOrLearnerPolicy")]
     public class LearnerDetailModel : PageModel
