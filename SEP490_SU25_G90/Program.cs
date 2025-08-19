@@ -121,14 +121,9 @@ app.MapGet("/", async context =>
         context.Response.Redirect("/Instructors/Classes/ListClasses");
         return;
     }
-    else if (context.User.IsInRole("learner"))
-    {
-        context.Response.Redirect("/Home/Index");
-        return;
-    }
     else
     {
-        context.Response.Redirect("/Error403");
+        context.Response.Redirect("/Home/Index");
         return;
     }
 });

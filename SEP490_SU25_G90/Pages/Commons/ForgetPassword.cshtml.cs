@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEP490_SU25_G90.vn.edu.fpt.Commons;
 using SEP490_SU25_G90.vn.edu.fpt.Services.EmailService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.ResetCodeService;
-using SEP490_SU25_G90.vn.edu.fpt.Services.User;
+using SEP490_SU25_G90.vn.edu.fpt.Services.UserService;
 using System.ComponentModel.DataAnnotations;
 
 namespace SEP490_SU25_G90.Pages.Commons

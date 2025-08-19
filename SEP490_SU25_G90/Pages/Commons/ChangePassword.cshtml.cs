@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using NuGet.Versioning;
-using SEP490_SU25_G90.vn.edu.fpt.Services.User;
+using SEP490_SU25_G90.vn.edu.fpt.Services.UserService;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 

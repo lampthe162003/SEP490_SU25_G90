@@ -1,12 +1,13 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
-using SEP490_SU25_G90.vn.edu.fpt.Services.User;
+using SEP490_SU25_G90.vn.edu.fpt.Services.UserService;
 
-namespace SEP490_SU25_G90.Pages.HumanResources.LearningProfile
+namespace SEP490_SU25_G90.Pages.Instructors.LearningProfile
 {
-    [Authorize(Roles = "human resources")]
+    [Authorize(Roles = "instructor")]
     public class LearnerDetailModel : PageModel
     {
         private readonly IUserService _userService;
@@ -24,16 +25,11 @@ namespace SEP490_SU25_G90.Pages.HumanResources.LearningProfile
         [TempData]
         public string? MessageType { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int id)
+        public async Task<IActionResult> OnGetAsync()
         {
-            if (id <= 0)
-            {
-                Message = "ID học viên không hợp lệ!";
-                MessageType = "error";
-                return RedirectToPage("./ListLearningProfile");
-            }
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            Learner = await _userService.GetLearnerById(id);
+            Learner = await _userService.GetLearnerById(int.Parse(userIdClaim));
 
             if (Learner == null)
             {

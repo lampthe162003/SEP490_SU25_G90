@@ -15,7 +15,7 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.RoleService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication;
 using SEP490_SU25_G90.vn.edu.fpt.Services.TestScoreStandardService;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.LicenseTypeRepository;
-using SEP490_SU25_G90.vn.edu.fpt.Services.User;
+using SEP490_SU25_G90.vn.edu.fpt.Services.UserService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.LicenseTypeService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.EmailService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.ResetCodeService;

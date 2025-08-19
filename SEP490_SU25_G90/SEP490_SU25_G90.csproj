@@ -22,6 +22,7 @@
     <Folder Include="Pages\AcademicAffairs\AcademicYears\" />
     <Folder Include="Pages\Instructors\Cars\" />
     <Folder Include="vn.edu.fpt.Models\" />
+    <Folder Include="vn.edu.fpt.Tests\UserServiceTests\" />
     <Folder Include="wwwroot\uploads\test-application\" />
   </ItemGroup>
 

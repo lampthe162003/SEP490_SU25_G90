@@ -1,8 +1,8 @@
 ﻿@page
-@model SEP490_SU25_G90.Pages.HumanResources.LearningProfile.ListLearningProfileModel
+@model SEP490_SU25_G90.Pages.HumanResources.User.ListLearningProfileModel
 @{
     ViewData["Title"] = "Quản lý học viên";
-    Layout = "~/Pages/Shared/_AdminLayout.cshtml";
+    Layout = "~/Pages/Shared/_HumanResourcesLayout.cshtml";
 }
 
 <div class="container-fluid">
@@ -15,6 +15,10 @@
                         <i class="fas fa-users text-primary me-2"></i>
                         Quản lý học viên
                     </h2>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addInstructorModal">
+                    <i class="fas fa-plus me-2"></i>
+                    Tạo tài khoản học viên 
+                     </button>
                     <p class="text-muted mb-0">
                         <i class="fas fa-info-circle me-1"></i>
                         Danh sách tất cả người dùng có vai trò học viên trong hệ thống
