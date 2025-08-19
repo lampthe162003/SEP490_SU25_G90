@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -27,13 +28,13 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Commons
             }
         }
 
-        public string GenerateToken(int userId, string email, string role, bool savePasswordCheck)
+        public string GenerateToken(LoginInformationResponse user, bool savePasswordCheck)
         {
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, email),
-                new Claim(ClaimTypes.Role, role),
-                new Claim("user_id", userId.ToString())
+                new Claim(ClaimTypes.Name, user.Fullname),
+                new Claim(ClaimTypes.Role, user.UserRoles.First().Role.RoleName),
+                new Claim("user_id", user.UserId.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key));

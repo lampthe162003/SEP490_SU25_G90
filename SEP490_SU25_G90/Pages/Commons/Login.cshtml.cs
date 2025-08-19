@@ -66,7 +66,7 @@ namespace SEP490_SU25_G90.Pages.Commons
 
             try
             {
-                var token = _jwt.GenerateToken(user.UserId, Email, role, SavePasswordCheck);
+                var token = _jwt.GenerateToken(user, SavePasswordCheck);
                 Response.Cookies.Append("jwt", token, new CookieOptions { HttpOnly = true });
                 if (role.Equals("academic affairs", StringComparison.OrdinalIgnoreCase))
                 {
