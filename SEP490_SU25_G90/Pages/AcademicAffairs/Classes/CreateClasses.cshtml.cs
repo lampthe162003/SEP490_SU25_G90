@@ -35,9 +35,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
 
         [BindProperty]
         public int? SelectedCourseId { get; set; }
-
-        [BindProperty]
-        public int MaxStudents { get; set; } = 10;
+        public int MaxStudents = 5;
 
         [BindProperty]
         public List<int> SelectedLearnerIds { get; set; } = new();
