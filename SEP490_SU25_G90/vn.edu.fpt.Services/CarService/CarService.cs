@@ -66,20 +66,23 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.CarService
 
             var responses = new List<CarResponse>();
 
-            foreach (var car in cars)
+            if (cars != null)
             {
-                var response = await MapToResponse(car);
-                
-                // Filter by rental status if specified
-                if (request.IsRented.HasValue)
+                foreach (var car in cars)
                 {
-                    if (request.IsRented.Value && !response.IsCurrentlyRented)
-                        continue;
-                    if (!request.IsRented.Value && response.IsCurrentlyRented)
-                        continue;
-                }
+                    var response = await MapToResponse(car);
 
-                responses.Add(response);
+                    // Filter by rental status if specified
+                    if (request.IsRented.HasValue)
+                    {
+                        if (request.IsRented.Value && !response.IsCurrentlyRented)
+                            continue;
+                        if (!request.IsRented.Value && response.IsCurrentlyRented)
+                            continue;
+                    }
+
+                    responses.Add(response);
+                }
             }
 
             return responses;
