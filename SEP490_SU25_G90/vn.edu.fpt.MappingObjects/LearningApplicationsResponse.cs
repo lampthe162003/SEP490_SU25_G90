@@ -43,5 +43,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         public int RequiredPracticalKm { get; set; }
         public string? ClassName { get; set; }
 
+        public bool TestEligibility { get; set; } // Added for eligibility status
     }
 }
