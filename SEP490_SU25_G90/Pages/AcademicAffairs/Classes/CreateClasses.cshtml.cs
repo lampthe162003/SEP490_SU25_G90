@@ -7,6 +7,8 @@ using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
+using SEP490_SU25_G90.vn.edu.fpt.Services.ScheduleSlotService;
+using SEP490_SU25_G90.vn.edu.fpt.Services.ClassTimeService;
 
 namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
 {
@@ -16,15 +18,21 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
         private readonly Sep490Su25G90DbContext _context;
         private readonly IInstructorService _instructorService;
         private readonly ILearningApplicationService _learningService;
+        private readonly IScheduleSlotService _scheduleSlotService;
+        private readonly IClassTimeService _classTimeService;
 
         public CreateClassesModel(
             Sep490Su25G90DbContext context,
             IInstructorService instructorService,
-            ILearningApplicationService learningService)
+            ILearningApplicationService learningService,
+            IScheduleSlotService scheduleSlotService,
+            IClassTimeService classTimeService)
         {
             _context = context;
             _instructorService = instructorService;
             _learningService = learningService;
+            _scheduleSlotService = scheduleSlotService;
+            _classTimeService = classTimeService;
         }
 
         [BindProperty]
@@ -40,8 +48,12 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
         [BindProperty]
         public List<int> SelectedLearnerIds { get; set; } = new();
 
+        [BindProperty]
+        public List<string> SelectedSchedules { get; set; } = new();
+
         public List<SelectListItem> Courses { get; set; } = new();
         public List<SelectListItem> Instructors { get; set; } = new();
+        public List<ScheduleSlot> ScheduleSlots { get; set; } = new();
 
         public List<WaitingLearnerVm> WaitingLearners { get; set; } = new();
 
@@ -62,6 +74,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
         {
             await LoadDropdownsAsync();
             await LoadWaitingLearnersAsync();
+            await LoadScheduleSlotsAsync();
 
             if (CourseId.HasValue)
             {
@@ -88,6 +101,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
         {
             await LoadDropdownsAsync();
             await LoadWaitingLearnersAsync();
+            await LoadScheduleSlotsAsync();
 
             if (!SelectedCourseId.HasValue)
             {
@@ -143,6 +157,24 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
                     }
                 }
                 await _context.SaveChangesAsync();
+
+                // Save class schedules
+                if (SelectedSchedules != null && SelectedSchedules.Any())
+                {
+                    var schedules = new List<(byte Thu, int SlotId)>();
+                    foreach (var schedule in SelectedSchedules)
+                    {
+                        var parts = schedule.Split('-');
+                        if (parts.Length == 2 && byte.TryParse(parts[0], out var thu) && int.TryParse(parts[1], out var slotId))
+                        {
+                            schedules.Add((thu, slotId));
+                        }
+                    }
+                    if (schedules.Any())
+                    {
+                        await _classTimeService.SaveClassTimesAsync(newClass.ClassId, schedules);
+                    }
+                }
 
                 await transaction.CommitAsync();
 
@@ -231,6 +263,12 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
                 .ToList();
 
             WaitingLearners = waiting;
+        }
+
+        private async Task LoadScheduleSlotsAsync()
+        {
+            var slots = await _scheduleSlotService.GetAllSlots();
+            ScheduleSlots = slots.OrderBy(s => s.StartTime).ToList();
         }
     }
 }
