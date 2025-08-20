@@ -51,9 +51,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.CarService
         public async Task<List<CarResponse>> SearchCarsAsync(CarSearchRequest request)
         {
             // Nếu không có điều kiện tìm kiếm nào, trả về tất cả xe
-            if (string.IsNullOrEmpty(request.CarMake) && 
-                string.IsNullOrEmpty(request.CarModel) && 
-                string.IsNullOrEmpty(request.LicensePlate) && 
+            if (string.IsNullOrWhiteSpace(request.CarMake) && 
+                string.IsNullOrWhiteSpace(request.CarModel) && 
+                string.IsNullOrWhiteSpace(request.LicensePlate) && 
                 !request.IsRented.HasValue)
             {
                 return await GetAllCarsAsync();

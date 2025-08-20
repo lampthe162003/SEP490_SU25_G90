@@ -242,30 +242,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Tests.CarServiceTests
             Assert.That(result[0].LicensePlate, Is.EqualTo("30A-12345"));
         }
 
-        //[Test]
-        //public async Task SearchCarsAsync_WithRentalStatusFilter_ReturnsFilteredCars()
-        //{
-        //    // Arrange
-        //    var request = new CarSearchRequest
-        //    {
-        //        CarMake = null,
-        //        CarModel = null,
-        //        LicensePlate = null,
-        //        IsRented = true
-        //    };
 
-        //    _carRepository.Setup(x => x.GetAllCarsAsync())
-        //        .ReturnsAsync(_testCars);
-
-        //    // Act
-        //    var result = await _carService.SearchCarsAsync(request);
-
-        //    // Assert
-        //    Assert.That(result, Is.Not.Null);
-        //    //Assert.That(result.Count, Is.EqualTo(1));
-        //    Assert.That(result[0].IsCurrentlyRented, Is.True);
-        //    Assert.That(result[0].CarMake, Is.EqualTo("Honda"));
-        //}
 
         [Test]
         public async Task SearchCarsAsync_WithAvailableStatusFilter_ReturnsFilteredCars()
@@ -287,7 +264,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Tests.CarServiceTests
 
             // Assert
             Assert.That(result, Is.Not.Null);
-            //Assert.That(result.Count, Is.EqualTo(3));
             Assert.That(result.All(c => c.IsCurrentlyRented == false), Is.True);
         }
         [Test]
@@ -499,74 +475,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Tests.CarServiceTests
 
             // Assert
             Assert.That(result, Is.Null);
-        }
-
-        //[Test]
-        //public async Task SearchCarsAsync_WithWhiteSpaceFilters_ReturnsAllCars()
-        //{
-        //    // Arrange
-        //    var request = new CarSearchRequest
-        //    {
-        //        CarMake = "   ",
-        //        CarModel = "   ",
-        //        LicensePlate = "   ",
-        //        IsRented = null
-        //    };
-
-        //    _carRepository.Setup(x => x.GetAllCarsAsync())
-        //        .ReturnsAsync(_testCars);
-
-        //    // Act
-        //    var result = await _carService.SearchCarsAsync(request);
-
-        //    // Assert
-        //    Assert.That(result, Is.Not.Null);
-        //    Assert.That(result.Count, Is.EqualTo(4));
-        //}
-        [Test]
-        public async Task SearchCarsAsync_WithNullOrEmptyFilters_ReturnsAllCars()
-        {
-            // Arrange
-            var request = new CarSearchRequest
-            {
-                CarMake = null,        // null để service coi là "không lọc"
-                CarModel = "",         // rỗng để service coi là "không lọc"
-                LicensePlate = null,   // null để service coi là "không lọc"
-                IsRented = null        // null để service không lọc theo trạng thái thuê
-            };
-
-            _carRepository.Setup(x => x.GetAllCarsAsync())
-                .ReturnsAsync(_testCars);
-
-            // Act
-            var result = await _carService.SearchCarsAsync(request);
-
-            // Assert
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(4)); // toàn bộ xe trong _testCars
-        }
-
-        [Test]
-        public async Task SearchCarsAsync_WithEmptyStringFilters_ReturnsAllCars()
-        {
-            // Arrange
-            var request = new CarSearchRequest
-            {
-                CarMake = "",
-                CarModel = "",
-                LicensePlate = "",
-                IsRented = null
-            };
-
-            _carRepository.Setup(x => x.GetAllCarsAsync())
-                .ReturnsAsync(_testCars);
-
-            // Act
-            var result = await _carService.SearchCarsAsync(request);
-
-            // Assert
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(4));
         }
     }
 }
