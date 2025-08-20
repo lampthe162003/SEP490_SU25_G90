@@ -98,6 +98,66 @@
             </div>
         </div>
 
+        <!-- Weekly Schedule Card -->
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    Lịch học hàng tuần
+                </h5>
+            </div>
+            <div class="card-body">
+                @if (Model.ClassSchedules.Any())
+                {
+                    <div class="row">
+                        @{
+                            var groupedSchedules = Model.GetGroupedSchedules();
+                        }
+                        @foreach (var daySchedule in groupedSchedules)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="card h-100 border-primary">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0 text-primary">
+                                            <i class="fas fa-calendar-day me-2"></i>
+                                            @Model.GetDayName(daySchedule.Key)
+                                        </h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-flex flex-column gap-2">
+                                            @foreach (var schedule in daySchedule.Value)
+                                            {
+                                                <div class="d-flex align-items-center p-2 bg-light rounded">
+                                                    <i class="fas fa-clock text-primary me-2"></i>
+                                                    <span class="fw-bold">
+                                                        @schedule.Slot?.StartTime?.ToString("HH:mm") - @schedule.Slot?.EndTime?.ToString("HH:mm")
+                                                    </span>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    
+                    <!-- Summary -->
+                    <div class="alert alert-info mt-3 mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Tổng kết:</strong> Lớp học @groupedSchedules.Count ngày/tuần với tổng cộng @Model.ClassSchedules.Count buổi học
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Chưa có lịch học</h5>
+                        <p class="text-muted">Lớp học này chưa được thiết lập lịch học hàng tuần.</p>
+                    </div>
+                }
+            </div>
+        </div>
+
         <!-- Students List Card -->
         <div class="card">
             <div class="card-header bg-success text-white">
@@ -338,5 +398,29 @@
     
     .breadcrumb-item + .breadcrumb-item::before {
         color: #6c757d;
+    }
+    
+    /* Schedule card styles */
+    .card.border-primary {
+        border-width: 2px;
+        transition: all 0.3s ease;
+    }
+    
+    .card.border-primary:hover {
+        box-shadow: 0 4px 8px rgba(0,123,255,0.2);
+        transform: translateY(-2px);
+    }
+    
+    .card.border-primary .card-header {
+        border-bottom: 2px solid #007bff;
+    }
+    
+    .bg-light.rounded {
+        transition: all 0.2s ease;
+    }
+    
+    .bg-light.rounded:hover {
+        background-color: #e3f2fd !important;
+        transform: translateX(5px);
     }
 </style> 
