@@ -82,6 +82,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
                             if (learningApp != null && learningApp.LearningStatus != 1)
                             {
                                 learningApp.LearningStatus = 1; // Đang học
+                                _context.LearningApplications.Update(learningApp);
                                 Console.WriteLine($" [DEBUG] Cập nhật trạng thái học viên {learningId} thành 'Đang học'");
                             }
                         }
@@ -112,7 +113,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
                 .ToListAsync();
 
             Candidates = list
-                .Where(x => x.LearningStatus != 4 && !alreadyMemberIds.Contains(x.LearningId))
+                .Where(x => x.LearningStatus != 4 && x.LearningStatus != 1 && !alreadyMemberIds.Contains(x.LearningId))
                 .Select(x => new CandidateVm
                 {
                     LearningId = x.LearningId,
