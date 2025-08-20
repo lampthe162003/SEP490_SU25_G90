@@ -96,7 +96,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ScheduleSlotRepository
                             .Include(a => a.Learner)
                             .Where(a => a.ClassId == ct.ClassId && 
                                        a.SessionDate == currentDate &&
-                                       (a.ClassTimeId == null || a.ClassTimeId == ct.ClassTimeId))
+                                       a.ClassTimeId == ct.ClassTimeId)
                             .ToList();
 
                         // Get all class members for total count
