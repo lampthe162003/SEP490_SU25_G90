@@ -36,17 +36,17 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.CarRepository
         {
             var query = _context.Cars.AsQueryable();
 
-            if (!string.IsNullOrEmpty(carMake))
+            if (!string.IsNullOrWhiteSpace(carMake))
             {
                 query = query.Where(c => c.CarMake != null && c.CarMake.Contains(carMake.Trim()));
             }
 
-            if (!string.IsNullOrEmpty(carModel))
+            if (!string.IsNullOrWhiteSpace(carModel))
             {
                 query = query.Where(c => c.CarModel != null && c.CarModel.Contains(carModel.Trim()));
             }
 
-            if (!string.IsNullOrEmpty(licensePlate))
+            if (!string.IsNullOrWhiteSpace(licensePlate))
             {
                 query = query.Where(c => c.LicensePlate != null && c.LicensePlate.Contains(licensePlate.Trim()));
             }
