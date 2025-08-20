@@ -160,7 +160,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
         /// </summary>
         public string CreateLearnerUrl(int learnerId)
         {
-            return $"/AcademicAffairs/LearningProfile/LearnerDetail?id={learnerId}";
+            return $"/AcademicAffairs/LearningApplications/Detail?id={learnerId}";
         }
 
         /// <summary>

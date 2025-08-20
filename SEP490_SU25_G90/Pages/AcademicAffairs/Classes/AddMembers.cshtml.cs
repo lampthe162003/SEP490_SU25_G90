@@ -82,6 +82,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
                             if (learningApp != null && learningApp.LearningStatus != 1)
                             {
                                 learningApp.LearningStatus = 1; // Đang học
+                                _context.LearningApplications.Update(learningApp);
                                 Console.WriteLine($" [DEBUG] Cập nhật trạng thái học viên {learningId} thành 'Đang học'");
                             }
                         }
