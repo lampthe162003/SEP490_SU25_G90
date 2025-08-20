@@ -8,7 +8,7 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
 
 namespace SEP490_SU25_G90.Pages.Instructors.LearnApplication
 {
-    [Authorize(Roles="instructor")]
+    [Authorize(Roles = "instructor")]
     public class ListLearningApplicationsModel : PageModel
     {
         private readonly IInstructorService _instructorService;
@@ -30,9 +30,10 @@ namespace SEP490_SU25_G90.Pages.Instructors.LearnApplication
         public async Task<IActionResult> OnGetAsync(string? searchString, int? statusFilter, int pageNumber = 1)
         {
             var username = User.Identity?.Name;
-            if (string.IsNullOrEmpty(username)) return Unauthorized();
+            var userId = User.FindFirst("user_id")?.Value;
+            if (string.IsNullOrEmpty(username) || userId == null) return Unauthorized();
 
-            var instructor = await _context.Users.FirstOrDefaultAsync(u => u.Email == username);
+            var instructor = await _context.Users.FirstOrDefaultAsync(u => u.UserId == int.Parse(userId));
             if (instructor == null) return Unauthorized();
 
             SearchString = searchString;
