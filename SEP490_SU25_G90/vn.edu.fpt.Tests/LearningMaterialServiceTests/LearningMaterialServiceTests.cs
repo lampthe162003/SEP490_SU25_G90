@@ -163,43 +163,6 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Tests.LearningMaterialServiceTests
             Assert.That(result.Item2, Is.EqualTo(_testMaterials.Count));
         }
 
-        //[Test]
-        //public async Task GetPagedMaterialsAsync_InvalidPageOrPageSize_ReturnsEmptyList()
-        //{
-        //    // Arrange
-        //    _learningMaterialRepository.Setup(x => x.GetPagedMaterialsAsync(0, 10))
-        //        .ReturnsAsync((new List<LearningMaterial>(), 0));
-
-        //    _learningMaterialRepository.Setup(x => x.GetPagedMaterialsAsync(1, 0))
-        //        .ReturnsAsync((new List<LearningMaterial>(), 0));
-
-        //    // Act
-        //    var resultPageZero = await _learningMaterialService.GetPagedMaterialsAsync(0, 10);
-        //    var resultPageSizeZero = await _learningMaterialService.GetPagedMaterialsAsync(1, 0);
-
-        //    // Assert
-        //    Assert.That(resultPageZero.Item1.Count, Is.EqualTo(0));
-        //    Assert.That(resultPageZero.Item2, Is.EqualTo(0));
-
-        //    Assert.That(resultPageSizeZero.Item1.Count, Is.EqualTo(0));
-        //    Assert.That(resultPageSizeZero.Item2, Is.EqualTo(0));
-        //}
-
-        //[Test]
-        //public async Task GetPagedMaterialsAsync_EmptyRepository_ReturnsEmptyList()
-        //{
-        //    // Arrange
-        //    _learningMaterialRepository.Setup(x => x.GetPagedMaterialsAsync(1, 10))
-        //        .ReturnsAsync((new List<LearningMaterial>(), 0));
-
-        //    // Act
-        //    var result = await _learningMaterialService.GetPagedMaterialsAsync(1, 10);
-
-        //    // Assert
-        //    Assert.That(result.Item1.Count, Is.EqualTo(0));
-        //    Assert.That(result.Item2, Is.EqualTo(0));
-        //}
-
         [Test]
         public async Task GetMaterialByIdAsync_InvalidOrZeroId_ReturnsNull()
         {
