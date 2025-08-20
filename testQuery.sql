@@ -159,20 +159,7 @@ CREATE TABLE ClassMembers
     FOREIGN KEY (learner_id) REFERENCES LearningApplications(learning_id)
 );
 
-CREATE TABLE Attendance
-(
-    attendance_id INT IDENTITY PRIMARY KEY,
-    learner_id INT NOT NULL,
-    class_id INT NOT NULL,
-    session_date DATE NOT NULL,
-    attendance_status BIT, --0: absent; 1: present
-    practical_duration_hours FLOAT, -- total hours practiced
-    practical_distance FLOAT, -- kilometers
-    note NVARCHAR(255),
-    FOREIGN KEY (learner_id) REFERENCES LearningApplications(learning_id),
-    FOREIGN KEY (class_id) REFERENCES Classes(class_id),
-    UNIQUE (learner_id, class_id, session_date) -- avoid duplicates
-);
+
 
 CREATE TABLE InstructorSpecializations
 (
@@ -279,4 +266,33 @@ CREATE TABLE CarAssignments
     FOREIGN KEY (slot_id) REFERENCES ScheduleSlots(slot_id),
     FOREIGN KEY (car_status) REFERENCES CarAssignmentStatus(status_id)
 );
+
+CREATE TABLE ClassTime
+(
+    class_time_id INT IDENTITY PRIMARY KEY,
+    class_id INT NOT NULL,
+    thu TINYINT NOT NULL, -- 2 = Thứ 2, 3 = Thứ 3, ..., 6 = Thứ 6
+    slot_id INT NOT NULL, -- tham chiếu đến khung giờ học trong ScheduleSlots
+    FOREIGN KEY (class_id) REFERENCES Classes(class_id),
+    FOREIGN KEY (slot_id) REFERENCES ScheduleSlots(slot_id),
+    CONSTRAINT UQ_ClassTime UNIQUE (class_id, thu, slot_id) -- tránh trùng lặp
+);
+
+CREATE TABLE Attendance
+(
+    attendance_id INT IDENTITY PRIMARY KEY,
+    learner_id INT NOT NULL,
+    class_id INT NOT NULL,
+    session_date DATE NOT NULL,
+    class_time_id INT,
+    attendance_status BIT, --0: absent; 1: present
+    practical_duration_hours FLOAT, -- total hours practiced
+    practical_distance FLOAT, -- kilometers
+    note NVARCHAR(255),
+    FOREIGN KEY (learner_id) REFERENCES LearningApplications(learning_id),
+    FOREIGN KEY (class_id) REFERENCES Classes(class_id),
+    FOREIGN KEY (class_time_id) REFERENCES ClassTime(class_time_id),
+    UNIQUE (learner_id, class_id, session_date, class_time_id) -- avoid duplicates
+);
+
 
