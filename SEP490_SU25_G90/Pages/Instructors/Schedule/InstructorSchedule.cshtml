@@ -9,167 +9,627 @@
     var weekdays = new[] { "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật" };
 }
 
-<h2 class="mb-4">@ViewData["Title"]</h2>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+            <i class="fas fa-calendar-alt me-2"></i>
+            @ViewData["Title"]
+        </h2>
+        <div class="badge bg-primary fs-6">
+            @weekRange
+        </div>
+    </div>
 
-<!-- Chọn năm và tuần -->
-<form method="get" class="mb-3 d-flex align-items-center gap-3">
-    <label for="yearSelector" class="form-label mb-0"><b>Chọn năm:</b></label>
-    <select id="yearSelector" name="Year" class="form-select w-auto me-3" onchange="this.form.submit()">
-        @{
-            int currentYear = DateTime.Now.Year;
-            for (int y = currentYear - 2; y <= currentYear + 1; y++)
-            {
-                <option value="@y" selected="@(Model.Year == y)">@y</option>
-            }
-        }
-    </select>
-
-    <label for="weekSelector" class="form-label mb-0"><b>Chọn tuần:</b></label>
-    <select id="weekSelector" name="StartOfWeekInput" class="form-select w-auto" onchange="this.form.submit()">
-        @{
-            int year = Model.Year ?? DateTime.Now.Year;
-            DateTime start = new DateTime(year, 1, 1);
-
-            // Tìm thứ 2 đầu tiên trong năm
-            while (start.DayOfWeek != DayOfWeek.Monday)
-            {
-                start = start.AddDays(1);
-            }
-
-            DateTime current = start;
-            DateTime endOfYear = new DateTime(year, 12, 31);
-
-            while (current <= endOfYear)
-            {
-                var monday = current;
-                var sunday = current.AddDays(6);
-                string value = monday.ToString("yyyy-MM-dd");
-                string text = $"{monday:dd/MM} - {sunday:dd/MM}";
-
-                bool selected;
-                if (Model.StartOfWeekInput.HasValue)
-                {
-                    selected = DateOnly.FromDateTime(monday) == Model.StartOfWeekInput.Value;
-                }
-                else
-                {
-                    selected = DateOnly.FromDateTime(monday) == Model.StartOfWeek;
-                }
-
-                <option value="@value" selected="@selected">@text</option>
-                current = current.AddDays(7);
-            }
-        }
-    </select>
-</form>
-
-<h5 class="mb-4 text-muted">@weekRange</h5>
-
-<!-- Lịch -->
-<div class="table-wrapper">
-    <table class="table table-bordered text-center">
-        <thead class="table-primary">
-            <tr>
-                <th style="width: 140px">Slot</th>
-                @for (int i = 0; i < Model.DatesOfWeek.Count; i++)
-                {
-                    <th>@weekdays[i]<br /><span class="text-muted">@Model.DatesOfWeek[i].ToString("dd/MM")</span></th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @for (int slot = 1; slot < 5; slot++)
-            {
-                <tr>
-                    <td>
-                        <b>Slot @slot</b><br />
+    <!-- Week and Year Selection Card -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">
+                <i class="fas fa-filter me-2"></i>
+                Chọn thời gian
+            </h5>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label for="yearSelector" class="form-label fw-bold">Năm học:</label>
+                    <select id="yearSelector" name="Year" class="form-select" onchange="this.form.submit()">
                         @{
-                            var slotInfo = Model.AllSlots.FirstOrDefault(s => s.SlotId == slot);
-                            if (!string.IsNullOrEmpty(slotInfo.StartTime))
+                            int currentYear = DateTime.Now.Year;
+                            for (int y = currentYear - 2; y <= currentYear + 1; y++)
                             {
-                                <span class="text-muted">@slotInfo.StartTime - @slotInfo.EndTime</span>
-                            }
-                            else
-                            {
-                                <span class="text-muted">--:-- - --:--</span>
+                                <option value="@y" selected="@(Model.Year == y)">Năm @y</option>
                             }
                         }
-                    </td>
-                    @for (int day = 0; day < 7; day++)
-                    {
-                        var date = Model.DatesOfWeek[day];
-                        var schedule = Model.ScheduleData.FirstOrDefault(x => x.ScheduleDate == date && x.SlotId == slot);
-                        <td>
-                            @if (schedule != null)
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="weekSelector" class="form-label fw-bold">Tuần học:</label>
+                    <select id="weekSelector" name="StartOfWeekInput" class="form-select" onchange="this.form.submit()">
+                        @{
+                            int year = Model.Year ?? DateTime.Now.Year;
+                            DateTime start = new DateTime(year, 1, 1);
+
+                            // Tìm thứ 2 đầu tiên trong năm
+                            while (start.DayOfWeek != DayOfWeek.Monday)
                             {
-                                <div><b>@schedule.ClassName</b></div>
+                                start = start.AddDays(1);
+                            }
+
+                            DateTime current = start;
+                            DateTime endOfYear = new DateTime(year, 12, 31);
+                            int weekNumber = 1;
+
+                            while (current <= endOfYear)
+                            {
+                                var monday = current;
+                                var sunday = current.AddDays(6);
+                                string value = monday.ToString("yyyy-MM-dd");
+                                string text = $"Tuần {weekNumber}: {monday:dd/MM} - {sunday:dd/MM}";
+
+                                bool selected;
+                                if (Model.StartOfWeekInput.HasValue)
+                                {
+                                    selected = DateOnly.FromDateTime(monday) == Model.StartOfWeekInput.Value;
+                                }
+                                else
+                                {
+                                    selected = DateOnly.FromDateTime(monday) == Model.StartOfWeek;
+                                }
+
+                                <option value="@value" selected="@selected">@text</option>
+                                current = current.AddDays(7);
+                                weekNumber++;
+                            }
+                        }
+                    </select>
+                </div>
+                 
+            </form>
+        </div>
+    </div>
+
+    <!-- Week Navigation Controls -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calendar-week me-2"></i>
+                        Điều hướng tuần học
+                    </h5>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="btn-group" role="group">
+                        <a href="@Model.GetPreviousWeekUrl()" class="btn btn-outline-light btn-sm">
+                            <i class="fas fa-chevron-left me-1"></i>
+                            Tuần trước
+                        </a>
+                        <a href="@Model.GetCurrentWeekUrl()" class="btn btn-light btn-sm">
+                            <i class="fas fa-home me-1"></i>
+                            Tuần này
+                        </a>
+                        <a href="@Model.GetNextWeekUrl()" class="btn btn-outline-light btn-sm">
+                            Tuần sau
+                            <i class="fas fa-chevron-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-end">
+                <!-- Hidden fields to preserve current week -->
+                <input type="hidden" name="Year" value="@Model.Year" />
+                <input type="hidden" name="StartOfWeekInput" value="@Model.StartOfWeekInput?.ToString("yyyy-MM-dd")" />
+                
+                <div class="col-md-4">
+                    <label for="classFilter" class="form-label fw-bold">
+                        <i class="fas fa-filter me-1"></i>
+                        Lọc theo lớp học:
+                    </label>
+                    <select id="classFilter" name="ClassFilter" class="form-select" onchange="this.form.submit()">
+                        <option value="">-- Tất cả lớp học --</option>
+                        @foreach (var classOption in Model.AvailableClassOptions)
+                        {
+                            <option value="@classOption.ClassId" selected="@(Model.ClassFilter == classOption.ClassId)">
+                                @classOption.ClassName
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    @if (Model.ClassFilter.HasValue)
+                    {
+                        <a href="/Instructor/Schedule?Year=@Model.Year&StartOfWeekInput=@Model.StartOfWeekInput?.ToString("yyyy-MM-dd")" 
+                           class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-1"></i>
+                            Xóa bộ lọc
+                        </a>
+                    }
+                </div>
+                <div class="col-md-5">
+                    <small class="text-muted">
+                        @if (Model.ScheduleData.Any())
+                        {
+                            @if (Model.ClassFilter.HasValue)
+                            {
+                                <span><i class="fas fa-info-circle me-1"></i>Hiển thị lịch học của lớp: <strong>@Model.ScheduleData.FirstOrDefault()?.ClassName</strong></span>
                             }
                             else
                             {
-                                <span>-</span>
+                                <span><i class="fas fa-info-circle me-1"></i>Hiển thị tất cả @Model.ScheduleData.GroupBy(s => s.ClassId).Count() lớp học của bạn</span>
                             }
-                        </td>
-                    }
-                </tr>
-            }
+                        }
+                        else
+                        {
+                            <span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Không có lịch học trong tuần này</span>
+                        }
+                    </small>
+                </div>
+            </form>
+        </div>
+    </div>
 
-        </tbody>
-    </table>
+    <!-- Schedule Table Card -->
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-table me-2"></i>
+                Thời khóa biểu tuần @weekRange
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-bordered mb-0 schedule-table">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="text-center slot-column">
+                                <i class="fas fa-clock me-2"></i>Khung giờ
+                            </th>
+                            @for (int i = 0; i < Model.DatesOfWeek.Count; i++)
+                            {
+                                var isToday = Model.DatesOfWeek[i] == DateOnly.FromDateTime(DateTime.Today);
+                                <th class="text-center @(isToday ? "bg-info text-white" : "")">
+                                    <div class="fw-bold">@weekdays[i]</div>
+                                    <small>@Model.DatesOfWeek[i].ToString("dd/MM/yyyy")</small>
+                                    @if (isToday)
+                                    {
+                                        <div class="badge bg-warning text-dark mt-1">Hôm nay</div>
+                                    }
+                                </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var slot in Model.AllSlots)
+                        {
+                            <tr>
+                                <td class="slot-info">
+                                    <div class="d-flex flex-column align-items-center">
+                                        <span class="badge bg-secondary mb-2">Slot @slot.SlotId</span>
+                                        @if (!string.IsNullOrEmpty(slot.StartTime))
+                                        {
+                                            <div class="text-primary fw-bold">
+                                                <i class="fas fa-play-circle me-1"></i>@slot.StartTime
+                                            </div>
+                                            <div class="text-danger fw-bold">
+                                                <i class="fas fa-stop-circle me-1"></i>@slot.EndTime
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Chưa cấu hình</span>
+                                        }
+                                    </div>
+                                </td>
+                                @for (int day = 0; day < 7; day++)
+                                {
+                                    var date = Model.DatesOfWeek[day];
+                                    var schedule = Model.ScheduleData.FirstOrDefault(x => x.ScheduleDate == date && x.SlotId == slot.SlotId);
+                                    var isToday = date == DateOnly.FromDateTime(DateTime.Today);
+                                    
+                                    <td class="schedule-cell @(isToday ? "today-cell" : "")">
+                                        @if (schedule != null)
+                                        {
+                                            <div class="class-block-enhanced">
+                                                <!-- Class Header with Click Options -->
+                                                <div class="class-header">
+                                                    <div class="class-basic-info mb-2">
+                                                        <div class="class-name fw-bold">
+                                                            <i class="fas fa-chalkboard-teacher me-1"></i>
+                                                            @schedule.ClassName
+                                                        </div>
+                                                        <div class="course-name small">
+                                                            <i class="fas fa-graduation-cap me-1"></i>
+                                                            @schedule.CourseName
+                                                        </div>
+                                                        <div class="class-time small">
+                                                            <i class="fas fa-clock me-1"></i>
+                                                            @schedule.StartTime - @schedule.EndTime
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <!-- Action Buttons -->
+                                                    <div class="class-actions mb-2">
+                                                        <div class="btn-group btn-group-sm w-100" role="group">
+                                                            <a href="/Instructors/Classes/ClassDetails?id=@schedule.ClassId" 
+                                                               class="btn btn-outline-light btn-sm flex-fill"
+                                                               data-bs-toggle="tooltip"
+                                                               title="Xem chi tiết lớp học">
+                                                                <i class="fas fa-info-circle me-1"></i>
+                                                                Chi tiết
+                                                            </a>
+                                                            <a href="/Instructors/RollCall/Attendance?classId=@schedule.ClassId&date=@schedule.ScheduleDate.ToString("yyyy-MM-dd")&slotId=@schedule.SlotId&classTimeId=@schedule.ClassTimeId@(Model.Year.HasValue ? $"&year={Model.Year.Value}" : "")@(!string.IsNullOrEmpty(Model.StartOfWeekInput?.ToString("yyyy-MM-dd")) ? $"&startOfWeekInput={Model.StartOfWeekInput?.ToString("yyyy-MM-dd")}" : "")"
+                                                               class="btn btn-outline-light btn-sm flex-fill"
+                                                               data-bs-toggle="tooltip"
+                                                               title="Điểm danh học viên">
+                                                                <i class="fas fa-clipboard-check me-1"></i>
+                                                                Điểm danh
+                                                            </a>
+                                                            @if (schedule.StudentAttendances.Any())
+                                                            {
+                                                                <button type="button" 
+                                                                        class="btn btn-outline-info btn-sm flex-fill attendance-toggle"
+                                                                        data-bs-toggle="collapse"
+                                                                        data-bs-target="#attendance-@schedule.ClassId-@schedule.ScheduleDate.ToString("yyyyMMdd")-@schedule.SlotId"
+                                                                        title="Xem lịch sử điểm danh">
+                                                                    <i class="fas fa-history me-1"></i>
+                                                                    Lịch sử
+                                                                </button>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Attendance Summary -->
+                                                @if (schedule.TotalStudents > 0)
+                                                {
+                                                    <div class="attendance-summary mb-2">
+                                                        <div class="attendance-stats">
+                                                            <div class="row g-1 text-center">
+                                                                <div class="col-4">
+                                                                    <div class="stat-box bg-info">
+                                                                        <div class="stat-number">@schedule.TotalStudents</div>
+                                                                        <div class="stat-label">Tổng</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <div class="stat-box bg-success">
+                                                                        <div class="stat-number">@schedule.PresentStudents</div>
+                                                                        <div class="stat-label">Có mặt</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <div class="stat-box bg-warning">
+                                                                        <div class="stat-number">@schedule.AbsentStudents</div>
+                                                                        <div class="stat-label">Vắng</div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            @if (schedule.StudentAttendances.Any())
+                                                            {
+                                                                <div class="attendance-rate mt-2">
+                                                                    <div class="progress" style="height: 4px;">
+                                                                        <div class="progress-bar bg-success" 
+                                                                             style="width: @schedule.AttendanceRate%"
+                                                                             title="Tỷ lệ điểm danh: @schedule.AttendanceRate.ToString("F1")%"></div>
+                                                                    </div>
+                                                                    <small class="text-light">@schedule.AttendanceRate.ToString("F1")% điểm danh</small>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                }
+
+                                                <!-- Detailed Attendance List (Collapsible) -->
+                                                @if (schedule.StudentAttendances.Any())
+                                                {
+                                                    <div class="collapse attendance-details" 
+                                                         id="attendance-@schedule.ClassId-@schedule.ScheduleDate.ToString("yyyyMMdd")-@schedule.SlotId">
+                                                        <div class="card card-body bg-dark text-light p-2">
+                                                            <h6 class="card-title mb-2">
+                                                                <i class="fas fa-list-check me-1"></i>
+                                                                Chi tiết điểm danh (@schedule.ScheduleDate.ToString("dd/MM"))
+                                                            </h6>
+                                                            <div class="student-list">
+                                                                @foreach (var student in schedule.StudentAttendances)
+                                                                {
+                                                                    <div class="student-attendance-row mb-1">
+                                                                        <div class="d-flex justify-content-between align-items-center">
+                                                                            <div class="student-info">
+                                                                                <i class="fas @(student.AttendanceStatus == true ? "fa-check-circle text-success" : student.AttendanceStatus == false ? "fa-times-circle text-danger" : "fa-question-circle text-warning") me-1"></i>
+                                                                                <span class="student-name">@student.StudentName</span>
+                                                                            </div>
+                                                                            <div class="attendance-details-info">
+                                                                                @if (student.PracticalDurationHours.HasValue || student.PracticalDistance.HasValue)
+                                                                                {
+                                                                                    <small class="text-muted">
+                                                                                        @if (student.PracticalDurationHours.HasValue)
+                                                                                        {
+                                                                                            <span>@student.PracticalDurationHours.Value.ToString("F1")h</span>
+                                                                                        }
+                                                                                        @if (student.PracticalDistance.HasValue)
+                                                                                        {
+                                                                                            <span>@student.PracticalDistance.Value.ToString("F1")km</span>
+                                                                                        }
+                                                                                    </small>
+                                                                                }
+                                                                            </div>
+                                                                        </div>
+                                                                        @if (!string.IsNullOrEmpty(student.Note))
+                                                                        {
+                                                                            <div class="student-note">
+                                                                                <small class="text-muted fst-italic">
+                                                                                    <i class="fas fa-sticky-note me-1"></i>
+                                                                                    @student.Note
+                                                                                </small>
+                                                                            </div>
+                                                                        }
+                                                                    </div>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="empty-cell">
+                                                <span class="text-muted">-</span>
+                                            </div>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+}
 
 @section Styles {
     <style>
-        table th, table td {
+        /* Card styles */
+        .card {
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            border-bottom: 2px solid rgba(0, 0, 0, 0.125);
+        }
+
+        /* Table styles */
+        .schedule-table {
+            min-width: 100%;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
             vertical-align: middle;
             text-align: center;
+            position: relative;
         }
 
-        select.form-select {
-            padding-right: 2rem;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23333'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.75rem center;
-            background-size: 10px 6px;
-        }
-
-        select.form-select {
-            min-width: 140px;
-            max-width: 200px;
-        }
-
-        th {
-            padding: 12px;
-            font-weight: 600;
-        }
-
-        td {
-            padding: 8px;
-        }
-
-            td span.text-muted {
-                display: block;
-                font-size: 0.85rem;
-                color: #666;
-            }
-
-        .table th,
-        .table td {
-            border: 1px solid #dee2e6;
-        }
-
-        .table-primary {
-            background-color: #dbeeff;
-        }
-
-        .table tbody tr:hover {
+        .slot-column {
+            width: 150px;
             background-color: #f8f9fa;
         }
 
-        .table-wrapper {
-            overflow-x: auto;
+        .slot-info {
+            background-color: #f8f9fa;
+            font-weight: 500;
+        }
+
+        /* Schedule cell styles */
+        .schedule-cell {
+            min-height: 80px;
+            padding: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .schedule-cell:hover {
+            background-color: #f0f8ff;
+        }
+
+        .today-cell {
+            background-color: #e8f4fd !important;
+        }
+
+        .empty-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60px;
+        }
+
+        /* Class block styles */
+        .class-block {
+            animation: fadeIn 0.5s ease;
+        }
+
+        .class-block a {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .class-block a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        .class-name {
+            font-size: 0.95rem;
+        }
+
+        .course-name {
+            opacity: 0.85;
+            font-style: italic;
+        }
+
+        .class-time {
+            opacity: 0.9;
+        }
+
+        /* Enhanced class block with attendance info */
+        .class-block-enhanced {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            padding: 12px;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .class-block-enhanced:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .class-header .class-basic-info {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .class-actions .btn-group {
+            gap: 2px;
+        }
+
+        .class-actions .btn {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+        }
+
+        .class-actions .btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Attendance summary styles */
+        .attendance-summary {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 8px;
+        }
+
+        .stat-box {
+            padding: 6px 4px;
+            border-radius: 4px;
+            text-align: center;
+            color: white;
+            font-size: 0.75rem;
+        }
+
+        .stat-box.bg-info {
+            background-color: #17a2b8 !important;
+        }
+
+        .stat-box.bg-success {
+            background-color: #28a745 !important;
+        }
+
+        .stat-box.bg-warning {
+            background-color: #ffc107 !important;
+            color: #212529 !important;
+        }
+
+        .stat-number {
+            font-weight: bold;
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.6rem;
+            opacity: 0.9;
+            margin-top: 2px;
+        }
+
+        .attendance-rate .progress {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Attendance details styles */
+        .attendance-details .card {
+            border: none;
+            margin-top: 8px;
+        }
+
+        .attendance-details .card-body {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+        }
+
+        .student-attendance-row {
+            padding: 6px;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .student-attendance-row:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .student-info .student-name {
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .attendance-details-info {
+            font-size: 0.75rem;
+        }
+
+        .student-note {
+            margin-top: 4px;
+            padding-top: 4px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Animation */
+
+        /* Badge styles */
+        .badge {
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+        }
+
+        /* Today highlight */
+        .bg-info.text-white {
+            background-color: #17a2b8 !important;
+        }
+
+        /* Form select styles */
+        .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        /* Alert styles */
+        .alert-info {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
         }
     </style>
 }

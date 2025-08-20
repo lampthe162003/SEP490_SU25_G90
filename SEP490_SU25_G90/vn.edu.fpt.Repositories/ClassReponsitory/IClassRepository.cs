@@ -41,5 +41,19 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
         /// <param name="classId">ID của lớp học</param>
         /// <returns>True nếu tồn tại</returns>
         Task<bool> ClassExistsAsync(int classId);
+
+        /// <summary>
+        /// Lấy thông tin lớp học theo ID
+        /// </summary>
+        /// <param name="classId">ID của lớp học</param>
+        /// <returns>Thông tin lớp học hoặc null</returns>
+        Task<Class?> GetClassByIdAsync(int classId);
+
+        /// <summary>
+        /// Lấy danh sách thành viên trong lớp
+        /// </summary>
+        /// <param name="classId">ID của lớp học</param>
+        /// <returns>Danh sách thành viên lớp học</returns>
+        Task<List<ClassMember>> GetClassMembersAsync(int classId);
     }
 }
