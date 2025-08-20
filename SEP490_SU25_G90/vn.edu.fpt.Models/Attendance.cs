@@ -13,6 +13,8 @@ public partial class Attendance
 
     public DateOnly SessionDate { get; set; }
 
+    public int? ClassTimeId { get; set; }
+
     public bool? AttendanceStatus { get; set; }
 
     public double? PracticalDurationHours { get; set; }
@@ -22,6 +24,8 @@ public partial class Attendance
     public string? Note { get; set; }
 
     public virtual Class Class { get; set; } = null!;
+
+    public virtual ClassTime? ClassTime { get; set; }
 
     public virtual LearningApplication Learner { get; set; } = null!;
 }

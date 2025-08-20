@@ -35,6 +35,8 @@ public partial class Sep490Su25G90DbContext : DbContext
 
     public virtual DbSet<ClassSchedule> ClassSchedules { get; set; }
 
+    public virtual DbSet<ClassTime> ClassTimes { get; set; }
+
     public virtual DbSet<Course> Courses { get; set; }
 
     public virtual DbSet<HealthCertificate> HealthCertificates { get; set; }
@@ -106,11 +108,12 @@ public partial class Sep490Su25G90DbContext : DbContext
 
             entity.ToTable("Attendance");
 
-            entity.HasIndex(e => new { e.LearnerId, e.ClassId, e.SessionDate }, "UQ__Attendan__824E7FF756A9A498").IsUnique();
+            entity.HasIndex(e => new { e.LearnerId, e.ClassId, e.SessionDate, e.ClassTimeId }, "UQ__Attendan__824E7FF756A9A498").IsUnique();
 
             entity.Property(e => e.AttendanceId).HasColumnName("attendance_id");
             entity.Property(e => e.AttendanceStatus).HasColumnName("attendance_status");
             entity.Property(e => e.ClassId).HasColumnName("class_id");
+            entity.Property(e => e.ClassTimeId).HasColumnName("class_time_id");
             entity.Property(e => e.LearnerId).HasColumnName("learner_id");
             entity.Property(e => e.Note)
                 .HasMaxLength(255)
@@ -123,6 +126,10 @@ public partial class Sep490Su25G90DbContext : DbContext
                 .HasForeignKey(d => d.ClassId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Attendanc__class__6383C8BA");
+
+            entity.HasOne(d => d.ClassTime).WithMany(p => p.Attendances)
+                .HasForeignKey(d => d.ClassTimeId)
+                .HasConstraintName("FK__Attendanc__class_time");
 
             entity.HasOne(d => d.Learner).WithMany(p => p.Attendances)
                 .HasForeignKey(d => d.LearnerId)
@@ -274,6 +281,30 @@ public partial class Sep490Su25G90DbContext : DbContext
             entity.HasOne(d => d.Slot).WithMany(p => p.ClassSchedules)
                 .HasForeignKey(d => d.SlotId)
                 .HasConstraintName("FK__ClassSche__slot___797309D9");
+        });
+
+        modelBuilder.Entity<ClassTime>(entity =>
+        {
+            entity.HasKey(e => e.ClassTimeId).HasName("PK__ClassTime");
+
+            entity.ToTable("ClassTime");
+
+            entity.HasIndex(e => new { e.ClassId, e.Thu, e.SlotId }, "UQ_ClassTime").IsUnique();
+
+            entity.Property(e => e.ClassTimeId).HasColumnName("class_time_id");
+            entity.Property(e => e.ClassId).HasColumnName("class_id");
+            entity.Property(e => e.Thu).HasColumnName("thu");
+            entity.Property(e => e.SlotId).HasColumnName("slot_id");
+
+            entity.HasOne(d => d.Class).WithMany(p => p.ClassTimes)
+                .HasForeignKey(d => d.ClassId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__ClassTime__class");
+
+            entity.HasOne(d => d.Slot).WithMany(p => p.ClassTimes)
+                .HasForeignKey(d => d.SlotId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__ClassTime__slot");
         });
 
         modelBuilder.Entity<Course>(entity =>

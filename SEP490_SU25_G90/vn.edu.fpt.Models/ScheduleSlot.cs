@@ -14,4 +14,6 @@ public partial class ScheduleSlot
     public virtual ICollection<CarAssignment> CarAssignments { get; set; } = new List<CarAssignment>();
 
     public virtual ICollection<ClassSchedule> ClassSchedules { get; set; } = new List<ClassSchedule>();
+
+    public virtual ICollection<ClassTime> ClassTimes { get; set; } = new List<ClassTime>();
 }
