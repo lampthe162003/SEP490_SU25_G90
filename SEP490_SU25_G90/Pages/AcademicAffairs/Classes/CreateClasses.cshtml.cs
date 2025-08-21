@@ -2,37 +2,37 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
+using SEP490_SU25_G90.vn.edu.fpt.Services.ClassService;
+using SEP490_SU25_G90.vn.edu.fpt.Services.CourseService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.ScheduleSlotService;
-using SEP490_SU25_G90.vn.edu.fpt.Services.ClassTimeService;
 
 namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
 {
     [Authorize(Roles = "academic affairs")]
     public class CreateClassesModel : PageModel
     {
-        private readonly Sep490Su25G90DbContext _context;
         private readonly IInstructorService _instructorService;
         private readonly ILearningApplicationService _learningService;
         private readonly IScheduleSlotService _scheduleSlotService;
-        private readonly IClassTimeService _classTimeService;
+        private readonly ICourseService _courseService;
+        private readonly IClassService _classService;
 
         public CreateClassesModel(
-            Sep490Su25G90DbContext context,
             IInstructorService instructorService,
             ILearningApplicationService learningService,
             IScheduleSlotService scheduleSlotService,
-            IClassTimeService classTimeService)
+            ICourseService courseService,
+            IClassService classService)
         {
-            _context = context;
             _instructorService = instructorService;
             _learningService = learningService;
             _scheduleSlotService = scheduleSlotService;
-            _classTimeService = classTimeService;
+            _courseService = courseService;
+            _classService = classService;
         }
 
         [BindProperty]
@@ -55,17 +55,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
         public List<SelectListItem> Instructors { get; set; } = new();
         public List<ScheduleSlot> ScheduleSlots { get; set; } = new();
 
-        public List<WaitingLearnerVm> WaitingLearners { get; set; } = new();
-
-        public class WaitingLearnerVm
-        {
-            public int LearningId { get; set; }
-            public string FullName { get; set; } = string.Empty;
-            public string Cccd { get; set; } = string.Empty;
-            public string Status { get; set; } = "Chưa học";
-            public string ProfileImageUrl { get; set; } = "https://cdn-icons-png.flaticon.com/512/1144/1144760.png";
-            public bool Selected { get; set; }
-        }
+        public List<WaitingLearnerResponse> WaitingLearners { get; set; } = new();
 
         [BindProperty(SupportsGet = true)]
         public int? CourseId { get; set; }
@@ -73,7 +63,6 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
         public async Task OnGetAsync()
         {
             await LoadDropdownsAsync();
-            await LoadWaitingLearnersAsync();
             await LoadScheduleSlotsAsync();
 
             if (CourseId.HasValue)
@@ -90,18 +79,38 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
                 }
             }
 
-            // Luôn generate tên lớp khi vào trang
+            // Load waiting learners and generate class name based on selected course
             if (SelectedCourseId.HasValue)
             {
-                ClassName = await GenerateClassNameInternalAsync(SelectedCourseId.Value);
+                await LoadWaitingLearnersByCourseAsync(SelectedCourseId.Value);
+                ClassName = await _classService.GenerateClassNameAsync(SelectedCourseId.Value);
+            }
+            else
+            {
+                await LoadWaitingLearnersAsync();
             }
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
+            // Load data for page reload if needed
             await LoadDropdownsAsync();
-            await LoadWaitingLearnersAsync();
             await LoadScheduleSlotsAsync();
+
+            // If course changed, reload the page with new course data
+            if (Request.Form["CourseChanged"].ToString() == "true")
+            {
+                if (SelectedCourseId.HasValue)
+                {
+                    await LoadWaitingLearnersByCourseAsync(SelectedCourseId.Value);
+                    ClassName = await _classService.GenerateClassNameAsync(SelectedCourseId.Value);
+                }
+                else
+                {
+                    await LoadWaitingLearnersAsync();
+                }
+                return Page();
+            }
 
             if (!SelectedCourseId.HasValue)
             {
@@ -110,19 +119,22 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
 
             if (!ModelState.IsValid)
             {
+                if (SelectedCourseId.HasValue)
+                {
+                    await LoadWaitingLearnersByCourseAsync(SelectedCourseId.Value);
+                    ClassName = await _classService.GenerateClassNameAsync(SelectedCourseId.Value);
+                }
+                else
+                {
+                    await LoadWaitingLearnersAsync();
+                }
                 return Page();
             }
 
-            using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 // Bỏ qua input từ client, luôn generate tên lớp theo quy tắc để chống chỉnh sửa
-                if (!SelectedCourseId.HasValue)
-                {
-                    ModelState.AddModelError(nameof(SelectedCourseId), "Vui lòng chọn khóa học");
-                    return Page();
-                }
-                ClassName = await GenerateClassNameInternalAsync(SelectedCourseId.Value);
+                ClassName = await _classService.GenerateClassNameAsync(SelectedCourseId.Value);
 
                 var newClass = new vn.edu.fpt.Models.Class
                 {
@@ -130,111 +142,68 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
                     InstructorId = InstructorId,
                     CourseId = SelectedCourseId
                 };
-                _context.Classes.Add(newClass);
-                await _context.SaveChangesAsync();
 
-                // Limit selected learners by MaxStudents
-                var learnerIds = SelectedLearnerIds.Take(Math.Max(0, MaxStudents)).ToList();
-                foreach (var learningId in learnerIds)
-                {
-                    _context.ClassMembers.Add(new ClassMember
-                    {
-                        ClassId = newClass.ClassId,
-                        LearnerId = learningId
-                    });
-
-                    // Tự động cập nhật trạng thái học thành "Đang học" nếu có giảng viên
-                    if (InstructorId.HasValue)
-                    {
-                        var learningApp = await _context.LearningApplications
-                            .FirstOrDefaultAsync(la => la.LearningId == learningId);
-                        
-                        if (learningApp != null && learningApp.LearningStatus != 1)
-                        {
-                            learningApp.LearningStatus = 1; // Đang học
-                            Console.WriteLine($" [DEBUG] Cập nhật trạng thái học viên {learningId} thành 'Đang học'");
-                        }
-                    }
-                }
-                await _context.SaveChangesAsync();
-
-                // Save class schedules
-                if (SelectedSchedules != null && SelectedSchedules.Any())
-                {
-                    var schedules = new List<(byte Thu, int SlotId)>();
-                    foreach (var schedule in SelectedSchedules)
-                    {
-                        var parts = schedule.Split('-');
-                        if (parts.Length == 2 && byte.TryParse(parts[0], out var thu) && int.TryParse(parts[1], out var slotId))
-                        {
-                            schedules.Add((thu, slotId));
-                        }
-                    }
-                    if (schedules.Any())
-                    {
-                        await _classTimeService.SaveClassTimesAsync(newClass.ClassId, schedules);
-                    }
-                }
-
-                await transaction.CommitAsync();
+                var classId = await _classService.CreateClassAsync(newClass, SelectedLearnerIds, SelectedSchedules);
 
                 TempData["SuccessMessage"] = "Tạo lớp học thành công";
-                return RedirectToPage("/AcademicAffairs/Classes/ClassDetails", new { id = newClass.ClassId });
+                return RedirectToPage("/AcademicAffairs/Classes/ClassDetails", new { id = classId });
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
                 ModelState.AddModelError(string.Empty, "Có lỗi xảy ra khi tạo lớp: " + ex.Message);
+                if (SelectedCourseId.HasValue)
+                {
+                    await LoadWaitingLearnersByCourseAsync(SelectedCourseId.Value);
+                    ClassName = await _classService.GenerateClassNameAsync(SelectedCourseId.Value);
+                }
+                else
+                {
+                    await LoadWaitingLearnersAsync();
+                }
                 return Page();
             }
         }
 
-        public async Task<JsonResult> OnGetGenerateNameAsync(int courseId)
+        // Remove AJAX endpoints - using MVC pattern with page reload instead
+
+        private async Task LoadDropdownsAsync()
         {
-            var name = await GenerateClassNameInternalAsync(courseId);
-            return new JsonResult(new { name });
-        }
+            // Load courses with student count using CourseService
+            var coursesWithStudentCount = await _courseService.GetCoursesWithStudentCountAsync();
 
-        private async Task<string> GenerateClassNameInternalAsync(int courseId)
-        {
-            var course = await _context.Courses.FirstOrDefaultAsync(c => c.CourseId == courseId);
-            var prefix = course?.CourseName ?? ($"KH-{courseId}");
-
-            var existingNames = await _context.Classes
-                .Where(c => c.CourseId == courseId && c.ClassName != null)
-                .Select(c => c.ClassName!)
-                .ToListAsync();
-
-            var maxIndex = 0;
-            foreach (var name in existingNames)
-            {
-                var marker = "-L";
-                var idx = name.LastIndexOf(marker, StringComparison.OrdinalIgnoreCase);
-                if (idx >= 0 && idx + marker.Length < name.Length)
+            Courses = coursesWithStudentCount
+                .Select(c => new SelectListItem
                 {
-                    var numStr = name[(idx + marker.Length)..];
-                    if (int.TryParse(numStr, out var n) && n > maxIndex)
+                    Value = c.CourseId.ToString(),
+                    Text = c.DisplayText
+                })
+                .ToList();
+            var instructorDtos = new List<InstructorListInformationResponse>();
+            if (SelectedCourseId.HasValue)
+            {
+                // Get course to get its license type from the courses list
+                var selectedCourse = coursesWithStudentCount.FirstOrDefault(c => c.CourseId == SelectedCourseId.Value);
+                if (selectedCourse?.LicenceTypeId != null)
+                {
+                    // Get instructors by license type
+                    var instructorsByLicense = _instructorService.GetAllInstructors(licenceTypeId: selectedCourse.LicenceTypeId);
+                    if (instructorsByLicense != null)
                     {
-                        maxIndex = n;
+                        instructorDtos.AddRange(instructorsByLicense);
                     }
                 }
             }
 
-            return $"{prefix}-L{maxIndex + 1}";
-        }
-
-        private async Task LoadDropdownsAsync()
-        {
-            Courses = await _context.Courses
-                .OrderByDescending(c => c.CourseId)
-                .Select(c => new SelectListItem
+            if (!instructorDtos.Any())
+            {
+                // Fallback to all instructors if no specific ones found
+                var allInstructors = _instructorService.GetAllInstructors();
+                if (allInstructors != null)
                 {
-                    Value = c.CourseId.ToString(),
-                    Text = c.CourseName ?? ("KH-" + c.CourseId)
-                })
-                .ToListAsync();
+                    instructorDtos.AddRange(allInstructors);
+                }
+            }
 
-            var instructorDtos = _instructorService.GetAllInstructors();
             Instructors = instructorDtos
                 .Select(i => new SelectListItem
                 {
@@ -245,24 +214,12 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
 
         private async Task LoadWaitingLearnersAsync()
         {
-            // Learners who are not assigned to any class yet or status not completed
-            var learners = await _learningService.GetAllAsync();
+            WaitingLearners = await _learningService.GetWaitingLearnersAsync();
+        }
 
-            var waiting = learners
-                .Where(x => x.LearningStatus != 4) // exclude completed
-                .Select(x => new WaitingLearnerVm
-                {
-                    LearningId = x.LearningId,
-                    FullName = x.LearnerFullName ?? "",
-                    Cccd = x.LearnerCccdNumber ?? "",
-                    Status = x.LearningStatusName ?? "",
-                    ProfileImageUrl = string.IsNullOrWhiteSpace(x.LearnerCccdImageUrl) ?
-                        "https://cdn-icons-png.flaticon.com/512/1144/1144760.png" :
-                        x.LearnerCccdImageUrl.Split('|').FirstOrDefault() ?? "https://cdn-icons-png.flaticon.com/512/1144/1144760.png"
-                })
-                .ToList();
-
-            WaitingLearners = waiting;
+        private async Task LoadWaitingLearnersByCourseAsync(int courseId)
+        {
+            WaitingLearners = await _learningService.GetWaitingLearnersByCourseAsync(courseId);
         }
 
         private async Task LoadScheduleSlotsAsync()
@@ -270,5 +227,25 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
             var slots = await _scheduleSlotService.GetAllSlots();
             ScheduleSlots = slots.OrderBy(s => s.StartTime).ToList();
         }
+
+
+
+        /// <summary>
+        /// Lấy class CSS cho badge trạng thái học
+        /// </summary>
+        public static string GetStatusBadgeClass(string? status)
+        {
+            return status switch
+            {
+                "Đang học" => "bg-success",
+                "Bảo lưu" => "bg-warning text-dark",
+                "Học lại" => "bg-danger",
+                "Hoàn thành" => "bg-primary",
+                "Chưa bắt đầu" => "bg-secondary",
+                _ => "bg-light text-dark"
+            };
+        }
+
+        // AJAX endpoints removed - using MVC pattern with page reload instead
     }
 }

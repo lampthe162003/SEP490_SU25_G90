@@ -15,6 +15,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
         Task<bool> UpdateStatusAsync(int learningId, byte newStatus);
         Task UpdateAsync(LearningApplication request);
         Task<LearningApplication> GetByIdAsync(int id);
+        Task<List<WaitingLearnerResponse>> GetWaitingLearnersAsync();
+        Task<List<WaitingLearnerResponse>> GetWaitingLearnersByCourseAsync(int courseId);
 
     }
 }

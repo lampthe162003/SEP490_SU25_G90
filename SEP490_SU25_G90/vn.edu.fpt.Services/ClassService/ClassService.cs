@@ -94,5 +94,21 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.ClassService
 
             return await _classRepository.GetClassMembersAsync(classId);
         }
+
+        /// <summary>
+        /// Tạo tên lớp tự động dựa trên khóa học
+        /// </summary>
+        public async Task<string> GenerateClassNameAsync(int courseId)
+        {
+            return await _classRepository.GenerateClassNameAsync(courseId);
+        }
+
+        /// <summary>
+        /// Tạo lớp học mới
+        /// </summary>
+        public async Task<int> CreateClassAsync(Class newClass, List<int> selectedLearnerIds, List<string> selectedSchedules)
+        {
+            return await _classRepository.CreateClassAsync(newClass, selectedLearnerIds, selectedSchedules);
+        }
     }
 }

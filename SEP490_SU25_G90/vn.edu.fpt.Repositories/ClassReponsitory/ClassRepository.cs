@@ -239,5 +239,109 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
                 _ => "Không xác định"
             };
         }
+
+        /// <summary>
+        /// Tạo tên lớp tự động dựa trên khóa học
+        /// </summary>
+        public async Task<string> GenerateClassNameAsync(int courseId)
+        {
+            var course = await _context.Courses.FirstOrDefaultAsync(c => c.CourseId == courseId);
+            var prefix = course?.CourseName ?? ($"KH-{courseId}");
+
+            var existingNames = await _context.Classes
+                .Where(c => c.CourseId == courseId && c.ClassName != null)
+                .Select(c => c.ClassName!)
+                .ToListAsync();
+
+            var maxIndex = 0;
+            foreach (var name in existingNames)
+            {
+                var marker = "-L";
+                var idx = name.LastIndexOf(marker, StringComparison.OrdinalIgnoreCase);
+                if (idx >= 0 && idx + marker.Length < name.Length)
+                {
+                    var numStr = name[(idx + marker.Length)..];
+                    if (int.TryParse(numStr, out var n) && n > maxIndex)
+                    {
+                        maxIndex = n;
+                    }
+                }
+            }
+
+            return $"{prefix}-L{maxIndex + 1}";
+        }
+
+        /// <summary>
+        /// Tạo lớp học mới
+        /// </summary>
+        public async Task<int> CreateClassAsync(Class newClass, List<int> selectedLearnerIds, List<string> selectedSchedules)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                _context.Classes.Add(newClass);
+                await _context.SaveChangesAsync();
+
+                // Limit selected learners by MaxStudents
+                const int maxStudents = 5;
+                var learnerIds = selectedLearnerIds.Take(Math.Max(0, maxStudents)).ToList();
+                foreach (var learningId in learnerIds)
+                {
+                    _context.ClassMembers.Add(new ClassMember
+                    {
+                        ClassId = newClass.ClassId,
+                        LearnerId = learningId
+                    });
+
+                    // Tự động cập nhật trạng thái học thành "Đang học" nếu có giảng viên
+                    if (newClass.InstructorId.HasValue)
+                    {
+                        var learningApp = await _context.LearningApplications
+                            .FirstOrDefaultAsync(la => la.LearningId == learningId);
+
+                        if (learningApp != null && learningApp.LearningStatus != 1)
+                        {
+                            learningApp.LearningStatus = 1; // Đang học
+                        }
+                    }
+                }
+                await _context.SaveChangesAsync();
+
+                // Save class schedules
+                if (selectedSchedules != null && selectedSchedules.Any())
+                {
+                    var schedules = new List<(byte Thu, int SlotId)>();
+                    foreach (var schedule in selectedSchedules)
+                    {
+                        var parts = schedule.Split('-');
+                        if (parts.Length == 2 && byte.TryParse(parts[0], out var thu) && int.TryParse(parts[1], out var slotId))
+                        {
+                            schedules.Add((thu, slotId));
+                        }
+                    }
+                    if (schedules.Any())
+                    {
+                        foreach (var (thu, slotId) in schedules)
+                        {
+                            _context.ClassTimes.Add(new ClassTime
+                            {
+                                ClassId = newClass.ClassId,
+                                Thu = thu,
+                                SlotId = slotId
+                            });
+                        }
+                        await _context.SaveChangesAsync();
+                    }
+                }
+
+                await transaction.CommitAsync();
+                return newClass.ClassId;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
     }
 }

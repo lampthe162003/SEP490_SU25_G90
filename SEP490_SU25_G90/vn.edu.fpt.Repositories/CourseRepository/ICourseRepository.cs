@@ -21,6 +21,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.CourseRepository
         Task UpdateAsync(Course entity);
         Task DeleteAsync(int id);
         Task<IEnumerable<LicenceType>> GetAllLicenceTypesAsync();
+        Task<IEnumerable<CourseWithStudentCountResponse>> GetCoursesWithStudentCountAsync();
+        Task<CourseInfoResponse?> GetCourseInfoAsync(int courseId);
     }
 }
 
