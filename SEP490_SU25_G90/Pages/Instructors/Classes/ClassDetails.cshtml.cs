@@ -151,7 +151,7 @@ namespace SEP490_SU25_G90.Pages.Instructors.Classes
         /// </summary>
         public string CreateLearnerUrl(int learnerId)
         {
-            return $"/Instructors/LearningProfile/LearnerDetail?id={learnerId}";
+            return $"/Instructors/LearnApplication/Detail/id={learnerId}";
         }
 
         /// <summary>

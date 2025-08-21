@@ -476,6 +476,22 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
             return true;
         }
 
+        public async Task UpdateAsync(LearningApplication request)
+        {
+            _context.LearningApplications.Update(request);
+            await _context.SaveChangesAsync();
+        }
 
+        public Task<LearningApplication> GetByIdAsync(int id)
+        {
+            return _context.LearningApplications
+                .Include(la => la.Attendances)
+                .Include(la => la.LicenceType)
+                .Include(la => la.ClassMembers)
+                .Include(la => la.Learner)
+                .Include(la => la.TestApplications)
+                .Where(la => la.LearningId == id)
+                .FirstOrDefaultAsync();
+        }
     }
 }

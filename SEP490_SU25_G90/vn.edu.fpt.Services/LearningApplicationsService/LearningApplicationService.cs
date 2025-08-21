@@ -1,4 +1,5 @@
 ﻿// File: LearningApplicationService.cs
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
@@ -9,9 +10,11 @@ using System.Linq.Expressions;
 public class LearningApplicationService : ILearningApplicationService
 {
     private readonly ILearningApplicationRepository _learningApplicationRepository;
-    public LearningApplicationService(ILearningApplicationRepository learningApplicationRepository)
+    private readonly IMapper _mapper;
+    public LearningApplicationService(ILearningApplicationRepository learningApplicationRepository, IMapper mapper)
     {
         _learningApplicationRepository = learningApplicationRepository;
+        _mapper = mapper;
     }
 
     
@@ -134,4 +137,15 @@ public class LearningApplicationService : ILearningApplicationService
         return _learningApplicationRepository.UpdateStatusAsync(learningId, newStatus);
     }
 
+    public async Task UpdateLearnerProgress(UpdateLearnerProgressRequest request)
+    {
+        var learningapp = await _learningApplicationRepository.GetByIdAsync(request.LearningId);
+        if (learningapp.PracticalDistance == null) learningapp.PracticalDistance = request.PracticalDistance;
+        else learningapp.PracticalDistance += request.PracticalDistance;
+
+        if (learningapp.PracticalDurationHours == null) learningapp.PracticalDurationHours = request.PracticalDurationHours;
+        else learningapp.PracticalDurationHours += request.PracticalDurationHours;
+
+        await _learningApplicationRepository.UpdateAsync(learningapp);
+    }
 }

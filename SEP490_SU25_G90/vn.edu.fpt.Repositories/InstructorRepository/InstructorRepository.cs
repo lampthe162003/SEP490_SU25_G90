@@ -380,15 +380,16 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
             string className = learnerClasses.FirstOrDefault()?.ClassName ?? "";
 
             // Tính tổng giờ và km thực hành
-            var totals = await _context.Attendances
-                .Where(a => a.LearnerId == app.LearnerId && a.AttendanceStatus == true)
-                .GroupBy(a => a.LearnerId)
-                .Select(g => new
-                {
-                    TotalHours = g.Sum(x => x.PracticalDurationHours) ?? 0,
-                    TotalKm = g.Sum(x => x.PracticalDistance) ?? 0
-                })
-                .FirstOrDefaultAsync();
+            //var totals = await _context.Attendances
+            //    .Where(a => a.LearnerId == app.LearnerId && a.AttendanceStatus == true)
+            //    .GroupBy(a => a.LearnerId)
+            //    .Select(g => new
+            //    {
+            //        TotalHours = g.Sum(x => x.PracticalDurationHours) ?? 0,
+            //        TotalKm = g.Sum(x => x.PracticalDistance) ?? 0
+            //    })
+            //    .FirstOrDefaultAsync();
+
 
             // Số giờ & km yêu cầu theo loại bằng
             (int requiredHours, int requiredKm) = app.LicenceType?.LicenceCode switch
@@ -431,8 +432,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 //PracticalMaxScore = practicalStd?.MaxScore,
                 LearnerClasses = learnerClasses,
                 ClassName = className,
-                TotalPracticalHours = totals?.TotalHours ?? 0,
-                TotalPracticalKm = totals?.TotalKm ?? 0,
+                TotalPracticalHours = app.PracticalDurationHours ?? 0,
+                TotalPracticalKm = app.PracticalDistance ?? 0,
                 RequiredPracticalHours = requiredHours,
                 RequiredPracticalKm = requiredKm
             };

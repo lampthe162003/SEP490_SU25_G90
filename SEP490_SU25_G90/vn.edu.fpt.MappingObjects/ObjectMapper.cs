@@ -88,6 +88,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
 
             CreateMap<UpdateStaffRequest, UserDetailsInformationResponse>();
             CreateMap<UserDetailsInformationResponse, UpdateStaffRequest>();
+
+            CreateMap<LearningApplication, UpdateLearnerProgressRequest>();
+            CreateMap<UpdateLearnerProgressRequest, LearningApplication>();
         }
     }
 }

@@ -1,4 +1,6 @@
- 
+USE SEP490_SU25_G90_DB;
+GO
+
 INSERT INTO Cars VALUES
 (N'36A-123.45', N'Toyota', N'Camry'), (N'36A-678.90', N'Honda', N'Civic')
 

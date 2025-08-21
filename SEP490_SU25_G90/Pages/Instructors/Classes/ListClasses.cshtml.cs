@@ -71,7 +71,7 @@ namespace SEP490_SU25_G90.Pages.Instructors.Classes
                     await LoadDropdownDataAsync();
                     return;
                 }
-                var instructorEntity = await _context.Users.FirstOrDefaultAsync(u => u.Email == username);
+                var instructorEntity = await _context.Users.FirstOrDefaultAsync(u => u.UserId == int.Parse(User.FindFirst("user_id").Value));
                 if (instructorEntity == null)
                 {
                     ModelState.AddModelError("", "Không tìm thấy tài khoản giảng viên.");

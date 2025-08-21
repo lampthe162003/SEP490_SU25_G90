@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
+using SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Services.AttendanceService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.ClassService;
+using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.ScheduleSlotService;
 
 namespace SEP490_SU25_G90.Pages.Instructors.RollCall
@@ -14,15 +17,18 @@ namespace SEP490_SU25_G90.Pages.Instructors.RollCall
         private readonly IAttendanceService _attendanceService;
         private readonly IClassService _classService;
         private readonly IScheduleSlotService _scheduleSlotService;
+        private readonly ILearningApplicationService _learningApplicationService;
 
         public AttendanceModel(
             IAttendanceService attendanceService,
             IClassService classService,
-            IScheduleSlotService scheduleSlotService)
+            IScheduleSlotService scheduleSlotService,
+            ILearningApplicationService learningApplicationService)
         {
             _attendanceService = attendanceService;
             _classService = classService;
             _scheduleSlotService = scheduleSlotService;
+            _learningApplicationService = learningApplicationService;
         }
 
         [BindProperty(SupportsGet = true)]
@@ -212,6 +218,18 @@ namespace SEP490_SU25_G90.Pages.Instructors.RollCall
                     var absentCount = attendanceRecords.Count(r => r.AttendanceStatus == false);
                     TempData["SuccessMessage"] = $"Cập nhật điểm danh thành công! Đã cập nhật {studentsBeingMarked} học viên " +
                         $"({presentCount} có mặt, {absentCount} vắng) cho buổi học ngày {Date:dd/MM/yyyy}.";
+                    
+                    //Update learner's total progress into learning application
+                    foreach (var attendanceRecord in attendanceRecords)
+                    {
+                        UpdateLearnerProgressRequest request = new UpdateLearnerProgressRequest
+                        {
+                            LearningId = attendanceRecord.LearnerId,
+                            PracticalDistance = (float)attendanceRecord.PracticalDistance,
+                            PracticalDurationHours = (float)attendanceRecord?.PracticalDurationHours
+                        };
+                        await _learningApplicationService.UpdateLearnerProgress(request);
+                    }
                 }
                 else
                 {
