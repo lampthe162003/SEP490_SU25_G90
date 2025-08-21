@@ -52,28 +52,97 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ScheduleSlotRepository
                 })
                 .ToListAsync();
 
-            // Lấy lịch học trong tuần
-            var schedule = await _context.ClassSchedules
-                .Include(cs => cs.Class)
-                .Include(cs => cs.Slot) // join bảng ScheduleSlots
-                .Where(cs => cs.Class.InstructorId == instructorId &&
-                             cs.ScheduleDate.HasValue &&
-                             cs.ScheduleDate.Value >= startOfWeek &&
-                             cs.ScheduleDate.Value <= endOfWeek)
-                .Select(cs => new InstructorScheduleResponse
-                {
-                    ScheduleDate = cs.ScheduleDate.Value,
-                    SlotId = cs.SlotId ?? 0,
-                    ClassName = cs.Class.ClassName,
-                    StartTime = cs.Slot != null && cs.Slot.StartTime.HasValue
-                                ? cs.Slot.StartTime.Value.ToString(@"HH\:mm")
-                                : string.Empty,
-                    EndTime = cs.Slot != null && cs.Slot.EndTime.HasValue
-                                ? cs.Slot.EndTime.Value.ToString(@"HH\:mm")
-                                : string.Empty
-                })
+            // Lấy lịch học từ ClassTime cho giảng viên
+            var classTimes = await _context.ClassTimes
+                .Include(ct => ct.Class)
+                    .ThenInclude(c => c.Course)
+                .Include(ct => ct.Slot)
+                .Where(ct => ct.Class.InstructorId == instructorId)
                 .ToListAsync();
 
+            // Tạo schedule cho mỗi ngày trong tuần dựa trên ClassTime
+            var schedule = new List<InstructorScheduleResponse>();
+            
+            for (int i = 0; i < 7; i++)
+            {
+                var currentDate = startOfWeek.AddDays(i);
+                var dayOfWeek = (byte)((i + 1) % 7 + 1); // Monday = 2, Tuesday = 3, ..., Sunday = 1
+                
+                if (i == 6) dayOfWeek = 1; // Sunday
+                else dayOfWeek = (byte)(i + 2); // Monday to Saturday
+                
+                var daySchedules = classTimes
+                    .Where(ct => ct.Thu == dayOfWeek)
+                    .Where(ct => {
+                        // Kiểm tra xem ngày hiện tại có nằm trong khoảng thời gian của khóa học không
+                        var course = ct.Class?.Course;
+                        if (course == null) return false;
+                        
+                        var courseStartDate = course.StartDate;
+                        var courseEndDate = course.EndDate;
+                        
+                        // Nếu không có ngày bắt đầu hoặc kết thúc thì hiển thị
+                        if (!courseStartDate.HasValue && !courseEndDate.HasValue) return true;
+                        
+                        // Kiểm tra ngày hiện tại có nằm trong khoảng khóa học không
+                        bool isAfterStart = !courseStartDate.HasValue || currentDate >= courseStartDate.Value;
+                        bool isBeforeEnd = !courseEndDate.HasValue || currentDate <= courseEndDate.Value;
+                        
+                        return isAfterStart && isBeforeEnd;
+                    })
+                    .Select(ct => {
+                        // Get attendance data for this specific date and class time
+                        var attendanceData = _context.Attendances
+                            .Include(a => a.Learner)
+                            .Where(a => a.ClassId == ct.ClassId && 
+                                       a.SessionDate == currentDate &&
+                                       a.ClassTimeId == ct.ClassTimeId)
+                            .ToList();
+
+                        // Get all class members for total count
+                        var classMembers = _context.ClassMembers
+                            .Include(cm => cm.Learner)
+                            .Where(cm => cm.ClassId == ct.ClassId)
+                            .ToList();
+
+                        var totalStudents = classMembers.Count;
+                        var presentStudents = attendanceData.Count(a => a.AttendanceStatus == true);
+                        var absentStudents = attendanceData.Count(a => a.AttendanceStatus == false);
+                        var attendanceRate = totalStudents > 0 ? (double)presentStudents / totalStudents * 100 : 0;
+
+                        var studentAttendances = attendanceData.Select(a => new StudentAttendanceInfo
+                        {
+                            LearnerId = a.LearnerId,
+                            StudentName = GetStudentName(a.Learner),
+                            AttendanceStatus = a.AttendanceStatus,
+                            PracticalDurationHours = a.PracticalDurationHours,
+                            PracticalDistance = a.PracticalDistance,
+                            Note = a.Note
+                        }).ToList();
+
+                        return new InstructorScheduleResponse
+                        {
+                            ScheduleDate = currentDate,
+                            SlotId = ct.SlotId,
+                            ClassId = ct.ClassId,
+                            ClassTimeId = ct.ClassTimeId, // Include ClassTimeId for proper attendance tracking
+                            ClassName = ct.Class?.ClassName ?? string.Empty,
+                            StartTime = ct.Slot?.StartTime?.ToString(@"HH\:mm") ?? string.Empty,
+                            EndTime = ct.Slot?.EndTime?.ToString(@"HH\:mm") ?? string.Empty,
+                            DayOfWeek = dayOfWeek,
+                            CourseName = ct.Class?.Course?.CourseName ?? string.Empty,
+                            CourseStartDate = ct.Class?.Course?.StartDate,
+                            CourseEndDate = ct.Class?.Course?.EndDate,
+                            TotalStudents = totalStudents,
+                            PresentStudents = presentStudents,
+                            AbsentStudents = absentStudents,
+                            AttendanceRate = attendanceRate,
+                            StudentAttendances = studentAttendances
+                        };
+                    });
+                
+                schedule.AddRange(daySchedules);
+            }
 
             // Convert slots sang dạng tuple để truyền ra view
             var slotList = slots
@@ -83,5 +152,18 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ScheduleSlotRepository
             return (schedule, slotList);
         }
 
+        private string GetStudentName(LearningApplication learner)
+        {
+            if (learner?.Learner == null) return "Unknown Student";
+            
+            var parts = new[]
+            {
+                learner.Learner.FirstName,
+                learner.Learner.MiddleName,
+                learner.Learner.LastName
+            }.Where(part => !string.IsNullOrWhiteSpace(part));
+            
+            return string.Join(" ", parts);
+        }
     }
 }

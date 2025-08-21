@@ -1,0 +1,583 @@
+@page "/Instructors/RollCall/Attendance"
+@model SEP490_SU25_G90.Pages.Instructors.RollCall.AttendanceModel
+
+@{
+    ViewData["Title"] = "Điểm danh lớp học";
+    Layout = "~/Pages/Shared/_InstructorLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="d-flex align-items-center mb-1">
+                        <h2 class="mb-0 me-3">
+                            <i class="fas fa-clipboard-check me-2 text-primary"></i>
+                            @ViewData["Title"]
+                        </h2>
+                        @if (Model.IsEditMode)
+                        {
+                            <span class="badge bg-warning text-dark fs-6">
+                                <i class="fas fa-edit me-1"></i>
+                                Chỉnh sửa
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success fs-6">
+                                <i class="fas fa-plus me-1"></i>
+                                Tạo mới
+                            </span>
+                        }
+                    </div>
+                    <p class="text-muted mb-0">
+                        @(Model.IsEditMode ? "Cập nhật điểm danh đã có" : "Tạo bản ghi điểm danh mới")
+                        • @Model.Date.ToString("dd/MM/yyyy") • @Model.SlotTime
+                    </p>
+                </div>
+                <div>
+                    <a href="@Model.GetReturnUrl()" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>
+                        Quay lại lịch
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["WarningMessage"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            @TempData["WarningMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Class Information Card -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chalkboard-teacher me-2"></i>
+                                @Model.ClassName
+                            </h5>
+                            <small class="opacity-75">@Model.CourseName</small>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="badge bg-light text-dark fs-6">
+                                <i class="fas fa-calendar me-1"></i>
+                                @Model.Date.ToString("dd/MM/yyyy")
+                            </div>
+                            <div class="badge bg-light text-dark fs-6 ms-1">
+                                <i class="fas fa-clock me-1"></i>
+                                @Model.SlotTime
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance Form -->
+    <form method="post" asp-page-handler="SaveAttendance">
+        <input type="hidden" asp-for="ClassId" />
+        <input type="hidden" asp-for="Date" />
+        <input type="hidden" asp-for="SlotId" />
+        <input type="hidden" asp-for="ClassTimeId" />
+        <input type="hidden" asp-for="Year" />
+        <input type="hidden" asp-for="StartOfWeekInput" />
+        <input type="hidden" asp-for="IsEditMode" />
+
+        <!-- Quick Actions -->
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body py-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-success btn-sm" onclick="markAllPresent()">
+                                    <i class="fas fa-check-circle me-1"></i>
+                                    Có mặt tất cả
+                                </button>
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="markAllAbsent()">
+                                    <i class="fas fa-times-circle me-1"></i>
+                                    Vắng tất cả
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearAll()">
+                                    <i class="fas fa-eraser me-1"></i>
+                                    Xóa tất cả
+                                </button>
+                            </div>
+                            <div class="attendance-summary">
+                                <span class="badge bg-success me-1" id="presentCount">0 có mặt</span>
+                                <span class="badge bg-danger me-1" id="absentCount">0 vắng</span>
+                                <span class="badge bg-secondary" id="totalCount">0/@Model.Students.Count học viên</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Students List -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">
+                            <i class="fas fa-users me-2"></i>
+                            Danh sách học viên (@Model.Students.Count người)
+                        </h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 5%">#</th>
+                                        <th style="width: 25%">Họ và tên</th>
+                                        <th style="width: 15%" class="text-center">Trạng thái</th>
+                                        <th style="width: 12%">Giờ thực hành</th>
+                                        <th style="width: 12%">Quãng đường</th>
+                                        <th style="width: 31%">Ghi chú</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.Students.Count; i++)
+                                    {
+                                        <tr class="student-row">
+                                            <input type="hidden" asp-for="Students[i].LearnerId" />
+                                            <input type="hidden" asp-for="Students[i].StudentName" />
+                                            <input type="hidden" asp-for="Students[i].AttendanceId" />
+                                            
+                                            <td class="align-middle fw-bold text-muted">@(i + 1)</td>
+                                            <td class="align-middle">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="student-avatar me-2">
+                                                        <i class="fas fa-user-circle text-muted fs-4"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-semibold student-name">@Model.Students[i].StudentName</div>
+                                                        <small class="text-muted">ID: @Model.Students[i].LearnerId</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <div class="btn-group attendance-status" role="group">
+                                                    <input type="radio" class="btn-check" 
+                                                           name="Students[@i].AttendanceStatus" 
+                                                           value="True"
+                                                           id="present_@i" 
+                                                           checked="@(Model.Students[i].AttendanceStatus == true)"
+                                                           onchange="updateSummary()">
+                                                    <label class="btn btn-outline-success btn-sm" for="present_@i">
+                                                        <i class="fas fa-check me-1"></i>Có mặt
+                                                    </label>
+                                                    
+                                                    <input type="radio" class="btn-check" 
+                                                           name="Students[@i].AttendanceStatus" 
+                                                           value="False"
+                                                           id="absent_@i" 
+                                                           checked="@(Model.Students[i].AttendanceStatus == false)"
+                                                           onchange="updateSummary()">
+                                                    <label class="btn btn-outline-danger btn-sm" for="absent_@i">
+                                                        <i class="fas fa-times me-1"></i>Vắng
+                                                    </label>
+                                                    
+                                                    <!-- Hidden field to ensure field is submitted even if no radio is selected -->
+                                                    <input type="hidden" name="Students.Index" value="@i" />
+                                                    <input type="hidden" name="Students[@i].AttendanceStatus" value="" />
+                                                </div>
+                                            </td>
+                                            <td class="align-middle">
+                                                <div class="input-group input-group-sm">
+                                                    <input type="number" 
+                                                           asp-for="Students[i].PracticalDurationHours" 
+                                                           class="form-control" 
+                                                           step="0.1" 
+                                                           min="0" 
+                                                           max="24"
+                                                           placeholder="0.0">
+                                                    <span class="input-group-text">giờ</span>
+                                                </div>
+                                            </td>
+                                            <td class="align-middle">
+                                                <div class="input-group input-group-sm">
+                                                    <input type="number" 
+                                                           asp-for="Students[i].PracticalDistance" 
+                                                           class="form-control" 
+                                                           step="0.1" 
+                                                           min="0"
+                                                           placeholder="0.0">
+                                                    <span class="input-group-text">km</span>
+                                                </div>
+                                            </td>
+                                            <td class="align-middle">
+                                                <textarea asp-for="Students[i].Note" 
+                                                          class="form-control form-control-sm" 
+                                                          rows="1" 
+                                                          placeholder="Ghi chú..."></textarea>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Section -->
+        <div class="row mt-4 mb-5">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm submit-section">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                @if (Model.IsEditMode)
+                                {
+                                    <h6 class="mb-1 text-warning">
+                                        <i class="fas fa-edit me-1"></i>
+                                        Chỉnh sửa điểm danh
+                                    </h6>
+                                    <small class="text-muted">Dữ liệu điểm danh đã tồn tại và sẽ được cập nhật.</small>
+                                }
+                                else
+                                {
+                                    <h6 class="mb-1 text-info">
+                                        <i class="fas fa-plus-circle me-1"></i>
+                                        Tạo điểm danh mới
+                                    </h6>
+                                    <small class="text-muted">Tạo bản ghi điểm danh mới cho buổi học này.</small>
+                                }
+                            </div>
+                            <div>
+                                <a href="@Model.GetReturnUrl()" class="btn btn-outline-secondary me-2">
+                                    <i class="fas fa-times me-1"></i>
+                                    Hủy bỏ
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i>
+                                    @(Model.IsEditMode ? "Cập nhật" : "Lưu") điểm danh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSummary();
+        });
+
+        function markAllPresent() {
+            document.querySelectorAll('input[type="radio"][value="True"]').forEach(radio => {
+                radio.checked = true;
+            });
+            updateSummary();
+        }
+
+        function markAllAbsent() {
+            document.querySelectorAll('input[type="radio"][value="False"]').forEach(radio => {
+                radio.checked = true;
+            });
+            updateSummary();
+        }
+
+        function clearAll() {
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.checked = false;
+            });
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const presentCount = document.querySelectorAll('input[type="radio"][value="True"]:checked').length;
+            const absentCount = document.querySelectorAll('input[type="radio"][value="False"]:checked').length;
+            const totalMarked = presentCount + absentCount;
+            const totalStudents = @Model.Students.Count;
+
+            document.getElementById('presentCount').textContent = `${presentCount} có mặt`;
+            document.getElementById('absentCount').textContent = `${absentCount} vắng`;
+            document.getElementById('totalCount').textContent = `${totalMarked}/${totalStudents} học viên`;
+
+            // Update badge colors based on completion
+            const totalBadge = document.getElementById('totalCount');
+            if (totalMarked === totalStudents) {
+                totalBadge.className = 'badge bg-success';
+            } else if (totalMarked > 0) {
+                totalBadge.className = 'badge bg-warning text-dark';
+            } else {
+                totalBadge.className = 'badge bg-secondary';
+            }
+
+            // Update practical fields requirement based on attendance status
+            updatePracticalFieldsRequirement();
+        }
+
+        function updatePracticalFieldsRequirement() {
+            // Loop through all student rows and update practical fields based on attendance status
+            document.querySelectorAll('.student-row').forEach((row, index) => {
+                const presentRadio = row.querySelector('input[type="radio"][value="True"]');
+                const absentRadio = row.querySelector('input[type="radio"][value="False"]');
+                const hoursInput = row.querySelector('input[type="number"][name*="PracticalDurationHours"]');
+                const distanceInput = row.querySelector('input[type="number"][name*="PracticalDistance"]');
+
+                if (presentRadio && presentRadio.checked) {
+                    // Student is present - make practical fields required and enable them
+                    hoursInput.required = true;
+                    distanceInput.required = true;
+                    hoursInput.disabled = false;
+                    distanceInput.disabled = false;
+                    hoursInput.style.backgroundColor = '';
+                    distanceInput.style.backgroundColor = '';
+                    
+                    // Add visual indication
+                    hoursInput.parentElement.classList.add('required-field');
+                    distanceInput.parentElement.classList.add('required-field');
+                } else if (absentRadio && absentRadio.checked) {
+                    // Student is absent - clear practical fields and disable them
+                    hoursInput.required = false;
+                    distanceInput.required = false;
+                    hoursInput.value = '';
+                    distanceInput.value = '';
+                    hoursInput.disabled = true;
+                    distanceInput.disabled = true;
+                    hoursInput.style.backgroundColor = '#f8f9fa';
+                    distanceInput.style.backgroundColor = '#f8f9fa';
+                    
+                    // Remove visual indication
+                    hoursInput.parentElement.classList.remove('required-field');
+                    distanceInput.parentElement.classList.remove('required-field');
+                } else {
+                    // No attendance status selected - enable fields but not required
+                    hoursInput.required = false;
+                    distanceInput.required = false;
+                    hoursInput.disabled = false;
+                    distanceInput.disabled = false;
+                    hoursInput.style.backgroundColor = '';
+                    distanceInput.style.backgroundColor = '';
+                    
+                    // Remove visual indication
+                    hoursInput.parentElement.classList.remove('required-field');
+                    distanceInput.parentElement.classList.remove('required-field');
+                }
+            });
+        }
+
+        function validateForm() {
+            let isValid = true;
+            let errorMessages = [];
+
+            document.querySelectorAll('.student-row').forEach((row, index) => {
+                const presentRadio = row.querySelector('input[type="radio"][value="True"]');
+                const hoursInput = row.querySelector('input[type="number"][name*="PracticalDurationHours"]');
+                const distanceInput = row.querySelector('input[type="number"][name*="PracticalDistance"]');
+                const studentName = row.querySelector('.student-name').textContent;
+
+                if (presentRadio && presentRadio.checked) {
+                    // Validate practical hours
+                    if (!hoursInput.value || parseFloat(hoursInput.value) <= 0) {
+                        errorMessages.push(`${studentName}: Vui lòng nhập số giờ thực hành khi có mặt.`);
+                        hoursInput.style.borderColor = '#dc3545';
+                        isValid = false;
+                    } else if (parseFloat(hoursInput.value) > 24) {
+                        errorMessages.push(`${studentName}: Số giờ thực hành không được vượt quá 24 giờ.`);
+                        hoursInput.style.borderColor = '#dc3545';
+                        isValid = false;
+                    } else {
+                        hoursInput.style.borderColor = '';
+                    }
+
+                    // Validate practical distance
+                    if (!distanceInput.value || parseFloat(distanceInput.value) <= 0) {
+                        errorMessages.push(`${studentName}: Vui lòng nhập quãng đường thực hành khi có mặt.`);
+                        distanceInput.style.borderColor = '#dc3545';
+                        isValid = false;
+                    } else {
+                        distanceInput.style.borderColor = '';
+                    }
+                }
+            });
+
+            if (!isValid) {
+                alert('Lỗi validation:\n\n' + errorMessages.join('\n'));
+            }
+
+            return isValid;
+        }
+
+        // Add event listeners for attendance radio buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add change event listeners to all attendance radio buttons
+            document.querySelectorAll('input[type="radio"][name*="AttendanceStatus"]').forEach(radio => {
+                radio.addEventListener('change', updatePracticalFieldsRequirement);
+            });
+
+            // Add form submit validation
+            document.querySelector('form').addEventListener('submit', function(e) {
+                if (!validateForm()) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            // Initial setup
+            updatePracticalFieldsRequirement();
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .card {
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+
+        .student-row:hover {
+            background-color: #f8f9fa;
+        }
+
+        .attendance-status .btn-check:checked + .btn {
+            transform: scale(1.05);
+            font-weight: 600;
+        }
+
+        .student-avatar {
+            width: 40px;
+            text-align: center;
+        }
+
+        .btn-group .btn {
+            border-radius: 0.375rem;
+            margin: 0 1px;
+        }
+
+        .attendance-summary .badge {
+            font-size: 0.875rem;
+            padding: 0.5rem 0.75rem;
+        }
+
+        .input-group-sm .form-control,
+        .input-group-sm .input-group-text {
+            font-size: 0.875rem;
+        }
+
+        textarea.form-control-sm {
+            resize: vertical;
+            min-height: 32px;
+        }
+
+        .table td {
+            padding: 1rem 0.75rem;
+        }
+
+        .card-header h6 {
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .bg-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        }
+
+        /* Required field indicators */
+        .required-field {
+            position: relative;
+        }
+
+        .required-field::after {
+            content: '*';
+            color: #dc3545;
+            font-weight: bold;
+            font-size: 1.2em;
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+
+        .input-group.required-field::after {
+            right: 5px;
+        }
+
+        /* Visual feedback for form validation */
+        .is-invalid {
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+
+        .is-valid {
+            border-color: #28a745 !important;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+        }
+
+        /* Disabled field styling */
+        .form-control:disabled {
+            background-color: #f8f9fa !important;
+            border-color: #e9ecef;
+            opacity: 0.6;
+        }
+
+        /* Mode indicator badges */
+        .badge.fs-6 {
+            font-size: 0.9rem !important;
+            padding: 0.4rem 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Enhanced submit section */
+        .submit-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+        }
+
+        /* Validation message styling */
+        .validation-message {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+        }
+
+        .validation-message ul {
+            margin-bottom: 0;
+            padding-left: 1.5rem;
+        }
+    </style>
+}

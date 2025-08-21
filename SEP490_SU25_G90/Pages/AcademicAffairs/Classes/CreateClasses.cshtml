@@ -55,6 +55,64 @@
 
                 <hr class="my-4" />
 
+                <h4 class="mb-3">Lịch học hàng tuần</h4>
+                <div class="alert alert-info mb-3">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Vui lòng chọn tối đa 2 ngày học từ Thứ 2 đến Thứ 6. Mỗi ngày có thể chọn nhiều khung giờ học.
+                </div>
+
+                <div class="schedule-selection mb-4">
+                    <div class="row">
+                        @{
+                            var weekDays = new[] {
+                                new { Value = 2, Name = "Thứ 2" },
+                                new { Value = 3, Name = "Thứ 3" },
+                                new { Value = 4, Name = "Thứ 4" },
+                                new { Value = 5, Name = "Thứ 5" },
+                                new { Value = 6, Name = "Thứ 6" }
+                            };
+                        }
+                        @foreach (var day in weekDays)
+                        {
+                            <div class="col-md-12 mb-3">
+                                <div class="card">
+                                    <div class="card-header bg-light">
+                                        <div class="form-check">
+                                            <input class="form-check-input day-checkbox" type="checkbox" id="day-@day.Value" data-day="@day.Value">
+                                            <label class="form-check-label fw-bold" for="day-@day.Value">
+                                                @day.Name
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="card-body day-slots" id="slots-@day.Value" style="display: none;">
+                                        <div class="row">
+                                            @foreach (var slot in Model.ScheduleSlots)
+                                            {
+                                                <div class="col-md-3 mb-2">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input slot-checkbox" 
+                                                               type="checkbox" 
+                                                               name="SelectedSchedules" 
+                                                               value="@day.Value-@slot.SlotId" 
+                                                               id="schedule-@day.Value-@slot.SlotId"
+                                                               data-day="@day.Value"
+                                                               disabled>
+                                                        <label class="form-check-label" for="schedule-@day.Value-@slot.SlotId">
+                                                            @slot.StartTime?.ToString("HH:mm") - @slot.EndTime?.ToString("HH:mm")
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <hr class="my-4" />
+
                 <h4 class="mb-3">Danh sách học viên chờ xếp lớp</h4>
 
                 <div class="table-responsive">
@@ -111,6 +169,20 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <style>
+        .schedule-selection .card {
+            border: 1px solid #dee2e6;
+            transition: all 0.3s ease;
+        }
+        .schedule-selection .card.active {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+        .day-slots {
+            background-color: #f8f9fa;
+            border-radius: 0.25rem;
+        }
+    </style>
     <script>
         async function onCourseChanged(sel){
             if(!sel || !sel.value) return;
@@ -120,10 +192,86 @@
             const input = document.querySelector('[name="ClassName"]');
             if(input) input.value = data.name;
         }
-        // auto-generate on initial load if course preselected
-        window.addEventListener('DOMContentLoaded', ()=>{
+        
+        // Handle schedule selection
+        document.addEventListener('DOMContentLoaded', function() {
+            // auto-generate on initial load if course preselected
             const sel = document.querySelector('[name="SelectedCourseId"]');
             if(sel && sel.value){ onCourseChanged(sel); }
+            
+            const maxDays = 2;
+            let selectedDays = 0;
+            
+            // Handle day checkbox changes
+            document.querySelectorAll('.day-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const dayValue = this.dataset.day;
+                    const slotsContainer = document.getElementById(`slots-${dayValue}`);
+                    const card = this.closest('.card');
+                    const slotCheckboxes = slotsContainer.querySelectorAll('.slot-checkbox');
+                    
+                    if (this.checked) {
+                        // Check if max days reached
+                        if (selectedDays >= maxDays) {
+                            this.checked = false;
+                            alert(`Chỉ được chọn tối đa ${maxDays} ngày học trong tuần!`);
+                            return;
+                        }
+                        
+                        selectedDays++;
+                        slotsContainer.style.display = 'block';
+                        card.classList.add('active');
+                        
+                        // Enable slot checkboxes for this day
+                        slotCheckboxes.forEach(cb => {
+                            cb.disabled = false;
+                        });
+                    } else {
+                        selectedDays--;
+                        slotsContainer.style.display = 'none';
+                        card.classList.remove('active');
+                        
+                        // Disable and uncheck slot checkboxes for this day
+                        slotCheckboxes.forEach(cb => {
+                            cb.disabled = true;
+                            cb.checked = false;
+                        });
+                    }
+                    
+                    // Update other day checkboxes
+                    updateDayCheckboxes();
+                });
+            });
+            
+            function updateDayCheckboxes() {
+                const dayCheckboxes = document.querySelectorAll('.day-checkbox');
+                
+                if (selectedDays >= maxDays) {
+                    // Disable unchecked day checkboxes
+                    dayCheckboxes.forEach(cb => {
+                        if (!cb.checked) {
+                            cb.disabled = true;
+                            cb.closest('.card').style.opacity = '0.6';
+                        }
+                    });
+                } else {
+                    // Enable all day checkboxes
+                    dayCheckboxes.forEach(cb => {
+                        cb.disabled = false;
+                        cb.closest('.card').style.opacity = '1';
+                    });
+                }
+            }
+            
+            // Validate at least one schedule is selected on form submit
+            document.querySelector('form').addEventListener('submit', function(e) {
+                const checkedSlots = document.querySelectorAll('.slot-checkbox:checked');
+                if (checkedSlots.length === 0) {
+                    e.preventDefault();
+                    alert('Vui lòng chọn ít nhất một khung giờ học!');
+                    return false;
+                }
+            });
         });
     </script>
 }

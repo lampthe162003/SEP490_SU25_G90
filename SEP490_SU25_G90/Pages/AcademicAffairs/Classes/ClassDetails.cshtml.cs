@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.Class;
 using SEP490_SU25_G90.vn.edu.fpt.Services.ClassService;
+using SEP490_SU25_G90.vn.edu.fpt.Services.ClassTimeService;
+using SEP490_SU25_G90.vn.edu.fpt.Models;
 
 namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
 {
@@ -13,15 +15,18 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
     public class ClassDetailsModel : PageModel
     {
         private readonly IClassService _classService;
+        private readonly IClassTimeService _classTimeService;
 
-        public ClassDetailsModel(IClassService classService)
+        public ClassDetailsModel(IClassService classService, IClassTimeService classTimeService)
         {
             _classService = classService;
+            _classTimeService = classTimeService;
         }
 
         // Properties để hiển thị dữ liệu
         public ClassDetailResponse ClassDetail { get; set; } = new ClassDetailResponse();
         public bool ClassNotFound { get; set; } = false;
+        public List<ClassTime> ClassSchedules { get; set; } = new List<ClassTime>();
 
         // URL Parameters
         [BindProperty(SupportsGet = true)]
@@ -68,6 +73,9 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
                 }
 
                 ClassDetail = classDetail;
+
+                // Load class schedules
+                ClassSchedules = await _classTimeService.GetClassTimesAsync(Id.Value);
 
                 // Xử lý phân trang cho danh sách học viên
                 SetupPagination(page);
@@ -181,5 +189,34 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
         /// Kiểm tra có hiển thị phân trang không
         /// </summary>
         public bool ShouldShowPagination => TotalPages > 1;
+
+        /// <summary>
+        /// Lấy tên thứ trong tuần
+        /// </summary>
+        public string GetDayName(byte dayNumber)
+        {
+            return dayNumber switch
+            {
+                2 => "Thứ 2",
+                3 => "Thứ 3",
+                4 => "Thứ 4",
+                5 => "Thứ 5",
+                6 => "Thứ 6",
+                7 => "Thứ 7",
+                1 => "Chủ nhật",
+                _ => ""
+            };
+        }
+
+        /// <summary>
+        /// Nhóm lịch học theo ngày
+        /// </summary>
+        public Dictionary<byte, List<ClassTime>> GetGroupedSchedules()
+        {
+            return ClassSchedules
+                .GroupBy(cs => cs.Thu)
+                .OrderBy(g => g.Key)
+                .ToDictionary(g => g.Key, g => g.OrderBy(s => s.Slot?.StartTime).ToList());
+        }
     }
 } 

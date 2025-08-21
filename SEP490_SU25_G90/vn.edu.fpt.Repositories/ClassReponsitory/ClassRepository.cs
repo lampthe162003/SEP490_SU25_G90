@@ -182,6 +182,32 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
         }
 
         /// <summary>
+        /// Lấy thông tin lớp học theo ID
+        /// </summary>
+        public async Task<Class?> GetClassByIdAsync(int classId)
+        {
+            return await _context.Classes
+                .Include(c => c.Course)
+                    .ThenInclude(co => co.LicenceType)
+                .Include(c => c.Instructor)
+                .FirstOrDefaultAsync(c => c.ClassId == classId);
+        }
+
+        /// <summary>
+        /// Lấy danh sách thành viên trong lớp
+        /// </summary>
+        public async Task<List<ClassMember>> GetClassMembersAsync(int classId)
+        {
+            return await _context.ClassMembers
+                .Include(cm => cm.Learner)
+                    .ThenInclude(la => la.Learner)
+                .Where(cm => cm.ClassId == classId)
+                .OrderBy(cm => cm.Learner.Learner.LastName)
+                .ThenBy(cm => cm.Learner.Learner.FirstName)
+                .ToListAsync();
+        }
+
+        /// <summary>
         /// Xác định trạng thái của lớp học dựa trên ngày bắt đầu và kết thúc
         /// </summary>
         private static string GetClassStatus(DateOnly? startDate, DateOnly? endDate)
