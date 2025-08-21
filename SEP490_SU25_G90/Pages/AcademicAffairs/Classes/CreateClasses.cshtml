@@ -124,6 +124,7 @@
                                 <th style="width:80px">Chọn</th>
                                 <th style="width:120px">Hình ảnh</th>
                                 <th>CCCD</th>
+                                <th>Bằng</th>
                                 <th>Tên học viên</th>
                                 <th>Tình trạng</th>
                             </tr>
@@ -149,6 +150,7 @@
                                         <img src="@item.ProfileImageUrl" alt="avatar" class="rounded" style="width:48px;height:48px;object-fit:cover"/>
                                     </td>
                                     <td>@item.Cccd</td>
+                                    <td>@item.LicenceName</td>
                                     <td>@item.FullName</td>
                                     <td>
                                         <span class="badge @SEP490_SU25_G90.Pages.AcademicAffairs.Classes.CreateClassesModel.GetStatusBadgeClass(item.Status)">@item.Status</span>

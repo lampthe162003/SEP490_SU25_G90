@@ -538,13 +538,15 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 .Include(la => la.Learner)
                     .ThenInclude(u => u.UserRoles)
                         .ThenInclude(ur => ur.Role)
+                .Include(la => la.Learner)
+                    .ThenInclude(u => u.Cccd)
                 .Include(la => la.LicenceType)
                 .Include(la => la.ClassMembers)
                 .Where(la => la.Learner.UserRoles.Any(ur => ur.RoleId == 1) && // Filter by roleId = 1
                             la.LicenceTypeId == course.LicenceTypeId
-                            //&& // Match license type
-                            //la.LearningStatus != 4 && // Exclude completed
-                            //!la.ClassMembers.Any()
+                           //&& // Match license type
+                           && (la.LearningStatus != 4 && la.LearningStatus != 1)  // Exclude completed
+                                                                                  //!la.ClassMembers.Any()
                             ) // Not assigned to any class yet
                 .ToListAsync();
 
@@ -558,7 +560,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                     ProfileImageUrl = !string.IsNullOrWhiteSpace(x.Learner?.ProfileImageUrl) ?
                         x.Learner.ProfileImageUrl :
                         "https://cdn-icons-png.flaticon.com/512/1144/1144760.png",
-                    LearningStatus = x.LearningStatus
+                    LearningStatus = x.LearningStatus,
+                    LicenceName = x.LicenceType.LicenceCode
                 })
                 .ToList();
         }

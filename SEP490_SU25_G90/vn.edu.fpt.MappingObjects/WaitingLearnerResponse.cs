@@ -9,6 +9,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         public string ProfileImageUrl { get; set; } = "https://cdn-icons-png.flaticon.com/512/1144/1144760.png";
         public bool Selected { get; set; }
         public byte? LicenceTypeId { get; set; }
+        public string? LicenceName { get; set; }
         public byte? LearningStatus { get; set; }
     }
 }

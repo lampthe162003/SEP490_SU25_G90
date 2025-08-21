@@ -241,8 +241,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.CourseRepository
                     CourseName = c.CourseName ?? ("KH-" + c.CourseId),
                     LicenceTypeId = c.LicenceTypeId,
                     StudentCount = _context.LearningApplications
-                        .Count(la => la.LicenceTypeId == c.LicenceTypeId &&
-                                    la.Learner.UserRoles.Any(ur => ur.RoleId == 1))   // learner role
+                        .Count(la => la.LicenceTypeId == c.LicenceTypeId
+                                    && (la.LearningStatus != 4 && la.LearningStatus != 1)
+                                   && la.Learner.UserRoles.Any(ur => ur.RoleId == 1))   // learner role
 
                 })
                 .ToListAsync();
