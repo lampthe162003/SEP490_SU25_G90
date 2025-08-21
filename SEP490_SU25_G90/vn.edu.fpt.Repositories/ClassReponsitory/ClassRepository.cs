@@ -31,8 +31,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
             // Tìm kiếm theo tên lớp
             if (!string.IsNullOrEmpty(searchRequest.ClassName))
             {
-                query = query.Where(c => c.ClassName != null && 
-                    (c.ClassName.ToLower().Contains(searchRequest.ClassName.ToLower()) || 
+                query = query.Where(c => c.ClassName != null &&
+                    (c.ClassName.ToLower().Contains(searchRequest.ClassName.ToLower()) ||
                     (c.Instructor != null &&
                     (c.Instructor.FirstName != null && c.Instructor.FirstName.ToLower().Contains(searchRequest.ClassName.ToLower()))
                    || (c.Instructor.MiddleName != null && c.Instructor.MiddleName.ToLower().Contains(searchRequest.ClassName.ToLower()))
@@ -59,8 +59,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
                 {
                     ClassId = c.ClassId,
                     ClassName = c.ClassName,
-                    InstructorName = c.Instructor != null ? 
-                        $"{c.Instructor.FirstName} {c.Instructor.MiddleName} {c.Instructor.LastName}".Trim() : 
+                    InstructorName = c.Instructor != null ?
+                        $"{c.Instructor.FirstName} {c.Instructor.MiddleName} {c.Instructor.LastName}".Trim() :
                         "Chưa phân công",
                     LicenceCode = c.Course != null && c.Course.LicenceType != null ? c.Course.LicenceType.LicenceCode : null,
                     StartDate = c.Course!.StartDate != null ? c.Course.StartDate.Value.ToDateTime(TimeOnly.MinValue) : null,
@@ -89,7 +89,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
             // Áp dụng các điều kiện tìm kiếm tương tự như GetClassesAsync
             if (!string.IsNullOrEmpty(searchRequest.ClassName))
             {
-                query = query.Where(c => c.ClassName != null && 
+                query = query.Where(c => c.ClassName != null &&
                     c.ClassName.ToLower().Contains(searchRequest.ClassName.ToLower()));
             }
 
@@ -161,10 +161,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
                         FullName = $"{cm.Learner.Learner.FirstName} {cm.Learner.Learner.MiddleName} {cm.Learner.Learner.LastName}".Trim(),
                         Email = cm.Learner.Learner.Email,
                         Phone = cm.Learner.Learner.Phone,
-                        ProfileImageUrl = !string.IsNullOrEmpty(cm.Learner.Learner.ProfileImageUrl) 
-                            ? cm.Learner.Learner.ProfileImageUrl 
+                        ProfileImageUrl = !string.IsNullOrEmpty(cm.Learner.Learner.ProfileImageUrl)
+                            ? cm.Learner.Learner.ProfileImageUrl
                             : "https://cdn.vectorstock.com/i/1000v/51/87/student-avatar-user-profile-icon-vector-47025187.jpg",
-                        LearningStatus = "Đang học", // Default status, có thể customize sau
+                        LearningStatus = GetLearningStatusName(cm.Learner!.LearningStatus),
                         JoinDate = DateTime.Now // Có thể lấy từ CreatedDate nếu có
                     })
                     .ToList()
@@ -223,6 +223,21 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
                 return "Đang học";
             else
                 return "Đã học xong";
+        }
+
+        /// <summary>
+        /// Chuyển đổi mã trạng thái học thành tên hiển thị
+        /// </summary>
+        private static string GetLearningStatusName(byte? status)
+        {
+            return status switch
+            {
+                1 => "Đang học",
+                2 => "Bảo lưu",
+                3 => "Học lại",
+                4 => "Hoàn thành",
+                _ => "Không xác định"
+            };
         }
     }
 }

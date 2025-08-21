@@ -232,7 +232,7 @@
                                             </div>
                                         </td>
                                         <td class="align-middle">
-                                            <span class="badge bg-primary">@item.value.LearningStatus</span>
+                                            <span class="badge @Model.GetLearningStatusBadgeClass(item.value.LearningStatus)">@item.value.LearningStatus</span>
                                         </td>
                                         <td class="align-middle text-center">
                                             <a href="@Model.CreateLearnerUrl(item.value.UserId)" 
