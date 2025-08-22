@@ -58,6 +58,25 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.LearningApplications
                 return RedirectToPage(new { id = Id });
             }
 
+            // Lấy thông tin học viên để check điểm
+            var detail = await _learningApplicationService.GetDetailAsync(Id.Value);
+            if (detail == null)
+            {
+                return NotFound();
+            }
+
+            bool allPassed =
+                detail.TheoryScore >= detail.TheoryPassScore &&
+                detail.SimulationScore >= detail.SimulationPassScore &&
+                detail.ObstacleScore >= detail.ObstaclePassScore &&
+                detail.PracticalScore >= detail.PracticalPassScore;
+
+            if (allPassed)
+            {
+                // Gọi service update test_eligibility = 1
+                await _learningApplicationService.UpdateTestEligibilityAsync(Id.Value, true);
+            }
+
             var result = await _learningApplicationService.UpdateStatusAsync(Id.Value, NewStatus);
 
             StatusMessage = result
@@ -66,5 +85,6 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.LearningApplications
 
             return RedirectToPage(new { id = Id });
         }
+
     }
 }

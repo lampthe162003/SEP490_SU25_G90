@@ -137,6 +137,7 @@ public class LearningApplicationService : ILearningApplicationService
         return _learningApplicationRepository.UpdateStatusAsync(learningId, newStatus);
     }
 
+
     public async Task UpdateLearnerProgress(UpdateLearnerProgressRequest request)
     {
         var learningapp = await _learningApplicationRepository.GetByIdAsync(request.LearningId);
@@ -148,8 +149,12 @@ public class LearningApplicationService : ILearningApplicationService
 
         await _learningApplicationRepository.UpdateAsync(learningapp);
     }
+
     public Task<bool> UpdateTestEligibilityAsync(int learningId, bool eligibility)
     {
         return _learningApplicationRepository.UpdateTestEligibilityAsync(learningId, eligibility);
     }
+
+
+
 }

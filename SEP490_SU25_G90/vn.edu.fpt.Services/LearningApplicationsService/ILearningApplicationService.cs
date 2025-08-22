@@ -15,8 +15,11 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService
         Task<LearningApplicationsResponse?> FindLearnerByCccdAsync(string cccd);
         Task<bool> UpdateStatusAsync(int learningId, byte newStatus);
         Task<List<LearningApplicationsResponse>> FindEligibleAsync(byte? licenceTypeId = null);
+
         Task UpdateLearnerProgress(UpdateLearnerProgressRequest request);
         Task<bool> UpdateTestEligibilityAsync(int learningId, bool eligibility);
+
+
     }
 }
 
