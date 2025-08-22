@@ -148,4 +148,14 @@ public class LearningApplicationService : ILearningApplicationService
 
         await _learningApplicationRepository.UpdateAsync(learningapp);
     }
+
+    public async Task<List<WaitingLearnerResponse>> GetWaitingLearnersAsync()
+    {
+        return await _learningApplicationRepository.GetWaitingLearnersAsync();
+    }
+
+    public async Task<List<WaitingLearnerResponse>> GetWaitingLearnersByCourseAsync(int courseId)
+    {
+        return await _learningApplicationRepository.GetWaitingLearnersByCourseAsync(courseId);
+    }
 }

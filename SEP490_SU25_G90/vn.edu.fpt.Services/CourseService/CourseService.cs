@@ -109,6 +109,16 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.CourseService
         {
             return await _courseRepository.CourseNameExistsAsync(courseName, excludeCourseId);
         }
+
+        public async Task<IEnumerable<CourseWithStudentCountResponse>> GetCoursesWithStudentCountAsync()
+        {
+            return await _courseRepository.GetCoursesWithStudentCountAsync();
+        }
+
+        public async Task<CourseInfoResponse?> GetCourseInfoAsync(int courseId)
+        {
+            return await _courseRepository.GetCourseInfoAsync(courseId);
+        }
     }
 }
 

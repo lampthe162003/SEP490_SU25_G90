@@ -49,5 +49,21 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.ClassService
         /// <param name="classId">ID của lớp học</param>
         /// <returns>Danh sách thành viên lớp học</returns>
         Task<List<ClassMember>> GetClassMembersAsync(int classId);
+
+        /// <summary>
+        /// Tạo tên lớp tự động dựa trên khóa học
+        /// </summary>
+        /// <param name="courseId">ID của khóa học</param>
+        /// <returns>Tên lớp được tạo tự động</returns>
+        Task<string> GenerateClassNameAsync(int courseId);
+
+        /// <summary>
+        /// Tạo lớp học mới
+        /// </summary>
+        /// <param name="newClass">Thông tin lớp học mới</param>
+        /// <param name="selectedLearnerIds">Danh sách ID học viên được chọn</param>
+        /// <param name="selectedSchedules">Danh sách lịch học được chọn</param>
+        /// <returns>ID của lớp học vừa tạo</returns>
+        Task<int> CreateClassAsync(Class newClass, List<int> selectedLearnerIds, List<string> selectedSchedules);
     }
 }

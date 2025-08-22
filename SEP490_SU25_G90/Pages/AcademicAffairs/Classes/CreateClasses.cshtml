@@ -28,7 +28,8 @@
 
     <div class="card mb-4">
         <div class="card-body">
-            <form method="post">
+            <form method="post" id="mainForm">
+                <input type="hidden" name="CourseChanged" value="false" />
                 <div class="row g-3 align-items-end">
                     <div class="col-md-3">
                         <label asp-for="SelectedCourseId" class="form-label">Tên khóa học</label>
@@ -123,6 +124,7 @@
                                 <th style="width:80px">Chọn</th>
                                 <th style="width:120px">Hình ảnh</th>
                                 <th>CCCD</th>
+                                <th>Bằng</th>
                                 <th>Tên học viên</th>
                                 <th>Tình trạng</th>
                             </tr>
@@ -148,8 +150,11 @@
                                         <img src="@item.ProfileImageUrl" alt="avatar" class="rounded" style="width:48px;height:48px;object-fit:cover"/>
                                     </td>
                                     <td>@item.Cccd</td>
+                                    <td>@item.LicenceName</td>
                                     <td>@item.FullName</td>
-                                    <td>@item.Status</td>
+                                    <td>
+                                        <span class="badge @SEP490_SU25_G90.Pages.AcademicAffairs.Classes.CreateClassesModel.GetStatusBadgeClass(item.Status)">@item.Status</span>
+                                    </td>
                                 </tr>
                                 index++;
                             }
@@ -184,21 +189,15 @@
         }
     </style>
     <script>
-        async function onCourseChanged(sel){
-            if(!sel || !sel.value) return;
-            const res = await fetch(`?handler=GenerateName&courseId=${sel.value}`);
-            if(!res.ok) return;
-            const data = await res.json();
-            const input = document.querySelector('[name="ClassName"]');
-            if(input) input.value = data.name;
+        function onCourseChanged(sel) {
+            // Set hidden field to indicate course change
+            document.querySelector('input[name="CourseChanged"]').value = 'true';
+            // Submit form to reload page with new course data
+            document.getElementById('mainForm').submit();
         }
         
         // Handle schedule selection
         document.addEventListener('DOMContentLoaded', function() {
-            // auto-generate on initial load if course preselected
-            const sel = document.querySelector('[name="SelectedCourseId"]');
-            if(sel && sel.value){ onCourseChanged(sel); }
-            
             const maxDays = 2;
             let selectedDays = 0;
             
@@ -265,6 +264,11 @@
             
             // Validate at least one schedule is selected on form submit
             document.querySelector('form').addEventListener('submit', function(e) {
+                // Skip validation if just changing course
+                if (document.querySelector('input[name="CourseChanged"]').value === 'true') {
+                    return true;
+                }
+                
                 const checkedSlots = document.querySelectorAll('.slot-checkbox:checked');
                 if (checkedSlots.length === 0) {
                     e.preventDefault();

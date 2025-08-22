@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.Class;
+using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Services.ClassService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.ClassTimeService;
-using SEP490_SU25_G90.vn.edu.fpt.Models;
 
 namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
 {
@@ -46,7 +46,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
         {
             // Debug: Log received parameters
             Console.WriteLine($"ClassDetails - Id: {Id}, Page: {page}");
-            
+
             // Validate input
             if (!Id.HasValue || Id.Value <= 0)
             {
@@ -97,10 +97,10 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
         private void SetupPagination(int page)
         {
             CurrentPage = page > 0 ? page : 1;
-            
+
             var totalMembers = ClassDetail.Members.Count;
             TotalPages = (int)Math.Ceiling((double)totalMembers / PageSize);
-            
+
             // Đảm bảo trang hiện tại hợp lệ
             if (CurrentPage > TotalPages && TotalPages > 0)
                 CurrentPage = TotalPages;
@@ -168,7 +168,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
         /// </summary>
         public string CreateLearnerUrl(int learnerId)
         {
-            return $"/AcademicAffairs/LearningApplications/Detail?id={learnerId}";
+            return $"/AcademicAffairs/LearningApplications/Detail/{learnerId}";
         }
 
         /// <summary>
@@ -218,5 +218,20 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
                 .OrderBy(g => g.Key)
                 .ToDictionary(g => g.Key, g => g.OrderBy(s => s.Slot?.StartTime).ToList());
         }
+
+        /// <summary>
+        /// Lấy class CSS cho badge trạng thái học dựa trên tên trạng thái
+        /// </summary>
+        public string GetLearningStatusBadgeClass(string? learningStatus)
+        {
+            return learningStatus switch
+            {
+                "Đang học" => "bg-success",
+                "Bảo lưu" => "bg-warning text-dark",
+                "Học lại" => "bg-danger",
+                "Hoàn thành" => "bg-primary",
+                _ => "bg-secondary"
+            };
+        }
     }
-} 
+}

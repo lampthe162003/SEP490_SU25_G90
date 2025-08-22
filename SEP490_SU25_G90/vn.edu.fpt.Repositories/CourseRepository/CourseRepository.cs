@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.Course;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
@@ -232,6 +228,54 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.CourseRepository
             // Lấy số thứ tự tiếp theo theo từng loại bằng để tránh nhảy lung tung giữa các loại
             var countByType = await _context.Courses.CountAsync(c => c.LicenceTypeId == licenceTypeId);
             return countByType + 1;
+        }
+
+        public async Task<IEnumerable<CourseWithStudentCountResponse>> GetCoursesWithStudentCountAsync()
+        {
+            var coursesWithStudentCount = await _context.Courses
+                .Include(c => c.LicenceType)
+                .OrderByDescending(c => c.CourseId)
+                .Select(c => new CourseWithStudentCountResponse
+                {
+                    CourseId = c.CourseId,
+                    CourseName = c.CourseName ?? ("KH-" + c.CourseId),
+                    LicenceTypeId = c.LicenceTypeId,
+                    StudentCount = _context.LearningApplications
+                        .Count(la => la.LicenceTypeId == c.LicenceTypeId
+                                    && (la.LearningStatus != 4 && la.LearningStatus != 1)
+                                   && la.Learner.UserRoles.Any(ur => ur.RoleId == 1))   // learner role
+
+                })
+                .ToListAsync();
+
+            return coursesWithStudentCount;
+        }
+
+        public async Task<CourseInfoResponse?> GetCourseInfoAsync(int courseId)
+        {
+            var course = await _context.Courses
+                .Include(c => c.LicenceType)
+                .FirstOrDefaultAsync(c => c.CourseId == courseId);
+
+            if (course == null)
+            {
+                return null;
+            }
+
+            // Count students waiting for this course (based on license type)
+            var studentCount = await _context.LearningApplications
+                .CountAsync(la => la.LicenceTypeId == course.LicenceTypeId &&
+                                 la.Learner.UserRoles.Any(ur => ur.RoleId == 1) && // learner role
+                                 la.LearningStatus != 4 && // not completed
+                                 !la.ClassMembers.Any()); // not assigned to any class yet
+
+            return new CourseInfoResponse
+            {
+                CourseName = course.CourseName ?? ("KH-" + course.CourseId),
+                LicenceType = course.LicenceType?.LicenceCode ?? "Không xác định",
+                LicenceTypeName = course.LicenceType?.LicenceCode ?? "Không xác định",
+                StudentCount = studentCount
+            };
         }
 
         private static string GetCourseStatus(DateOnly? startDate, DateOnly? endDate)
