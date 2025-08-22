@@ -476,11 +476,27 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
             return true;
         }
 
+        public async Task<bool> UpdateTestEligibilityAsync(int learningId, bool eligibility)
+        {
+            var entity = await _context.LearningApplications.FindAsync(learningId);
+            if (entity == null) return false;
+
+            entity.TestEligibility = eligibility;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+
+
         public async Task UpdateAsync(LearningApplication request)
         {
             _context.LearningApplications.Update(request);
             await _context.SaveChangesAsync();
         }
+
+
+
+
 
         public Task<LearningApplication> GetByIdAsync(int id)
         {
