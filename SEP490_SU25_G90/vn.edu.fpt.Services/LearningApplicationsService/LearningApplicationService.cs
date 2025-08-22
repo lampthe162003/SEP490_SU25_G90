@@ -148,4 +148,8 @@ public class LearningApplicationService : ILearningApplicationService
 
         await _learningApplicationRepository.UpdateAsync(learningapp);
     }
+    public Task<bool> UpdateTestEligibilityAsync(int learningId, bool eligibility)
+    {
+        return _learningApplicationRepository.UpdateTestEligibilityAsync(learningId, eligibility);
+    }
 }
