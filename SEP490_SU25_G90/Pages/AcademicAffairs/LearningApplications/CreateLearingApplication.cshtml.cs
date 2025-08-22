@@ -200,6 +200,8 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.LearningApplications
                 ObstacleScore = 0,
                 PracticalScore = 0,
                 LearningStatus = 0,
+                PracticalDistance = 0,
+                PracticalDurationHours = 0,
                 TestEligibility = false              
             };
 
