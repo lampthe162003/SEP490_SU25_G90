@@ -176,8 +176,8 @@ namespace SEP490_SU25_G90.Pages.Instructors.RollCall
                 // Clear practical data for absent students
                 if (student.AttendanceStatus == false)
                 {
-                    student.PracticalDurationHours = null;
-                    student.PracticalDistance = null;
+                    student.PracticalDurationHours = 0;
+                    student.PracticalDistance = 0;
                 }
             }
             
@@ -243,6 +243,16 @@ namespace SEP490_SU25_G90.Pages.Instructors.RollCall
                         var absentCount = recordsToCreate.Count(r => r.AttendanceStatus == false);
                         TempData["SuccessMessage"] = $"Tạo điểm danh mới thành công! Đã điểm danh {recordsToCreate.Count} học viên " +
                             $"({presentCount} có mặt, {absentCount} vắng) cho buổi học ngày {Date:dd/MM/yyyy}.";
+                        foreach (var attendanceRecord in attendanceRecords)
+                        {
+                            UpdateLearnerProgressRequest request = new UpdateLearnerProgressRequest
+                            {
+                                LearningId = attendanceRecord.LearnerId,
+                                PracticalDistance = (float)attendanceRecord.PracticalDistance,
+                                PracticalDurationHours = (float)attendanceRecord?.PracticalDurationHours
+                            };
+                            await _learningApplicationService.UpdateLearnerProgress(request);
+                        }
                     }
                     else
                     {

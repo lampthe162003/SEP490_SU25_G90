@@ -1,6 +1,7 @@
 using AutoMapper;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
+using SEP490_SU25_G90.vn.edu.fpt.Repositories.CourseRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Services.EmailService;
 using System.Text;
@@ -13,16 +14,18 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _env;
         private readonly IEmailService _emailService;
+        private readonly ICourseRepository _courseRepository;
 
-        public InstructorService(IInstructorRepository instructorRepository, IMapper mapper, IWebHostEnvironment env, IEmailService emailService)
+        public InstructorService(IInstructorRepository instructorRepository, IMapper mapper, IWebHostEnvironment env, IEmailService emailService, ICourseRepository courseRepository)
         {
             _instructorRepository = instructorRepository;
             _mapper = mapper;
             _env = env;
             _emailService = emailService;
+            _courseRepository = courseRepository;
         }
 
-        public IList<InstructorListInformationResponse> GetAllInstructors(string? name = null, byte? licenceTypeId = null)
+        public IList<InstructorListInformationResponse> GetAllInstructors(string? name = null, byte? licenceTypeId = null, byte? courseId = null)
         {
             var query = _instructorRepository.GetAllInstructors();
 
@@ -34,6 +37,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
             if (licenceTypeId.HasValue)
             {
                 query = _instructorRepository.GetInstructorsByLicenceType(query, licenceTypeId.Value);
+            }
+
+            if (courseId.HasValue)
+            {
+                //Course course = await _courseRepository.GetByIdAsync(courseId.Value);
+                //query = _instructorRepository.GetInstructorsByLicenceType(query, (byte)course.LicenceTypeId);
             }
 
             var instructors = query.ToList();

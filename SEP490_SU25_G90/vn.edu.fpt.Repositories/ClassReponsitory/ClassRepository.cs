@@ -31,8 +31,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
             // Tìm kiếm theo tên lớp
             if (!string.IsNullOrEmpty(searchRequest.ClassName))
             {
-                query = query.Where(c => c.ClassName != null && 
-                    (c.ClassName.ToLower().Contains(searchRequest.ClassName.ToLower()) || 
+                query = query.Where(c => c.ClassName != null &&
+                    (c.ClassName.ToLower().Contains(searchRequest.ClassName.ToLower()) ||
                     (c.Instructor != null &&
                     (c.Instructor.FirstName != null && c.Instructor.FirstName.ToLower().Contains(searchRequest.ClassName.ToLower()))
                    || (c.Instructor.MiddleName != null && c.Instructor.MiddleName.ToLower().Contains(searchRequest.ClassName.ToLower()))
@@ -59,8 +59,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
                 {
                     ClassId = c.ClassId,
                     ClassName = c.ClassName,
-                    InstructorName = c.Instructor != null ? 
-                        $"{c.Instructor.FirstName} {c.Instructor.MiddleName} {c.Instructor.LastName}".Trim() : 
+                    InstructorName = c.Instructor != null ?
+                        $"{c.Instructor.FirstName} {c.Instructor.MiddleName} {c.Instructor.LastName}".Trim() :
                         "Chưa phân công",
                     LicenceCode = c.Course != null && c.Course.LicenceType != null ? c.Course.LicenceType.LicenceCode : null,
                     StartDate = c.Course!.StartDate != null ? c.Course.StartDate.Value.ToDateTime(TimeOnly.MinValue) : null,
@@ -89,7 +89,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
             // Áp dụng các điều kiện tìm kiếm tương tự như GetClassesAsync
             if (!string.IsNullOrEmpty(searchRequest.ClassName))
             {
-                query = query.Where(c => c.ClassName != null && 
+                query = query.Where(c => c.ClassName != null &&
                     c.ClassName.ToLower().Contains(searchRequest.ClassName.ToLower()));
             }
 
@@ -161,10 +161,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
                         FullName = $"{cm.Learner.Learner.FirstName} {cm.Learner.Learner.MiddleName} {cm.Learner.Learner.LastName}".Trim(),
                         Email = cm.Learner.Learner.Email,
                         Phone = cm.Learner.Learner.Phone,
-                        ProfileImageUrl = !string.IsNullOrEmpty(cm.Learner.Learner.ProfileImageUrl) 
-                            ? cm.Learner.Learner.ProfileImageUrl 
+                        ProfileImageUrl = !string.IsNullOrEmpty(cm.Learner.Learner.ProfileImageUrl)
+                            ? cm.Learner.Learner.ProfileImageUrl
                             : "https://cdn.vectorstock.com/i/1000v/51/87/student-avatar-user-profile-icon-vector-47025187.jpg",
-                        LearningStatus = "Đang học", // Default status, có thể customize sau
+                        LearningStatus = GetLearningStatusName(cm.Learner!.LearningStatus),
                         JoinDate = DateTime.Now // Có thể lấy từ CreatedDate nếu có
                     })
                     .ToList()
@@ -223,6 +223,125 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
                 return "Đang học";
             else
                 return "Đã học xong";
+        }
+
+        /// <summary>
+        /// Chuyển đổi mã trạng thái học thành tên hiển thị
+        /// </summary>
+        private static string GetLearningStatusName(byte? status)
+        {
+            return status switch
+            {
+                1 => "Đang học",
+                2 => "Bảo lưu",
+                3 => "Học lại",
+                4 => "Hoàn thành",
+                _ => "Không xác định"
+            };
+        }
+
+        /// <summary>
+        /// Tạo tên lớp tự động dựa trên khóa học
+        /// </summary>
+        public async Task<string> GenerateClassNameAsync(int courseId)
+        {
+            var course = await _context.Courses.FirstOrDefaultAsync(c => c.CourseId == courseId);
+            var prefix = course?.CourseName ?? ($"KH-{courseId}");
+
+            var existingNames = await _context.Classes
+                .Where(c => c.CourseId == courseId && c.ClassName != null)
+                .Select(c => c.ClassName!)
+                .ToListAsync();
+
+            var maxIndex = 0;
+            foreach (var name in existingNames)
+            {
+                var marker = "-L";
+                var idx = name.LastIndexOf(marker, StringComparison.OrdinalIgnoreCase);
+                if (idx >= 0 && idx + marker.Length < name.Length)
+                {
+                    var numStr = name[(idx + marker.Length)..];
+                    if (int.TryParse(numStr, out var n) && n > maxIndex)
+                    {
+                        maxIndex = n;
+                    }
+                }
+            }
+
+            return $"{prefix}-L{maxIndex + 1}";
+        }
+
+        /// <summary>
+        /// Tạo lớp học mới
+        /// </summary>
+        public async Task<int> CreateClassAsync(Class newClass, List<int> selectedLearnerIds, List<string> selectedSchedules)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                _context.Classes.Add(newClass);
+                await _context.SaveChangesAsync();
+
+                // Limit selected learners by MaxStudents
+                const int maxStudents = 5;
+                var learnerIds = selectedLearnerIds.Take(Math.Max(0, maxStudents)).ToList();
+                foreach (var learningId in learnerIds)
+                {
+                    _context.ClassMembers.Add(new ClassMember
+                    {
+                        ClassId = newClass.ClassId,
+                        LearnerId = learningId
+                    });
+
+                    // Tự động cập nhật trạng thái học thành "Đang học" nếu có giảng viên
+                    if (newClass.InstructorId.HasValue)
+                    {
+                        var learningApp = await _context.LearningApplications
+                            .FirstOrDefaultAsync(la => la.LearningId == learningId);
+
+                        if (learningApp != null && learningApp.LearningStatus != 1)
+                        {
+                            learningApp.LearningStatus = 1; // Đang học
+                        }
+                    }
+                }
+                await _context.SaveChangesAsync();
+
+                // Save class schedules
+                if (selectedSchedules != null && selectedSchedules.Any())
+                {
+                    var schedules = new List<(byte Thu, int SlotId)>();
+                    foreach (var schedule in selectedSchedules)
+                    {
+                        var parts = schedule.Split('-');
+                        if (parts.Length == 2 && byte.TryParse(parts[0], out var thu) && int.TryParse(parts[1], out var slotId))
+                        {
+                            schedules.Add((thu, slotId));
+                        }
+                    }
+                    if (schedules.Any())
+                    {
+                        foreach (var (thu, slotId) in schedules)
+                        {
+                            _context.ClassTimes.Add(new ClassTime
+                            {
+                                ClassId = newClass.ClassId,
+                                Thu = thu,
+                                SlotId = slotId
+                            });
+                        }
+                        await _context.SaveChangesAsync();
+                    }
+                }
+
+                await transaction.CommitAsync();
+                return newClass.ClassId;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
     }
 }

@@ -510,6 +510,91 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                 .FirstOrDefaultAsync();
         }
 
-        
+        public async Task<List<WaitingLearnerResponse>> GetWaitingLearnersAsync()
+        {
+            var waitingLearners = await _context.LearningApplications
+                .Include(la => la.Learner)
+                    .ThenInclude(u => u.UserRoles)
+                        .ThenInclude(ur => ur.Role)
+                .Include(la => la.LicenceType)
+                .Include(la => la.ClassMembers)
+                .Where(la => la.Learner.UserRoles.Any(ur => ur.RoleId == 1)) // Filter by roleId = 1 (learner role)
+                .ToListAsync();
+
+            return waitingLearners
+                .Select(x => new WaitingLearnerResponse
+                {
+                    LearningId = x.LearningId,
+                    FullName = $"{x.Learner?.FirstName} {x.Learner?.MiddleName} {x.Learner?.LastName}".Trim(),
+                    Cccd = x.Learner?.Cccd?.CccdNumber ?? "",
+                    Status = GetLearningStatusName(x.LearningStatus),
+                    ProfileImageUrl = !string.IsNullOrWhiteSpace(x.Learner?.ProfileImageUrl) ?
+                        x.Learner.ProfileImageUrl :
+                        "https://cdn-icons-png.flaticon.com/512/1144/1144760.png",
+                    LicenceTypeId = x.LicenceTypeId,
+                    LearningStatus = x.LearningStatus
+                })
+                .ToList();
+        }
+
+        public async Task<List<WaitingLearnerResponse>> GetWaitingLearnersByCourseAsync(int courseId)
+        {
+            // Get license type for the selected course
+            var course = await _context.Courses
+                .Include(c => c.LicenceType)
+                .FirstOrDefaultAsync(c => c.CourseId == courseId);
+
+            if (course?.LicenceTypeId == null)
+            {
+                return new List<WaitingLearnerResponse>();
+            }
+
+            // Get learners with roleId = 1 for the specific license type
+            var filteredLearners = await _context.LearningApplications
+                .Include(la => la.Learner)
+                    .ThenInclude(u => u.UserRoles)
+                        .ThenInclude(ur => ur.Role)
+                .Include(la => la.Learner)
+                    .ThenInclude(u => u.Cccd)
+                .Include(la => la.LicenceType)
+                .Include(la => la.ClassMembers)
+                .Where(la => la.Learner.UserRoles.Any(ur => ur.RoleId == 1) && // Filter by roleId = 1
+                            la.LicenceTypeId == course.LicenceTypeId
+                           //&& // Match license type
+                           && (la.LearningStatus != 4 && la.LearningStatus != 1)  // Exclude completed
+                                                                                  //!la.ClassMembers.Any()
+                            ) // Not assigned to any class yet
+                .ToListAsync();
+
+            return filteredLearners
+                .Select(x => new WaitingLearnerResponse
+                {
+                    LearningId = x.LearningId,
+                    FullName = $"{x.Learner?.FirstName} {x.Learner?.MiddleName} {x.Learner?.LastName}".Trim(),
+                    Cccd = x.Learner?.Cccd?.CccdNumber ?? "",
+                    Status = GetLearningStatusName(x.LearningStatus),
+                    ProfileImageUrl = !string.IsNullOrWhiteSpace(x.Learner?.ProfileImageUrl) ?
+                        x.Learner.ProfileImageUrl :
+                        "https://cdn-icons-png.flaticon.com/512/1144/1144760.png",
+                    LearningStatus = x.LearningStatus,
+                    LicenceName = x.LicenceType.LicenceCode
+                })
+                .ToList();
+        }
+
+        /// <summary>
+        /// Chuyển đổi mã trạng thái học thành tên hiển thị
+        /// </summary>
+        private static string GetLearningStatusName(byte? status)
+        {
+            return status switch
+            {
+                1 => "Đang học",
+                2 => "Bảo lưu",
+                3 => "Học lại",
+                4 => "Hoàn thành",
+                _ => "Chưa bắt đầu"
+            };
+        }
     }
 }

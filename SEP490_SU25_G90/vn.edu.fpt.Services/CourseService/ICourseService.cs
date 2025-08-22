@@ -18,6 +18,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.CourseService
         Task DeleteAsync(int id);
         Task<bool> CourseNameExistsAsync(string courseName, int? excludeCourseId = null);
         Task<string> GenerateCourseNameAsync(byte licenceTypeId);
+        Task<IEnumerable<CourseWithStudentCountResponse>> GetCoursesWithStudentCountAsync();
+        Task<CourseInfoResponse?> GetCourseInfoAsync(int courseId);
     }
 }
 

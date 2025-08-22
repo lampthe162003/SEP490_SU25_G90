@@ -18,12 +18,12 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
 
         [BindProperty]
         public CreateInstructorRequest CreateRequest { get; set; } = new();
-        
+
         public List<LicenceTypeResponse> AvailableLicenceTypes { get; set; } = new();
-        
+
         [TempData]
         public string? Message { get; set; }
-        
+
         [TempData]
         public string? MessageType { get; set; }
 
@@ -61,7 +61,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                 await _instructorService.CreateInstructorAsync(CreateRequest);
                 Message = $"Tạo tài khoản giảng viên thành công! Mật khẩu đã được gửi về email {CreateRequest.Email}";
                 MessageType = "success";
-                
+
                 return RedirectToPage("./ManagerInstructor");
             }
             catch (Exception ex)
@@ -78,4 +78,4 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
             AvailableLicenceTypes = _instructorService.GetAllLicenceTypes();
         }
     }
-} 
+}
