@@ -61,41 +61,7 @@ INSERT INTO LicenceTypes VALUES
 
 INSERT [dbo].[ScheduleSlots]
 VALUES (1, '08:00:00', '09:30:00'), (2, '10:00:00', '11:30:00'), (3, '13:30:00', '15:00:00'), (4, '15:30:00', '17:00:00')
--- Insert TestCoreStandards
---  B1	
-INSERT INTO TestScoreStandards (licence_type_id, part_name, max_score, pass_score) VALUES
-(1, N'Theory', 30, 26),
-(1, N'Simulation', 50, 35),
-(1, N'Obstacle', 100, 80),
-(1, N'Practical', 100, 80);
 
---  B2
-INSERT INTO TestScoreStandards (licence_type_id, part_name, max_score, pass_score) VALUES
-(2, N'Theory', 35, 32),
-(2, N'Simulation', 50, 35),
-(2, N'Obstacle', 100, 80),
-(2, N'Practical', 100, 80);
-
---  C
-INSERT INTO TestScoreStandards (licence_type_id, part_name, max_score, pass_score) VALUES
-(3, N'Theory', 40, 36),
-(3, N'Simulation', 50, 35),
-(3, N'Obstacle', 100, 80),
-(3, N'Practical', 100, 80);
-
---  D
-INSERT INTO TestScoreStandards (licence_type_id, part_name, max_score, pass_score) VALUES
-(4, N'Theory', 45, 40),
-(4, N'Simulation', 50, 35),
-(4, N'Obstacle', 100, 80),
-(4, N'Practical', 100, 80);
-
---  E
-INSERT INTO TestScoreStandards (licence_type_id, part_name, max_score, pass_score) VALUES
-(5, N'Theory', 45, 40),
-(5, N'Simulation', 50, 35),
-(5, N'Obstacle', 100, 80),
-(5, N'Practical', 100, 80);
 
 INSERT INTO Cities(city_id, city_name) VALUES
 (01, N'Hà Nội'),
@@ -160,7 +126,7 @@ INSERT INTO Cities(city_id, city_name) VALUES
 (93, N'Hậu Giang'),
 (94, N'Sóc Trăng'),
 (95, N'Bạc Liêu'),
-(96, N'Cà Mau');  -- Truncated to avoid SQL size overflow
+(96, N'Cà Mau'); 
 
 INSERT INTO Provinces(province_id, province_name, city_id) VALUES
 (001, N'Ba Đình', 01),
@@ -1862,6 +1828,46 @@ INSERT INTO Wards(ward_id, ward_name, province_id) VALUES
 (03177, N'Huổi Lếnh', 096),
 (03172, N'Mường Chà', 097);  -- Truncated to avoid SQL size overflow
 
+-- Insert TestCoreStandards
+--  B1	
+INSERT INTO TestScoreStandards (licence_type_id, part_name, max_score, pass_score) VALUES
+(1, N'Theory', 30, 26),
+(1, N'Simulation', 50, 35),
+(1, N'Obstacle', 100, 80),
+(1, N'Practical', 100, 80);
+
+--  B2
+INSERT INTO TestScoreStandards (licence_type_id, part_name, max_score, pass_score) VALUES
+(2, N'Theory', 35, 32),
+(2, N'Simulation', 50, 35),
+(2, N'Obstacle', 100, 80),
+(2, N'Practical', 100, 80);
+
+--  C
+INSERT INTO TestScoreStandards (licence_type_id, part_name, max_score, pass_score) VALUES
+(3, N'Theory', 40, 36),
+(3, N'Simulation', 50, 35),
+(3, N'Obstacle', 100, 80),
+(3, N'Practical', 100, 80);
+
+--  D
+INSERT INTO TestScoreStandards (licence_type_id, part_name, max_score, pass_score) VALUES
+(4, N'Theory', 45, 40),
+(4, N'Simulation', 50, 35),
+(4, N'Obstacle', 100, 80),
+(4, N'Practical', 100, 80);
+
+--  E
+INSERT INTO TestScoreStandards (licence_type_id, part_name, max_score, pass_score) VALUES
+(5, N'Theory', 45, 40),
+(5, N'Simulation', 50, 35),
+(5, N'Obstacle', 100, 80),
+(5, N'Practical', 100, 80);
+
+ -- Truncated to avoid SQL size overflow
+
+
+
 SET IDENTITY_INSERT [dbo].[News] ON 
 
 INSERT [dbo].[News] ([news_id], [title], [news_content], [author_id], [post_time], [image]) VALUES (1, N'<p>Học l&aacute;i xe &ocirc; t&ocirc; hạng B1&nbsp;</p>
@@ -2136,4 +2142,238 @@ INSERT [dbo].[News] ([news_id], [title], [news_content], [author_id], [post_time
 <p>Địa chỉ:&nbsp;89, Ng&ocirc; Gia Tự, Phường Tam Sơn, Th&agrave;nh phố Từ Sơn, Tỉnh Bắc Ninh</p>
 ', 5, CAST(N'2025-07-19T10:10:08.910' AS DateTime), N'images/news3.jpg')
 
-SET IDENTITY_INSERT [dbo].[News] OFF
+SET IDENTITY_INSERT [dbo].[News] OFF;
+
+
+INSERT INTO CCCD (CCCD_number, image_mt, image_ms) VALUES
+('031234567890', 'https://img.example/cccd/031234567890_mt.jpg', 'https://img.example/cccd/031234567890_ms.jpg'),
+('041234567891', 'https://img.example/cccd/041234567891_mt.jpg', 'https://img.example/cccd/041234567891_ms.jpg'),
+('051234567892', 'https://img.example/cccd/051234567892_mt.jpg', 'https://img.example/cccd/051234567892_ms.jpg'),
+('061234567893', 'https://img.example/cccd/061234567893_mt.jpg', 'https://img.example/cccd/061234567893_ms.jpg'),
+('071234567894', 'https://img.example/cccd/071234567894_mt.jpg', 'https://img.example/cccd/071234567894_ms.jpg'),
+('081234567895', 'https://img.example/cccd/081234567895_mt.jpg', 'https://img.example/cccd/081234567895_ms.jpg'),
+('091234567896', 'https://img.example/cccd/091234567896_mt.jpg', 'https://img.example/cccd/091234567896_ms.jpg'),
+('101234567897', 'https://img.example/cccd/101234567897_mt.jpg', 'https://img.example/cccd/101234567897_ms.jpg'),
+('111234567898', 'https://img.example/cccd/111234567898_mt.jpg', 'https://img.example/cccd/111234567898_ms.jpg'),
+('121234567899', 'https://img.example/cccd/121234567899_mt.jpg', 'https://img.example/cccd/121234567899_ms.jpg'),
+('131234567800', 'https://img.example/cccd/131234567800_mt.jpg', 'https://img.example/cccd/131234567800_ms.jpg'),
+('141234567801', 'https://img.example/cccd/141234567801_mt.jpg', 'https://img.example/cccd/141234567801_ms.jpg'),
+('151234567802', 'https://img.example/cccd/151234567802_mt.jpg', 'https://img.example/cccd/151234567802_ms.jpg'),
+('161234567803', 'https://img.example/cccd/161234567803_mt.jpg', 'https://img.example/cccd/161234567803_ms.jpg'),
+('171234567804', 'https://img.example/cccd/171234567804_mt.jpg', 'https://img.example/cccd/171234567804_ms.jpg'),
+('181234567805', 'https://img.example/cccd/181234567805_mt.jpg', 'https://img.example/cccd/181234567805_ms.jpg'),
+('191234567806', 'https://img.example/cccd/191234567806_mt.jpg', 'https://img.example/cccd/191234567806_ms.jpg'),
+('201234567807', 'https://img.example/cccd/201234567807_mt.jpg', 'https://img.example/cccd/201234567807_ms.jpg'),
+('211234567808', 'https://img.example/cccd/211234567808_mt.jpg', 'https://img.example/cccd/211234567808_ms.jpg'),
+('221234567809', 'https://img.example/cccd/221234567809_mt.jpg', 'https://img.example/cccd/221234567809_ms.jpg');
+ 
+INSERT INTO HealthCertificates (image_url) VALUES
+('https://img.example/health/hc_001.jpg'), ('https://img.example/health/hc_002.jpg'),
+('https://img.example/health/hc_003.jpg'), ('https://img.example/health/hc_004.jpg'),
+('https://img.example/health/hc_005.jpg'), ('https://img.example/health/hc_006.jpg'),
+('https://img.example/health/hc_007.jpg'), ('https://img.example/health/hc_008.jpg'),
+('https://img.example/health/hc_009.jpg'), ('https://img.example/health/hc_010.jpg'),
+('https://img.example/health/hc_011.jpg'), ('https://img.example/health/hc_012.jpg'),
+('https://img.example/health/hc_013.jpg'), ('https://img.example/health/hc_014.jpg'),
+('https://img.example/health/hc_015.jpg'), ('https://img.example/health/hc_016.jpg'),
+('https://img.example/health/hc_017.jpg'), ('https://img.example/health/hc_018.jpg'),
+('https://img.example/health/hc_019.jpg'), ('https://img.example/health/hc_020.jpg');
+
+
+INSERT INTO Addresses (house_number, road_name, ward_id) VALUES
+(N'12A', N'Nguyễn Trãi',   00001),
+(N'25',  N'Kim Mã',        00028),
+(N'7B',  N'Giảng Võ',      00031),
+(N'89',  N'Thụy Khuê',     00112),
+(N'102', N'Phố Huế',       00262),
+(N'56',  N'Lý Thái Tổ',    00058),
+(N'18',  N'Quán Thánh',    00013),
+(N'23C', N'Đội Cấn',       00022),
+(N'45',  N'Ngọc Khánh',    00025),
+(N'3',   N'Yên Phụ',       00106),
+(N'9',   N'Phú Thượng',    00091),
+(N'88',  N'Trần Hưng Đạo', 00082),
+(N'21',  N'Bạch Mai',      00292),
+(N'15',  N'Khâm Thiên',    00202),
+(N'61',  N'La Thành',      00196),
+(N'4/2', N'Dịch Vọng',     00166),
+(N'77',  N'Xuân La',       00103),
+(N'5',   N'Quảng An',      00100),
+(N'33',  N'Ngọc Hà',       00016),
+(N'101', N'Yên Hòa',       00172);
+
+INSERT INTO LearningApplications 
+(learner_id, licence_type_id, submitted_at, theory_score, simulation_score, obstacle_score, practical_score,
+ learning_status, practical_duration_hours, practical_distance, test_eligibility)
+VALUES
+(1,1,'2025-06-01',26,38,82,85,1,12.5, 120.0, 1),
+(2,2,'2025-06-03',28,40,86,88,1,18.0, 180.0, 1),
+(3,3,'2025-06-05',22,36,80,79,1,10.0, 100.0, 0),
+(1,2,'2025-06-10',30,42,90,91,4,35.0, 360.0,1),
+(2,1,'2025-06-12',24,34,78,75,2, 8.0,  85.0, 0),
+(3,2,'2025-06-13',27,39,84,83,1,16.0, 170.0,1),
+(1,3,'2025-06-15',25,37,81,82,3,14.0, 150.0,0),
+(2,3,'2025-06-18',29,41,88,90,1,22.0, 220.0,1),
+(3,1,'2025-06-20',26,38,82,84,1,12.0, 125.0,1),
+(1,4,'2025-06-22',31,43,92,93,1,26.0, 280.0,1),
+(2,5,'2025-06-25',33,45,95,96,1,40.0, 420.0,1),
+(3,4,'2025-06-27',28,40,86,85,2,18.0, 200.0,0),
+(1,5,'2025-06-29',34,46,96,97,1,45.0, 480.0,1),
+(2,4,'2025-07-01',32,44,94,92,1,38.0, 410.0,1),
+(3,5,'2025-07-02',35,47,97,98,1,48.0, 500.0,1),
+(1,1,'2025-07-03',27,39,83,86,1,17.0, 190.0,1),
+(2,2,'2025-07-04',26,38,82,80,3,12.0, 130.0,0),
+(3,3,'2025-07-05',30,42,90,92,1,28.0, 300.0,1),
+(1,2,'2025-07-06',29,41,88,89,1,24.0, 260.0,1),
+(2,1,'2025-07-07',25,37,81,80,2,14.0, 150.0,0);
+
+
+INSERT INTO Courses (course_name, [start_date], end_date, licence_type_id) VALUES
+(N'Khóa B1-09/2025', '2025-09-01','2025-11-30',1),
+(N'Khóa B1-10/2025', '2025-10-01','2025-12-31',1),
+(N'Khóa B2-09/2025', '2025-09-05','2025-12-05',2),
+(N'Khóa B2-10/2025', '2025-10-10','2026-01-10',2),
+(N'Khóa C-09/2025',  '2025-09-01','2026-01-15',3),
+(N'Khóa C-10/2025',  '2025-10-01','2026-02-01',3),
+(N'Khóa D-09/2025',  '2025-09-15','2026-02-15',4),
+(N'Khóa D-10/2025',  '2025-10-15','2026-03-01',4),
+(N'Khóa E-09/2025',  '2025-09-20','2026-03-20',5),
+(N'Khóa E-10/2025',  '2025-10-20','2026-04-01',5),
+(N'Khóa B1-11/2025', '2025-11-01','2026-01-31',1),
+(N'Khóa B2-11/2025', '2025-11-05','2026-02-05',2),
+(N'Khóa C-11/2025',  '2025-11-10','2026-03-10',3),
+(N'Khóa D-11/2025',  '2025-11-12','2026-03-20',4),
+(N'Khóa E-11/2025',  '2025-11-15','2026-04-15',5),
+(N'Khóa B1-12/2025', '2025-12-01','2026-02-28',1),
+(N'Khóa B2-12/2025', '2025-12-05','2026-03-05',2),
+(N'Khóa C-12/2025',  '2025-12-10','2026-04-10',3),
+(N'Khóa D-12/2025',  '2025-12-15','2026-04-30',4),
+(N'Khóa E-12/2025',  '2025-12-20','2026-05-20',5);
+
+
+INSERT INTO Classes (instructor_id, class_name, course_id) VALUES
+(7,N'B1-Morning-A','1'), (8,N'B1-Evening-A','2'),
+(9,N'B2-Morning-A','3'), (7,N'B2-Evening-A','4'),
+(8,N'C-Weekend-A','5'),  (9,N'C-Weekend-B','6'),
+(7,N'D-Morning-A','7'), (8,N'D-Evening-A','8'),
+(9,N'E-Weekend-A','9'), (7,N'E-Weekend-B','10'),
+(8,N'B1-Morning-B','11'),(9,N'B2-Morning-B','12'),
+(7,N'C-Morning-C','13'), (8,N'D-Morning-C','14'),
+(9,N'E-Morning-C','15'), (7,N'B1-Morning-C','16'),
+(8,N'B2-Evening-B','17'), (9,N'C-Weekend-C','18'),
+(7,N'D-Weekend-C','19'), (8,N'E-Weekend-C','20');
+
+
+INSERT INTO ClassTime (class_id, thu, slot_id) VALUES
+(1,2,1),(1,3,2),(1,4,3),(1,5,4),
+(2,2,2),(2,3,3),(2,4,4),(2,6,1),
+(3,2,3),(3,4,1),(3,5,2),(3,6,4),
+(4,3,1),(4,5,3),(4,6,2),(4,2,4),
+(5,2,1),(5,3,2),(5,4,3),(5,5,4);
+
+
+INSERT INTO ClassSchedules (class_id, slot_id, schedule_date) VALUES
+(1,1,'2025-09-02'), (1,2,'2025-09-03'), (1,3,'2025-09-04'), (1,4,'2025-09-05'),
+(2,2,'2025-09-02'), (2,3,'2025-09-03'), (2,4,'2025-09-04'), (2,1,'2025-09-06'),
+(3,3,'2025-09-08'), (3,1,'2025-09-10'), (3,2,'2025-09-12'), (3,4,'2025-09-13'),
+(4,1,'2025-09-09'), (4,3,'2025-09-11'), (4,2,'2025-09-13'), (4,4,'2025-09-16'),
+(5,1,'2025-09-02'), (5,2,'2025-09-04'), (5,3,'2025-09-06'), (5,4,'2025-09-09');
+
+INSERT INTO InstructorSpecializations (instructor_id, licence_type_id) VALUES
+(7,1),(7,2),(7,3),(7,4),(7,5),
+(8,1),(8,2),(8,3),(8,4),(8,5),
+(9,1),(9,2),(9,3),(9,4),(9,5),
+-- vài specialization bổ sung (trùng người nhưng hợp lệ)
+(7,1),(8,2),(9,3),(7,4),(8,5);
+
+INSERT INTO LearningMaterials (title, [description], licence_type_id, file_link)
+VALUES
+(N'Lý thuyết B1 – Chương 1', N'Quy tắc giao thông cơ bản', 1, N'https://files.example/b1/theory_01.pdf'),
+(N'Lý thuyết B1 – Chương 2', N'Biển báo giao thông',      1, N'https://files.example/b1/signs.pdf'),
+(N'Thực hành B1 – Số 1',    N'Kỹ thuật đánh lái',         1, N'https://files.example/b1/prac_steer.mp4'),
+(N'Lý thuyết B2 – Chương 1',N'Cấu tạo ô tô',              2, N'https://files.example/b2/structure.pdf'),
+(N'Lý thuyết B2 – Chương 2',N'Quy tắc ưu tiên',           2, N'https://files.example/b2/priority.pdf'),
+(N'Thực hành B2 – Số 1',    N'Đề pa ngang dốc',           2, N'https://files.example/b2/hillstart.mp4'),
+(N'Lý thuyết C – Chương 1', N'Tải trọng & an toàn',       3, N'https://files.example/c/safety.pdf'),
+(N'Lý thuyết C – Chương 2', N'Kỹ năng lái xe tải',        3, N'https://files.example/c/skills.pdf'),
+(N'Thực hành C – Số 1',     N'Lùi chuồng',                3, N'https://files.example/c/reverse.mp4'),
+(N'Lý thuyết D – Chương 1', N'An toàn hành khách',        4, N'https://files.example/d/passenger.pdf'),
+(N'Lý thuyết D – Chương 2', N'Kỹ năng lái xe bus',        4, N'https://files.example/d/bus.pdf'),
+(N'Thực hành D – Số 1',     N'Vào bến & rời bến',         4, N'https://files.example/d/station.mp4'),
+(N'Lý thuyết E – Chương 1', N'Kéo rơ-moóc an toàn',       5, N'https://files.example/e/trailer.pdf'),
+(N'Lý thuyết E – Chương 2', N'Phanh rơ-moóc',             5, N'https://files.example/e/brake.pdf'),
+(N'Thực hành E – Số 1',     N'Quay đầu xe moóc',          5, N'https://files.example/e/turn.mp4'),
+(N'Mẹo thi mô phỏng',       N'Chiến lược làm bài 50 câu', 2, N'https://files.example/common/sim_tips.pdf'),
+(N'FAQ đăng ký hồ sơ',      N'Câu hỏi thường gặp',        1, N'https://files.example/common/faq.pdf'),
+(N'Quy chế sát hạch',       N'Điểm và tiêu chuẩn',        1, N'https://files.example/common/rules.pdf'),
+(N'An toàn đường bộ',       N'Phòng tránh tai nạn',       2, N'https://files.example/common/road_safety.pdf'),
+(N'Kỹ năng đường trường',   N'Vượt xe, vào/ra cao tốc',   2, N'https://files.example/common/highway.pdf');
+
+
+INSERT INTO TestApplications
+(learning_id, exam_date, result_image_url, theory_score, simulation_score, obstacle_score, practical_score, [status], submit_profile_date, notes)
+VALUES
+(1,'2025-09-20','https://img.example/test/1.jpg', 26,38,82,85,1,'2025-09-05',N'Đạt'),
+(2,'2025-09-21','https://img.example/test/2.jpg', 28,40,86,88,1,'2025-09-06',N'Đạt'),
+(3,'2025-09-22','https://img.example/test/3.jpg', 22,36,80,79,0,'2025-09-07',N'Thi lại mô phỏng'),
+(4,'2025-09-23','https://img.example/test/4.jpg', 30,42,90,91,1,'2025-09-08',N'Hoàn thành'),
+(5,'2025-09-24','https://img.example/test/5.jpg', 24,34,78,75,0,'2025-09-09',N'Bảo lưu'),
+(6,'2025-09-25','https://img.example/test/6.jpg', 27,39,84,83,1,'2025-09-10',N'OK'),
+(7,'2025-09-26','https://img.example/test/7.jpg', 25,37,81,82,0,'2025-09-11',N'Học lại'),
+(8,'2025-09-27','https://img.example/test/8.jpg', 29,41,88,90,1,'2025-09-12',N'Đạt tốt'),
+(9,'2025-09-28','https://img.example/test/9.jpg', 26,38,82,84,1,'2025-09-13',N'OK'),
+(10,'2025-09-29','https://img.example/test/10.jpg',31,43,92,93,1,'2025-09-14',N'OK'),
+(11,'2025-09-30','https://img.example/test/11.jpg',33,45,95,96,1,'2025-09-15',N'OK'),
+(12,'2025-10-01','https://img.example/test/12.jpg',28,40,86,85,0,'2025-09-16',N'Thi lại'),
+(13,'2025-10-02','https://img.example/test/13.jpg',34,46,96,97,1,'2025-09-17',N'OK'),
+(14,'2025-10-03','https://img.example/test/14.jpg',32,44,94,92,1,'2025-09-18',N'OK'),
+(15,'2025-10-04','https://img.example/test/15.jpg',35,47,97,98,1,'2025-09-19',N'OK'),
+(16,'2025-10-05','https://img.example/test/16.jpg',27,39,83,86,1,'2025-09-20',N'OK'),
+(17,'2025-10-06','https://img.example/test/17.jpg',26,38,82,80,0,'2025-09-21',N'Học lại'),
+(18,'2025-10-07','https://img.example/test/18.jpg',30,42,90,92,1,'2025-09-22',N'OK'),
+(19,'2025-10-08','https://img.example/test/19.jpg',29,41,88,89,1,'2025-09-23',N'OK'),
+(20,'2025-10-09','https://img.example/test/20.jpg',25,37,81,80,0,'2025-09-24',N'Bảo lưu');
+
+
+INSERT INTO CarAssignments (car_id, instructor_id, slot_id, schedule_date, car_status) VALUES
+(1,7,1,'2025-09-02',2),(2,8,2,'2025-09-02',2),
+(1,9,3,'2025-09-03',2),(2,7,4,'2025-09-03',2),
+(1,8,1,'2025-09-04',2),(2,9,2,'2025-09-04',2),
+(1,7,3,'2025-09-05',2),(2,8,4,'2025-09-05',2),
+(1,9,1,'2025-09-06',2),(2,7,2,'2025-09-06',2),
+(1,8,3,'2025-09-07',2),(2,9,4,'2025-09-07',2),
+(1,7,2,'2025-09-08',2),(2,8,3,'2025-09-08',2),
+(1,9,4,'2025-09-09',2),(2,7,1,'2025-09-09',2),
+(1,8,2,'2025-09-10',2),(2,9,3,'2025-09-10',2);
+
+INSERT INTO ClassMembers (class_id, learner_id) VALUES
+(1,1),(2,2),(3,3),(4,4),(5,5),
+(6,6),(7,7),(8,8),(9,9),(10,10),
+(11,11),(12,12),(13,13),(14,14),(15,15),
+(16,16),(17,17),(18,18),(19,19),(20,20);
+
+
+
+INSERT INTO Attendance
+(learner_id, class_id, session_date, class_time_id, attendance_status,
+ practical_duration_hours, practical_distance, note)
+VALUES
+(1,1,'2025-09-02', 1,1,1.5, 15.0,N'Có mặt'),
+(2,2,'2025-09-02', 5,1,1.5, 16.0,N'Có mặt'),
+(3,3,'2025-09-08', 9,1,1.5, 14.0,N'Có mặt'),
+(4,4,'2025-09-09',13,1,1.5, 15.0,N'Có mặt'),
+(5,5,'2025-09-02',17,1,1.5, 13.0,N'Có mặt'), 
+(7,7,'2025-09-15', NULL,1,1.2, 12.0,N'Lý thuyết'),
+(8,8,'2025-09-16', NULL,1,1.3, 13.0,N'Lý thuyết'),
+(9,9,'2025-09-20', NULL,1,1.4, 14.0,N'Lý thuyết'),
+(10,10,'2025-09-29',NULL,1,1.6, 15.0,N'Lý thuyết'),
+(11,11,'2025-09-30',NULL,1,1.2, 12.0,N'Lý thuyết'),
+(12,12,'2025-10-01',NULL,0,0.0,  0.0,N'Vắng'),
+(13,13,'2025-10-02',NULL,1,1.7, 17.0,N'Có mặt'),
+(14,14,'2025-10-03',NULL,1,1.8, 18.0,N'Có mặt'),
+(15,15,'2025-10-04',NULL,1,1.9, 19.0,N'Có mặt'),
+(16,16,'2025-10-05',NULL,1,1.6, 15.0,N'Có mặt'),
+(17,17,'2025-10-06',NULL,0,0.0,  0.0,N'Vắng'),
+(18,18,'2025-10-07',NULL,1,1.5, 15.0,N'Có mặt'),
+(19,19,'2025-10-08',NULL,1,1.4, 14.0,N'Có mặt'),
+(20,20,'2025-10-09',NULL,1,1.3, 13.0,N'Có mặt');
