@@ -20,6 +20,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService
         Task<bool> UpdateTestEligibilityAsync(int learningId, bool eligibility);
 
 
+
     }
 }
 
