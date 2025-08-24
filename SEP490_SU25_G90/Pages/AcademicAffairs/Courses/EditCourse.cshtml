@@ -32,10 +32,11 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Loại bằng</label>
-                        <select asp-for="Input.LicenceTypeId" class="form-select" asp-items="Model.LicenceTypes">
-                            <option value="">-- Chọn loại bằng --</option>
-                        </select>
-                        <span class="text-danger" asp-validation-for="Input.LicenceTypeId"></span>
+                        <input class="form-control" value="@Model.Input.LicenceCode" disabled />
+                        @* <select asp-for="Input.LicenceTypeId" class="form-select" asp-items="Model.LicenceTypes" disabled> *@
+                        @*     <option value="">-- Chọn loại bằng --</option> *@
+                        @* </select> *@
+                        @* <span class="text-danger" asp-validation-for="Input.LicenceTypeId"></span> *@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Thời gian bắt đầu</label>

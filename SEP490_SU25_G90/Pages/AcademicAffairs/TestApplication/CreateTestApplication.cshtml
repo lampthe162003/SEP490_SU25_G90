@@ -95,27 +95,67 @@
             .catch(err => { console.error(err); alert('Lỗi tải danh sách'); });
         }
 
-        function submitBulk() {
-            const ids = Array.from(document.querySelectorAll('.sel:checked')).map(x => parseInt(x.getAttribute('data-id')));
+                function submitBulk() {
+            const ids = Array.from(document.querySelectorAll('.sel:checked'))
+                .map(x => parseInt(x.getAttribute('data-id')));
             const submitDate = document.getElementById('submitDate').value;
             const examDate = document.getElementById('examDate').value;
-            if (!ids.length) { alert('Vui lòng chọn ít nhất một học viên'); return; }
-            if (!submitDate || !examDate) { alert('Vui lòng chọn ngày nộp hồ sơ và ngày thi'); return; }
+
+            if (!ids.length) {
+                alert('Vui lòng chọn ít nhất một học viên');
+                return;
+            }
+
+            if (!submitDate || !examDate) {
+                alert('Vui lòng chọn ngày nộp hồ sơ và ngày thi');
+                return;
+            }
+
+            const submit = new Date(submitDate);
+            const exam = new Date(examDate);
+            const today = new Date();
+
+            // ngày nộp hồ sơ không được lớn hơn ngày hiện tại
+            if (submit > today) {
+                alert('Ngày nộp hồ sơ phải nhỏ hơn hoặc bằng ngày hiện tại');
+                return;
+            }
+
+            // ngày thi phải lớn hơn ngày nộp hồ sơ
+            if (exam <= submit) {
+                alert('Ngày thi phải lớn hơn ngày nộp hồ sơ');
+                return;
+            }
+
+            // (tuỳ chọn) kiểm tra ngày thi phải lớn hơn hôm nay
+            if (exam <= today) {
+                alert('Ngày thi phải lớn hơn ngày hiện tại');
+                return;
+            }
+
             fetch('/AcademicAffairs/TestApplication/New?handler=BulkCreate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
                 },
-                body: JSON.stringify({ learningApplicationIds: ids, submitProfileDate: submitDate, examDate: examDate })
+                body: JSON.stringify({
+                    learningApplicationIds: ids,
+                    submitProfileDate: submitDate,
+                    examDate: examDate
+                })
             })
             .then(r => r.json())
             .then(res => {
                 alert(`Tạo thành công ${res.created} hồ sơ thi`);
                 window.location.href = '/AcademicAffairs/TestApplication';
             })
-            .catch(err => { console.error(err); alert('Tạo hồ sơ thi thất bại'); });
+            .catch(err => {
+                console.error(err);
+                alert('Tạo hồ sơ thi thất bại');
+            });
         }
+
 
         function toggleAll(cb) {
             document.querySelectorAll('.sel').forEach(x => x.checked = cb.checked);
