@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
@@ -16,9 +15,9 @@ namespace SEP490_SU25_G90.Pages.Instructors.LearnApplication
     public class UpdateLearningApplicationDetailsModel : PageModel
     {
         private readonly IInstructorService _instructorService;
-        private readonly SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext _context;
+        private readonly Sep490Su25G90DbContext _context;
 
-        public UpdateLearningApplicationDetailsModel(IInstructorService instructorService, SEP490_SU25_G90.vn.edu.fpt.Models.Sep490Su25G90DbContext context)
+        public UpdateLearningApplicationDetailsModel(IInstructorService instructorService, Sep490Su25G90DbContext context)
         {
             _instructorService = instructorService;
             _context = context;
@@ -34,7 +33,7 @@ namespace SEP490_SU25_G90.Pages.Instructors.LearnApplication
         public string LicenceCode { get; set; } = "";
         public DateTime? SubmittedAt { get; set; }
 
-        // Dùng để bind điểm tối đa theo từng phần
+        // Lưu điểm tối đa cho từng phần thi
         public Dictionary<string, int> MaxScores { get; set; } = new();
 
         public async Task<IActionResult> OnGetAsync(int id)
@@ -56,7 +55,7 @@ namespace SEP490_SU25_G90.Pages.Instructors.LearnApplication
             LicenceCode = app.LicenceType?.LicenceCode ?? "";
             SubmittedAt = app.SubmittedAt;
 
-            // Lấy điểm tối đa từ bảng TestScoreStandards
+            // Lấy chuẩn điểm tối đa từ DB
             var standards = await _context.TestScoreStandards
                 .Where(s => s.LicenceTypeId == app.LicenceTypeId)
                 .ToListAsync();
@@ -73,19 +72,21 @@ namespace SEP490_SU25_G90.Pages.Instructors.LearnApplication
         {
             if (!ModelState.IsValid)
             {
-                ModelState.AddModelError(string.Empty, "Dữ liệu không hợp lệ.");
+                TempData["ErrorMessage"] = "⚠️ Vui lòng nhập đầy đủ và đúng định dạng điểm.";
                 return Page();
             }
 
-            var result = await _instructorService.UpdateLearnerScoresAsync(LearningId, TheoryScore, SimulationScore, ObstacleScore, PracticalScore);
+            var success = await _instructorService.UpdateLearnerScoresAsync(
+                LearningId, TheoryScore, SimulationScore, ObstacleScore, PracticalScore);
 
-            if (!result)
+            if (!success)
             {
-                TempData["ErrorMessage"] = "Cập nhật điểm thất bại. Điểm không thể vượt mức tối đa.";
+                // Không lấy message từ Service nữa, tự định nghĩa chung
+                TempData["ErrorMessage"] = "❌ Cập nhật điểm thất bại. Điểm nhập vào không hợp lệ hoặc vượt mức cho phép.";
                 return Page();
             }
 
-            TempData["SuccessMessage"] = "Cập nhật điểm thành công.";
+            TempData["SuccessMessage"] = "✅ Cập nhật điểm thành công.";
             return RedirectToPage("/Instructors/LearnApplication/Details", new { id = LearningId });
         }
     }
