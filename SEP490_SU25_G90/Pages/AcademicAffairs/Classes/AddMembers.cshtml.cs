@@ -120,7 +120,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
                     FullName = x.LearnerFullName ?? string.Empty,
                     Cccd = x.LearnerCccdNumber ?? string.Empty,
                     Status = x.LearningStatusName ?? string.Empty,
-                    ProfileImageUrl = _context.Users.FirstOrDefault(z => z.UserId == x.LearningId)?.ProfileImageUrl?.ToString() ??
+                    ProfileImageUrl = _context.Users.FirstOrDefault(z => z.UserId == x.LearnerId)?.ProfileImageUrl?.ToString() ??
                         "https://cdn-icons-png.flaticon.com/512/1144/1144760.png"
                 })
                 .ToList();
