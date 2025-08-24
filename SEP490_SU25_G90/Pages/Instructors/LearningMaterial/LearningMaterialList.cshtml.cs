@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.LearningMaterial;
+using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Services.LearningMaterialService;
 
 namespace SEP490_SU25_G90.Pages.Instructors.LearningMaterial
@@ -21,6 +23,12 @@ namespace SEP490_SU25_G90.Pages.Instructors.LearningMaterial
         [BindProperty(SupportsGet = true)]
         public int CurrentPage { get; set; } = 1;
 
+        [BindProperty(SupportsGet = true)]
+        public int SelectedLicenceTypeId { get; set; } = 0;
+
+        public List<SelectListItem> LicenceTypeOptions { get; set; } = new();
+
+
         public int TotalPages { get; set; }
 
         public async Task OnGetAsync()
@@ -28,6 +36,14 @@ namespace SEP490_SU25_G90.Pages.Instructors.LearningMaterial
             const int pageSize = 6;
 
             var (items, totalCount) = await _iLearningMaterialService.GetPagedMaterialsAsync(CurrentPage, pageSize);
+           
+            var licenceTypes = await _iLearningMaterialService.GetLicenceTypesAsync();
+            LicenceTypeOptions = licenceTypes.Select(x => new SelectListItem
+            {
+                Value = x.LicenceTypeId.ToString(),
+                Text = x.LicenceCode
+            }).ToList();
+
             Materials = items;
             TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
         }

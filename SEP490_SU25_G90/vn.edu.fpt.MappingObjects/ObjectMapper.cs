@@ -34,7 +34,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
                 .ForMember(dest => dest.Learning, opt => opt.MapFrom(src => src.Learning));
 
 
-            CreateMap<Models.News, NewsListInformationResponse>();
+            CreateMap<Models.News, NewsListInformationResponse>()
+                 .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src =>
+                     src.Author != null
+                         ? string.Join(" ", new[] { src.Author.FirstName, src.Author.MiddleName, src.Author.LastName }
+                                       .Where(s => !string.IsNullOrWhiteSpace(s)))
+                         : string.Empty));
             CreateMap<NewsFormRequest, Models.News>()
                 .ForMember(dest => dest.Image, opt => opt.Ignore())
                 .ForMember(dest => dest.PostTime, opt => opt.Ignore())
