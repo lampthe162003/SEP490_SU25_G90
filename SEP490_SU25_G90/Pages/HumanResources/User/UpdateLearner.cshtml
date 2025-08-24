@@ -176,6 +176,43 @@
                                                 <span asp-validation-for="UpdateRequest.Gender" class="text-danger"></span>
                                             </div>
                                         </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <h6 class="text-success mb-3 mt-3">
+                                                    <i class="fas fa-map-marker-alt me-2"></i>
+                                                    Địa chỉ
+                                                </h6>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label asp-for="UpdateRequest.HouseNumber" class="form-label">
+                                                    <i class="fas fa-home me-1"></i>
+                                                    Số nhà
+                                                </label>
+                                                <input asp-for="UpdateRequest.HouseNumber" class="form-control" placeholder="Ví dụ: 123, 45A" />
+                                                <span asp-validation-for="UpdateRequest.HouseNumber" class="text-danger"></span>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label asp-for="UpdateRequest.RoadName" class="form-label">
+                                                    <i class="fas fa-road me-1"></i>
+                                                    Tên đường
+                                                </label>
+                                                <input asp-for="UpdateRequest.RoadName" class="form-control" placeholder="Ví dụ: Nguyễn Văn Linh" />
+                                                <span asp-validation-for="UpdateRequest.RoadName" class="text-danger"></span>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label asp-for="UpdateRequest.WardId" class="form-label">
+                                                    <i class="fas fa-map-pin me-1"></i>
+                                                    Phường/Xã
+                                                </label>
+                                                <input asp-for="UpdateRequest.WardId" type="number" class="form-control" placeholder="Mã phường/xã" />
+                                                <span asp-validation-for="UpdateRequest.WardId" class="text-danger"></span>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-info-circle me-1"></i>
+                                                    Nhập mã phường/xã (tùy chọn)
+                                                </small>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

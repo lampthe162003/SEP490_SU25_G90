@@ -52,7 +52,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                 }
 
                 //Check if age is lower than 18
-                if (CreateRequest.Dob < DateOnly.FromDateTime(DateTime.Today.AddYears(-18)))
+                if (CreateRequest.Dob > DateOnly.FromDateTime(DateTime.Today.AddYears(-18)))
                 {
                     ModelState.AddModelError("CreateRequest.Dob", "Tuổi của học viên chưa đủ 18.");
                     return Page();

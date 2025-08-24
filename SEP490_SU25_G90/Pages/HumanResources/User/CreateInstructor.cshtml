@@ -118,6 +118,33 @@
                                     </select>
                                     <span asp-validation-for="CreateRequest.Gender" class="text-danger"></span>
                                 </div>
+
+                                <h6 class="text-success mb-3 mt-4">
+                                    <i class="fas fa-map-marker-alt me-2"></i>
+                                    Địa chỉ
+                                </h6>
+
+                                <div class="mb-3">
+                                    <label asp-for="CreateRequest.HouseNumber" class="form-label">Số nhà</label>
+                                    <input asp-for="CreateRequest.HouseNumber" class="form-control" placeholder="Ví dụ: 123, 45A" />
+                                    <span asp-validation-for="CreateRequest.HouseNumber" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="CreateRequest.RoadName" class="form-label">Tên đường</label>
+                                    <input asp-for="CreateRequest.RoadName" class="form-control" placeholder="Ví dụ: Nguyễn Văn Linh" />
+                                    <span asp-validation-for="CreateRequest.RoadName" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="CreateRequest.WardId" class="form-label">Phường/Xã</label>
+                                    <input asp-for="CreateRequest.WardId" type="number" class="form-control" placeholder="Mã phường/xã" />
+                                    <span asp-validation-for="CreateRequest.WardId" class="text-danger"></span>
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Nhập mã phường/xã (tùy chọn)
+                                    </small>
+                                </div>
                             </div>
 
                             <!-- CCCD & Specializations -->
