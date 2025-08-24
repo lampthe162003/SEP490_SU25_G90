@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Azure.Core;
 using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.TestApplication;
@@ -171,7 +170,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
             {
                 ProfileImageUrl = string.IsNullOrWhiteSpace(obj.Learning.Learner.ProfileImageUrl)
                   ? "/images/avatar_placeholder.png"
-                  :  obj.Learning.Learner.ProfileImageUrl,
+                  : obj.Learning.Learner.ProfileImageUrl,
                 CCCD = obj.Learning.Learner.Cccd?.CccdNumber,
                 ExamDate = obj.ExamDate,
                 LearningApplicationId = id,
@@ -207,13 +206,29 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
             var path = Path.Combine("uploads", "test-application");
             if (request.Attachment != null)
             {
+                // Xóa file cũ nếu có
                 if (!string.IsNullOrEmpty(raw.ResultImageUrl))
                 {
-                    File.Delete(Path.Combine(rootPath, raw.ResultImageUrl));
+                    var oldFilePath = Path.Combine(rootPath, raw.ResultImageUrl);
+                    if (File.Exists(oldFilePath))
+                    {
+                        File.Delete(oldFilePath);
+                    }
                 }
 
+                // Tạo thư mục lưu file
                 Directory.CreateDirectory(Path.Combine(rootPath, path));
-                path = Path.Combine(path, request.Attachment.FileName);
+
+                // Lấy đuôi file gốc
+                var extension = Path.GetExtension(request.Attachment.FileName);
+
+                // Sinh tên file ngẫu nhiên bằng GUID
+                var newFileName = $"{Guid.NewGuid()}{extension}";
+
+                // Ghép vào path
+                path = Path.Combine(path, newFileName);
+
+                // Lưu file
                 using (FileStream fs = new FileStream(Path.Combine(rootPath, path), FileMode.CreateNew, FileAccess.Write))
                 {
                     await request.Attachment.CopyToAsync(fs);
