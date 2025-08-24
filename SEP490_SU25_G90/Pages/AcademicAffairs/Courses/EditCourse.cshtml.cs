@@ -19,7 +19,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Courses
         }
 
         [BindProperty]
-        public CourseFormRequest Input { get; set; } = new();
+        public CourseFormRequestUpdate Input { get; set; } = new();
 
         public List<SelectListItem> LicenceTypes { get; set; } = new();
 
@@ -39,22 +39,23 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Courses
                 return RedirectToPage("./CourseDetails", new { id });
             }
 
-            Input = new CourseFormRequest
+            Input = new CourseFormRequestUpdate
             {
                 CourseId = course.CourseId,
                 CourseName = course.CourseName,
                 LicenceTypeId = course.LicenceTypeId,
+                LicenceCode = course.LicenceType.LicenceCode,
                 StartDate = course.StartDate?.ToDateTime(TimeOnly.MinValue),
                 EndDate = course.EndDate?.ToDateTime(TimeOnly.MinValue)
             };
 
-            await LoadLicenceTypesAsync();
+            //await LoadLicenceTypesAsync();
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            await LoadLicenceTypesAsync();
+            //await LoadLicenceTypesAsync();
 
             if (!ModelState.IsValid)
             {
@@ -88,7 +89,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Courses
                     CourseId = Input.CourseId,
                     // CourseName không cho phép sửa trực tiếp
                     CourseName = existing.CourseName,
-                    LicenceTypeId = Input.LicenceTypeId,
+                    LicenceTypeId = existing.LicenceTypeId,
                     StartDate = Input.StartDate.HasValue ? DateOnly.FromDateTime(Input.StartDate.Value) : null,
                     EndDate = Input.EndDate.HasValue ? DateOnly.FromDateTime(Input.EndDate.Value) : null
                 };
@@ -105,26 +106,27 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Courses
             return RedirectToPage("./ListCourses");
         }
 
-        private async Task LoadLicenceTypesAsync()
-        {
-            var types = await _courseService.GetAllLicenceTypesAsync();
-            LicenceTypes = types.Select(t => new SelectListItem
-            {
-                Value = t.LicenceTypeId.ToString(),
-                Text = t.LicenceCode
-            }).ToList();
-        }
+        //private async Task LoadLicenceTypesAsync()
+        //{
+        //    var types = await _courseService.GetAllLicenceTypesAsync();
+        //    LicenceTypes = types.Select(t => new SelectListItem
+        //    {
+        //        Value = t.LicenceTypeId.ToString(),
+        //        Text = t.LicenceCode
+        //    }).ToList();
+        //}
 
-        public class CourseFormRequest
+        public class CourseFormRequestUpdate
         {
             public int CourseId { get; set; }
 
-            [Required(ErrorMessage = "Tên khóa học là bắt buộc.")]
-            [StringLength(100, ErrorMessage = "Tên khóa học tối đa 100 ký tự.")]
+            //[Required(ErrorMessage = "Tên khóa học là bắt buộc.")]
+            //[StringLength(100, ErrorMessage = "Tên khóa học tối đa 100 ký tự.")]
             public string? CourseName { get; set; }
 
-            [Required(ErrorMessage = "Loại bằng là bắt buộc.")]
+            //[Required(ErrorMessage = "Loại bằng là bắt buộc.")]
             public byte? LicenceTypeId { get; set; }
+            public string? LicenceCode { get; set; }
 
             [Required(ErrorMessage = "Thời gian bắt đầu là bắt buộc.")]
             [DataType(DataType.Date)]

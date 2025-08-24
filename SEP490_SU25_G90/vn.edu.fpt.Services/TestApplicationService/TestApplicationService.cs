@@ -169,6 +169,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.TestApplication
                 .FirstOrDefaultAsync(x => x.TestId == id);
             return new CreatUpdateTestApplicationRequest()
             {
+                ProfileImageUrl = string.IsNullOrWhiteSpace(obj.Learning.Learner.ProfileImageUrl)
+                  ? "/images/avatar_placeholder.png"
+                  :  obj.Learning.Learner.ProfileImageUrl,
                 CCCD = obj.Learning.Learner.Cccd?.CccdNumber,
                 ExamDate = obj.ExamDate,
                 LearningApplicationId = id,

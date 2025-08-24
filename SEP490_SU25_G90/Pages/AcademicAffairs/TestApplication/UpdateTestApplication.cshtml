@@ -114,4 +114,66 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.querySelector("form");
+            const examDateInput = document.getElementById("RequestModel_ExamDate");
+
+            const scoreInputs = [
+                document.getElementById("RequestModel_TheoryScore"),
+                document.getElementById("RequestModel_ObstacleScore"),
+                document.getElementById("RequestModel_SimulationScore"),
+                document.getElementById("RequestModel_PracticalScore")
+            ];
+
+            const attachmentInput = document.getElementById("RequestModel_Attachment");
+
+            function applyExamRules() {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const examDate = new Date(examDateInput.value);
+                examDate.setHours(0, 0, 0, 0);
+
+                if (examDate > today) {
+                    // Chưa tới ngày thi → khóa ngày thi + disable điểm + disable file đính kèm
+                    examDateInput.setAttribute("readonly", "readonly");
+                    scoreInputs.forEach(x => {
+                        x.value = "";
+                        x.setAttribute("disabled", "disabled");
+                    });
+                    if (attachmentInput) {
+                        attachmentInput.value = "";
+                        attachmentInput.setAttribute("disabled", "disabled");
+                    }
+                } else {
+                    // Ngày thi đến hoặc đã qua → cho nhập điểm, sửa ngày thi, upload file
+                    examDateInput.removeAttribute("readonly");
+                    scoreInputs.forEach(x => x.removeAttribute("disabled"));
+                    if (attachmentInput) {
+                        attachmentInput.removeAttribute("disabled");
+                    }
+                }
+            }
+
+            // Kiểm tra ngay khi load form
+            applyExamRules();
+
+            // Kiểm tra lại khi submit
+            form.addEventListener("submit", function (e) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const examDate = new Date(examDateInput.value);
+                examDate.setHours(0, 0, 0, 0);
+
+                if (examDate > today) {
+                    e.preventDefault();
+                    alert("Chưa đến ngày thi, bạn không thể nhập điểm hoặc upload file!");
+                    applyExamRules();
+                }
+            });
+
+    </script>
 }
+
+
