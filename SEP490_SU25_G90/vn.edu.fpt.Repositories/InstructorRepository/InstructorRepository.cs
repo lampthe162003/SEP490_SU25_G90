@@ -278,6 +278,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
             if (passed)
             {
                 app.LearningStatus = 4; // Hoàn thành
+                app.TestEligibility = true;
             }
 
             await _context.SaveChangesAsync();
