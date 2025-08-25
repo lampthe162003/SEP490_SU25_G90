@@ -578,5 +578,29 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
         {
             await _userRepository.Update(_mapper.Map<User>(request));
         }
+
+        public async Task<bool> DoesUserWithCccdExist(string cccdNumber)
+        {
+            var users = await _userRepository.GetAllUsers();
+            return users.Any(u => u.Cccd != null && u.Cccd.CccdNumber == cccdNumber);
+        }
+
+        public async Task<bool> DoesUserWithPhoneExist(string phoneNumber)
+        {
+            var users = await _userRepository.GetAllUsers();
+            return users.Any(u => u.Phone == phoneNumber);
+        }
+
+        public async Task<bool> DoesUserWithCccdExistExcludingUser(string cccdNumber, int excludeUserId)
+        {
+            var users = await _userRepository.GetAllUsers();
+            return users.Any(u => u.UserId != excludeUserId && u.Cccd != null && u.Cccd.CccdNumber == cccdNumber);
+        }
+
+        public async Task<bool> DoesUserWithPhoneExistExcludingUser(string phoneNumber, int excludeUserId)
+        {
+            var users = await _userRepository.GetAllUsers();
+            return users.Any(u => u.UserId != excludeUserId && u.Phone == phoneNumber);
+        }
     }
 }

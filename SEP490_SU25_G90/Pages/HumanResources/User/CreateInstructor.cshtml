@@ -98,20 +98,28 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label asp-for="CreateRequest.Phone" class="form-label">Số điện thoại</label>
-                                    <input asp-for="CreateRequest.Phone" class="form-control" />
+                                    <label asp-for="CreateRequest.Phone" class="form-label">Số điện thoại *</label>
+                                    <input asp-for="CreateRequest.Phone" class="form-control" placeholder="Ví dụ: 0987654321" pattern="^(0[3|5|7|8|9])[0-9]{8}$" title="Số điện thoại Việt Nam hợp lệ (10 số, bắt đầu bằng 03, 05, 07, 08, 09)" maxlength="10" required />
                                     <span asp-validation-for="CreateRequest.Phone" class="text-danger"></span>
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Số điện thoại Việt Nam (10 số, bắt đầu bằng 03, 05, 07, 08, 09)
+                                    </small>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label asp-for="CreateRequest.Dob" class="form-label">Ngày sinh</label>
-                                    <input asp-for="CreateRequest.Dob" type="date" class="form-control" />
+                                    <label asp-for="CreateRequest.Dob" class="form-label">Ngày sinh *</label>
+                                    <input asp-for="CreateRequest.Dob" type="date" class="form-control" required />
                                     <span asp-validation-for="CreateRequest.Dob" class="text-danger"></span>
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Tuổi phải từ 18 đến 65
+                                    </small>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label asp-for="CreateRequest.Gender" class="form-label">Giới tính</label>
-                                    <select asp-for="CreateRequest.Gender" class="form-select">
+                                    <label asp-for="CreateRequest.Gender" class="form-label">Giới tính *</label>
+                                    <select asp-for="CreateRequest.Gender" class="form-select" required>
                                         <option value="">-- Chọn giới tính --</option>
                                         <option value="true">Nam</option>
                                         <option value="false">Nữ</option>
@@ -156,11 +164,15 @@
 
                                 <div class="mb-3">
                                     <label asp-for="CreateRequest.CccdNumber" class="form-label">
-                                        Số CCCD 
+                                        Số CCCD * 
                                         <small class="text-muted">(12 chữ số)</small>
                                     </label>
-                                    <input asp-for="CreateRequest.CccdNumber" class="form-control" placeholder="Nhập 12 chữ số CCCD" maxlength="12" />
+                                    <input asp-for="CreateRequest.CccdNumber" class="form-control" placeholder="Nhập 12 chữ số CCCD" maxlength="12" minlength="12" pattern="^\d{12}$" title="Số CCCD phải có đúng 12 chữ số" required />
                                     <span asp-validation-for="CreateRequest.CccdNumber" class="text-danger"></span>
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Chỉ được nhập số, đúng 12 chữ số
+                                    </small>
                                 </div>
 
                                 <div class="mb-3">
@@ -350,12 +362,44 @@
                     if (e.target.value.length > 12) {
                         e.target.value = e.target.value.substring(0, 12);
                     }
+                    
+                    // Real-time validation feedback
+                    validateCccdNumber(e.target);
                 });
 
                 createCccdInput.addEventListener('keypress', function(e) {
                     if (!/^\d$/.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
                         e.preventDefault();
                     }
+                });
+            }
+            
+            // Phone number input validation
+            const createPhoneInput = document.querySelector('input[name="CreateRequest.Phone"]');
+            if (createPhoneInput) {
+                createPhoneInput.addEventListener('input', function(e) {
+                    // Allow only digits
+                    e.target.value = e.target.value.replace(/[^\d]/g, '');
+                    if (e.target.value.length > 10) {
+                        e.target.value = e.target.value.substring(0, 10);
+                    }
+                    
+                    // Real-time validation feedback
+                    validatePhoneNumber(e.target);
+                });
+
+                createPhoneInput.addEventListener('keypress', function(e) {
+                    if (!/^\d$/.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                        e.preventDefault();
+                    }
+                });
+            }
+            
+            // Date of birth validation
+            const createDobInput = document.querySelector('input[name="CreateRequest.Dob"]');
+            if (createDobInput) {
+                createDobInput.addEventListener('change', function(e) {
+                    validateDateOfBirth(e.target);
                 });
             }
         }
@@ -433,6 +477,91 @@
 
         function hideCreateFileError(input) {
             const errorDiv = input.parentNode.querySelector('.create-file-error');
+            if (errorDiv) {
+                errorDiv.remove();
+            }
+        }
+
+        // Validation functions
+        function validateCccdNumber(input) {
+            const value = input.value;
+            const isValid = /^\d{12}$/.test(value) || value === '';
+            
+            if (isValid) {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                hideValidationError(input, 'cccd-error');
+            } else {
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                if (value.length > 0 && value.length < 12) {
+                    showValidationError(input, 'cccd-error', 'Số CCCD phải có đúng 12 chữ số');
+                } else if (value.length > 0 && !/^\d+$/.test(value)) {
+                    showValidationError(input, 'cccd-error', 'Số CCCD chỉ được chứa số');
+                }
+            }
+        }
+        
+        function validatePhoneNumber(input) {
+            const value = input.value;
+            const isValid = /^(0[3|5|7|8|9])[0-9]{8}$/.test(value) || value === '';
+            
+            if (isValid) {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                hideValidationError(input, 'phone-error');
+            } else {
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                if (value.length > 0) {
+                    if (value.length !== 10) {
+                        showValidationError(input, 'phone-error', 'Số điện thoại phải có đúng 10 số');
+                    } else if (!/^0[3|5|7|8|9]/.test(value)) {
+                        showValidationError(input, 'phone-error', 'Số điện thoại phải bắt đầu bằng 03, 05, 07, 08, hoặc 09');
+                    }
+                }
+            }
+        }
+        
+        function validateDateOfBirth(input) {
+            const value = input.value;
+            if (value) {
+                const dob = new Date(value);
+                const today = new Date();
+                const age = today.getFullYear() - dob.getFullYear();
+                const monthDiff = today.getMonth() - dob.getMonth();
+                
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+                    age--;
+                }
+                
+                if (age < 18) {
+                    input.classList.add('is-invalid');
+                    showValidationError(input, 'dob-error', 'Tuổi của giảng viên chưa đủ 18');
+                } else if (age > 65) {
+                    input.classList.add('is-invalid');
+                    showValidationError(input, 'dob-error', 'Tuổi của giảng viên không được quá 65');
+                } else {
+                    input.classList.remove('is-invalid');
+                    input.classList.add('is-valid');
+                    hideValidationError(input, 'dob-error');
+                }
+            }
+        }
+        
+        function showValidationError(input, errorId, message) {
+            let errorDiv = document.getElementById(errorId);
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.id = errorId;
+                errorDiv.className = 'invalid-feedback d-block';
+                input.parentNode.appendChild(errorDiv);
+            }
+            errorDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>' + message;
+        }
+        
+        function hideValidationError(input, errorId) {
+            const errorDiv = document.getElementById(errorId);
             if (errorDiv) {
                 errorDiv.remove();
             }

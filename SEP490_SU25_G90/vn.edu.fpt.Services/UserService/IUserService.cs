@@ -17,6 +17,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
         public Task<LoginInformationResponse> GetLoginDetailsByEmail(string email);
         public Task ResetPasswordAsync(string email, string newPassword);
         public Task<bool> DoesUserWithEmailExist(string email);
+        public Task<bool> DoesUserWithCccdExist(string cccdNumber);
+        public Task<bool> DoesUserWithPhoneExist(string phoneNumber);
+        public Task<bool> DoesUserWithCccdExistExcludingUser(string cccdNumber, int excludeUserId);
+        public Task<bool> DoesUserWithPhoneExistExcludingUser(string phoneNumber, int excludeUserId);
         public Task<List<UserListInformationResponse>> GetUsersByRole(byte roleId);
         public Task UpdateStaffAsync(UpdateStaffRequest request);
     }
