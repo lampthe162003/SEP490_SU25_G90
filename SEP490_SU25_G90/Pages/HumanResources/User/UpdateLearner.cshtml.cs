@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Services.UserService;
+using SEP490_SU25_G90.vn.edu.fpt.Services.AddressService;
 
 namespace SEP490_SU25_G90.Pages.HumanResources.User
 {
@@ -10,14 +11,20 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
     public class UpdateLearnerModel : PageModel
     {
         private readonly IUserService _userService;
+        private readonly IAddressService _addressService;
 
-        public UpdateLearnerModel(IUserService userService)
+        public UpdateLearnerModel(IUserService userService, IAddressService addressService)
         {
             _userService = userService;
+            _addressService = addressService;
         }
 
         [BindProperty]
         public UpdateLearnerRequest UpdateRequest { get; set; } = new();
+
+        public List<CityResponse> AvailableCities { get; set; } = new();
+        public List<ProvinceResponse> AvailableProvinces { get; set; } = new();
+        public List<WardResponse> AvailableWards { get; set; } = new();
 
         [TempData]
         public string? Message { get; set; }
@@ -60,6 +67,20 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     HealthCertificateImageUrl = learner.HealthCertificateImageUrl
                 };
 
+                // Load existing address information if available
+                if (learner.AddressId.HasValue)
+                {
+                    var address = await _addressService.GetAddressAsync(learner.AddressId.Value);
+                    if (address != null)
+                    {
+                        UpdateRequest.WardId = address.WardId;
+                        UpdateRequest.ProvinceId = address.Ward?.ProvinceId;
+                        UpdateRequest.CityId = address.Ward?.Province?.CityId;
+                        UpdateRequest.HouseNumber = address.HouseNumber;
+                    }
+                }
+
+                LoadAddressData();
                 return Page();
             }
             catch (Exception ex)
@@ -94,6 +115,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     if (existingUserWithCccd)
                     {
                         ModelState.AddModelError("UpdateRequest.CccdNumber", "Số CCCD này đã được sử dụng");
+                        LoadAddressData();
                         return Page();
                     }
                 }
@@ -105,6 +127,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     if (existingUserWithPhone)
                     {
                         ModelState.AddModelError("UpdateRequest.Phone", "Số điện thoại này đã được sử dụng");
+                        LoadAddressData();
                         return Page();
                     }
                 }
@@ -115,12 +138,14 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     if (UpdateRequest.Dob > DateOnly.FromDateTime(DateTime.Today.AddYears(-18)))
                     {
                         ModelState.AddModelError("UpdateRequest.Dob", "Tuổi của học viên chưa đủ 18.");
+                        LoadAddressData();
                         return Page();
                     }
 
                     if (UpdateRequest.Dob < DateOnly.FromDateTime(DateTime.Today.AddYears(-60)))
                     {
                         ModelState.AddModelError("UpdateRequest.Dob", "Tuổi của học viên không được quá 60.");
+                        LoadAddressData();
                         return Page();
                     }
                 }
@@ -139,6 +164,30 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     return Page();
                 }
 
+                // Create or update address record if ward is selected
+                if (UpdateRequest.WardId.HasValue)
+                {
+                    if (learner.AddressId.HasValue)
+                    {
+                        // Update existing address
+                        await _addressService.UpdateAddressAsync(
+                            learner.AddressId.Value,
+                            UpdateRequest.WardId.Value,
+                            UpdateRequest.HouseNumber,
+                            null // No road name
+                        );
+                    }
+                    else
+                    {
+                        // Create new address
+                        var addressId = await _addressService.CreateAddressAsync(
+                            UpdateRequest.WardId.Value, 
+                            UpdateRequest.HouseNumber,
+                            null // No road name
+                        );
+                    }
+                }
+
                 // Update learner information
                 await _userService.UpdateLearnerInfoAsync(UpdateRequest.UserId, UpdateRequest);
 
@@ -150,7 +199,36 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
             {
                 Message = $"Lỗi khi cập nhật thông tin học viên: {ex.Message}";
                 MessageType = "error";
+                LoadAddressData();
                 return Page();
+            }
+        }
+
+        public async Task<IActionResult> OnGetProvincesAsync(int cityId)
+        {
+            var provinces = _addressService.GetProvincesByCity(cityId);
+            return new JsonResult(provinces);
+        }
+
+        public async Task<IActionResult> OnGetWardsAsync(int provinceId)
+        {
+            var wards = _addressService.GetWardsByProvince(provinceId);
+            return new JsonResult(wards);
+        }
+
+
+        private void LoadAddressData()
+        {
+            AvailableCities = _addressService.GetAllCities();
+            
+            if (UpdateRequest.CityId.HasValue)
+            {
+                AvailableProvinces = _addressService.GetProvincesByCity(UpdateRequest.CityId.Value);
+            }
+            
+            if (UpdateRequest.ProvinceId.HasValue)
+            {
+                AvailableWards = _addressService.GetWardsByProvince(UpdateRequest.ProvinceId.Value);
             }
         }
     }

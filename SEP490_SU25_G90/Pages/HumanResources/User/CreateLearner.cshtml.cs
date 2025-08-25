@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
+using SEP490_SU25_G90.vn.edu.fpt.Services.AddressService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.UserService;
 
 namespace SEP490_SU25_G90.Pages.HumanResources.User
@@ -10,30 +11,35 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
     public class CreateLearnerModel : PageModel
     {
         private readonly IUserService _userService;
+        private readonly IAddressService _addressService;
 
-        public CreateLearnerModel(IUserService userService)
+        public CreateLearnerModel(IUserService userService, IAddressService addressService)
         {
             _userService = userService;
+            _addressService = addressService;
         }
 
         [BindProperty]
         public CreateLearnerRequest CreateRequest { get; set; } = new();
-        
+
+        public List<CityResponse> AvailableCities { get; set; } = new();
+
         [TempData]
         public string? Message { get; set; }
-        
+
         [TempData]
         public string? MessageType { get; set; }
 
         public void OnGet()
         {
-            // Initialize page
+            LoadAvailableCities();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
+                LoadAvailableCities();
                 return Page();
             }
 
@@ -54,6 +60,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     if (existingUserWithCccd)
                     {
                         ModelState.AddModelError("CreateRequest.CccdNumber", "Số CCCD này đã được sử dụng");
+                        LoadAvailableCities();
                         return Page();
                     }
                 }
@@ -65,6 +72,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     if (existingUserWithPhone)
                     {
                         ModelState.AddModelError("CreateRequest.Phone", "Số điện thoại này đã được sử dụng");
+                        LoadAvailableCities();
                         return Page();
                     }
                 }
@@ -97,18 +105,39 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     return Page();
                 }
 
+
+
                 var password = await _userService.CreateLearnerAsync(CreateRequest);
                 Message = $"Tạo tài khoản học viên thành công! Mật khẩu đã được gửi về email {CreateRequest.Email}";
                 MessageType = "success";
-                
+
                 return RedirectToPage("./ListLearningProfile");
             }
             catch (Exception ex)
             {
                 Message = $"Lỗi khi tạo tài khoản học viên: {ex.Message}";
                 MessageType = "error";
+                LoadAvailableCities();
                 return Page();
             }
         }
+
+        public async Task<IActionResult> OnGetProvincesAsync(int cityId)
+        {
+            var provinces = _addressService.GetProvincesByCity(cityId);
+            return new JsonResult(provinces);
+        }
+
+        public async Task<IActionResult> OnGetWardsAsync(int provinceId)
+        {
+            var wards = _addressService.GetWardsByProvince(provinceId);
+            return new JsonResult(wards);
+        }
+
+
+        private void LoadAvailableCities()
+        {
+            AvailableCities = _addressService.GetAllCities();
+        }
     }
-} 
+}
