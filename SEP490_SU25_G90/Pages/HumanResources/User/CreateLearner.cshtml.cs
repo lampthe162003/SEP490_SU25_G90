@@ -47,10 +47,53 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     return Page();
                 }
 
-                //Check if age is lower than 18
+                // Check if CCCD number already exists
+                if (!string.IsNullOrEmpty(CreateRequest.CccdNumber))
+                {
+                    var existingUserWithCccd = await _userService.DoesUserWithCccdExist(CreateRequest.CccdNumber);
+                    if (existingUserWithCccd)
+                    {
+                        ModelState.AddModelError("CreateRequest.CccdNumber", "Số CCCD này đã được sử dụng");
+                        return Page();
+                    }
+                }
+
+                // Check if phone number already exists
+                if (!string.IsNullOrEmpty(CreateRequest.Phone))
+                {
+                    var existingUserWithPhone = await _userService.DoesUserWithPhoneExist(CreateRequest.Phone);
+                    if (existingUserWithPhone)
+                    {
+                        ModelState.AddModelError("CreateRequest.Phone", "Số điện thoại này đã được sử dụng");
+                        return Page();
+                    }
+                }
+
+                // Check if age is lower than 18
                 if (CreateRequest.Dob > DateOnly.FromDateTime(DateTime.Today.AddYears(-18)))
                 {
                     ModelState.AddModelError("CreateRequest.Dob", "Tuổi của học viên chưa đủ 18.");
+                    return Page();
+                }
+
+                // Check if age is too high (over 60 for learners)
+                if (CreateRequest.Dob < DateOnly.FromDateTime(DateTime.Today.AddYears(-60)))
+                {
+                    ModelState.AddModelError("CreateRequest.Dob", "Tuổi của học viên không được quá 60.");
+                    return Page();
+                }
+
+                // Validate CCCD number format
+                if (!string.IsNullOrEmpty(CreateRequest.CccdNumber) && !System.Text.RegularExpressions.Regex.IsMatch(CreateRequest.CccdNumber, @"^\d{12}$"))
+                {
+                    ModelState.AddModelError("CreateRequest.CccdNumber", "Số CCCD phải có đúng 12 chữ số và chỉ chứa số");
+                    return Page();
+                }
+
+                // Validate phone number format
+                if (!string.IsNullOrEmpty(CreateRequest.Phone) && !System.Text.RegularExpressions.Regex.IsMatch(CreateRequest.Phone, @"^(0[3|5|7|8|9])[0-9]{8}$"))
+                {
+                    ModelState.AddModelError("CreateRequest.Phone", "Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam hợp lệ (10 số, bắt đầu bằng 03, 05, 07, 08, 09)");
                     return Page();
                 }
 

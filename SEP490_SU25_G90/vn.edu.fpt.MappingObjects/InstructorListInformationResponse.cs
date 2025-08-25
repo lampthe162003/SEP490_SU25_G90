@@ -55,13 +55,19 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         [StringLength(50, ErrorMessage = "Tên không được quá 50 ký tự")]
         public string? LastName { get; set; }
         
+        [Required(ErrorMessage = "Ngày sinh là bắt buộc")]
         public DateOnly? Dob { get; set; }
+        
+        [Required(ErrorMessage = "Giới tính là bắt buộc")]
         public bool? Gender { get; set; }
         
-        [Phone(ErrorMessage = "Số điện thoại không hợp lệ")]
+        [Required(ErrorMessage = "Số điện thoại là bắt buộc")]
+        [RegularExpression(@"^(0[3|5|7|8|9])[0-9]{8}$", ErrorMessage = "Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam hợp lệ (10 số, bắt đầu bằng 03, 05, 07, 08, 09)")]
         public string? Phone { get; set; }
         
-        [RegularExpression(@"^(\d{12})?$", ErrorMessage = "Số CCCD phải có đúng 12 chữ số và chỉ chứa số")]
+        [Required(ErrorMessage = "Số CCCD là bắt buộc")]
+        [RegularExpression(@"^\d{12}$", ErrorMessage = "Số CCCD phải có đúng 12 chữ số và chỉ chứa số")]
+        [StringLength(12, MinimumLength = 12, ErrorMessage = "Số CCCD phải có đúng 12 chữ số")]
         public string? CccdNumber { get; set; }
         
         public string? CccdImageFront { get; set; }
@@ -198,13 +204,19 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         [StringLength(50, ErrorMessage = "Tên không được quá 50 ký tự")]
         public string? LastName { get; set; }
         
+        [Required(ErrorMessage = "Ngày sinh là bắt buộc")]
         public DateOnly? Dob { get; set; }
+        
+        [Required(ErrorMessage = "Giới tính là bắt buộc")]
         public bool? Gender { get; set; }
         
-        [Phone(ErrorMessage = "Số điện thoại không hợp lệ")]
+        [Required(ErrorMessage = "Số điện thoại là bắt buộc")]
+        [RegularExpression(@"^(0[3|5|7|8|9])[0-9]{8}$", ErrorMessage = "Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam hợp lệ (10 số, bắt đầu bằng 03, 05, 07, 08, 09)")]
         public string? Phone { get; set; }
         
-        [RegularExpression(@"^(\d{12})?$", ErrorMessage = "Số CCCD phải có đúng 12 chữ số và chỉ chứa số")]
+        [Required(ErrorMessage = "Số CCCD là bắt buộc")]
+        [RegularExpression(@"^\d{12}$", ErrorMessage = "Số CCCD phải có đúng 12 chữ số và chỉ chứa số")]
+        [StringLength(12, MinimumLength = 12, ErrorMessage = "Số CCCD phải có đúng 12 chữ số")]
         public string? CccdNumber { get; set; }
         
         public string? CccdImageFront { get; set; }
@@ -249,13 +261,19 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         [StringLength(50, ErrorMessage = "Tên không được quá 50 ký tự")]
         public string? LastName { get; set; }
         
+        [Required(ErrorMessage = "Ngày sinh là bắt buộc")]
         public DateOnly? Dob { get; set; }
+        
+        [Required(ErrorMessage = "Giới tính là bắt buộc")]
         public bool? Gender { get; set; }
         
-        [Phone(ErrorMessage = "Số điện thoại không hợp lệ")]
+        [Required(ErrorMessage = "Số điện thoại là bắt buộc")]
+        [RegularExpression(@"^(0[3|5|7|8|9])[0-9]{8}$", ErrorMessage = "Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam hợp lệ (10 số, bắt đầu bằng 03, 05, 07, 08, 09)")]
         public string? Phone { get; set; }
         
-        [RegularExpression(@"^(\d{12})?$", ErrorMessage = "Số CCCD phải có đúng 12 chữ số và chỉ chứa số")]
+        [Required(ErrorMessage = "Số CCCD là bắt buộc")]
+        [RegularExpression(@"^\d{12}$", ErrorMessage = "Số CCCD phải có đúng 12 chữ số và chỉ chứa số")]
+        [StringLength(12, MinimumLength = 12, ErrorMessage = "Số CCCD phải có đúng 12 chữ số")]
         public string? CccdNumber { get; set; }
         
         public string? CccdImageFront { get; set; }
@@ -299,13 +317,19 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         [StringLength(50, ErrorMessage = "Tên không được quá 50 ký tự")]
         public string? LastName { get; set; }
         
+        [Required(ErrorMessage = "Ngày sinh là bắt buộc")]
         public DateOnly? Dob { get; set; }
+        
+        [Required(ErrorMessage = "Giới tính là bắt buộc")]
         public bool? Gender { get; set; }
         
-        [Phone(ErrorMessage = "Số điện thoại không hợp lệ")]
+        [Required(ErrorMessage = "Số điện thoại là bắt buộc")]
+        [RegularExpression(@"^(0[3|5|7|8|9])[0-9]{8}$", ErrorMessage = "Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam hợp lệ (10 số, bắt đầu bằng 03, 05, 07, 08, 09)")]
         public string? Phone { get; set; }
         
-        [RegularExpression(@"^(\d{12})?$", ErrorMessage = "Số CCCD phải có đúng 12 chữ số và chỉ chứa số")]
+        [Required(ErrorMessage = "Số CCCD là bắt buộc")]
+        [RegularExpression(@"^\d{12}$", ErrorMessage = "Số CCCD phải có đúng 12 chữ số và chỉ chứa số")]
+        [StringLength(12, MinimumLength = 12, ErrorMessage = "Số CCCD phải có đúng 12 chữ số")]
         public string? CccdNumber { get; set; }
         
         public string? CccdImageFront { get; set; }

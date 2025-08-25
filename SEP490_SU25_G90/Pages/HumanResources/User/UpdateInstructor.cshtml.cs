@@ -91,6 +91,64 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     return RedirectToPage("./ManagerInstructor");
                 }
 
+                // Check if CCCD number already exists (exclude current user)
+                if (!string.IsNullOrEmpty(UpdateRequest.CccdNumber))
+                {
+                    var existingInstructors = _instructorService.GetAllInstructors();
+                    if (existingInstructors.Any(i => i.CccdNumber == UpdateRequest.CccdNumber && i.UserId != UpdateRequest.UserId))
+                    {
+                        ModelState.AddModelError("UpdateRequest.CccdNumber", "Số CCCD này đã được sử dụng");
+                        LoadAvailableLicenceTypes();
+                        return Page();
+                    }
+                }
+
+                // Check if phone number already exists (exclude current user)
+                if (!string.IsNullOrEmpty(UpdateRequest.Phone))
+                {
+                    var existingInstructors = _instructorService.GetAllInstructors();
+                    if (existingInstructors.Any(i => i.Phone == UpdateRequest.Phone && i.UserId != UpdateRequest.UserId))
+                    {
+                        ModelState.AddModelError("UpdateRequest.Phone", "Số điện thoại này đã được sử dụng");
+                        LoadAvailableLicenceTypes();
+                        return Page();
+                    }
+                }
+
+                // Check if age is valid
+                if (UpdateRequest.Dob.HasValue)
+                {
+                    if (UpdateRequest.Dob > DateOnly.FromDateTime(DateTime.Today.AddYears(-18)))
+                    {
+                        ModelState.AddModelError("UpdateRequest.Dob", "Tuổi của giảng viên chưa đủ 18.");
+                        LoadAvailableLicenceTypes();
+                        return Page();
+                    }
+
+                    if (UpdateRequest.Dob < DateOnly.FromDateTime(DateTime.Today.AddYears(-65)))
+                    {
+                        ModelState.AddModelError("UpdateRequest.Dob", "Tuổi của giảng viên không được quá 65.");
+                        LoadAvailableLicenceTypes();
+                        return Page();
+                    }
+                }
+
+                // Validate CCCD number format
+                if (!string.IsNullOrEmpty(UpdateRequest.CccdNumber) && !System.Text.RegularExpressions.Regex.IsMatch(UpdateRequest.CccdNumber, @"^\d{12}$"))
+                {
+                    ModelState.AddModelError("UpdateRequest.CccdNumber", "Số CCCD phải có đúng 12 chữ số và chỉ chứa số");
+                    LoadAvailableLicenceTypes();
+                    return Page();
+                }
+
+                // Validate phone number format
+                if (!string.IsNullOrEmpty(UpdateRequest.Phone) && !System.Text.RegularExpressions.Regex.IsMatch(UpdateRequest.Phone, @"^(0[3|5|7|8|9])[0-9]{8}$"))
+                {
+                    ModelState.AddModelError("UpdateRequest.Phone", "Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam hợp lệ (10 số, bắt đầu bằng 03, 05, 07, 08, 09)");
+                    LoadAvailableLicenceTypes();
+                    return Page();
+                }
+
                 // Update specializations first
                 UpdateSpecializations(UpdateRequest.UserId, instructor.Specializations.Select(s => s.LicenceTypeId).ToList(), UpdateRequest.SelectedSpecializations);
 
