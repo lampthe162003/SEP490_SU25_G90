@@ -54,7 +54,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.LearningApplications
 
             if (NewStatus < 1 || NewStatus > 4)
             {
-                StatusMessage = "⚠️ Trạng thái không hợp lệ.";
+                StatusMessage = "Trạng thái không hợp lệ.";
                 return RedirectToPage(new { id = Id });
             }
 
