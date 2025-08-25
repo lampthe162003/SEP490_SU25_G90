@@ -26,7 +26,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects.Class
     public class ClassMemberResponse
     {
         public int UserId { get; set; }
-        public string? StudentCode { get; set; }
+        public string? CCCD { get; set; }
         public string? FullName { get; set; }
         public string? Email { get; set; }
         public string? Phone { get; set; }

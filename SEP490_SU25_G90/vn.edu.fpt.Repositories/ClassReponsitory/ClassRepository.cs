@@ -157,7 +157,10 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassReponsitory
                     .Select(cm => new ClassMemberResponse
                     {
                         UserId = cm.Learner!.Learner!.UserId,
-                        StudentCode = cm.Learner.Learner.UserId.ToString("D9"), // Generate student code from UserId
+                        CCCD = _context.Cccds
+                           .Where(cc => cc.CccdId == cm.Learner.Learner.CccdId)
+                            .Select(cc => cc.CccdNumber)
+                            .FirstOrDefault(),
                         FullName = $"{cm.Learner.Learner.FirstName} {cm.Learner.Learner.MiddleName} {cm.Learner.Learner.LastName}".Trim(),
                         Email = cm.Learner.Learner.Email,
                         Phone = cm.Learner.Learner.Phone,

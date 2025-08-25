@@ -71,6 +71,15 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         // Thêm trường ProfileImageUrl cho ảnh đại diện
         public string? ProfileImageUrl { get; set; }
         
+        // Address fields
+        [StringLength(100, ErrorMessage = "Số nhà/đường không được quá 100 ký tự")]
+        public string? HouseNumber { get; set; }
+        
+        [StringLength(200, ErrorMessage = "Tên đường không được quá 200 ký tự")]
+        public string? RoadName { get; set; }
+        
+        public int? WardId { get; set; }
+        
         // File upload properties
         public IFormFile? ProfileImageFile { get; set; }
         public IFormFile? CccdImageFrontFile { get; set; }
@@ -207,6 +216,15 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         // Thêm trường ProfileImageUrl cho ảnh đại diện
         public string? ProfileImageUrl { get; set; }
         
+        // Address fields
+        [StringLength(100, ErrorMessage = "Số nhà/đường không được quá 100 ký tự")]
+        public string? HouseNumber { get; set; }
+        
+        [StringLength(200, ErrorMessage = "Tên đường không được quá 200 ký tự")]
+        public string? RoadName { get; set; }
+        
+        public int? WardId { get; set; }
+        
         // File upload properties
         public IFormFile? ProfileImageFile { get; set; }
         public IFormFile? CccdImageFrontFile { get; set; }
@@ -246,6 +264,15 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
 
         // Thêm trường ProfileImageUrl cho ảnh đại diện
         public string? ProfileImageUrl { get; set; }
+        
+        // Address fields
+        [StringLength(100, ErrorMessage = "Số nhà/đường không được quá 100 ký tự")]
+        public string? HouseNumber { get; set; }
+        
+        [StringLength(200, ErrorMessage = "Tên đường không được quá 200 ký tự")]
+        public string? RoadName { get; set; }
+        
+        public int? WardId { get; set; }
         
         // File upload properties
         public IFormFile? ProfileImageFile { get; set; }
@@ -289,6 +316,15 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
 
         // Thêm trường ProfileImageUrl cho ảnh đại diện
         public string? ProfileImageUrl { get; set; }
+        
+        // Address fields
+        [StringLength(100, ErrorMessage = "Số nhà/đường không được quá 100 ký tự")]
+        public string? HouseNumber { get; set; }
+        
+        [StringLength(200, ErrorMessage = "Tên đường không được quá 200 ký tự")]
+        public string? RoadName { get; set; }
+        
+        public int? WardId { get; set; }
         
         // File upload properties
         public IFormFile? ProfileImageFile { get; set; }

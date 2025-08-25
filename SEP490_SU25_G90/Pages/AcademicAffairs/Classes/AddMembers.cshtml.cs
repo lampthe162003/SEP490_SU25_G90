@@ -78,7 +78,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
                         {
                             var learningApp = await _context.LearningApplications
                                 .FirstOrDefaultAsync(la => la.LearningId == learningId);
-                            
+
                             if (learningApp != null && learningApp.LearningStatus != 1)
                             {
                                 learningApp.LearningStatus = 1; // Đang học
@@ -91,7 +91,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
-                
+
                 TempData["SuccessMessage"] = "Đã thêm học viên vào lớp";
                 return RedirectToPage("/AcademicAffairs/Classes/ClassDetails", new { id = ClassId });
             }
@@ -120,9 +120,8 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
                     FullName = x.LearnerFullName ?? string.Empty,
                     Cccd = x.LearnerCccdNumber ?? string.Empty,
                     Status = x.LearningStatusName ?? string.Empty,
-                    ProfileImageUrl = string.IsNullOrWhiteSpace(x.LearnerCccdImageUrl) ?
-                        "https://cdn-icons-png.flaticon.com/512/1144/1144760.png" :
-                        x.LearnerCccdImageUrl.Split('|').FirstOrDefault() ?? "https://cdn-icons-png.flaticon.com/512/1144/1144760.png"
+                    ProfileImageUrl = _context.Users.FirstOrDefault(z => z.UserId == x.LearnerId)?.ProfileImageUrl?.ToString() ??
+                        "https://cdn-icons-png.flaticon.com/512/1144/1144760.png"
                 })
                 .ToList();
         }

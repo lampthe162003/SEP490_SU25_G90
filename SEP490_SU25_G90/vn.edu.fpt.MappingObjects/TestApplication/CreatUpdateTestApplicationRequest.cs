@@ -7,7 +7,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects.TestApplication
         public CreatUpdateTestApplicationRequest()
         {
         }
-
+        public string? ProfileImageUrl { get; set; }
         public string? FullName { get; set; }
 
         public string? DateOfBirth { get; set; }
