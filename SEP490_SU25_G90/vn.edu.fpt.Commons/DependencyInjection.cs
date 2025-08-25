@@ -35,6 +35,7 @@ using SEP490_SU25_G90.vn.edu.fpt.Repositories.ClassTimeRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Services.ClassTimeService;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.AttendanceRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Services.AttendanceService;
+using SEP490_SU25_G90.vn.edu.fpt.Services.AddressService;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Commons
 {
@@ -102,6 +103,9 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Commons
             // Attendance services - Dịch vụ quản lý điểm danh
             services.AddScoped<IAttendanceRepository, AttendanceRepository>();
             services.AddScoped<IAttendanceService, AttendanceService>();
+
+            // Address services - Dịch vụ quản lý địa chỉ
+            services.AddScoped<IAddressService, AddressService>();
 
             return services;
         }
