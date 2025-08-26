@@ -83,6 +83,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                     LearningStatusName = GetLearningStatusName(la.LearningStatus, la.ClassMembers.Any(cm => cm.Class.InstructorId.HasValue)),
                     LearnerId = la.LearnerId
                 })
+                .OrderByDescending(x => x.SubmittedAt)
                 .ToListAsync();
 
             return list;

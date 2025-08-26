@@ -323,7 +323,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 SimulationScore = app.SimulationScore,
                 ObstacleScore = app.ObstacleScore,
                 PracticalScore = app.PracticalScore
-            }).ToList();
+            }).OrderByDescending(app => app.SubmittedAt)
+                .ToList();
         }
 
         /// <summary>
