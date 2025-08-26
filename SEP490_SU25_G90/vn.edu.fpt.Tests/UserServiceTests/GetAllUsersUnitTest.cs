@@ -6,8 +6,6 @@ using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.UserRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Services.UserService;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.InMemory;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Tests.UserServiceTests
 {

@@ -93,6 +93,10 @@
 
     <!-- Điểm thi & tài liệu -->
     <div class="col-md-5">
+        
+
+
+
         <div class="card mb-3 shadow-sm">
             <div class="card-header bg-primary text-white">
                 <strong>Điểm thi tốt nghiệp</strong>
@@ -150,6 +154,24 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+        @{
+            bool allPassed =
+            (app?.TheoryScore >= app?.TheoryPassScore) &&
+            (app?.SimulationScore >= app?.SimulationPassScore) &&
+            (app?.ObstacleScore >= app?.ObstaclePassScore) &&
+            (app?.PracticalScore >= app?.PracticalPassScore);
+        }
+
+        <div class="card mb-3 shadow-sm">
+            <div class="card-header @(allPassed ? "bg-success" : "bg-danger") text-white text-center">
+                <strong>Kết quả thi tốt nghiệp</strong>
+            </div>
+            <div class="card-body text-center">
+                <span class="fw-bold" style="font-size:1.5rem;">
+                    @(allPassed ? "Đạt " : "Trượt ")
+                </span>
             </div>
         </div>
 
@@ -252,3 +274,36 @@
         }
     </script>
 }
+<style>
+    .exam-result {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+        .exam-result .alert {
+            border-radius: 12px;
+            font-size: 1.25rem;
+        }
+
+        .exam-result .alert-success {
+            background: linear-gradient(90deg, #28a745, #34ce57);
+            color: white;
+        }
+
+        .exam-result .alert-danger {
+            background: linear-gradient(90deg, #dc3545, #e4606d);
+            color: white;
+        }
+
+        .exam-result .alert {
+            font-size: 1.6rem; /* chữ to hơn */
+            font-weight: bold; /* in đậm */
+            padding: 20px 30px; /* khoảng cách rộng rãi */
+            border-radius: 10px; /* bo tròn nhẹ */
+        }
+
+    .exam-text {
+        display: inline-block;
+    }
+</style>
+

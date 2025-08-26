@@ -166,32 +166,46 @@
                                                 </h6>
                                             </div>
                                             <div class="col-md-4 mb-3">
+                                                <label asp-for="CreateRequest.CityId" class="form-label">
+                                                    <i class="fas fa-city me-1"></i>
+                                                    Tỉnh/Thành phố *
+                                                </label>
+                                                <select asp-for="CreateRequest.CityId" class="form-select" id="citySelect" required>
+                                                    <option value="">-- Chọn tỉnh/thành phố --</option>
+                                                    @foreach (var city in Model.AvailableCities)
+                                                    {
+                                                        <option value="@city.CityId">@city.CityName</option>
+                                                    }
+                                                </select>
+                                                <span asp-validation-for="CreateRequest.CityId" class="text-danger"></span>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label asp-for="CreateRequest.ProvinceId" class="form-label">
+                                                    <i class="fas fa-building me-1"></i>
+                                                    Quận/Huyện *
+                                                </label>
+                                                <select asp-for="CreateRequest.ProvinceId" class="form-select" id="provinceSelect" required disabled>
+                                                    <option value="">-- Chọn quận/huyện --</option>
+                                                </select>
+                                                <span asp-validation-for="CreateRequest.ProvinceId" class="text-danger"></span>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label asp-for="CreateRequest.WardId" class="form-label">
+                                                    <i class="fas fa-map-pin me-1"></i>
+                                                    Phường/Xã *
+                                                </label>
+                                                <select asp-for="CreateRequest.WardId" class="form-select" id="wardSelect" required disabled>
+                                                    <option value="">-- Chọn phường/xã --</option>
+                                                </select>
+                                                <span asp-validation-for="CreateRequest.WardId" class="text-danger"></span>
+                                            </div>
+                                            <div class="col-md-12 mb-3">
                                                 <label asp-for="CreateRequest.HouseNumber" class="form-label">
                                                     <i class="fas fa-home me-1"></i>
                                                     Số nhà
                                                 </label>
                                                 <input asp-for="CreateRequest.HouseNumber" class="form-control" placeholder="Ví dụ: 123, 45A" />
                                                 <span asp-validation-for="CreateRequest.HouseNumber" class="text-danger"></span>
-                                            </div>
-                                            <div class="col-md-4 mb-3">
-                                                <label asp-for="CreateRequest.RoadName" class="form-label">
-                                                    <i class="fas fa-road me-1"></i>
-                                                    Tên đường
-                                                </label>
-                                                <input asp-for="CreateRequest.RoadName" class="form-control" placeholder="Ví dụ: Nguyễn Văn Linh" />
-                                                <span asp-validation-for="CreateRequest.RoadName" class="text-danger"></span>
-                                            </div>
-                                            <div class="col-md-4 mb-3">
-                                                <label asp-for="CreateRequest.WardId" class="form-label">
-                                                    <i class="fas fa-map-pin me-1"></i>
-                                                    Phường/Xã
-                                                </label>
-                                                <input asp-for="CreateRequest.WardId" type="number" class="form-control" placeholder="Mã phường/xã" />
-                                                <span asp-validation-for="CreateRequest.WardId" class="text-danger"></span>
-                                                <small class="text-muted">
-                                                    <i class="fas fa-info-circle me-1"></i>
-                                                    Nhập mã phường/xã (tùy chọn)
-                                                </small>
                                             </div>
                                         </div>
                                     </div>
@@ -466,6 +480,7 @@
         
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
+            setupAddressCascadingDropdowns();
             // CCCD number validation
             const cccdInput = document.getElementById('cccdNumber');
             if (cccdInput) {
@@ -653,6 +668,101 @@
             if (currentImageUrl) {
                 window.open(currentImageUrl, '_blank');
             }
+        }
+
+        // Address cascading dropdowns functionality
+        function setupAddressCascadingDropdowns() {
+            const citySelect = document.getElementById('citySelect');
+            const provinceSelect = document.getElementById('provinceSelect');
+            const wardSelect = document.getElementById('wardSelect');
+
+            // City change event
+            citySelect.addEventListener('change', function() {
+                const cityId = this.value;
+                if (cityId) {
+                    loadProvinces(cityId);
+                } else {
+                    resetSelect(provinceSelect, '-- Chọn quận/huyện --');
+                    resetSelect(wardSelect, '-- Chọn phường/xã --');
+                    provinceSelect.disabled = true;
+                    wardSelect.disabled = true;
+                }
+            });
+
+            // Province change event
+            provinceSelect.addEventListener('change', function() {
+                const provinceId = this.value;
+                if (provinceId) {
+                    loadWards(provinceId);
+                } else {
+                    resetSelect(wardSelect, '-- Chọn phường/xã --');
+                    wardSelect.disabled = true;
+                }
+            });
+        }
+
+        function loadProvinces(cityId) {
+            showLoading(document.getElementById('provinceSelect'));
+            
+            fetch(`?handler=Provinces&cityId=${cityId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const provinceSelect = document.getElementById('provinceSelect');
+                    resetSelect(provinceSelect, '-- Chọn quận/huyện --');
+                    
+                    data.forEach(province => {
+                        const option = document.createElement('option');
+                        option.value = province.provinceId;
+                        option.textContent = province.provinceName;
+                        provinceSelect.appendChild(option);
+                    });
+                    
+                    provinceSelect.disabled = false;
+                    resetSelect(document.getElementById('wardSelect'), '-- Chọn phường/xã --');
+                    document.getElementById('wardSelect').disabled = true;
+                })
+                .catch(error => {
+                    console.error('Error loading provinces:', error);
+                    showError('Không thể tải danh sách quận/huyện');
+                });
+        }
+
+        function loadWards(provinceId) {
+            showLoading(document.getElementById('wardSelect'));
+            
+            fetch(`?handler=Wards&provinceId=${provinceId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const wardSelect = document.getElementById('wardSelect');
+                    resetSelect(wardSelect, '-- Chọn phường/xã --');
+                    
+                    data.forEach(ward => {
+                        const option = document.createElement('option');
+                        option.value = ward.wardId;
+                        option.textContent = ward.wardName;
+                        wardSelect.appendChild(option);
+                    });
+                    
+                    wardSelect.disabled = false;
+                })
+                .catch(error => {
+                    console.error('Error loading wards:', error);
+                    showError('Không thể tải danh sách phường/xã');
+                });
+        }
+
+
+        function resetSelect(selectElement, defaultText) {
+            selectElement.innerHTML = `<option value="">${defaultText}</option>`;
+        }
+
+        function showLoading(selectElement) {
+            selectElement.innerHTML = '<option value="">Đang tải...</option>';
+        }
+
+        function showError(message) {
+            // You can customize this to show error messages in your preferred way
+            console.error(message);
         }
     </script>
 } 

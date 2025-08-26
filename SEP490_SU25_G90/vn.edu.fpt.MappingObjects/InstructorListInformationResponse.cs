@@ -17,6 +17,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
 
         // Address information
         public string? AddressDisplay { get; set; }
+        public int? AddressId { get; set; }
 
         // CCCD information
         public string? CccdNumber { get; set; }
@@ -81,9 +82,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         [StringLength(100, ErrorMessage = "Số nhà/đường không được quá 100 ký tự")]
         public string? HouseNumber { get; set; }
         
-        [StringLength(200, ErrorMessage = "Tên đường không được quá 200 ký tự")]
-        public string? RoadName { get; set; }
-        
+        public int? CityId { get; set; }
+        public int? ProvinceId { get; set; }
         public int? WardId { get; set; }
         
         // File upload properties
@@ -163,6 +163,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         public string? CccdImageFront { get; set; }
         public string? CccdImageBack { get; set; }
         public string? AddressDisplay { get; set; }
+        public int? AddressId { get; set; }
         public string? ProfileImageUrl { get; set; }
         public string? HealthCertificateImageUrl { get; set; }
         public List<LearningApplicationInfo> LearningApplications { get; set; } = new List<LearningApplicationInfo>();
@@ -232,9 +233,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         [StringLength(100, ErrorMessage = "Số nhà/đường không được quá 100 ký tự")]
         public string? HouseNumber { get; set; }
         
-        [StringLength(200, ErrorMessage = "Tên đường không được quá 200 ký tự")]
-        public string? RoadName { get; set; }
-        
+        public int? CityId { get; set; }
+        public int? ProvinceId { get; set; }
         public int? WardId { get; set; }
         
         // File upload properties
@@ -287,9 +287,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         [StringLength(100, ErrorMessage = "Số nhà/đường không được quá 100 ký tự")]
         public string? HouseNumber { get; set; }
         
-        [StringLength(200, ErrorMessage = "Tên đường không được quá 200 ký tự")]
-        public string? RoadName { get; set; }
-        
+        public int? CityId { get; set; }
+        public int? ProvinceId { get; set; }
         public int? WardId { get; set; }
         
         // File upload properties
@@ -345,9 +344,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         [StringLength(100, ErrorMessage = "Số nhà/đường không được quá 100 ký tự")]
         public string? HouseNumber { get; set; }
         
-        [StringLength(200, ErrorMessage = "Tên đường không được quá 200 ký tự")]
-        public string? RoadName { get; set; }
-        
+        public int? CityId { get; set; }
+        public int? ProvinceId { get; set; }
         public int? WardId { get; set; }
         
         // File upload properties
@@ -355,5 +353,32 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         public IFormFile? CccdImageFrontFile { get; set; }
         public IFormFile? CccdImageBackFile { get; set; }
         public IFormFile? HealthCertificateImageFile { get; set; }
+    }
+
+    public class CityResponse
+    {
+        public int CityId { get; set; }
+        public string? CityName { get; set; }
+    }
+
+    public class ProvinceResponse
+    {
+        public int ProvinceId { get; set; }
+        public string? ProvinceName { get; set; }
+        public int? CityId { get; set; }
+    }
+
+    public class WardResponse
+    {
+        public int WardId { get; set; }
+        public string? WardName { get; set; }
+        public int? ProvinceId { get; set; }
+    }
+
+    public class RoadResponse
+    {
+        public int RoadId { get; set; }
+        public string? RoadName { get; set; }
+        public int? WardId { get; set; }
     }
 }
