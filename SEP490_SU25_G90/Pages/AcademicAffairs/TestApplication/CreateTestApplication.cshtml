@@ -112,10 +112,13 @@
                 alert('Vui lòng chọn ngày nộp hồ sơ và ngày thi');
                 return;
             }
+            function normalizeDate(d) {
+            return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+            }
 
-            const submit = new Date(submitDate);
-            const exam = new Date(examDate);
-            const today = new Date();
+            const submit = normalizeDate(new Date(submitDate));
+            const exam = normalizeDate(new Date(examDate));
+            const today = normalizeDate(new Date());
 
             // ngày nộp hồ sơ không được lớn hơn ngày hiện tại
             if (submit > today) {
