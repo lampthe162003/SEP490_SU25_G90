@@ -9,6 +9,7 @@ using SEP490_SU25_G90.vn.edu.fpt.Services.CourseService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.ScheduleSlotService;
+using System.ComponentModel.DataAnnotations;
 
 namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
 {
@@ -175,7 +176,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
                 .Select(c => new SelectListItem
                 {
                     Value = c.CourseId.ToString(),
-                    Text = c.DisplayText
+                    Text = c.CourseName
                 })
                 .ToList();
             var instructorDtos = new List<InstructorListInformationResponse>();
