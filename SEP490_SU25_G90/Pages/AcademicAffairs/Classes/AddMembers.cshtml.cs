@@ -34,6 +34,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
             public int LearningId { get; set; }
             public string FullName { get; set; } = string.Empty;
             public string Cccd { get; set; } = string.Empty;
+            public string LicenseTypeName { get; set; } = string.Empty;
             public string Status { get; set; } = string.Empty;
             public string ProfileImageUrl { get; set; } = "https://cdn-icons-png.flaticon.com/512/1144/1144760.png";
         }
@@ -165,6 +166,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
                     LearningId = x.LearningId,
                     FullName = x.LearnerFullName ?? string.Empty,
                     Cccd = x.LearnerCccdNumber ?? string.Empty,
+                    LicenseTypeName = x.LicenceTypeName ?? string.Empty,
                     Status = x.LearningStatusName ?? string.Empty,
                     ProfileImageUrl = _context.Users.FirstOrDefault(z => z.UserId == x.LearnerId)?.ProfileImageUrl?.ToString() ??
                         "https://cdn-icons-png.flaticon.com/512/1144/1144760.png"
