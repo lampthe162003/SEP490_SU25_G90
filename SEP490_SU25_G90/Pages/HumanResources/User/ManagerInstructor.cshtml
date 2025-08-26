@@ -373,6 +373,17 @@
                     bsAlert.close();
                 }, 5000);
             });
+
+            // Clear localStorage if coming from successful CreateInstructor
+            @if (TempData["ClearLocalStorage"] != null)
+            {
+                <text>
+                localStorage.removeItem('create_profile_image');
+                localStorage.removeItem('create_cccd_front_image');
+                localStorage.removeItem('create_cccd_back_image');
+                console.log('localStorage cleared after successful instructor creation');
+                </text>
+            }
         });
     </script>
 }

@@ -355,6 +355,16 @@
                     bsAlert.close();
                 }, 5000);
             });
+
+            // Clear localStorage if coming from successful CreateLearner
+            @if (TempData["ClearLocalStorage"] != null)
+            {
+                <text>
+                // Clear CreateLearner localStorage data
+                localStorage.removeItem('create_learner_health_cert_image');
+                console.log('CreateLearner localStorage cleared after successful creation');
+                </text>
+            }
         });
     </script>
 }

@@ -40,57 +40,57 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
     public class UpdateInstructorRequest
     {
         public int UserId { get; set; }
-        
+
         [Required(ErrorMessage = "Email là bắt buộc")]
         [EmailAddress(ErrorMessage = "Email không hợp lệ")]
         public string? Email { get; set; }
-        
+
         [Required(ErrorMessage = "Họ là bắt buộc")]
         [StringLength(50, ErrorMessage = "Họ không được quá 50 ký tự")]
         public string? FirstName { get; set; }
-        
+
         [StringLength(50, ErrorMessage = "Tên đệm không được quá 50 ký tự")]
         public string? MiddleName { get; set; }
-        
+
         [Required(ErrorMessage = "Tên là bắt buộc")]
         [StringLength(50, ErrorMessage = "Tên không được quá 50 ký tự")]
         public string? LastName { get; set; }
-        
+
         [Required(ErrorMessage = "Ngày sinh là bắt buộc")]
         public DateOnly? Dob { get; set; }
-        
+
         [Required(ErrorMessage = "Giới tính là bắt buộc")]
         public bool? Gender { get; set; }
-        
+
         [Required(ErrorMessage = "Số điện thoại là bắt buộc")]
         [RegularExpression(@"^(0[3|5|7|8|9])[0-9]{8}$", ErrorMessage = "Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam hợp lệ (10 số, bắt đầu bằng 03, 05, 07, 08, 09)")]
         public string? Phone { get; set; }
-        
+
         [Required(ErrorMessage = "Số CCCD là bắt buộc")]
         [RegularExpression(@"^\d{12}$", ErrorMessage = "Số CCCD phải có đúng 12 chữ số và chỉ chứa số")]
         [StringLength(12, MinimumLength = 12, ErrorMessage = "Số CCCD phải có đúng 12 chữ số")]
         public string? CccdNumber { get; set; }
-        
+
         public string? CccdImageFront { get; set; }
-        
+
         public string? CccdImageBack { get; set; }
 
         // Thêm trường ProfileImageUrl cho ảnh đại diện
         public string? ProfileImageUrl { get; set; }
-        
+
         // Address fields
         [StringLength(100, ErrorMessage = "Số nhà/đường không được quá 100 ký tự")]
         public string? HouseNumber { get; set; }
-        
+
         public int? CityId { get; set; }
         public int? ProvinceId { get; set; }
         public int? WardId { get; set; }
-        
+
         // File upload properties
         public IFormFile? ProfileImageFile { get; set; }
         public IFormFile? CccdImageFrontFile { get; set; }
         public IFormFile? CccdImageBackFile { get; set; }
-        
+
         public List<byte> SelectedSpecializations { get; set; } = new List<byte>();
     }
 
@@ -168,7 +168,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         public string? HealthCertificateImageUrl { get; set; }
         public List<LearningApplicationInfo> LearningApplications { get; set; } = new List<LearningApplicationInfo>();
     }
-    
+
     public class LearningApplicationInfo
     {
         public int ApplicationId { get; set; }
@@ -189,54 +189,54 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
     public class UpdateLearnerRequest
     {
         public int UserId { get; set; }
-        
+
         [Required(ErrorMessage = "Email là bắt buộc")]
         [EmailAddress(ErrorMessage = "Email không hợp lệ")]
         public string? Email { get; set; }
-        
+
         [Required(ErrorMessage = "Họ là bắt buộc")]
         [StringLength(50, ErrorMessage = "Họ không được quá 50 ký tự")]
         public string? FirstName { get; set; }
-        
+
         [StringLength(50, ErrorMessage = "Tên đệm không được quá 50 ký tự")]
         public string? MiddleName { get; set; }
-        
+
         [Required(ErrorMessage = "Tên là bắt buộc")]
         [StringLength(50, ErrorMessage = "Tên không được quá 50 ký tự")]
         public string? LastName { get; set; }
-        
+
         [Required(ErrorMessage = "Ngày sinh là bắt buộc")]
         public DateOnly? Dob { get; set; }
-        
+
         [Required(ErrorMessage = "Giới tính là bắt buộc")]
         public bool? Gender { get; set; }
-        
+
         [Required(ErrorMessage = "Số điện thoại là bắt buộc")]
         [RegularExpression(@"^(0[3|5|7|8|9])[0-9]{8}$", ErrorMessage = "Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam hợp lệ (10 số, bắt đầu bằng 03, 05, 07, 08, 09)")]
         public string? Phone { get; set; }
-        
+
         [Required(ErrorMessage = "Số CCCD là bắt buộc")]
         [RegularExpression(@"^\d{12}$", ErrorMessage = "Số CCCD phải có đúng 12 chữ số và chỉ chứa số")]
         [StringLength(12, MinimumLength = 12, ErrorMessage = "Số CCCD phải có đúng 12 chữ số")]
         public string? CccdNumber { get; set; }
-        
+
         public string? CccdImageFront { get; set; }
-        
+
         public string? CccdImageBack { get; set; }
-        
+
         public string? HealthCertificateImageUrl { get; set; }
 
         // Thêm trường ProfileImageUrl cho ảnh đại diện
         public string? ProfileImageUrl { get; set; }
-        
+
         // Address fields
         [StringLength(100, ErrorMessage = "Số nhà/đường không được quá 100 ký tự")]
         public string? HouseNumber { get; set; }
-        
+
         public int? CityId { get; set; }
         public int? ProvinceId { get; set; }
         public int? WardId { get; set; }
-        
+
         // File upload properties
         public IFormFile? ProfileImageFile { get; set; }
         public IFormFile? CccdImageFrontFile { get; set; }
@@ -249,53 +249,53 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         [Required(ErrorMessage = "Email là bắt buộc")]
         [EmailAddress(ErrorMessage = "Email không hợp lệ")]
         public string? Email { get; set; }
-        
+
         [Required(ErrorMessage = "Họ là bắt buộc")]
         [StringLength(50, ErrorMessage = "Họ không được quá 50 ký tự")]
         public string? FirstName { get; set; }
-        
+
         [StringLength(50, ErrorMessage = "Tên đệm không được quá 50 ký tự")]
         public string? MiddleName { get; set; }
-        
+
         [Required(ErrorMessage = "Tên là bắt buộc")]
         [StringLength(50, ErrorMessage = "Tên không được quá 50 ký tự")]
         public string? LastName { get; set; }
-        
+
         [Required(ErrorMessage = "Ngày sinh là bắt buộc")]
         public DateOnly? Dob { get; set; }
-        
+
         [Required(ErrorMessage = "Giới tính là bắt buộc")]
         public bool? Gender { get; set; }
-        
+
         [Required(ErrorMessage = "Số điện thoại là bắt buộc")]
         [RegularExpression(@"^(0[3|5|7|8|9])[0-9]{8}$", ErrorMessage = "Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam hợp lệ (10 số, bắt đầu bằng 03, 05, 07, 08, 09)")]
         public string? Phone { get; set; }
-        
+
         [Required(ErrorMessage = "Số CCCD là bắt buộc")]
         [RegularExpression(@"^\d{12}$", ErrorMessage = "Số CCCD phải có đúng 12 chữ số và chỉ chứa số")]
         [StringLength(12, MinimumLength = 12, ErrorMessage = "Số CCCD phải có đúng 12 chữ số")]
         public string? CccdNumber { get; set; }
-        
+
         public string? CccdImageFront { get; set; }
-        
+
         public string? CccdImageBack { get; set; }
 
         // Thêm trường ProfileImageUrl cho ảnh đại diện
         public string? ProfileImageUrl { get; set; }
-        
+
         // Address fields
         [StringLength(100, ErrorMessage = "Số nhà/đường không được quá 100 ký tự")]
         public string? HouseNumber { get; set; }
-        
+
         public int? CityId { get; set; }
         public int? ProvinceId { get; set; }
         public int? WardId { get; set; }
-        
+
         // File upload properties
         public IFormFile? ProfileImageFile { get; set; }
         public IFormFile? CccdImageFrontFile { get; set; }
         public IFormFile? CccdImageBackFile { get; set; }
-        
+
         public List<byte> SelectedSpecializations { get; set; } = new List<byte>();
     }
 
@@ -304,50 +304,50 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         [Required(ErrorMessage = "Email là bắt buộc")]
         [EmailAddress(ErrorMessage = "Email không hợp lệ")]
         public string? Email { get; set; }
-        
+
         [Required(ErrorMessage = "Họ là bắt buộc")]
         [StringLength(50, ErrorMessage = "Họ không được quá 50 ký tự")]
         public string? FirstName { get; set; }
-        
+
         [StringLength(50, ErrorMessage = "Tên đệm không được quá 50 ký tự")]
         public string? MiddleName { get; set; }
-        
+
         [Required(ErrorMessage = "Tên là bắt buộc")]
         [StringLength(50, ErrorMessage = "Tên không được quá 50 ký tự")]
         public string? LastName { get; set; }
-        
+
         [Required(ErrorMessage = "Ngày sinh là bắt buộc")]
         public DateOnly? Dob { get; set; }
-        
+
         [Required(ErrorMessage = "Giới tính là bắt buộc")]
         public bool? Gender { get; set; }
-        
+
         [Required(ErrorMessage = "Số điện thoại là bắt buộc")]
         [RegularExpression(@"^(0[3|5|7|8|9])[0-9]{8}$", ErrorMessage = "Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam hợp lệ (10 số, bắt đầu bằng 03, 05, 07, 08, 09)")]
         public string? Phone { get; set; }
-        
+
         [Required(ErrorMessage = "Số CCCD là bắt buộc")]
         [RegularExpression(@"^\d{12}$", ErrorMessage = "Số CCCD phải có đúng 12 chữ số và chỉ chứa số")]
         [StringLength(12, MinimumLength = 12, ErrorMessage = "Số CCCD phải có đúng 12 chữ số")]
         public string? CccdNumber { get; set; }
-        
+
         public string? CccdImageFront { get; set; }
-        
+
         public string? CccdImageBack { get; set; }
-        
+
         public string? HealthCertificateImageUrl { get; set; }
 
         // Thêm trường ProfileImageUrl cho ảnh đại diện
         public string? ProfileImageUrl { get; set; }
-        
+
         // Address fields
         [StringLength(100, ErrorMessage = "Số nhà/đường không được quá 100 ký tự")]
         public string? HouseNumber { get; set; }
-        
+
         public int? CityId { get; set; }
         public int? ProvinceId { get; set; }
         public int? WardId { get; set; }
-        
+
         // File upload properties
         public IFormFile? ProfileImageFile { get; set; }
         public IFormFile? CccdImageFrontFile { get; set; }

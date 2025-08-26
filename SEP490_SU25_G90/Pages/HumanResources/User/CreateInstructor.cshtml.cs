@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Services.AddressService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
+using System.Text.Json.Serialization;
 
 namespace SEP490_SU25_G90.Pages.HumanResources.User
 {
@@ -25,36 +26,74 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
         public List<LicenceTypeResponse> AvailableLicenceTypes { get; set; } = new();
         public List<CityResponse> AvailableCities { get; set; } = new();
 
+
+
         [TempData]
         public string? Message { get; set; }
 
         [TempData]
         public string? MessageType { get; set; }
 
+        // Properties for localStorage file data
+        [BindProperty]
+        public string? ProfileImageData { get; set; }
+
+        [BindProperty]
+        public string? CccdFrontImageData { get; set; }
+
+        [BindProperty]
+        public string? CccdBackImageData { get; set; }
+
         public void OnGet()
         {
             LoadAvailableLicenceTypes();
             LoadAvailableCities();
+
+            // Clear localStorage data after successful creation
+            ClearLocalStorageData();
+
+            // Set flag to clear localStorage on client-side
+            TempData["ClearLocalStorage"] = "true";
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
+            // Process localStorage files first
+            ProcessLocalStorageFiles();
+
+            // Custom validation for name fields - run before checking ModelState.IsValid
+            if (!string.IsNullOrEmpty(CreateRequest.FirstName) && !System.Text.RegularExpressions.Regex.IsMatch(CreateRequest.FirstName, @"^[\p{L}]+$"))
+            {
+                ModelState.AddModelError("CreateRequest.FirstName", "Họ chỉ được chứa chữ cái và không được có khoảng trắng hoặc số");
+            }
+
+            if (!string.IsNullOrEmpty(CreateRequest.MiddleName) && !System.Text.RegularExpressions.Regex.IsMatch(CreateRequest.MiddleName, @"^[\p{L}]+$"))
+            {
+                ModelState.AddModelError("CreateRequest.MiddleName", "Tên đệm chỉ được chứa chữ cái và không được có khoảng trắng hoặc số");
+            }
+
+            if (!string.IsNullOrEmpty(CreateRequest.LastName) && !System.Text.RegularExpressions.Regex.IsMatch(CreateRequest.LastName, @"^[\p{L}]+$"))
+            {
+                ModelState.AddModelError("CreateRequest.LastName", "Tên chỉ được chứa chữ cái và không được có khoảng trắng hoặc số");
+            }
+
             if (!ModelState.IsValid)
             {
                 LoadAvailableLicenceTypes();
-                LoadAvailableCities();
+                LoadAddressData();
                 return Page();
             }
 
             try
             {
+
                 // Check if email already exists
                 var existingInstructors = _instructorService.GetAllInstructors();
                 if (existingInstructors.Any(i => i.Email == CreateRequest.Email))
                 {
                     ModelState.AddModelError("CreateRequest.Email", "Email này đã được sử dụng");
                     LoadAvailableLicenceTypes();
-                    LoadAvailableCities();
+                    LoadAddressData();
                     return Page();
                 }
 
@@ -65,7 +104,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     {
                         ModelState.AddModelError("CreateRequest.CccdNumber", "Số CCCD này đã được sử dụng");
                         LoadAvailableLicenceTypes();
-                        LoadAvailableCities();
+                        LoadAddressData();
                         return Page();
                     }
                 }
@@ -77,7 +116,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     {
                         ModelState.AddModelError("CreateRequest.Phone", "Số điện thoại này đã được sử dụng");
                         LoadAvailableLicenceTypes();
-                        LoadAvailableCities();
+                        LoadAddressData();
                         return Page();
                     }
                 }
@@ -87,7 +126,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                 {
                     ModelState.AddModelError("CreateRequest.Dob", "Tuổi của giảng viên chưa đủ 18.");
                     LoadAvailableLicenceTypes();
-                    LoadAvailableCities();
+                    LoadAddressData();
                     return Page();
                 }
 
@@ -96,7 +135,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                 {
                     ModelState.AddModelError("CreateRequest.Dob", "Tuổi của giảng viên không được quá 65.");
                     LoadAvailableLicenceTypes();
-                    LoadAvailableCities();
+                    LoadAddressData();
                     return Page();
                 }
 
@@ -105,7 +144,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                 {
                     ModelState.AddModelError("CreateRequest.CccdNumber", "Số CCCD phải có đúng 12 chữ số và chỉ chứa số");
                     LoadAvailableLicenceTypes();
-                    LoadAvailableCities();
+                    LoadAddressData();
                     return Page();
                 }
 
@@ -114,13 +153,20 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                 {
                     ModelState.AddModelError("CreateRequest.Phone", "Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam hợp lệ (10 số, bắt đầu bằng 03, 05, 07, 08, 09)");
                     LoadAvailableLicenceTypes();
-                    LoadAvailableCities();
+                    LoadAddressData();
                     return Page();
                 }
 
                 await _instructorService.CreateInstructorAsync(CreateRequest);
+
                 Message = $"Tạo tài khoản giảng viên thành công! Mật khẩu đã được gửi về email {CreateRequest.Email}";
                 MessageType = "success";
+
+                // Clear localStorage data after successful creation
+                ClearLocalStorageData();
+
+                // Set flag to clear localStorage on client-side
+                TempData["ClearLocalStorage"] = "true";
 
                 return RedirectToPage("./ManagerInstructor");
             }
@@ -129,7 +175,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                 Message = $"Lỗi khi tạo tài khoản giảng viên: {ex.Message}";
                 MessageType = "error";
                 LoadAvailableLicenceTypes();
-                LoadAvailableCities();
+                LoadAddressData();
                 return Page();
             }
         }
@@ -147,6 +193,8 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
         }
 
 
+
+
         private void LoadAvailableLicenceTypes()
         {
             AvailableLicenceTypes = _instructorService.GetAllLicenceTypes();
@@ -155,6 +203,119 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
         private void LoadAvailableCities()
         {
             AvailableCities = _addressService.GetAllCities();
+        }
+
+        private void LoadAddressData()
+        {
+            AvailableCities = _addressService.GetAllCities();
+
+            if (CreateRequest.CityId.HasValue)
+            {
+                AvailableProvinces = _addressService.GetProvincesByCity(CreateRequest.CityId.Value);
+            }
+
+            if (CreateRequest.ProvinceId.HasValue)
+            {
+                AvailableWards = _addressService.GetWardsByProvince(CreateRequest.ProvinceId.Value);
+            }
+        }
+
+        public List<ProvinceResponse> AvailableProvinces { get; set; } = new();
+        public List<WardResponse> AvailableWards { get; set; } = new();
+
+        private void ProcessLocalStorageFiles()
+        {
+            Console.WriteLine("=== ProcessLocalStorageFiles START ===");
+
+            // Process profile image from localStorage
+            if (!string.IsNullOrEmpty(ProfileImageData))
+            {
+                Console.WriteLine($"Processing profile image from localStorage, data length: {ProfileImageData.Length}");
+                CreateRequest.ProfileImageFile = ConvertBase64ToFormFile(ProfileImageData, "profile");
+                Console.WriteLine($"Profile image processed: {CreateRequest.ProfileImageFile?.FileName}, Size: {CreateRequest.ProfileImageFile?.Length}");
+            }
+
+            // Process CCCD front image from localStorage
+            if (!string.IsNullOrEmpty(CccdFrontImageData))
+            {
+                Console.WriteLine($"Processing CCCD front image from localStorage, data length: {CccdFrontImageData.Length}");
+                CreateRequest.CccdImageFrontFile = ConvertBase64ToFormFile(CccdFrontImageData, "cccd-front");
+                Console.WriteLine($"CCCD front image processed: {CreateRequest.CccdImageFrontFile?.FileName}, Size: {CreateRequest.CccdImageFrontFile?.Length}");
+            }
+
+            // Process CCCD back image from localStorage
+            if (!string.IsNullOrEmpty(CccdBackImageData))
+            {
+                Console.WriteLine($"Processing CCCD back image from localStorage, data length: {CccdBackImageData.Length}");
+                CreateRequest.CccdImageBackFile = ConvertBase64ToFormFile(CccdBackImageData, "cccd-back");
+                Console.WriteLine($"CCCD back image processed: {CreateRequest.CccdImageBackFile?.FileName}, Size: {CreateRequest.CccdImageBackFile?.Length}");
+            }
+
+            Console.WriteLine("=== ProcessLocalStorageFiles END ===");
+        }
+
+        private IFormFile? ConvertBase64ToFormFile(string base64Data, string fileType)
+        {
+            try
+            {
+                // Parse JSON from localStorage
+                var fileData = System.Text.Json.JsonSerializer.Deserialize<LocalStorageFileData>(base64Data);
+                if (fileData == null || string.IsNullOrEmpty(fileData.Data))
+                    return null;
+
+                // Extract base64 content (remove data:image/...;base64, prefix)
+                var base64Content = fileData.Data;
+                if (base64Content.Contains(","))
+                {
+                    base64Content = base64Content.Split(',')[1];
+                }
+
+                // Convert base64 to byte array
+                var fileBytes = Convert.FromBase64String(base64Content);
+
+                // Create memory stream
+                var stream = new MemoryStream(fileBytes);
+
+                // Create IFormFile
+                return new FormFile(stream, 0, fileBytes.Length, fileType, fileData.Name)
+                {
+                    Headers = new HeaderDictionary(),
+                    ContentType = fileData.Type
+                };
+            }
+            catch (Exception ex)
+            {
+                // Log error but don't break the flow
+                Console.WriteLine($"Error converting localStorage file data: {ex.Message}");
+                return null;
+            }
+        }
+
+        private void ClearLocalStorageData()
+        {
+            // Clear the properties that contain localStorage data
+            ProfileImageData = null;
+            CccdFrontImageData = null;
+            CccdBackImageData = null;
+        }
+
+        // Class to deserialize localStorage file data
+        private class LocalStorageFileData
+        {
+            [JsonPropertyName("data")]
+            public string Data { get; set; } = "";
+
+            [JsonPropertyName("name")]
+            public string Name { get; set; } = "";
+
+            [JsonPropertyName("type")]
+            public string Type { get; set; } = "";
+
+            [JsonPropertyName("size")]
+            public long Size { get; set; }
+
+            [JsonPropertyName("lastModified")]
+            public long LastModified { get; set; }
         }
     }
 }

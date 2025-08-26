@@ -87,9 +87,9 @@ CREATE TABLE Users
     email VARCHAR(100),
     [password] VARCHAR(255),
     profile_image_url VARCHAR(500),
-    first_name NVARCHAR(10),
-    middle_name NVARCHAR(20),
-    last_name NVARCHAR(10),
+    first_name NVARCHAR(50),
+    middle_name NVARCHAR(50),
+    last_name NVARCHAR(50),
     dob DATE,
     gender BIT,
     -- 0 = Nu, 1 = Nam

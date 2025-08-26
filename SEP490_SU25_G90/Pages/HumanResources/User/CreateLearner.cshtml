@@ -48,7 +48,13 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <form method="post" enctype="multipart/form-data">
+                    <form method="post" enctype="multipart/form-data" onsubmit="prepareFormSubmission()">
+                        <!-- Hidden fields for localStorage file data -->
+                        <input type="hidden" id="healthCertImageData" name="HealthCertImageData" />
+                        <input type="hidden" id="profileImageData" name="ProfileImageData" />
+                        <input type="hidden" id="cccdFrontImageData" name="CccdFrontImageData" />
+                        <input type="hidden" id="cccdBackImageData" name="CccdBackImageData" />
+
                         <div class="row">
                             <!-- Left Column - Basic Information -->
                             <div class="col-md-12 mb-4">
@@ -95,24 +101,36 @@
                                                     <i class="fas fa-user me-1"></i>
                                                     Họ <span class="text-danger">*</span>
                                                 </label>
-                                                <input asp-for="CreateRequest.FirstName" class="form-control" />
+                                                <input asp-for="CreateRequest.FirstName" class="form-control" maxlength="50" />
                                                 <span asp-validation-for="CreateRequest.FirstName" class="text-danger"></span>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-info-circle me-1"></i>
+                                                    Chỉ được chứa chữ cái, không có số hoặc khoảng trắng
+                                                </small>
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <label asp-for="CreateRequest.MiddleName" class="form-label">
                                                     <i class="fas fa-user me-1"></i>
                                                     Tên đệm
                                                 </label>
-                                                <input asp-for="CreateRequest.MiddleName" class="form-control" />
+                                                <input asp-for="CreateRequest.MiddleName" class="form-control" maxlength="50" />
                                                 <span asp-validation-for="CreateRequest.MiddleName" class="text-danger"></span>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-info-circle me-1"></i>
+                                                    Chỉ được chứa chữ cái, không có số hoặc khoảng trắng
+                                                </small>
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <label asp-for="CreateRequest.LastName" class="form-label">
                                                     <i class="fas fa-user me-1"></i>
                                                     Tên <span class="text-danger">*</span>
                                                 </label>
-                                                <input asp-for="CreateRequest.LastName" class="form-control" />
+                                                <input asp-for="CreateRequest.LastName" class="form-control" maxlength="50" />
                                                 <span asp-validation-for="CreateRequest.LastName" class="text-danger"></span>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-info-circle me-1"></i>
+                                                    Chỉ được chứa chữ cái, không có số hoặc khoảng trắng
+                                                </small>
                                             </div>
                                         </div>
                                         
@@ -184,8 +202,12 @@
                                                     <i class="fas fa-building me-1"></i>
                                                     Quận/Huyện *
                                                 </label>
-                                                <select asp-for="CreateRequest.ProvinceId" class="form-select" id="provinceSelect" required disabled>
+                                                <select asp-for="CreateRequest.ProvinceId" class="form-select" id="provinceSelect" required>
                                                     <option value="">-- Chọn quận/huyện --</option>
+                                                    @foreach (var province in Model.AvailableProvinces)
+                                                    {
+                                                        <option value="@province.ProvinceId" selected="@(province.ProvinceId == Model.CreateRequest.ProvinceId)">@province.ProvinceName</option>
+                                                    }
                                                 </select>
                                                 <span asp-validation-for="CreateRequest.ProvinceId" class="text-danger"></span>
                                             </div>
@@ -194,8 +216,12 @@
                                                     <i class="fas fa-map-pin me-1"></i>
                                                     Phường/Xã *
                                                 </label>
-                                                <select asp-for="CreateRequest.WardId" class="form-select" id="wardSelect" required disabled>
+                                                <select asp-for="CreateRequest.WardId" class="form-select" id="wardSelect" required>
                                                     <option value="">-- Chọn phường/xã --</option>
+                                                    @foreach (var ward in Model.AvailableWards)
+                                                    {
+                                                        <option value="@ward.WardId" selected="@(ward.WardId == Model.CreateRequest.WardId)">@ward.WardName</option>
+                                                    }
                                                 </select>
                                                 <span asp-validation-for="CreateRequest.WardId" class="text-danger"></span>
                                             </div>
@@ -481,6 +507,9 @@
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             setupAddressCascadingDropdowns();
+            setupNameFieldsValidation();
+            restoreFilePreviewsFromStorage();
+            
             // CCCD number validation
             const cccdInput = document.getElementById('cccdNumber');
             if (cccdInput) {
@@ -593,15 +622,8 @@
                 input.classList.add('is-valid');
                 hideFileError(input);
                 
-                // Create preview
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    if (previewImg) {
-                        previewImg.src = e.target.result;
-                        previewDiv.style.display = 'block';
-                    }
-                };
-                reader.readAsDataURL(file);
+                // Save file to localStorage and create preview
+                saveFileToStorage(file, type, input, previewImg, previewDiv);
             } else {
                 input.classList.remove('is-invalid', 'is-valid');
                 hideFileError(input);
@@ -764,5 +786,228 @@
             // You can customize this to show error messages in your preferred way
             console.error(message);
         }
+
+        function setupNameFieldsValidation() {
+            // Name fields validation - only letters, no numbers, no spaces
+            const createFirstNameInput = document.querySelector('input[name="CreateRequest.FirstName"]');
+            const createMiddleNameInput = document.querySelector('input[name="CreateRequest.MiddleName"]');
+            const createLastNameInput = document.querySelector('input[name="CreateRequest.LastName"]');
+
+            if (createFirstNameInput) {
+                createFirstNameInput.addEventListener('input', function(e) {
+                    validateNameField(e.target, 'learner-first-name-error', 'Họ');
+                });
+                
+                createFirstNameInput.addEventListener('keypress', function(e) {
+                    if (!/^[\p{L}]$/u.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                        e.preventDefault();
+                    }
+                });
+            }
+
+            if (createMiddleNameInput) {
+                createMiddleNameInput.addEventListener('input', function(e) {
+                    validateNameField(e.target, 'learner-middle-name-error', 'Tên đệm');
+                });
+                
+                createMiddleNameInput.addEventListener('keypress', function(e) {
+                    if (!/^[\p{L}]$/u.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                        e.preventDefault();
+                    }
+                });
+            }
+
+            if (createLastNameInput) {
+                createLastNameInput.addEventListener('input', function(e) {
+                    validateNameField(e.target, 'learner-last-name-error', 'Tên');
+                });
+                
+                createLastNameInput.addEventListener('keypress', function(e) {
+                    if (!/^[\p{L}]$/u.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                        e.preventDefault();
+                    }
+                });
+            }
+        }
+
+        function validateNameField(input, errorId, fieldName) {
+            const value = input.value.trim();
+            const isValid = /^[\p{L}]*$/u.test(value) && value.length <= 50;
+            
+            if (isValid || value === '') {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                hideValidationError(input, errorId);
+            } else {
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                if (!/^[\p{L}]*$/u.test(value)) {
+                    showValidationError(input, errorId, `${fieldName} chỉ được chứa chữ cái và không được có khoảng trắng hoặc số`);
+                } else if (value.length > 50) {
+                    showValidationError(input, errorId, `${fieldName} không được quá 50 ký tự`);
+                }
+            }
+        }
+        
+        function showValidationError(input, errorId, message) {
+            let errorDiv = document.getElementById(errorId);
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.id = errorId;
+                errorDiv.className = 'invalid-feedback d-block';
+                input.parentNode.appendChild(errorDiv);
+            }
+            errorDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>' + message;
+        }
+        
+        function hideValidationError(input, errorId) {
+            const errorDiv = document.getElementById(errorId);
+            if (errorDiv) {
+                errorDiv.remove();
+            }
+        }
+
+        // Functions to save and restore file previews
+        function saveFileToStorage(file, type, input, previewImg, previewDiv) {
+            // Map type to storage key
+            let storageKey = '';
+            switch(type) {
+                case 'profile':
+                    storageKey = 'create_learner_profile_image';
+                    break;
+                case 'cccd-front':
+                    storageKey = 'create_learner_cccd_front_image';
+                    break;
+                case 'cccd-back':
+                    storageKey = 'create_learner_cccd_back_image';
+                    break;
+                case 'health-cert':
+                    storageKey = 'create_learner_health_cert_image';
+                    break;
+            }
+
+            // Show loading state
+            if (previewImg) {
+                previewImg.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBzdHJva2U9IiMwMDciPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMSAxKSIgc3Ryb2tlLXdpZHRoPSIyIj48Y2lyY2xlIHN0cm9rZS1vcGFjaXR5PSIuNSIgY3g9IjE4IiBjeT0iMTgiIHI9IjE4Ii8+PHBhdGggZD0ibTM2IDE4YzAtOS45NC04LjA2LTE4LTE4LTE4Ij48YW5pbWF0ZVRyYW5zZm9ybSBhdHRyaWJ1dGVOYW1lPSJ0cmFuc2Zvcm0iIHR5cGU9InJvdGF0ZSIgdmFsdWVzPSIwIDE4IDE4OzM2MCAxOCAxOCIgZHVyPSIxcyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz48L3BhdGg+PC9nPjwvZz48L3N2Zz4=';
+                previewDiv.style.display = 'block';
+            }
+
+            // Read file as base64
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    // Save to localStorage
+                    const fileData = {
+                        data: e.target.result,
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                        lastModified: file.lastModified
+                    };
+                    
+                    localStorage.setItem(storageKey, JSON.stringify(fileData));
+                    
+                    // Update preview
+                    if (previewImg) {
+                        previewImg.src = e.target.result;
+                        previewDiv.style.display = 'block';
+                    }
+                    
+                    input.classList.remove('is-invalid');
+                    input.classList.add('is-valid');
+                    
+                } catch (error) {
+                    console.error('Storage error:', error);
+                    input.classList.remove('is-valid');
+                    input.classList.add('is-invalid');
+                    showFileError(input, 'Lỗi lưu file vào bộ nhớ');
+                    hideImagePreview(previewDiv);
+                }
+            };
+            
+            reader.onerror = function() {
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                showFileError(input, 'Lỗi đọc file');
+                hideImagePreview(previewDiv);
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        function restoreFilePreviewsFromStorage() {
+            // Restore profile image
+            restoreFilePreview('create_learner_profile_image', '.new-profile-image-preview img');
+            
+            // Restore CCCD front image
+            restoreFilePreview('create_learner_cccd_front_image', '.new-cccd-front-preview img');
+            
+            // Restore CCCD back image
+            restoreFilePreview('create_learner_cccd_back_image', '.new-cccd-back-preview img');
+            
+            // Restore health certificate image
+            restoreFilePreview('create_learner_health_cert_image', '.new-health-cert-preview img');
+        }
+
+        function restoreFilePreview(storageKey, imgSelector) {
+            try {
+                const stored = localStorage.getItem(storageKey);
+                if (stored) {
+                    const fileData = JSON.parse(stored);
+                    const imgElement = document.querySelector(imgSelector);
+                    if (imgElement) {
+                        imgElement.src = fileData.data;
+                        // Find the correct preview container and show it
+                        const previewContainer = imgElement.closest('.new-profile-image-preview, .new-cccd-front-preview, .new-cccd-back-preview, .new-health-cert-preview');
+                        if (previewContainer) {
+                            previewContainer.style.display = 'block';
+                        }
+                    }
+                }
+            } catch (ex) {
+                console.warn('Failed to restore file preview:', ex);
+                localStorage.removeItem(storageKey);
+            }
+        }
+
+        function clearFilePreviewStorage() {
+            localStorage.removeItem('create_learner_profile_image');
+            localStorage.removeItem('create_learner_cccd_front_image');
+            localStorage.removeItem('create_learner_cccd_back_image');
+            localStorage.removeItem('create_learner_health_cert_image');
+        }
+
+        function prepareFormSubmission() {
+            // Transfer localStorage data to hidden fields before form submission
+            const profileData = localStorage.getItem('create_learner_profile_image');
+            const cccdFrontData = localStorage.getItem('create_learner_cccd_front_image');
+            const cccdBackData = localStorage.getItem('create_learner_cccd_back_image');
+            const healthCertData = localStorage.getItem('create_learner_health_cert_image');
+
+            // Set hidden field values
+            if (profileData) {
+                document.getElementById('profileImageData').value = profileData;
+            }
+            if (cccdFrontData) {
+                document.getElementById('cccdFrontImageData').value = cccdFrontData;
+            }
+            if (cccdBackData) {
+                document.getElementById('cccdBackImageData').value = cccdBackData;
+            }
+            if (healthCertData) {
+                document.getElementById('healthCertImageData').value = healthCertData;
+            }
+
+            return true; // Allow form submission to continue
+        }
+
+        // Clear storage on successful form submit
+        window.addEventListener('DOMContentLoaded', function() {
+            // Check if we're on the success page (redirected after successful creation)
+            const urlParams = new URLSearchParams(window.location.search);
+            if (window.location.pathname.includes('ListLearningProfile') || document.querySelector('.alert-success')) {
+                clearFilePreviewStorage();
+            }
+        });
     </script>
 } 

@@ -114,24 +114,36 @@
                                                     <i class="fas fa-user me-1"></i>
                                                     Họ <span class="text-danger">*</span>
                                                 </label>
-                                                <input asp-for="UpdateRequest.FirstName" class="form-control" />
+                                                <input asp-for="UpdateRequest.FirstName" class="form-control" maxlength="50" />
                                                 <span asp-validation-for="UpdateRequest.FirstName" class="text-danger"></span>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-info-circle me-1"></i>
+                                                    Chỉ được chứa chữ cái, không có số hoặc khoảng trắng
+                                                </small>
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <label asp-for="UpdateRequest.MiddleName" class="form-label">
                                                     <i class="fas fa-user me-1"></i>
                                                     Tên đệm
                                                 </label>
-                                                <input asp-for="UpdateRequest.MiddleName" class="form-control" />
+                                                <input asp-for="UpdateRequest.MiddleName" class="form-control" maxlength="50" />
                                                 <span asp-validation-for="UpdateRequest.MiddleName" class="text-danger"></span>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-info-circle me-1"></i>
+                                                    Chỉ được chứa chữ cái, không có số hoặc khoảng trắng
+                                                </small>
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <label asp-for="UpdateRequest.LastName" class="form-label">
                                                     <i class="fas fa-user me-1"></i>
                                                     Tên <span class="text-danger">*</span>
                                                 </label>
-                                                <input asp-for="UpdateRequest.LastName" class="form-control" />
+                                                <input asp-for="UpdateRequest.LastName" class="form-control" maxlength="50" />
                                                 <span asp-validation-for="UpdateRequest.LastName" class="text-danger"></span>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-info-circle me-1"></i>
+                                                    Chỉ được chứa chữ cái, không có số hoặc khoảng trắng
+                                                </small>
                                             </div>
                                         </div>
                                         
@@ -571,6 +583,9 @@
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             setupAddressCascadingDropdowns();
+            setupNameFieldsValidation();
+            restoreFilePreviewsFromStorage();
+            
             // CCCD number validation
             const cccdInput = document.getElementById('cccdNumber');
             if (cccdInput) {
@@ -748,7 +763,7 @@
                 input.classList.add('is-valid');
                 hideFileError(input);
                 
-                // Create preview
+                // Create preview and save to storage
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     if (previewImg) {
@@ -757,6 +772,26 @@
                     }
                 };
                 reader.readAsDataURL(file);
+                
+                // Save to sessionStorage for restoration on validation errors
+                let storageKey = '';
+                switch(type) {
+                    case 'profile':
+                        storageKey = 'update_learner_profile_image';
+                        break;
+                    case 'cccd-front':
+                        storageKey = 'update_learner_cccd_front_image';
+                        break;
+                    case 'cccd-back':
+                        storageKey = 'update_learner_cccd_back_image';
+                        break;
+                    case 'health-cert':
+                        storageKey = 'update_learner_health_cert_image';
+                        break;
+                }
+                if (storageKey) {
+                    saveFilePreviewToStorage(storageKey, file);
+                }
             } else {
                 input.classList.remove('is-invalid', 'is-valid');
                 hideFileError(input);
@@ -913,5 +948,149 @@
             // You can customize this to show error messages in your preferred way
             console.error(message);
         }
+
+        function setupNameFieldsValidation() {
+            // Name fields validation - only letters, no numbers, no spaces
+            const updateFirstNameInput = document.querySelector('input[name="UpdateRequest.FirstName"]');
+            const updateMiddleNameInput = document.querySelector('input[name="UpdateRequest.MiddleName"]');
+            const updateLastNameInput = document.querySelector('input[name="UpdateRequest.LastName"]');
+
+            if (updateFirstNameInput) {
+                updateFirstNameInput.addEventListener('input', function(e) {
+                    validateNameField(e.target, 'learner-update-first-name-error', 'Họ');
+                });
+                
+                updateFirstNameInput.addEventListener('keypress', function(e) {
+                    if (!/^[\p{L}]$/u.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                        e.preventDefault();
+                    }
+                });
+            }
+
+            if (updateMiddleNameInput) {
+                updateMiddleNameInput.addEventListener('input', function(e) {
+                    validateNameField(e.target, 'learner-update-middle-name-error', 'Tên đệm');
+                });
+                
+                updateMiddleNameInput.addEventListener('keypress', function(e) {
+                    if (!/^[\p{L}]$/u.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                        e.preventDefault();
+                    }
+                });
+            }
+
+            if (updateLastNameInput) {
+                updateLastNameInput.addEventListener('input', function(e) {
+                    validateNameField(e.target, 'learner-update-last-name-error', 'Tên');
+                });
+                
+                updateLastNameInput.addEventListener('keypress', function(e) {
+                    if (!/^[\p{L}]$/u.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                        e.preventDefault();
+                    }
+                });
+            }
+        }
+
+        function validateNameField(input, errorId, fieldName) {
+            const value = input.value.trim();
+            const isValid = /^[\p{L}]*$/u.test(value) && value.length <= 50;
+            
+            if (isValid || value === '') {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                hideValidationError(input, errorId);
+            } else {
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                if (!/^[\p{L}]*$/u.test(value)) {
+                    showValidationError(input, errorId, `${fieldName} chỉ được chứa chữ cái và không được có khoảng trắng hoặc số`);
+                } else if (value.length > 50) {
+                    showValidationError(input, errorId, `${fieldName} không được quá 50 ký tự`);
+                }
+            }
+        }
+        
+        function showValidationError(input, errorId, message) {
+            let errorDiv = document.getElementById(errorId);
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.id = errorId;
+                errorDiv.className = 'invalid-feedback d-block';
+                input.parentNode.appendChild(errorDiv);
+            }
+            errorDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>' + message;
+        }
+        
+        function hideValidationError(input, errorId) {
+            const errorDiv = document.getElementById(errorId);
+            if (errorDiv) {
+                errorDiv.remove();
+            }
+        }
+
+        // Functions to save and restore file previews
+        function saveFilePreviewToStorage(key, file) {
+            if (file && file.size < 2 * 1024 * 1024) { // Only save files < 2MB to avoid storage limit
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        sessionStorage.setItem(key, JSON.stringify({
+                            data: e.target.result,
+                            name: file.name,
+                            type: file.type
+                        }));
+                    } catch (ex) {
+                        console.warn('Failed to save file preview to storage:', ex);
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function restoreFilePreviewsFromStorage() {
+            // Restore profile image
+            restoreFilePreview('update_learner_profile_image', '.new-profile-image-preview img');
+            
+            // Restore CCCD front image
+            restoreFilePreview('update_learner_cccd_front_image', '.new-cccd-front-preview img');
+            
+            // Restore CCCD back image
+            restoreFilePreview('update_learner_cccd_back_image', '.new-cccd-back-preview img');
+            
+            // Restore health certificate image
+            restoreFilePreview('update_learner_health_cert_image', '.new-health-cert-preview img');
+        }
+
+        function restoreFilePreview(storageKey, imgSelector) {
+            try {
+                const stored = sessionStorage.getItem(storageKey);
+                if (stored) {
+                    const fileData = JSON.parse(stored);
+                    const imgElement = document.querySelector(imgSelector);
+                    if (imgElement) {
+                        imgElement.src = fileData.data;
+                        imgElement.closest('.new-profile-image-preview, .new-cccd-front-preview, .new-cccd-back-preview, .new-health-cert-preview').style.display = 'block';
+                    }
+                }
+            } catch (ex) {
+                console.warn('Failed to restore file preview:', ex);
+                sessionStorage.removeItem(storageKey);
+            }
+        }
+
+        function clearFilePreviewStorage() {
+            sessionStorage.removeItem('update_learner_profile_image');
+            sessionStorage.removeItem('update_learner_cccd_front_image');
+            sessionStorage.removeItem('update_learner_cccd_back_image');
+            sessionStorage.removeItem('update_learner_health_cert_image');
+        }
+
+        // Clear storage on successful form submit
+        window.addEventListener('beforeunload', function() {
+            if (document.querySelector('.alert-success')) {
+                clearFilePreviewStorage();
+            }
+        });
     </script>
 } 
