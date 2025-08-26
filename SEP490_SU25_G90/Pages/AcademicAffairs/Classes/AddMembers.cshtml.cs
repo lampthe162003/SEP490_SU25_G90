@@ -27,6 +27,8 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
 
         public List<CandidateVm> Candidates { get; set; } = new();
 
+        public string ClassLicenceTypeCode { get; set; } = string.Empty;
+
         public class CandidateVm
         {
             public int LearningId { get; set; }
@@ -146,11 +148,14 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
                 .Select(cm => cm.LearnerId!.Value)
                 .ToListAsync();
             // Lấy loại bằng của lớp qua Course
-            var classLicenceTypeId = await _context.Classes
-                .Include(c => c.Course)
+            var classInfo = await _context.Classes
+                .Include(c => c.Course)!
+                .ThenInclude(co => co!.LicenceType)
                 .Where(c => c.ClassId == ClassId)
-                .Select(c => c.Course!.LicenceTypeId)
+                .Select(c => new { LicenceTypeId = c.Course!.LicenceTypeId, LicenceCode = c.Course!.LicenceType != null ? c.Course.LicenceType.LicenceCode : null })
                 .FirstOrDefaultAsync();
+            var classLicenceTypeId = classInfo?.LicenceTypeId;
+            ClassLicenceTypeCode = classInfo?.LicenceCode ?? string.Empty;
 
             Candidates = list
                 .Where(x => x.LearningStatus != 4 && x.LearningStatus != 1 && !alreadyMemberIds.Contains(x.LearningId))
