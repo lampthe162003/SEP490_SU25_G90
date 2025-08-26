@@ -96,7 +96,8 @@ public class LearningApplicationService : ILearningApplicationService
             LearnerClasses = learnerClasses ?? new List<LearnerClassInfo>(),
             SubmittedAt = la.SubmittedAt,
             LearningStatus = la.LearningStatus,
-            LearningStatusName = GetLearningStatusName(la.LearningStatus, hasInstructor)
+            LearningStatusName = GetLearningStatusName(la.LearningStatus, hasInstructor),
+            TestEligibility = (bool)la.TestEligibility,
         };
     }
 

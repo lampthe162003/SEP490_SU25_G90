@@ -49,6 +49,7 @@
                     <th>Tên học viên</th>
                     <th>Cccd</th>
                     <th>Loại bằng</th>
+                    <th>Trạng thái tốt nghiệp</th>
                 </tr>
             </thead>
             <tbody id="eligibleBody"></tbody>
@@ -88,6 +89,7 @@
                         <td>${row.fullName ?? ''}</td>
                         <td>${row.cccd ?? ''}</td>
                         <td>${row.licenceType ?? ''}</td>
+                        <td>${row.testEligibility === true ? 'Đạt' : (row.testEligibility === false ? 'Không đạt' : '')}</td>
                     `;
                     body.appendChild(tr);
                 });
