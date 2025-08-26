@@ -40,6 +40,7 @@
                 </div>
                 <div class="card-body">
                     <form method="post" asp-page-handler="Search">
+                        @Html.AntiForgeryToken()
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="searchName" class="form-label">Tên giảng viên</label>
@@ -190,10 +191,6 @@
                                                             onclick="editInstructor(@instructor.UserId)">
                                                         <i class="fas fa-edit me-1"></i>Chỉnh sửa
                                                     </button>
-                                                    <button type="button" class="btn btn-sm btn-outline-danger" 
-                                                            onclick="deleteInstructor(@instructor.UserId, '@instructor.FullName')">
-                                                        Xóa
-                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -319,9 +316,24 @@
                 input.name = 'id';
                 input.value = id;
                 
+                // Find the anti-forgery token
                 const token = document.querySelector('input[name="__RequestVerificationToken"]');
                 if (token) {
-                    form.appendChild(token.cloneNode());
+                    const tokenClone = token.cloneNode(true);
+                    form.appendChild(tokenClone);
+                } else {
+                    // If no token found, create one from meta tag (ASP.NET Core fallback)
+                    const metaToken = document.querySelector('meta[name="__RequestVerificationToken"]');
+                    if (metaToken) {
+                        const tokenInput = document.createElement('input');
+                        tokenInput.type = 'hidden';
+                        tokenInput.name = '__RequestVerificationToken';
+                        tokenInput.value = metaToken.getAttribute('content');
+                        form.appendChild(tokenInput);
+                    } else {
+                        alert('Lỗi bảo mật: Không thể xác thực yêu cầu. Vui lòng tải lại trang và thử lại.');
+                        return;
+                    }
                 }
                 
                 form.appendChild(input);
@@ -352,9 +364,24 @@
                 licenceInput.name = 'licenceTypeId';
                 licenceInput.value = licenceTypeId;
                 
+                // Find the anti-forgery token
                 const token = document.querySelector('input[name="__RequestVerificationToken"]');
                 if (token) {
-                    form.appendChild(token.cloneNode());
+                    const tokenClone = token.cloneNode(true);
+                    form.appendChild(tokenClone);
+                } else {
+                    // If no token found, create one from meta tag (ASP.NET Core fallback)
+                    const metaToken = document.querySelector('meta[name="__RequestVerificationToken"]');
+                    if (metaToken) {
+                        const tokenInput = document.createElement('input');
+                        tokenInput.type = 'hidden';
+                        tokenInput.name = '__RequestVerificationToken';
+                        tokenInput.value = metaToken.getAttribute('content');
+                        form.appendChild(tokenInput);
+                    } else {
+                        alert('Lỗi bảo mật: Không thể xác thực yêu cầu. Vui lòng tải lại trang và thử lại.');
+                        return;
+                    }
                 }
                 
                 form.appendChild(instructorInput);

@@ -85,6 +85,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         public int? CityId { get; set; }
         public int? ProvinceId { get; set; }
         public int? WardId { get; set; }
+        public int? AddressId { get; set; }
 
         // File upload properties
         public IFormFile? ProfileImageFile { get; set; }
@@ -236,6 +237,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.MappingObjects
         public int? CityId { get; set; }
         public int? ProvinceId { get; set; }
         public int? WardId { get; set; }
+        public int? AddressId { get; set; }
 
         // File upload properties
         public IFormFile? ProfileImageFile { get; set; }

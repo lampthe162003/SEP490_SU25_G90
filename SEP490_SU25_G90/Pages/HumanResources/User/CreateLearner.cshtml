@@ -117,7 +117,7 @@
                                                 <span asp-validation-for="CreateRequest.MiddleName" class="text-danger"></span>
                                                 <small class="text-muted">
                                                     <i class="fas fa-info-circle me-1"></i>
-                                                    Chỉ được chứa chữ cái, không có số hoặc khoảng trắng
+                                                    Chỉ được chứa chữ cái và khoảng trắng đơn (không có số hoặc khoảng trắng kép)
                                                 </small>
                                             </div>
                                             <div class="col-md-4 mb-3">
@@ -506,9 +506,22 @@
         
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
+            // Check if we should clear localStorage (set by server via TempData)
+            @if (TempData["ClearLocalStorage"] != null && TempData["ClearLocalStorage"].ToString() == "true")
+            {
+                <text>
+                clearFilePreviewStorage();
+                </text>
+            }
+            else
+            {
+                <text>
+                restoreFilePreviewsFromStorage();
+                </text>
+            }
+            
             setupAddressCascadingDropdowns();
             setupNameFieldsValidation();
-            restoreFilePreviewsFromStorage();
             
             // CCCD number validation
             const cccdInput = document.getElementById('cccdNumber');
@@ -807,11 +820,16 @@
 
             if (createMiddleNameInput) {
                 createMiddleNameInput.addEventListener('input', function(e) {
-                    validateNameField(e.target, 'learner-middle-name-error', 'Tên đệm');
+                    validateMiddleNameField(e.target, 'learner-middle-name-error', 'Tên đệm');
                 });
                 
                 createMiddleNameInput.addEventListener('keypress', function(e) {
-                    if (!/^[\p{L}]$/u.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                    // Allow letters and single spaces
+                    if (!/^[\p{L}\s]$/u.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                        e.preventDefault();
+                    }
+                    // Prevent consecutive spaces
+                    if (e.key === ' ' && e.target.value.endsWith(' ')) {
                         e.preventDefault();
                     }
                 });
@@ -845,6 +863,30 @@
                     showValidationError(input, errorId, `${fieldName} chỉ được chứa chữ cái và không được có khoảng trắng hoặc số`);
                 } else if (value.length > 50) {
                     showValidationError(input, errorId, `${fieldName} không được quá 50 ký tự`);
+                }
+            }
+        }
+        
+        function validateMiddleNameField(input, errorId, fieldName) {
+            const value = input.value.trim();
+            // Allow letters and single spaces, no consecutive spaces
+            const isValid = /^[\p{L}]+(\s[\p{L}]+)*$/u.test(value) && value.length <= 50;
+            
+            if (isValid || value === '') {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                hideValidationError(input, errorId);
+            } else {
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                if (value.includes('  ')) {
+                    showValidationError(input, errorId, `${fieldName} không được có khoảng trắng kép`);
+                } else if (!/^[\p{L}\s]*$/u.test(value)) {
+                    showValidationError(input, errorId, `${fieldName} chỉ được chứa chữ cái và khoảng trắng đơn (không có số)`);
+                } else if (value.length > 50) {
+                    showValidationError(input, errorId, `${fieldName} không được quá 50 ký tự`);
+                } else {
+                    showValidationError(input, errorId, `${fieldName} không hợp lệ`);
                 }
             }
         }

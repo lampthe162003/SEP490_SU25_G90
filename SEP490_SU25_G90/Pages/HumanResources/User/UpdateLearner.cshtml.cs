@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
-using SEP490_SU25_G90.vn.edu.fpt.Services.UserService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.AddressService;
+using SEP490_SU25_G90.vn.edu.fpt.Services.UserService;
 
 namespace SEP490_SU25_G90.Pages.HumanResources.User
 {
@@ -99,9 +99,9 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                 ModelState.AddModelError("UpdateRequest.FirstName", "Họ chỉ được chứa chữ cái và không được có khoảng trắng hoặc số");
             }
 
-            if (!string.IsNullOrEmpty(UpdateRequest.MiddleName) && !System.Text.RegularExpressions.Regex.IsMatch(UpdateRequest.MiddleName, @"^[\p{L}]+$"))
+            if (!string.IsNullOrEmpty(UpdateRequest.MiddleName) && !System.Text.RegularExpressions.Regex.IsMatch(UpdateRequest.MiddleName, @"^[\p{L}]+(\s[\p{L}]+)*$"))
             {
-                ModelState.AddModelError("UpdateRequest.MiddleName", "Tên đệm chỉ được chứa chữ cái và không được có khoảng trắng hoặc số");
+                ModelState.AddModelError("UpdateRequest.MiddleName", "Tên đệm chỉ được chứa chữ cái");
             }
 
             if (!string.IsNullOrEmpty(UpdateRequest.LastName) && !System.Text.RegularExpressions.Regex.IsMatch(UpdateRequest.LastName, @"^[\p{L}]+$"))
@@ -195,15 +195,17 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                             UpdateRequest.HouseNumber,
                             null // No road name
                         );
+                        UpdateRequest.AddressId = learner.AddressId.Value;
                     }
                     else
                     {
                         // Create new address
                         var addressId = await _addressService.CreateAddressAsync(
-                            UpdateRequest.WardId.Value, 
+                            UpdateRequest.WardId.Value,
                             UpdateRequest.HouseNumber,
                             null // No road name
                         );
+                        UpdateRequest.AddressId = addressId;
                     }
                 }
 
@@ -239,16 +241,16 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
         private void LoadAddressData()
         {
             AvailableCities = _addressService.GetAllCities();
-            
+
             if (UpdateRequest.CityId.HasValue)
             {
                 AvailableProvinces = _addressService.GetProvincesByCity(UpdateRequest.CityId.Value);
             }
-            
+
             if (UpdateRequest.ProvinceId.HasValue)
             {
                 AvailableWards = _addressService.GetWardsByProvince(UpdateRequest.ProvinceId.Value);
             }
         }
     }
-} 
+}

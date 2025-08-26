@@ -427,11 +427,16 @@
 
             if (updateMiddleNameInput) {
                 updateMiddleNameInput.addEventListener('input', function(e) {
-                    validateNameField(e.target, 'update-middle-name-error', 'Tên đệm');
+                    validateMiddleNameField(e.target, 'update-middle-name-error', 'Tên đệm');
                 });
                 
                 updateMiddleNameInput.addEventListener('keypress', function(e) {
-                    if (!/^[\p{L}]$/u.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                   // Allow letters and single spaces
+                    if (!/^[\p{L}\s]$/u.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                        e.preventDefault();
+                    }
+                    // Prevent consecutive spaces
+                    if (e.key === ' ' && e.target.value.endsWith(' ')) {
                         e.preventDefault();
                     }
                 });
@@ -558,6 +563,29 @@
                 }
             }
          });
+         function validateMiddleNameField(input, errorId, fieldName) {
+            const value = input.value.trim();
+            // Allow letters and single spaces, no consecutive spaces
+            const isValid = /^[\p{L}]+(\s[\p{L}]+)*$/u.test(value) && value.length <= 50;
+
+            if (isValid || value === '') {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                hideValidationError(input, errorId);
+            } else {
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                if (value.includes('  ')) {
+                    showValidationError(input, errorId, `${fieldName} không được có khoảng trắng kép`);
+                } else if (!/^[\p{L}\s]*$/u.test(value)) {
+                    showValidationError(input, errorId, `${fieldName} chỉ được chứa chữ cái và khoảng trắng đơn (không có số)`);
+                } else if (value.length > 50) {
+                    showValidationError(input, errorId, `${fieldName} không được quá 50 ký tự`);
+                } else {
+                    showValidationError(input, errorId, `${fieldName} không hợp lệ`);
+                }
+            }
+        }
 
         // Image Modal Functions
         function showImageModal(imageUrl, title) {

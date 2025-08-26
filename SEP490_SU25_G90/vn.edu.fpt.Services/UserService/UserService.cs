@@ -468,7 +468,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
 
                 if (learner == null)
                 {
-
+                    return;
                 }
 
                 // Update basic information
@@ -479,7 +479,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
                 learner.Dob = request.Dob;
                 learner.Gender = request.Gender;
                 learner.Phone = request.Phone;
-
+                learner.AddressId = request.AddressId;
                 // Update ProfileImageUrl if provided
                 if (!string.IsNullOrWhiteSpace(request.ProfileImageUrl))
                 {

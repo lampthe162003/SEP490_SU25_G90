@@ -67,9 +67,9 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                 ModelState.AddModelError("CreateRequest.FirstName", "Họ chỉ được chứa chữ cái và không được có khoảng trắng hoặc số");
             }
 
-            if (!string.IsNullOrEmpty(CreateRequest.MiddleName) && !System.Text.RegularExpressions.Regex.IsMatch(CreateRequest.MiddleName, @"^[\p{L}]+$"))
+            if (!string.IsNullOrEmpty(CreateRequest.MiddleName) && !System.Text.RegularExpressions.Regex.IsMatch(CreateRequest.MiddleName, @"^[\p{L}]+(\s[\p{L}]+)*$"))
             {
-                ModelState.AddModelError("CreateRequest.MiddleName", "Tên đệm chỉ được chứa chữ cái và không được có khoảng trắng hoặc số");
+                ModelState.AddModelError("CreateRequest.MiddleName", "Tên đệm chỉ được chứa chữ cái và không được có 2 khoảng trắng hoặc số");
             }
 
             if (!string.IsNullOrEmpty(CreateRequest.LastName) && !System.Text.RegularExpressions.Regex.IsMatch(CreateRequest.LastName, @"^[\p{L}]+$"))
