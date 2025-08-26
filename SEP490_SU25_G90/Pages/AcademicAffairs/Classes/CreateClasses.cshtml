@@ -190,17 +190,14 @@
     </style>
     <script>
         function onCourseChanged(sel) {
-            // Set hidden field to indicate course change
             document.querySelector('input[name="CourseChanged"]').value = 'true';
-            // Submit form to reload page with new course data
             document.getElementById('mainForm').submit();
         }
-        
-        // Handle schedule selection
+
         document.addEventListener('DOMContentLoaded', function() {
             const maxDays = 2;
             let selectedDays = 0;
-            
+
             // Handle day checkbox changes
             document.querySelectorAll('.day-checkbox').forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
@@ -208,45 +205,33 @@
                     const slotsContainer = document.getElementById(`slots-${dayValue}`);
                     const card = this.closest('.card');
                     const slotCheckboxes = slotsContainer.querySelectorAll('.slot-checkbox');
-                    
+
                     if (this.checked) {
-                        // Check if max days reached
                         if (selectedDays >= maxDays) {
                             this.checked = false;
                             alert(`Chỉ được chọn tối đa ${maxDays} ngày học trong tuần!`);
                             return;
                         }
-                        
                         selectedDays++;
                         slotsContainer.style.display = 'block';
                         card.classList.add('active');
-                        
-                        // Enable slot checkboxes for this day
-                        slotCheckboxes.forEach(cb => {
-                            cb.disabled = false;
-                        });
+                        slotCheckboxes.forEach(cb => cb.disabled = false);
                     } else {
                         selectedDays--;
                         slotsContainer.style.display = 'none';
                         card.classList.remove('active');
-                        
-                        // Disable and uncheck slot checkboxes for this day
                         slotCheckboxes.forEach(cb => {
                             cb.disabled = true;
                             cb.checked = false;
                         });
                     }
-                    
-                    // Update other day checkboxes
                     updateDayCheckboxes();
                 });
             });
-            
+
             function updateDayCheckboxes() {
                 const dayCheckboxes = document.querySelectorAll('.day-checkbox');
-                
                 if (selectedDays >= maxDays) {
-                    // Disable unchecked day checkboxes
                     dayCheckboxes.forEach(cb => {
                         if (!cb.checked) {
                             cb.disabled = true;
@@ -254,28 +239,44 @@
                         }
                     });
                 } else {
-                    // Enable all day checkboxes
                     dayCheckboxes.forEach(cb => {
                         cb.disabled = false;
                         cb.closest('.card').style.opacity = '1';
                     });
                 }
             }
-            
-            // Validate at least one schedule is selected on form submit
-            document.querySelector('form').addEventListener('submit', function(e) {
-                // Skip validation if just changing course
+
+            // ✅ Validate khi submit form
+            document.getElementById('mainForm').addEventListener('submit', function(e) {
                 if (document.querySelector('input[name="CourseChanged"]').value === 'true') {
                     return true;
                 }
-                
+
+                // Ít nhất 1 khung giờ
                 const checkedSlots = document.querySelectorAll('.slot-checkbox:checked');
                 if (checkedSlots.length === 0) {
                     e.preventDefault();
                     alert('Vui lòng chọn ít nhất một khung giờ học!');
                     return false;
                 }
+
+                // Bắt buộc chọn giáo viên
+                const instructorSelect = document.getElementById("InstructorId");
+                if (!instructorSelect.value) {
+                    e.preventDefault();
+                    alert("Vui lòng chọn giáo viên!");
+                    return false;
+                }
+
+                // Không quá 5 học viên
+                const checkedLearners = document.querySelectorAll('input[name="SelectedLearnerIds"]:checked');
+                if (checkedLearners.length > 5) {
+                    e.preventDefault();
+                    alert("Không được chọn quá 5 học viên!");
+                    return false;
+                }
             });
         });
     </script>
+
 }
