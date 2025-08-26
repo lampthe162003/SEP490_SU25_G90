@@ -74,7 +74,7 @@ namespace SEP490_SU25_G90.Pages.Commons
                 }
                 else if (role.Equals("human resources", StringComparison.OrdinalIgnoreCase))
                 {
-                    return Redirect("/HR/Dashboard");
+                    return Redirect("/HumanResources/User/ListLearningProfile");
                 }
                 else if (role.Equals("instructor", StringComparison.OrdinalIgnoreCase))
                 {

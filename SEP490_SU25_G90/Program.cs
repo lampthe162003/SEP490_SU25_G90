@@ -113,7 +113,7 @@ app.MapGet("/", async context =>
     }
     else if (context.User.IsInRole("human resources"))
     {
-        context.Response.Redirect("/HR/Dashboard");
+        context.Response.Redirect("/HumanResources/User/ListLearningProfile");
         return;
     }
     else if (context.User.IsInRole("instructor"))
