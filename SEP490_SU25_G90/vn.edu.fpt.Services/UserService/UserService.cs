@@ -6,6 +6,7 @@ using SEP490_SU25_G90.vn.edu.fpt.MappingObjects.UserDto;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.RoleRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.UserRepository;
+using SEP490_SU25_G90.vn.edu.fpt.Services.AddressService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.EmailService;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
@@ -20,6 +21,12 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
         private readonly IRoleRepository _roleRepository;
         private readonly IWebHostEnvironment _env;
         private readonly IEmailService _emailService;
+        private readonly IAddressService _addressService;
+        private object context;
+        private object hasher;
+        private object roleRepository;
+        private object env;
+        private object emailService;
 
         public UserService(Sep490Su25G90DbContext context,
             IMapper mapper,
@@ -27,7 +34,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
             IPasswordHasher<Models.User> hasher,
             IRoleRepository roleRepository,
             IWebHostEnvironment env,
-            IEmailService emailService)
+            IEmailService emailService, IAddressService addressService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -37,6 +44,18 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
             _roleRepository = roleRepository;
             _env = env;
             _emailService = emailService;
+            _addressService = addressService;
+        }
+
+        public UserService(object context, IMapper mapper, IUserRepository userRepository, object hasher, object roleRepository, object env, object emailService)
+        {
+            this.context = context;
+            _mapper = mapper;
+            _userRepository = userRepository;
+            this.hasher = hasher;
+            this.roleRepository = roleRepository;
+            this.env = env;
+            this.emailService = emailService;
         }
 
         public async Task CreateAccount(AccountCreationRequest request, byte roleId)
@@ -175,14 +194,45 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
                 CccdImageFront = learner.Cccd?.ImageMt,
                 CccdImageBack = learner.Cccd?.ImageMs,
                 AddressDisplay = learner.Address != null
-                    ? $" {learner.Address.Ward?.WardName}, {learner.Address.Ward?.Province?.ProvinceName}, {learner.Address.Ward?.Province?.City?.CityName}"
+                    ? BuildAddressDisplay(learner.Address)
                     : null,
                 ProfileImageUrl = learner.ProfileImageUrl,
                 HealthCertificateImageUrl = learner.HealthCertificate?.ImageUrl,
-                LearningApplications = learningApplicationInfos
+                LearningApplications = learningApplicationInfos,
+                AddressId = learner.AddressId
             };
 
             return result;
+        }
+
+        private string BuildAddressDisplay(Address? address)
+        {
+            if (address == null) return "";
+
+            var parts = new List<string>();
+
+            if (!string.IsNullOrEmpty(address.HouseNumber))
+                parts.Add(address.HouseNumber);
+
+            if (!string.IsNullOrEmpty(address.RoadName))
+                parts.Add(address.RoadName);
+
+            if (address.Ward != null)
+            {
+                if (!string.IsNullOrEmpty(address.Ward.WardName))
+                    parts.Add(address.Ward.WardName);
+
+                if (address.Ward.Province != null)
+                {
+                    if (!string.IsNullOrEmpty(address.Ward.Province.ProvinceName))
+                        parts.Add(address.Ward.Province.ProvinceName);
+
+                    if (address.Ward.Province.City != null && !string.IsNullOrEmpty(address.Ward.Province.City.CityName))
+                        parts.Add(address.Ward.Province.City.CityName);
+                }
+            }
+
+            return string.Join(", ", parts);
         }
 
         public async Task<string> CreateLearnerAsync(CreateLearnerRequest request)
@@ -229,7 +279,16 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.UserService
                     Phone = request.Phone,
                     ProfileImageUrl = request.ProfileImageUrl
                 };
-
+                // Create address record first if ward is selected
+                if (request.WardId.HasValue)
+                {
+                    var addressId = await _addressService.CreateAddressAsync(
+                        request.WardId.Value,
+                        request.HouseNumber,
+                        null // No road name
+                    );
+                    newUser.AddressId = addressId;
+                }
                 _context.Users.Add(newUser);
                 await _context.SaveChangesAsync();
 

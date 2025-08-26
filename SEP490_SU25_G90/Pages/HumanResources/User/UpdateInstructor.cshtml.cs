@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
+using SEP490_SU25_G90.vn.edu.fpt.Services.AddressService;
 
 namespace SEP490_SU25_G90.Pages.HumanResources.User
 {
@@ -10,16 +11,21 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
     public class UpdateInstructorModel : PageModel
     {
         private readonly IInstructorService _instructorService;
+        private readonly IAddressService _addressService;
 
-        public UpdateInstructorModel(IInstructorService instructorService)
+        public UpdateInstructorModel(IInstructorService instructorService, IAddressService addressService)
         {
             _instructorService = instructorService;
+            _addressService = addressService;
         }
 
         [BindProperty]
         public UpdateInstructorRequest UpdateRequest { get; set; } = new();
 
         public List<LicenceTypeResponse> AvailableLicenceTypes { get; set; } = new();
+        public List<CityResponse> AvailableCities { get; set; } = new();
+        public List<ProvinceResponse> AvailableProvinces { get; set; } = new();
+        public List<WardResponse> AvailableWards { get; set; } = new();
 
         [TempData]
         public string? Message { get; set; }
@@ -27,7 +33,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
         [TempData]
         public string? MessageType { get; set; }
 
-        public IActionResult OnGet(int? id)
+        public async Task<IActionResult> OnGet(int? id)
         {
             if (!id.HasValue)
             {
@@ -62,7 +68,21 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     SelectedSpecializations = instructor.Specializations.Select(s => s.LicenceTypeId).ToList()
                 };
 
+                // Load existing address information if available
+                if (instructor.AddressId.HasValue)
+                {
+                    var address = await _addressService.GetAddressAsync(instructor.AddressId.Value);
+                    if (address != null)
+                    {
+                        UpdateRequest.WardId = address.WardId;
+                        UpdateRequest.ProvinceId = address.Ward?.ProvinceId;
+                        UpdateRequest.CityId = address.Ward?.Province?.CityId;
+                        UpdateRequest.HouseNumber = address.HouseNumber;
+                    }
+                }
+
                 LoadAvailableLicenceTypes();
+                LoadAddressData();
                 return Page();
             }
             catch (Exception ex)
@@ -99,6 +119,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     {
                         ModelState.AddModelError("UpdateRequest.CccdNumber", "Số CCCD này đã được sử dụng");
                         LoadAvailableLicenceTypes();
+                        LoadAddressData();
                         return Page();
                     }
                 }
@@ -111,6 +132,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     {
                         ModelState.AddModelError("UpdateRequest.Phone", "Số điện thoại này đã được sử dụng");
                         LoadAvailableLicenceTypes();
+                        LoadAddressData();
                         return Page();
                     }
                 }
@@ -122,6 +144,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     {
                         ModelState.AddModelError("UpdateRequest.Dob", "Tuổi của giảng viên chưa đủ 18.");
                         LoadAvailableLicenceTypes();
+                        LoadAddressData();
                         return Page();
                     }
 
@@ -129,6 +152,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     {
                         ModelState.AddModelError("UpdateRequest.Dob", "Tuổi của giảng viên không được quá 65.");
                         LoadAvailableLicenceTypes();
+                        LoadAddressData();
                         return Page();
                     }
                 }
@@ -147,6 +171,30 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     ModelState.AddModelError("UpdateRequest.Phone", "Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam hợp lệ (10 số, bắt đầu bằng 03, 05, 07, 08, 09)");
                     LoadAvailableLicenceTypes();
                     return Page();
+                }
+
+                // Create or update address record if ward is selected
+                if (UpdateRequest.WardId.HasValue)
+                {
+                    if (instructor.AddressId.HasValue)
+                    {
+                        // Update existing address
+                        await _addressService.UpdateAddressAsync(
+                            instructor.AddressId.Value,
+                            UpdateRequest.WardId.Value,
+                            UpdateRequest.HouseNumber,
+                            null // No road name
+                        );
+                    }
+                    else
+                    {
+                        // Create new address
+                        var addressId = await _addressService.CreateAddressAsync(
+                            UpdateRequest.WardId.Value, 
+                            UpdateRequest.HouseNumber,
+                            null // No road name
+                        );
+                    }
                 }
 
                 // Update specializations first
@@ -168,9 +216,37 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
             }
         }
 
+        public async Task<IActionResult> OnGetProvincesAsync(int cityId)
+        {
+            var provinces = _addressService.GetProvincesByCity(cityId);
+            return new JsonResult(provinces);
+        }
+
+        public async Task<IActionResult> OnGetWardsAsync(int provinceId)
+        {
+            var wards = _addressService.GetWardsByProvince(provinceId);
+            return new JsonResult(wards);
+        }
+
+
         private void LoadAvailableLicenceTypes()
         {
             AvailableLicenceTypes = _instructorService.GetAllLicenceTypes();
+        }
+
+        private void LoadAddressData()
+        {
+            AvailableCities = _addressService.GetAllCities();
+            
+            if (UpdateRequest.CityId.HasValue)
+            {
+                AvailableProvinces = _addressService.GetProvincesByCity(UpdateRequest.CityId.Value);
+            }
+            
+            if (UpdateRequest.ProvinceId.HasValue)
+            {
+                AvailableWards = _addressService.GetWardsByProvince(UpdateRequest.ProvinceId.Value);
+            }
         }
 
         private void UpdateSpecializations(int instructorId, List<byte> currentSpecializations, List<byte> newSpecializations)

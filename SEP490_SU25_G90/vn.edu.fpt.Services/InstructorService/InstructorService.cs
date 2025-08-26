@@ -3,6 +3,7 @@ using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.CourseRepository;
 using SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository;
+using SEP490_SU25_G90.vn.edu.fpt.Services.AddressService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.EmailService;
 using System.Text;
 
@@ -15,14 +16,16 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
         private readonly IWebHostEnvironment _env;
         private readonly IEmailService _emailService;
         private readonly ICourseRepository _courseRepository;
-
-        public InstructorService(IInstructorRepository instructorRepository, IMapper mapper, IWebHostEnvironment env, IEmailService emailService, ICourseRepository courseRepository)
+        private readonly IAddressService _addressService;
+        public InstructorService(IInstructorRepository instructorRepository, IMapper mapper, IWebHostEnvironment env, IEmailService emailService,
+            ICourseRepository courseRepository, IAddressService addressService)
         {
             _instructorRepository = instructorRepository;
             _mapper = mapper;
             _env = env;
             _emailService = emailService;
             _courseRepository = courseRepository;
+            _addressService = addressService;
         }
 
         public IList<InstructorListInformationResponse> GetAllInstructors(string? name = null, byte? licenceTypeId = null, byte? courseId = null)
@@ -98,6 +101,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
                     LicenceTypeId = ins.LicenceType.LicenceTypeId,
                     LicenceCode = ins.LicenceType.LicenceCode
                 }).ToList(),
+                AddressId = instructor.AddressId,
                 //StudentCount = instructor.LearningApplicationInstructors.Count(la => la.LearningStatus == 1)
             };
         }
@@ -141,6 +145,16 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService
                 Phone = request.Phone,
                 ProfileImageUrl = request.ProfileImageUrl
             };
+            // Create address record first if ward is selected
+            if (request.WardId.HasValue)
+            {
+                var addressId = await _addressService.CreateAddressAsync(
+                    request.WardId.Value,
+                    request.HouseNumber,
+                    null // No road name
+                );
+                instructor.AddressId = addressId;
+            }
 
             // Handle CCCD if provided
             if (!string.IsNullOrWhiteSpace(request.CccdNumber) ||

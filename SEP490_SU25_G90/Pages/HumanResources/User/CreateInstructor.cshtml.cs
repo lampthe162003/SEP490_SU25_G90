@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
+using SEP490_SU25_G90.vn.edu.fpt.Services.AddressService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
 
 namespace SEP490_SU25_G90.Pages.HumanResources.User
@@ -10,16 +11,19 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
     public class CreateInstructorModel : PageModel
     {
         private readonly IInstructorService _instructorService;
+        private readonly IAddressService _addressService;
 
-        public CreateInstructorModel(IInstructorService instructorService)
+        public CreateInstructorModel(IInstructorService instructorService, IAddressService addressService)
         {
             _instructorService = instructorService;
+            _addressService = addressService;
         }
 
         [BindProperty]
         public CreateInstructorRequest CreateRequest { get; set; } = new();
 
         public List<LicenceTypeResponse> AvailableLicenceTypes { get; set; } = new();
+        public List<CityResponse> AvailableCities { get; set; } = new();
 
         [TempData]
         public string? Message { get; set; }
@@ -30,6 +34,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
         public void OnGet()
         {
             LoadAvailableLicenceTypes();
+            LoadAvailableCities();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -37,6 +42,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
             if (!ModelState.IsValid)
             {
                 LoadAvailableLicenceTypes();
+                LoadAvailableCities();
                 return Page();
             }
 
@@ -48,6 +54,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                 {
                     ModelState.AddModelError("CreateRequest.Email", "Email này đã được sử dụng");
                     LoadAvailableLicenceTypes();
+                    LoadAvailableCities();
                     return Page();
                 }
 
@@ -58,6 +65,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     {
                         ModelState.AddModelError("CreateRequest.CccdNumber", "Số CCCD này đã được sử dụng");
                         LoadAvailableLicenceTypes();
+                        LoadAvailableCities();
                         return Page();
                     }
                 }
@@ -69,6 +77,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     {
                         ModelState.AddModelError("CreateRequest.Phone", "Số điện thoại này đã được sử dụng");
                         LoadAvailableLicenceTypes();
+                        LoadAvailableCities();
                         return Page();
                     }
                 }
@@ -78,6 +87,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                 {
                     ModelState.AddModelError("CreateRequest.Dob", "Tuổi của giảng viên chưa đủ 18.");
                     LoadAvailableLicenceTypes();
+                    LoadAvailableCities();
                     return Page();
                 }
 
@@ -86,6 +96,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                 {
                     ModelState.AddModelError("CreateRequest.Dob", "Tuổi của giảng viên không được quá 65.");
                     LoadAvailableLicenceTypes();
+                    LoadAvailableCities();
                     return Page();
                 }
 
@@ -94,6 +105,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                 {
                     ModelState.AddModelError("CreateRequest.CccdNumber", "Số CCCD phải có đúng 12 chữ số và chỉ chứa số");
                     LoadAvailableLicenceTypes();
+                    LoadAvailableCities();
                     return Page();
                 }
 
@@ -102,6 +114,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                 {
                     ModelState.AddModelError("CreateRequest.Phone", "Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam hợp lệ (10 số, bắt đầu bằng 03, 05, 07, 08, 09)");
                     LoadAvailableLicenceTypes();
+                    LoadAvailableCities();
                     return Page();
                 }
 
@@ -116,13 +129,32 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                 Message = $"Lỗi khi tạo tài khoản giảng viên: {ex.Message}";
                 MessageType = "error";
                 LoadAvailableLicenceTypes();
+                LoadAvailableCities();
                 return Page();
             }
         }
 
+        public async Task<IActionResult> OnGetProvincesAsync(int cityId)
+        {
+            var provinces = _addressService.GetProvincesByCity(cityId);
+            return new JsonResult(provinces);
+        }
+
+        public async Task<IActionResult> OnGetWardsAsync(int provinceId)
+        {
+            var wards = _addressService.GetWardsByProvince(provinceId);
+            return new JsonResult(wards);
+        }
+
+
         private void LoadAvailableLicenceTypes()
         {
             AvailableLicenceTypes = _instructorService.GetAllLicenceTypes();
+        }
+
+        private void LoadAvailableCities()
+        {
+            AvailableCities = _addressService.GetAllCities();
         }
     }
 }
