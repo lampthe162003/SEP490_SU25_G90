@@ -84,6 +84,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                     LearnerId = la.LearnerId,
                     TestEligibility = (bool)la.TestEligibility,
                 })
+                .OrderByDescending(x => x.SubmittedAt)
                 .ToListAsync();
 
             return list;
