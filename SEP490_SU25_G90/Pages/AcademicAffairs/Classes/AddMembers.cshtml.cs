@@ -27,11 +27,14 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
 
         public List<CandidateVm> Candidates { get; set; } = new();
 
+        public string ClassLicenceTypeCode { get; set; } = string.Empty;
+
         public class CandidateVm
         {
             public int LearningId { get; set; }
             public string FullName { get; set; } = string.Empty;
             public string Cccd { get; set; } = string.Empty;
+            public string LicenseTypeName { get; set; } = string.Empty;
             public string Status { get; set; } = string.Empty;
             public string ProfileImageUrl { get; set; } = "https://cdn-icons-png.flaticon.com/512/1144/1144760.png";
         }
@@ -49,6 +52,7 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
         {
             var classEntity = await _context.Classes
                 .Include(c => c.Instructor)
+                .Include(c => c.Course)
                 .FirstOrDefaultAsync(c => c.ClassId == ClassId);
             if (classEntity == null) return NotFound();
 
@@ -57,6 +61,39 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
                 ModelState.AddModelError(string.Empty, "Vui lòng chọn ít nhất một học viên");
                 await LoadCandidatesAsync();
                 return Page();
+            }
+
+            // Kiểm tra số lượng tối đa 5 học viên/lớp
+            var currentMemberCount = await _context.ClassMembers.CountAsync(cm => cm.ClassId == ClassId);
+            var selectedDistinctIds = SelectedLearnerIds.Distinct().ToList();
+            var alreadyInClassIds = await _context.ClassMembers
+                .Where(cm => cm.ClassId == ClassId && cm.LearnerId != null)
+                .Select(cm => cm.LearnerId!.Value)
+                .ToListAsync();
+            var idsToAdd = selectedDistinctIds.Where(id => !alreadyInClassIds.Contains(id)).ToList();
+            var remainingSlots = 5 - currentMemberCount;
+            if (remainingSlots <= 0 || idsToAdd.Count > remainingSlots)
+            {
+                ModelState.AddModelError(string.Empty, $"Lớp chỉ cho phép tối đa 5 học viên. Còn trống {Math.Max(remainingSlots, 0)} chỗ.");
+                await LoadCandidatesAsync();
+                return Page();
+            }
+
+            // Xác thực loại bằng của học viên trùng với lớp (theo Course.LicenceTypeId)
+            var classLicenceTypeId = classEntity.Course?.LicenceTypeId;
+            if (classLicenceTypeId.HasValue)
+            {
+                var invalidLicenceLearners = await _context.LearningApplications
+                    .Where(la => idsToAdd.Contains(la.LearningId))
+                    .Where(la => la.LicenceTypeId != classLicenceTypeId)
+                    .Select(la => la.LearningId)
+                    .ToListAsync();
+                if (invalidLicenceLearners.Any())
+                {
+                    ModelState.AddModelError(string.Empty, "Chỉ có thể thêm học viên có loại bằng phù hợp với lớp.");
+                    await LoadCandidatesAsync();
+                    return Page();
+                }
             }
 
             using var transaction = await _context.Database.BeginTransactionAsync();
@@ -111,14 +148,25 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.Classes
                 .Where(cm => cm.ClassId == ClassId)
                 .Select(cm => cm.LearnerId!.Value)
                 .ToListAsync();
+            // Lấy loại bằng của lớp qua Course
+            var classInfo = await _context.Classes
+                .Include(c => c.Course)!
+                .ThenInclude(co => co!.LicenceType)
+                .Where(c => c.ClassId == ClassId)
+                .Select(c => new { LicenceTypeId = c.Course!.LicenceTypeId, LicenceCode = c.Course!.LicenceType != null ? c.Course.LicenceType.LicenceCode : null })
+                .FirstOrDefaultAsync();
+            var classLicenceTypeId = classInfo?.LicenceTypeId;
+            ClassLicenceTypeCode = classInfo?.LicenceCode ?? string.Empty;
 
             Candidates = list
                 .Where(x => x.LearningStatus != 4 && x.LearningStatus != 1 && !alreadyMemberIds.Contains(x.LearningId))
+                .Where(x => !classLicenceTypeId.HasValue || x.LicenceTypeId == classLicenceTypeId)
                 .Select(x => new CandidateVm
                 {
                     LearningId = x.LearningId,
                     FullName = x.LearnerFullName ?? string.Empty,
                     Cccd = x.LearnerCccdNumber ?? string.Empty,
+                    LicenseTypeName = x.LicenceTypeName ?? string.Empty,
                     Status = x.LearningStatusName ?? string.Empty,
                     ProfileImageUrl = _context.Users.FirstOrDefault(z => z.UserId == x.LearnerId)?.ProfileImageUrl?.ToString() ??
                         "https://cdn-icons-png.flaticon.com/512/1144/1144760.png"

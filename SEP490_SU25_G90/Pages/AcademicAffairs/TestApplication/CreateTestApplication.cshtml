@@ -49,6 +49,7 @@
                     <th>Tên học viên</th>
                     <th>Cccd</th>
                     <th>Loại bằng</th>
+                    <th>Trạng thái tốt nghiệp</th>
                 </tr>
             </thead>
             <tbody id="eligibleBody"></tbody>
@@ -88,6 +89,7 @@
                         <td>${row.fullName ?? ''}</td>
                         <td>${row.cccd ?? ''}</td>
                         <td>${row.licenceType ?? ''}</td>
+                        <td>${row.testEligibility === true ? 'Đạt' : (row.testEligibility === false ? 'Không đạt' : '')}</td>
                     `;
                     body.appendChild(tr);
                 });
@@ -110,10 +112,13 @@
                 alert('Vui lòng chọn ngày nộp hồ sơ và ngày thi');
                 return;
             }
+            function normalizeDate(d) {
+            return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+            }
 
-            const submit = new Date(submitDate);
-            const exam = new Date(examDate);
-            const today = new Date();
+            const submit = normalizeDate(new Date(submitDate));
+            const exam = normalizeDate(new Date(examDate));
+            const today = normalizeDate(new Date());
 
             // ngày nộp hồ sơ không được lớn hơn ngày hiện tại
             if (submit > today) {

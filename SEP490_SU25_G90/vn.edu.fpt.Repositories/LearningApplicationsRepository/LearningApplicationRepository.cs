@@ -71,6 +71,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                                       (la.Learner.MiddleName ?? "") + " " +
                                       (la.Learner.LastName ?? ""),
                     LearnerCccdNumber = la.Learner.Cccd != null ? la.Learner.Cccd.CccdNumber : "",
+                    LicenceTypeId =  la.LicenceType.LicenceTypeId ,
                     LicenceTypeName = la.LicenceType != null ? la.LicenceType.LicenceCode : "",
                     InstructorFullName = la.ClassMembers
                         .Select(cm => (cm.Class.Instructor.FirstName ?? "") + " " +
@@ -80,7 +81,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository
                     SubmittedAt = la.SubmittedAt,
                     LearningStatus = la.LearningStatus,
                     LearningStatusName = GetLearningStatusName(la.LearningStatus, la.ClassMembers.Any(cm => cm.Class.InstructorId.HasValue)),
-                    LearnerId = la.LearnerId
+                    LearnerId = la.LearnerId,
+                    TestEligibility = (bool)la.TestEligibility,
                 })
                 .ToListAsync();
 

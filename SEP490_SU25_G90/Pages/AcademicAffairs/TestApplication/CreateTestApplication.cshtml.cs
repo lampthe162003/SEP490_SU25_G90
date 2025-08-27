@@ -48,7 +48,8 @@ namespace SEP490_SU25_G90.Pages.AcademicAffairs.TestApplication
                 id = x.LearningId,
                 fullName = x.LearnerFullName,
                 cccd = x.LearnerCccdNumber,
-                licenceType = x.LicenceTypeName
+                licenceType = x.LicenceTypeName,
+                testEligibility = x.TestEligibility
             }));
         }
 
