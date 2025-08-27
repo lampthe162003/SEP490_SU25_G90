@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
-using System.Linq;
 
 namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
 {
@@ -34,7 +33,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
 
         public IQueryable<User> GetInstructorsByName(IQueryable<User> query, string name)
         {
-            return query.Where(u => 
+            return query.Where(u =>
                 u.FirstName.Contains(name) ||
                 u.MiddleName.Contains(name) ||
                 u.LastName.Contains(name) ||
@@ -77,7 +76,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
             var instructor = _context.Users
                 .Include(u => u.Cccd)
                 .FirstOrDefault(u => u.UserId == instructorId);
-            
+
             if (instructor != null)
             {
                 instructor.FirstName = request.FirstName;
@@ -86,6 +85,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 instructor.Dob = request.Dob;
                 instructor.Gender = request.Gender;
                 instructor.Phone = request.Phone;
+                instructor.AddressId = request.AddressId;
 
                 // Update ProfileImageUrl if provided
                 if (!string.IsNullOrWhiteSpace(request.ProfileImageUrl))
@@ -94,8 +94,8 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                 }
 
                 // Update CCCD if any CCCD field is provided
-                if (!string.IsNullOrWhiteSpace(request.CccdNumber) || 
-                    !string.IsNullOrWhiteSpace(request.CccdImageFront) || 
+                if (!string.IsNullOrWhiteSpace(request.CccdNumber) ||
+                    !string.IsNullOrWhiteSpace(request.CccdImageFront) ||
                     !string.IsNullOrWhiteSpace(request.CccdImageBack))
                 {
                     // Validate CCCD number format if provided
@@ -137,7 +137,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
                         }
                     }
                 }
-                
+
                 _context.SaveChanges();
             }
         }
@@ -162,7 +162,7 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
         {
             var specialization = _context.InstructorSpecializations
                 .FirstOrDefault(ins => ins.InstructorId == instructorId && ins.LicenceTypeId == licenceTypeId);
-            
+
             if (specialization != null)
             {
                 _context.InstructorSpecializations.Remove(specialization);
@@ -448,4 +448,4 @@ namespace SEP490_SU25_G90.vn.edu.fpt.Repositories.InstructorRepository
 
 
     }
-} 
+}

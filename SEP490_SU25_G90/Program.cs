@@ -7,10 +7,6 @@ using SEP490_SU25_G90.vn.edu.fpt.Commons;
 using SEP490_SU25_G90.vn.edu.fpt.Commons.AuthorizationHandler;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
 using SEP490_SU25_G90.vn.edu.fpt.Models;
-using SEP490_SU25_G90.vn.edu.fpt.Repositories.LearningApplicationsRepository;
-using SEP490_SU25_G90.vn.edu.fpt.Repositories.NewsRepository;
-using SEP490_SU25_G90.vn.edu.fpt.Services.LearningApplicationsService;
-using SEP490_SU25_G90.vn.edu.fpt.Services.NewsService;
 using System.Globalization;
 using System.Security.Claims;
 using System.Text;
@@ -129,7 +125,7 @@ app.MapGet("/", async context =>
 });
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseSession();
 app.UseRouting();
 
 app.UseAuthentication();

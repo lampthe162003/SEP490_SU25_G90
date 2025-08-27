@@ -98,20 +98,32 @@
 
                                 <div class="mb-3">
                                     <label asp-for="UpdateRequest.FirstName" class="form-label">Họ *</label>
-                                    <input asp-for="UpdateRequest.FirstName" class="form-control" />
+                                    <input asp-for="UpdateRequest.FirstName" class="form-control" maxlength="50" />
                                     <span asp-validation-for="UpdateRequest.FirstName" class="text-danger"></span>
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Chỉ được chứa chữ cái, không có số hoặc khoảng trắng
+                                    </small>
                                 </div>
 
                                 <div class="mb-3">
                                     <label asp-for="UpdateRequest.MiddleName" class="form-label">Tên đệm</label>
-                                    <input asp-for="UpdateRequest.MiddleName" class="form-control" />
+                                    <input asp-for="UpdateRequest.MiddleName" class="form-control" maxlength="50" />
                                     <span asp-validation-for="UpdateRequest.MiddleName" class="text-danger"></span>
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Chỉ được chứa chữ cái, không có số hoặc khoảng trắng
+                                    </small>
                                 </div>
 
                                 <div class="mb-3">
                                     <label asp-for="UpdateRequest.LastName" class="form-label">Tên *</label>
-                                    <input asp-for="UpdateRequest.LastName" class="form-control" />
+                                    <input asp-for="UpdateRequest.LastName" class="form-control" maxlength="50" />
                                     <span asp-validation-for="UpdateRequest.LastName" class="text-danger"></span>
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Chỉ được chứa chữ cái, không có số hoặc khoảng trắng
+                                    </small>
                                 </div>
 
                                 <div class="mb-3">
@@ -395,6 +407,53 @@
         // CCCD input validation - only allow numbers
         document.addEventListener('DOMContentLoaded', function() {
             setupAddressCascadingDropdowns();
+            
+            // Name fields validation - only letters, no numbers, no spaces
+            const updateFirstNameInput = document.querySelector('input[name="UpdateRequest.FirstName"]');
+            const updateMiddleNameInput = document.querySelector('input[name="UpdateRequest.MiddleName"]');
+            const updateLastNameInput = document.querySelector('input[name="UpdateRequest.LastName"]');
+
+            if (updateFirstNameInput) {
+                updateFirstNameInput.addEventListener('input', function(e) {
+                    validateNameField(e.target, 'update-first-name-error', 'Họ');
+                });
+                
+                updateFirstNameInput.addEventListener('keypress', function(e) {
+                    if (!/^[\p{L}]$/u.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                        e.preventDefault();
+                    }
+                });
+            }
+
+            if (updateMiddleNameInput) {
+                updateMiddleNameInput.addEventListener('input', function(e) {
+                    validateMiddleNameField(e.target, 'update-middle-name-error', 'Tên đệm');
+                });
+                
+                updateMiddleNameInput.addEventListener('keypress', function(e) {
+                   // Allow letters and single spaces
+                    if (!/^[\p{L}\s]$/u.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                        e.preventDefault();
+                    }
+                    // Prevent consecutive spaces
+                    if (e.key === ' ' && e.target.value.endsWith(' ')) {
+                        e.preventDefault();
+                    }
+                });
+            }
+
+            if (updateLastNameInput) {
+                updateLastNameInput.addEventListener('input', function(e) {
+                    validateNameField(e.target, 'update-last-name-error', 'Tên');
+                });
+                
+                updateLastNameInput.addEventListener('keypress', function(e) {
+                    if (!/^[\p{L}]$/u.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                        e.preventDefault();
+                    }
+                });
+            }
+            
             const cccdInput = document.querySelector('input[name="UpdateRequest.CccdNumber"]');
             if (cccdInput) {
                 cccdInput.addEventListener('input', function(e) {
@@ -504,6 +563,29 @@
                 }
             }
          });
+         function validateMiddleNameField(input, errorId, fieldName) {
+            const value = input.value.trim();
+            // Allow letters and single spaces, no consecutive spaces
+            const isValid = /^[\p{L}]+(\s[\p{L}]+)*$/u.test(value) && value.length <= 50;
+
+            if (isValid || value === '') {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                hideValidationError(input, errorId);
+            } else {
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                if (value.includes('  ')) {
+                    showValidationError(input, errorId, `${fieldName} không được có khoảng trắng kép`);
+                } else if (!/^[\p{L}\s]*$/u.test(value)) {
+                    showValidationError(input, errorId, `${fieldName} chỉ được chứa chữ cái và khoảng trắng đơn (không có số)`);
+                } else if (value.length > 50) {
+                    showValidationError(input, errorId, `${fieldName} không được quá 50 ký tự`);
+                } else {
+                    showValidationError(input, errorId, `${fieldName} không hợp lệ`);
+                }
+            }
+        }
 
         // Image Modal Functions
         function showImageModal(imageUrl, title) {
@@ -653,6 +735,43 @@
         function showError(message) {
             // You can customize this to show error messages in your preferred way
             console.error(message);
+        }
+
+        function validateNameField(input, errorId, fieldName) {
+            const value = input.value.trim();
+            const isValid = /^[\p{L}]*$/u.test(value) && value.length <= 50;
+            
+            if (isValid || value === '') {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                hideValidationError(input, errorId);
+            } else {
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                if (!/^[\p{L}]*$/u.test(value)) {
+                    showValidationError(input, errorId, `${fieldName} chỉ được chứa chữ cái và không được có khoảng trắng hoặc số`);
+                } else if (value.length > 50) {
+                    showValidationError(input, errorId, `${fieldName} không được quá 50 ký tự`);
+                }
+            }
+        }
+        
+        function showValidationError(input, errorId, message) {
+            let errorDiv = document.getElementById(errorId);
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.id = errorId;
+                errorDiv.className = 'invalid-feedback d-block';
+                input.parentNode.appendChild(errorDiv);
+            }
+            errorDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>' + message;
+        }
+        
+        function hideValidationError(input, errorId) {
+            const errorDiv = document.getElementById(errorId);
+            if (errorDiv) {
+                errorDiv.remove();
+            }
         }
 
      </script>

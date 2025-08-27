@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEP490_SU25_G90.vn.edu.fpt.MappingObjects;
-using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
 using SEP490_SU25_G90.vn.edu.fpt.Services.AddressService;
+using SEP490_SU25_G90.vn.edu.fpt.Services.InstructorService;
 
 namespace SEP490_SU25_G90.Pages.HumanResources.User
 {
@@ -95,9 +95,26 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
 
         public async Task<IActionResult> OnPost()
         {
+            // Custom validation for name fields - run before checking ModelState.IsValid
+            if (!string.IsNullOrEmpty(UpdateRequest.FirstName) && !System.Text.RegularExpressions.Regex.IsMatch(UpdateRequest.FirstName, @"^[\p{L}]+$"))
+            {
+                ModelState.AddModelError("UpdateRequest.FirstName", "Họ chỉ được chứa chữ cái và không được có khoảng trắng hoặc số");
+            }
+
+            if (!string.IsNullOrEmpty(UpdateRequest.MiddleName) && !System.Text.RegularExpressions.Regex.IsMatch(UpdateRequest.MiddleName, @"^[\p{L}]+(\s[\p{L}]+)*$"))
+            {
+                ModelState.AddModelError("UpdateRequest.MiddleName", "Tên đệm chỉ được chứa chữ cái");
+            }
+
+            if (!string.IsNullOrEmpty(UpdateRequest.LastName) && !System.Text.RegularExpressions.Regex.IsMatch(UpdateRequest.LastName, @"^[\p{L}]+$"))
+            {
+                ModelState.AddModelError("UpdateRequest.LastName", "Tên chỉ được chứa chữ cái và không được có khoảng trắng hoặc số");
+            }
+
             if (!ModelState.IsValid)
             {
                 LoadAvailableLicenceTypes();
+                LoadAddressData();
                 return Page();
             }
 
@@ -110,6 +127,8 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                     MessageType = "error";
                     return RedirectToPage("./ManagerInstructor");
                 }
+
+
 
                 // Check if CCCD number already exists (exclude current user)
                 if (!string.IsNullOrEmpty(UpdateRequest.CccdNumber))
@@ -162,6 +181,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                 {
                     ModelState.AddModelError("UpdateRequest.CccdNumber", "Số CCCD phải có đúng 12 chữ số và chỉ chứa số");
                     LoadAvailableLicenceTypes();
+                    LoadAddressData();
                     return Page();
                 }
 
@@ -170,6 +190,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                 {
                     ModelState.AddModelError("UpdateRequest.Phone", "Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam hợp lệ (10 số, bắt đầu bằng 03, 05, 07, 08, 09)");
                     LoadAvailableLicenceTypes();
+                    LoadAddressData();
                     return Page();
                 }
 
@@ -185,15 +206,17 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                             UpdateRequest.HouseNumber,
                             null // No road name
                         );
+                        UpdateRequest.AddressId = instructor.AddressId.Value;
                     }
                     else
                     {
                         // Create new address
                         var addressId = await _addressService.CreateAddressAsync(
-                            UpdateRequest.WardId.Value, 
+                            UpdateRequest.WardId.Value,
                             UpdateRequest.HouseNumber,
                             null // No road name
                         );
+                        UpdateRequest.AddressId = addressId;
                     }
                 }
 
@@ -212,6 +235,7 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
                 Message = $"Lỗi khi cập nhật thông tin giảng viên: {ex.Message}";
                 MessageType = "error";
                 LoadAvailableLicenceTypes();
+                LoadAddressData();
                 return Page();
             }
         }
@@ -237,12 +261,12 @@ namespace SEP490_SU25_G90.Pages.HumanResources.User
         private void LoadAddressData()
         {
             AvailableCities = _addressService.GetAllCities();
-            
+
             if (UpdateRequest.CityId.HasValue)
             {
                 AvailableProvinces = _addressService.GetProvincesByCity(UpdateRequest.CityId.Value);
             }
-            
+
             if (UpdateRequest.ProvinceId.HasValue)
             {
                 AvailableWards = _addressService.GetWardsByProvince(UpdateRequest.ProvinceId.Value);
